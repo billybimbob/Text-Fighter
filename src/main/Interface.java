@@ -47,18 +47,19 @@ public class Interface {
 			BasicAttack baseAtt = new BasicAttack(fighters.get(i));
 			ChargeAttack charge = new ChargeAttack(fighters.get(i));
 			MagicBlast blast = new MagicBlast(fighters.get(i));
+			Freeze froze = new Freeze(fighters.get(i));
 			if (fighters.get(i).aggro) {
-				Attacks[] moveSet = {baseAtt, charge, blast, null};
+				Attacks[] moveSet = {baseAtt, charge, blast, froze, null};
 				hero.moveList = moveSet;
 			} else {
-				Attacks[] moveSet = {baseAtt, charge, blast};
+				Attacks[] moveSet = {baseAtt, charge, blast, froze};
 				fighters.get(i).moveList = moveSet;
 			}
 		}
 		fighters.remove(hero);
 		SpinAttack spin = new SpinAttack(hero, fighters);
 		fighters.add(hero);
-		hero.moveList[3] = spin;
+		hero.moveList[4] = spin;
 		
 		for (int i = 0; i <= player1.moveList.length-1; i++)
 			player1.moveListNames.add(player1.moveList[i].name + " - " + (int)player1.moveList[i].manaCost + " mana");
