@@ -1,0 +1,23 @@
+List of Things I need to change
+Start working on abilities that have each unique scaling calculators on damage. Make it so monster can use abilities but its rng.
+	figure out how to have an attack be multiple turns
+	Add magic attacks
+	Add description of abilities
+an inventory item that can be used as a 1 turn consumable to deal damage. example: select a rock on the inventory to deal 8 dmg on one monster once
+Account for max inventory??
+Add stun mechanic- reset stuns at the end of the turn
+Flesh out potion effects
+Bug: monster seems to reset attack move possibly after another monster's turn is skipped from being stunned
+Maybe: add title to choice options?
+Make monsters have better ai
+Regenerate mana somehow?
+	Ability or over time
+
+Talk with Marcel
+calculations
+
+Done
+Assess the UI. Right now the ui is built so that the hero always goes first. Make it so that you input your actions then all the fighting sequences happen in the correct order
+Bug: Used crit potions, then crit potion after gave 0 crit, check this for all potions
+Buffs override other buffs instead of waiting for the duration of one buff to expire
+Add "back" option in choices

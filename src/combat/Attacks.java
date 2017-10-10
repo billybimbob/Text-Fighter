@@ -34,9 +34,9 @@ public abstract class Attacks {
 	
 	public void targetReduct (Monsters target) {
 		if (attType)
-			baseDam -= (int)(Math.random()*(target.def*.75));
+			baseDam -= (int)(Math.random()*(target.def*.5));
 		else
-			baseDam -= (int)(Math.random()*(target.magR*.75));
+			baseDam -= (int)(Math.random()*(target.magR*.5));
 		
 		if (baseDam < 0)
 			baseDam = 0;
