@@ -5,8 +5,8 @@ import assets.Monsters;
 public abstract class Attacks {
 
 	public double baseDam, manaCost;
-	public boolean attType;
-	public Monsters attacker;
+	public boolean attType, aoe = false;
+	protected Monsters attacker;
 	public Monsters[] targets; //might make it an array
 	public int numTar = 1, tarCount = 0; //number of targets default set to 1
 	public String name, description;

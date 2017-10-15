@@ -28,13 +28,13 @@ public class ChargeAttack extends Attacks{
 				}
 			
 				targets[0].hp -= baseDam;
+				System.out.println(attacker.name + " lands a powerful hit on " + targets[0].name + " for " + baseDam + " damage");
 				if (attCheck > 1.2) {
 					System.out.println(attacker.name + "'s charged attack stuns " + targets[0].name);
 					targets[0].stun = true;
 				}
-				System.out.println(attacker.name + " lands a powerful hit on " + targets[0].name + " for " + baseDam + " damage\n");
 			} else {
-				System.out.println(attacker.name + "'s attack missed\n");
+				System.out.println(attacker.name + "'s attack missed");
 			}
 			attacker.def += 3; //might later set to a variable
 			turnCount = 0;
@@ -43,7 +43,7 @@ public class ChargeAttack extends Attacks{
 			
 		} else if (turnCount == 0 && attacker.mp >= manaCost){ //Checks if sufficient mana
 			attacker.mp -= manaCost;
-			System.out.println(attacker.name + " readies their swing and uses " + manaCost + " mana\n");
+			System.out.println(attacker.name + " readies their swing and uses " + manaCost + " mana");
 			attacker.def -= 3;
 			turnCount++;
 			if (attacker.aggro)
@@ -51,6 +51,6 @@ public class ChargeAttack extends Attacks{
 			else
 				attacker.skip = true;
 		} else
-			System.out.println(attacker.name + " tries to use " + name + ", but has insufficient mana\n");
+			System.out.println(attacker.name + " tries to use " + name + ", but has insufficient mana");
 	}
 }

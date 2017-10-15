@@ -25,13 +25,13 @@ public class BasicAttack extends Attacks {
 			}
 			
 			if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				System.out.println(attacker.name + "'s attack was blocked by " + targets[0].name + "\n");
+				System.out.println(attacker.name + "'s attack was blocked by " + targets[0].name);
 			} else {
 				targets[0].hp -= baseDam;
-				System.out.println(attacker.name + " has hit " + targets[0].name + " for " + baseDam + " damage\n");
+				System.out.println(attacker.name + " has hit " + targets[0].name + " for " + baseDam + " damage");
 			}
 		} else {
-			System.out.println(attacker.name + "'s attack missed\n");
+			System.out.println(attacker.name + "'s attack missed");
 		}
 	}
 }

@@ -12,12 +12,12 @@ public class Potions extends Items {
 		switch (stat) {
 			case "hp":
 				name = "Health Potion";
-				modVal = 2;
+				modVal = 3;
 				baseModVal = modVal;
 				break;
 			case "mp":
 				name = "Mana Potion";
-				modVal = 2;
+				modVal = 4;
 				baseModVal = modVal;
 				break;
 			case "att":
@@ -69,9 +69,9 @@ public class Potions extends Items {
 		turnStart = Fight.turnCount;
 		Inventory.removeItems(this);
 		if (!(statMod.equals("hp") || statMod.equals("mp")))
-			System.out.println("You have used " + this.name + " and have gained " + this.modVal + " " + this.statMod + "\n");
+			System.out.println("You have used " + this.name + " and have gained " + this.modVal + " " + this.statMod);
 		else
-			System.out.println("You have used " + this.name + " and will gain " + this.statMod + " over time\n");
+			System.out.println("You have used " + this.name + " and will gain " + this.statMod + " over time");
 	}
 	public static void buffCheck (Monsters user, Items used) { //Checks if buff wears off/ updates healing over time
 		if (Potions.timeLength <= Math.abs(Fight.turnCount-Potions.turnStart)) {

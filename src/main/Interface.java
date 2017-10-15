@@ -35,7 +35,7 @@ public class Interface {
 		
 		Hero player1 = new Hero(name);
 		fighters.add(player1);
-		Monsters mon1 = new Monsters("Thief", false, true, 15, 15, 3, 3, 3, 3, 6, 6, 6); //Temporary 
+		Monsters mon1 = new Monsters("Thief", false, true, 1, 15, 3, 3, 3, 3, 6, 6, 6); //Temporary 
 		fighters.add(mon1);
 		Monsters mon2 = new Monsters("Spider", false, true, 15, 15, 6, 2, 3, 3, 4, 4, 4);  // lvl ,hp, mp,  atk, def, magic, mr, crit, eva, speed
 		fighters.add(mon2);

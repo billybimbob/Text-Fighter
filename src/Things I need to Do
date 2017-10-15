@@ -6,10 +6,12 @@ Start working on abilities that have each unique scaling calculators on damage. 
 an inventory item that can be used as a 1 turn consumable to deal damage. example: select a rock on the inventory to deal 8 dmg on one monster once
 Account for max inventory??
 Add stun mechanic- reset stuns at the end of the turn
+Spin attack: doesn't account for when an enemy dies
 Flesh out potion effects
 Bug: monster seems to reset attack move possibly after another monster's turn is skipped from being stunned
 Maybe: add title to choice options?
 Make monsters have better ai
+Round damage to 2 decimal places
 Regenerate mana somehow?
 	Ability or over time
 

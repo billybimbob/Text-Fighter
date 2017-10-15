@@ -46,31 +46,27 @@ public class Fight {
 					case 1: //Attack a prompted target
 						do { //probably change, flow is really bad and confusing
 							String attPrompt = "Which attack do you want to use?";
-							int typeNum = Interface.choiceInput(keyboard, true, Interface.hero.moveListNames, attPrompt); //Temporary
-							if (typeNum == 0)
+							int attNum = Interface.choiceInput(keyboard, true, Interface.hero.moveListNames, attPrompt); //Temporary
+							if (attNum == 0)
 								break selection;
-							turnMove = Interface.hero.moveList[typeNum-1];
+							turnMove = Interface.hero.moveList[attNum-1];
+							
 							heroTargets.clear();
-							ArrayList<String> removedMon = new ArrayList<>();
-							if (turnMove.numTar == monFighters.size()) { //adds all the monsters to the targets if the targets capacity is the same
-								for (int i = 0; i <= turnMove.numTar-1; i++)
+							if (turnMove.aoe || turnMove.numTar == monFighters.size()) { //attacks all monsters if aoe attack or if only one option
+								for (int i = 0; i <= monFighters.size()-1; i++)
 									heroTargets.add(monFighters.get(i));
 								Interface.heroAction = true;
-							} else {
+							} else { //single target attacks
 								for (int i = 0; i <= turnMove.numTar-1; i++) {
 									String tarPrompt = "Which monster would you want to target?";
-									int attNum = Interface.choiceInput(keyboard, true, monFightersName, tarPrompt);
-									Interface.heroAction = true;
-									if (attNum == 0) {//have to change how to implement
+									int tarNum = Interface.choiceInput(keyboard, true, monFightersName, tarPrompt);
+									if (tarNum == 0) {//have to change how to implement
 										Interface.heroAction = false;
 										break;
 									}
-									heroTargets.add(monFighters.get(attNum-1));
-									monFightersName.remove(monFighters.get(attNum-1).name);
-									removedMon.add((monFighters.get(attNum-1).name));
+									heroTargets.add(monFighters.get(tarNum-1));
+									Interface.heroAction = true;
 								}
-								for (int i = 0; i <= removedMon.size()-1; i++)
-									monFightersName.add(removedMon.get(i));
 							}
 						} while (!Interface.heroAction);
 						break;
@@ -106,7 +102,7 @@ public class Fight {
 				if (target.hp <= 0 || flee)
 					break;
 				else if (attacker.stun) { //checks if fighter is stunned, if so, skips turn
-					System.out.println(attacker.name + " is stunned\n");
+					System.out.println(attacker.name + " is stunned");
 					attacker.stun = false;
 					
 				} else if (!attacker.aggro) { //Monster attacks
@@ -127,9 +123,12 @@ public class Fight {
 						Potions.buffCheck (target, pick);
 					switch (choice) {
 						case 1: //attacks inputed target
-							for (int j = 0; j <= turnMove.numTar-1; j++)
-								turnMove.setTarget(heroTargets.get(j));
-							
+							for (int j = 0; j <= turnMove.numTar-1; j++) {
+								if (j < heroTargets.size())
+									turnMove.setTarget(heroTargets.get(j));
+								else
+									turnMove.setTarget(null);
+							}
 							turnMove.execute();
 							break;
 						case 2: //use inputed item
@@ -146,7 +145,7 @@ public class Fight {
 							if (escapeCheck > 1)
 								flee = true;
 							else
-								System.out.println("You fail to escape\n");
+								System.out.println("You fail to escape");
 							Interface.hero.eva += 5;
 					}
 					for (int j = 0; j < monFighters.size(); j++) { //check if any monster died
@@ -154,12 +153,14 @@ public class Fight {
 							if (j < i)
 								i--;
 							fighters.remove(monFighters.get(j));
-							System.out.println(monFighters.get(j).name + " has died\n");
+							System.out.println("\n" + monFighters.get(j).name + " has died");
 							monFighters.remove(monFighters.get(j));
 						}
 					}
 					
 				}
+				attacker.mp += 1;
+				System.out.println("");
 				TimeUnit.SECONDS.sleep(2);
 			}
 			turnCount++; //turn counter
