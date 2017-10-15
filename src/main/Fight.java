@@ -14,6 +14,7 @@ public class Fight {
 	public static void fighting (Scanner keyboard, ArrayList<Monsters> fighters) throws InterruptedException {
 		System.out.println("Press enter when you are ready to fight");
 		keyboard.nextLine();
+		
 		Monsters target = null;
 		boolean fightControl = true, flee = false;
 		turnCount = 0;
@@ -195,29 +196,4 @@ public class Fight {
 			}
 		}
 	}
-	
-	/*public static void attackDeter (Monsters attacker, Monsters receiver) {
-		double attCheck = Math.random() + (attacker.att*0.5-receiver.eva*0.3); //Attack based on RNG and modified by stats
-		
-		if (attCheck > 0.1) { //Check if attack will be successful
-			Attacks test = new BasicAttack(attacker);
-		
-			if (test.critCheck()) { //Checks for critical hit
-				test.baseDam *= 2;
-				System.out.print("Critical Hit! ");
-			} else {
-				test.targetReduct(receiver);
-			}
-			
-			if (test.baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				System.out.println(attacker.name + "'s attack was blocked by " + receiver.name + "\n");
-			} else {
-				receiver.hp -= test.baseDam;
-				System.out.println(attacker.name + " has hit " + receiver.name + " for " + test.baseDam + " damage\n");
-			}
-		} else {
-			System.out.println(attacker.name + "'s attack missed\n");
-		}
-	}*/
-
 }
