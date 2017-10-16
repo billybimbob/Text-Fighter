@@ -17,7 +17,7 @@ public class SpinAttack extends Attacks {
 			
 			System.out.println(attacker.name + " spins around, hitting");
 			for (int i = 0; i <= targets.length-1; i++) { //Checks if hits for each monster
-				try { 
+				try {
 					double damDealt = 0;
 					double attCheck = attackCheck(targets[i]); //Attack based on RNG and modified by stats
 					if (attCheck > 0.1) { //Check if attack will be successful
@@ -25,6 +25,7 @@ public class SpinAttack extends Attacks {
 							baseDam *= 2;
 							System.out.println("Critical Hit!");
 						}*/
+						baseDamage();
 						double storeDam = baseDam;
 						targetReduct(targets[i]);
 						targets[i].hp -= baseDam;

@@ -20,7 +20,8 @@ public class ChargeAttack extends Attacks{
 		if (turnCount == 1) { //Checks if attack charged for 1 turn
 			double attCheck = attackCheck(targets[0]); //Attack based on RNG and modified by stats
 			if (attCheck > 0.1) { //Check if attack will be successful
-
+				
+				baseDamage();
 				if (critCheck()) { //Checks for critical hit
 					baseDam *= 2;
 					System.out.print("Critical Hit! ");

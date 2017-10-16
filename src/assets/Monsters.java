@@ -31,7 +31,7 @@ public class Monsters { //Temporary, probably make abstract later
 			Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[special].clone()};
 			moveList = moveStore;
 			for (int i = 0; i <= moveList.length-1; i++) {
-				moveList[i].setAttacker(this);
+				moveList[i].attacker = this;
 			}
 		} catch (CloneNotSupportedException c) {}
 	}
@@ -68,7 +68,7 @@ public class Monsters { //Temporary, probably make abstract later
 		this.spe = copy.spe;
 		this.moveList = copy.moveList;
 		for (int i = 0; i <= moveList.length-1; i++) {
-			moveList[i].setAttacker(this);
+			moveList[i].attacker = this;
 		}
 	}
 	

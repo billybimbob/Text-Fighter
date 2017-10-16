@@ -1,13 +1,12 @@
 package combat;
 
-import java.util.ArrayList;
 import assets.*;
 
 public abstract class Attacks implements Cloneable {
 
 	public double baseDam, manaCost;
 	public boolean attType, aoe = false;
-	protected Monsters attacker;
+	public Monsters attacker;
 	public Monsters[] targets; //might make it an array
 	public int numTar = 1, tarCount = 0; //number of targets default set to 1
 	protected double baseDamMod = 1;
@@ -17,19 +16,6 @@ public abstract class Attacks implements Cloneable {
 		return super.clone();  
 	}
 	
-	public void setAttacker(Monsters attacker) {
-		this.attacker = attacker;
-		baseDamage();
-		baseDam *= baseDamMod;
-	}
-	public void aoeTargets(ArrayList<Monsters> enemies) {
-		if (aoe) {
-			numTar = enemies.size();
-			targets = new Monsters[numTar];
-			for (int i = 0; i <= enemies.size()-1; i++)
-				targets[i] = enemies.get(i);
-		}
-	}
 	public void setTarget (Monsters target) { //probably useless
 		if (tarCount >= numTar)
 			tarCount = 0;
@@ -50,12 +36,11 @@ public abstract class Attacks implements Cloneable {
 		
 		return critHit;
 	}
-	
-	public double attackCheck (Monsters target) { //an attack check based on either the att or mag stat
+	public double attackCheck (Monsters target) { //an attack damage check based on either the att or mag stat
 		if (attType)
-			return Math.random() + (attacker.att*0.5-targets[0].eva*0.3);
+			return Math.random() + (attacker.att*0.5-targets[0].eva*0.3)*baseDamMod;
 		else
-			return Math.random() + (attacker.mag*0.5-targets[0].eva*0.3);
+			return Math.random() + (attacker.mag*0.5-targets[0].eva*0.3)*baseDamMod;
 	}
 	
 	public void targetReduct (Monsters target) {

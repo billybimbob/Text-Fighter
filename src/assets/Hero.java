@@ -29,7 +29,7 @@ public class Hero extends Monsters {
 				mag = 3;
 			}
 			for (int i = 0; i <= moveList.length-1; i++) {
-				moveList[i].setAttacker(this);
+				moveList[i].attacker = this;
 			}
 		} catch (CloneNotSupportedException c) {}
 	}

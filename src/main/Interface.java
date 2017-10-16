@@ -20,21 +20,26 @@ public class Interface {
 		String name = kboard.nextLine();
 		
 		ArrayList<String> availClass = new ArrayList<>(Arrays.asList("Warrior", "Mage"));
-		String classPrompt = "Would you like to be a warrior or a mage?\nThis will affect your stats and abilities";
+		String classPrompt = "Would you like to be a warrior or a mage?\nThis will affect your stats, potions, and abilities";
 		int classChoice = choiceInput(kboard, false,availClass, classPrompt);
-		boolean selectedClass = classChoice == 1; //might expand to if and else to affect starting potions
 		
-		Inventory.addItems(Index.potionsList[0], 2);
+		Hero player1 = null;
+		if (classChoice == 1) { //create warrior class
+			player1 = new Hero(name, true);
+			Inventory.addItems(Index.potionsList[2], 1);
+			Inventory.addItems(Index.potionsList[3], 1);
+		} else { //mage class
+			player1 = new Hero(name, false);
+			Inventory.addItems(Index.potionsList[4], 1);
+			Inventory.addItems(Index.potionsList[5], 1);
+		}
+		Inventory.addItems(Index.potionsList[0], 3);
 		Inventory.addItems(Index.potionsList[1], 3);
-		Inventory.addItems(Index.potionsList[2], 1);
-		Inventory.addItems(Index.potionsList[3], 1);
-		Inventory.addItems(Index.potionsList[4], 2);
-		Inventory.addItems(Index.potionsList[5], 1);
 		Inventory.addItems(Index.potionsList[6], 1);
+		Inventory.addItems(Index.potionsList[7], 1);
+		Inventory.addItems(Index.potionsList[8], 1);
 		
-		Hero player1 = new Hero(name, selectedClass);
 		fighters.add(player1);
-		
 		hero = player1; //Temporary
 		
 		for (int i = 0; i <= player1.moveList.length-1; i++)

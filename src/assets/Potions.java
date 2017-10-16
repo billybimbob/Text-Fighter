@@ -12,38 +12,52 @@ public class Potions extends Items {
 		switch (stat) {
 			case "hp":
 				name = "Health Potion";
-				modVal = 3;
+				modVal = 2;
 				baseModVal = modVal;
 				break;
 			case "mp":
 				name = "Mana Potion";
-				modVal = 4;
+				modVal = 2;
 				baseModVal = modVal;
 				break;
 			case "att":
 				name = "Potion of Offense";
-				modVal = 3;
+				modVal = 7;
 				break;
 			case "def":
 				name = "Ironskin Potion";
-				modVal = 2;
+				modVal = 10;
+				break;
+			case "mag":
+				name = "Potion of Elements";
+				modVal = 7;
+				break;
+			case "magR":
+				name = "Element Barrier Potion";
+				modVal = 10;
 				break;
 			case "crit":
 				name = "Lucky Potion";
-				modVal = 5;
+				modVal = 10;
 				break;
 			case "eva":
 				name = "Dodge Potion";
-				modVal = 10;
+				modVal = 5;
 				break;
 			case "spe":
 				name = "Swiftness Potion";
-				modVal = 5;
+				modVal = 10;
 				break;
 		}
 	}
 	public void useItem (Monsters user) {
 		switch (statMod) {
+			case "hp":
+				user.att += modVal*2;
+				break;
+			case "mp":
+				user.mp +=  modVal*2;
+				break;
 			case "att":
 				user.att += modVal;
 				break;
@@ -71,7 +85,7 @@ public class Potions extends Items {
 		if (!(statMod.equals("hp") || statMod.equals("mp")))
 			System.out.println("You have used " + this.name + " and have gained " + this.modVal + " " + this.statMod);
 		else
-			System.out.println("You have used " + this.name + " and will gain " + this.statMod + " over time");
+			System.out.println("You have used " + this.name + " and hava gained " + this.modVal*2 + " and will gain " + this.statMod + " over time");
 	}
 	public static void buffCheck (Monsters user, Items used) { //Checks if buff wears off/ updates healing over time
 		if (Potions.timeLength <= Math.abs(Fight.turnCount-Potions.turnStart)) {

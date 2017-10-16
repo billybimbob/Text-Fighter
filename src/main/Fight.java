@@ -138,7 +138,6 @@ public class Fight {
 								else
 									turnMove.setTarget(null);
 							}
-							System.out.println(turnMove.targets[0].name);
 							turnMove.execute();
 							break;
 						case 2: //Try to flee
