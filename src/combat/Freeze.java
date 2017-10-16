@@ -3,16 +3,16 @@ package combat;
 import assets.Monsters;
 
 public class Freeze extends Attacks {
-	public Freeze (Monsters attacker) {
+	
+	public Freeze () {
 		this.name = "Freeze";
 		this.description = "A a magic attack with the less damage, but lowers target's speed and evasion";
-		this.attacker = attacker;
 		this.attType = false;
 		this.targets = new Monsters[numTar];
 		this.manaCost = 2;
-		baseDamage();
-		baseDam *= .85;
+		baseDamMod = .85;
 	}
+	
 	public void execute() {
 		double attCheck = attackCheck(targets[0]); //Attack based on RNG and modified by stats, need to consider magic attack
 		attacker.mp -= manaCost;

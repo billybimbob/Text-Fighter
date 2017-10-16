@@ -1,22 +1,16 @@
 package combat;
 
-import java.util.ArrayList;
-import assets.Monsters;
-
 public class SpinAttack extends Attacks {
 	
-	public SpinAttack (Monsters attacker, ArrayList<Monsters> enemies) { //might change to get rid of enemies parameter
+	public SpinAttack () { //might change to get rid of enemies parameter
 		this.name = "Spin Attack";
 		this.description = "A spinning melee attack that damages all enemies for less damage than a basic attack";
-		this.attacker = attacker;
 		this.attType = true; //melee attack; might make it based on the attacker
-		this.numTar = enemies.size();
-		this.targets = new Monsters[numTar]; //need to consider if one of the monsters die
 		this.manaCost = 5;
 		this.aoe = true;
-		baseDamage();
-		this.baseDam *= 0.85;
+		baseDamMod = 0.85;
 	}
+	
 	public void execute() {
 		if (attacker.mp >= manaCost) {
 			attacker.mp -= manaCost;
@@ -41,7 +35,7 @@ public class SpinAttack extends Attacks {
 						 System.out.println("but is blocked by " + targets[i].name);
 					else
 						System.out.println(targets[i].name + " for " + damDealt + " damage");
-				} catch (Exception e) {}
+				} catch (Exception e) {System.out.print(e);}
 			}
 		
 		} else

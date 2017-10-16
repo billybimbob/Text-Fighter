@@ -4,15 +4,14 @@ import assets.Monsters;
 
 public class MagicBlast extends Attacks {
 
-	public MagicBlast (Monsters attacker) {
+	public MagicBlast () {
 		this.name = "Magic Blast";
 		this.description = "A a magic attack with the same damage as a basic, but has chance to stun and ignores some armor";
-		this.attacker = attacker;
 		this.attType = false;
 		this.targets = new Monsters[numTar];
 		this.manaCost = 2;
-		baseDamage();
 	}
+	
 	public void execute() {
 		double attCheck = attackCheck(targets[0]); //Attack based on RNG and modified by stats, need to consider magic attack
 		attacker.mp -= manaCost;

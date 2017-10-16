@@ -2,7 +2,6 @@ package main;
 
 import java.util.*;
 import assets.*;
-import combat.*;
 
 public class Interface {
 	
@@ -12,58 +11,34 @@ public class Interface {
 	
 	public static void main(String[] args) throws InterruptedException { //All this is probably temporary
 		
+		Index stuff = new Index();
 		Scanner kboard = new Scanner(System.in);
 		ArrayList<Monsters> fighters = new ArrayList<>();
 		System.out.println("Welcome hero!");
 		System.out.print("Step forth and state your name: ");
 		String name = kboard.nextLine();
 		
-		Potions hpPotion = new Potions("hp"); //Temporary
-		Potions mpPotion = new Potions("mp");
-		Potions atPotion = new Potions("att");
-		Potions dfPotion = new Potions("def");
-		Potions crPotion = new Potions("crit");
-		Potions evPotion = new Potions("eva");
-		Potions spPotion = new Potions("spe");
-		Inventory.addItems(mpPotion, 2);
-		Inventory.addItems(hpPotion, 3);
-		Inventory.addItems(atPotion, 1);
-		Inventory.addItems(dfPotion, 1);
-		Inventory.addItems(crPotion, 2);
-		Inventory.addItems(evPotion, 1);
-		Inventory.addItems(spPotion, 1);
+		Inventory.addItems(Index.potionsList[0], 2);
+		Inventory.addItems(Index.potionsList[1], 3);
+		Inventory.addItems(Index.potionsList[2], 1);
+		Inventory.addItems(Index.potionsList[3], 1);
+		Inventory.addItems(Index.potionsList[4], 2);
+		Inventory.addItems(Index.potionsList[5], 1);
+		Inventory.addItems(Index.potionsList[6], 1);
 		
-		Hero player1 = new Hero(name);
+		Hero player1 = new Hero(name, true);
 		fighters.add(player1);
-		Monsters mon1 = new Monsters("Thief", false, true, 1, 15, 3, 3, 3, 3, 6, 6, 6); //Temporary 
-		fighters.add(mon1);
-		Monsters mon2 = new Monsters("Spider", false, true, 15, 15, 6, 2, 3, 3, 4, 4, 4);  // lvl ,hp, mp,  atk, def, magic, mr, crit, eva, speed
-		fighters.add(mon2);
-		Monsters mon3 = new Monsters("Slime", false, true, 20, 10, 3, 5, 3, 3, 1, 1, 1);
-		fighters.add(mon3);
 		
 		hero = player1; //Temporary
-		for (int i = 0; i <= fighters.size()-1; i++) { //Temporary
-			BasicAttack baseAtt = new BasicAttack(fighters.get(i));
-			ChargeAttack charge = new ChargeAttack(fighters.get(i));
-			MagicBlast blast = new MagicBlast(fighters.get(i));
-			Freeze froze = new Freeze(fighters.get(i));
-			if (fighters.get(i).aggro) {
-				Attacks[] moveSet = {baseAtt, charge, blast, froze, null};
-				hero.moveList = moveSet;
-			} else {
-				Attacks[] moveSet = {baseAtt, charge, blast, froze};
-				fighters.get(i).moveList = moveSet;
-			}
-		}
-		fighters.remove(hero);
-		SpinAttack spin = new SpinAttack(hero, fighters);
-		fighters.add(hero);
-		hero.moveList[4] = spin;
 		
 		for (int i = 0; i <= player1.moveList.length-1; i++)
 			player1.moveListNames.add(player1.moveList[i].name + " - " + (int)player1.moveList[i].manaCost + " mana");
 
+		for (int i = 0; i <= Index.monsterList.length-1; i++) {
+			fighters.add(new Monsters(Index.monsterList[i]));
+		}
+		fighters.add(new Monsters(Index.monsterList[2]));
+		fighters.get(3).hp+= 5;
 		Fight.fighting(kboard, fighters);
 		kboard.close();
 	}

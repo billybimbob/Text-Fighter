@@ -1,15 +1,41 @@
 package combat;
 
-import assets.Monsters;
+import java.util.ArrayList;
+import assets.*;
 
-public abstract class Attacks {
+public abstract class Attacks implements Cloneable {
 
 	public double baseDam, manaCost;
 	public boolean attType, aoe = false;
 	protected Monsters attacker;
 	public Monsters[] targets; //might make it an array
 	public int numTar = 1, tarCount = 0; //number of targets default set to 1
+	protected double baseDamMod = 1;
 	public String name, description;
+	
+	public Object clone()throws CloneNotSupportedException {  
+		return super.clone();  
+	}
+	
+	public void setAttacker(Monsters attacker) {
+		this.attacker = attacker;
+		baseDamage();
+		baseDam *= baseDamMod;
+	}
+	public void aoeTargets(ArrayList<Monsters> enemies) {
+		if (aoe) {
+			numTar = enemies.size();
+			targets = new Monsters[numTar];
+			for (int i = 0; i <= enemies.size()-1; i++)
+				targets[i] = enemies.get(i);
+		}
+	}
+	public void setTarget (Monsters target) { //probably useless
+		if (tarCount >= numTar)
+			tarCount = 0;
+		targets[tarCount] = target;
+		tarCount++;
+	}
 	
 	public void baseDamage () { //determines the damage if either a melee or magic attack
 		if (attType)
@@ -40,13 +66,6 @@ public abstract class Attacks {
 		
 		if (baseDam < 0)
 			baseDam = 0;
-	}
-	
-	public void setTarget (Monsters target) { //probably useless
-		if (tarCount >= numTar)
-			tarCount = 0;
-		targets[tarCount] = target;
-		tarCount++;
 	}
 	
 	public abstract void execute ();

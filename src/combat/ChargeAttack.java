@@ -7,16 +7,15 @@ public class ChargeAttack extends Attacks{
 	
 	public int turnCount = 0;
 	
-	public ChargeAttack (Monsters attacker) {
+	public ChargeAttack () {
 		this.name = "Charged Strike";
 		this.description = "A powerful melee attack able to hit with twice the accuarcy and damage and ignores armor\nBut requires a turn to charge, and more vulnerable";
-		this.attacker = attacker;
 		this.attType = true;
 		this.targets = new Monsters[numTar];
 		this.manaCost = 6;
-		baseDamage();
-		this.baseDam *= 2.5;
+		this.baseDamMod = 2.5;
 	}
+	
 	public void execute() { //Change, too messy, might put the print statements in the fight class
 		if (turnCount == 1) { //Checks if attack charged for 1 turn
 			double attCheck = attackCheck(targets[0]); //Attack based on RNG and modified by stats

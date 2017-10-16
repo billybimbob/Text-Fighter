@@ -2,15 +2,36 @@ package assets;
 
 import java.util.ArrayList;
 
+import combat.*;
+import main.Index;
+
 public class Hero extends Monsters {
 
 	public boolean attType = true; //true means physical attack;
 	public final static double levMult = 2.5;
 	public ArrayList<String> moveListNames = new ArrayList<>();
 	
-	public Hero (String name){
+	public Hero (String name, boolean classes){ //if classes true, warrior
 		super(name, true, true, 25, 20, 5, 5, 5, 5, 5, 5, 5);
 		level = 1;
+		try {
+			if (classes) {
+				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[1].clone(), (Attacks)Index.attackList[2].clone()};
+				moveList = moveStore;
+				attType = true;
+				mag = 7;
+				att = 3;
+			} else {
+				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[3].clone(), (Attacks)Index.attackList[4].clone()};
+				moveList = moveStore;
+				attType = false;
+				att = 7;
+				mag = 3;
+			}
+			for (int i = 0; i <= moveList.length-1; i++) {
+				moveList[i].setAttacker(this);
+			}
+		} catch (CloneNotSupportedException c) {}
 	}
 	
 	public void levelUp () {

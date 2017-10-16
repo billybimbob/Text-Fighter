@@ -7,7 +7,7 @@ import combat.*;
 
 public class Fight {
 	
-	private static final ArrayList<String> fightChoices = new ArrayList<>(Arrays.asList("Fight", "Inventory", "Flee"));
+	private static final ArrayList<String> fightChoices = new ArrayList<>(Arrays.asList("Attack", "Dodge", "Inventory"));
 	public static int turnCount;
 	public static boolean potionBuff = false;
 
@@ -53,7 +53,12 @@ public class Fight {
 							turnMove = Interface.hero.moveList[attNum-1];
 							
 							heroTargets.clear();
-							if (turnMove.aoe || turnMove.numTar == monFighters.size()) { //attacks all monsters if aoe attack or if only one option
+							if (turnMove.aoe) {//attacks all monsters, might change later
+								turnMove.aoeTargets(monFighters);
+								for (int i = 0; i <= turnMove.targets.length-1; i++)
+									System.out.println(turnMove.targets[i].name);
+								Interface.heroAction = true;
+							} else if (turnMove.numTar == monFighters.size()) { //attacks all monsters if aoe attack or if only one option
 								for (int i = 0; i <= monFighters.size()-1; i++)
 									heroTargets.add(monFighters.get(i));
 								Interface.heroAction = true;
@@ -71,7 +76,7 @@ public class Fight {
 							}
 						} while (!Interface.heroAction);
 						break;
-					case 2: //Check inventory
+					case 3: //Check inventory
 						ArrayList<String> inventNames = Inventory.access();
 						if (Inventory.empty) {
 							System.out.println("You have no items in your inventory\n");
@@ -91,8 +96,7 @@ public class Fight {
 							Interface.heroAction = true;
 						}
 						break;
-					case 3: //temporarily raises evasion
-						Interface.hero.eva += 5;
+					case 2: //temporarily raises evasion, and costs 2 mana
 						Interface.heroAction = true;
 				}
 			}
@@ -100,7 +104,7 @@ public class Fight {
 			
 			for (int i = 0; i <= fighters.size()-1; i++) { //Goes through the move of each fighter
 				Monsters attacker = fighters.get(i);
-				if (target.hp <= 0 || flee)
+				if (target.hp <= 0) //got rid of flee maybe temporary
 					break;
 				else if (attacker.stun) { //checks if fighter is stunned, if so, skips turn
 					System.out.println(attacker.name + " is stunned");
@@ -121,7 +125,9 @@ public class Fight {
 				} else { //Hero action
 					Interface.heroAction = false; //sets default value, will by default ask for user input
 					if (potionBuff)
-						Potions.buffCheck (target, pick);
+						Potions.buffCheck (attacker, pick);
+					if (flee)
+						attacker.eva -= 5;
 					switch (choice) {
 						case 1: //attacks inputed target
 							for (int j = 0; j <= turnMove.numTar-1; j++) {
@@ -132,7 +138,7 @@ public class Fight {
 							}
 							turnMove.execute();
 							break;
-						case 2: //use inputed item
+						case 3: //use inputed item
 							int inventIndex = 0; //this part is here in order to account for potion overrides
 							for (int j = 0; j < pickNum-1; j++) //Not great, searching for index multiple times
 								inventIndex += Inventory.inventoryList[inventIndex].numAmount;
@@ -141,13 +147,16 @@ public class Fight {
 							potionBuff = true;
 							pick.useItem(attacker);
 							break;
-						case 3: //Try to flee
-							double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
-							if (escapeCheck > 1)
+						case 2: //Try to flee
+							//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
+							Interface.hero.mp -= 3;
+							Interface.hero.eva += 5;
+							System.out.println("You try dodge all incoming attacks, increasing evasion by 5");
+							flee = true;
+							/*if (escapeCheck > 1)
 								flee = true;
 							else
-								System.out.println("You fail to escape");
-							Interface.hero.eva += 5;
+								System.out.println("You fail to escape");*/
 					}
 					for (int j = 0; j < monFighters.size(); j++) { //check if any monster died
 						if (monFighters.get(j).hp <= 0) {
@@ -172,9 +181,9 @@ public class Fight {
 			} else if (monFighters.size() == 0) { //Check if all monsters are killed
 				System.out.println("All of the monsters have been killed, you win!");
 				fightControl = false;
-			} else if (flee) {
+			/*} else if (flee) {
 				System.out.println("You have successfully escaped");
-				fightControl = false;
+				fightControl = false;*/
 			}
 		}
 	}
@@ -195,5 +204,8 @@ public class Fight {
 				count += 1;
 			}
 		}
+	}
+	public static void fighterStatuses () {
+		
 	}
 }
