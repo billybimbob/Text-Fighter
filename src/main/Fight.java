@@ -21,7 +21,7 @@ public class Fight {
 		Items pick = null;
 		int choice = 2, pickNum = 0;
 		Attacks turnMove = null;
-		ArrayList<Monsters> heroTargets = new ArrayList<>(); //need to clear later
+		//ArrayList<Monsters> heroTargets = new ArrayList<>(); //need to clear later
 		
 		while (fightControl) {
 			ArrayList<String> monFightersName = new ArrayList<>();
@@ -52,15 +52,16 @@ public class Fight {
 								break selection;
 							turnMove = Interface.hero.moveList[attNum-1];
 							
-							heroTargets.clear();
+							//heroTargets.clear();
 							if (turnMove.aoe) {//attacks all monsters, might change later
-								turnMove.aoeTargets(monFighters);
-								for (int i = 0; i <= turnMove.targets.length-1; i++)
-									System.out.println(turnMove.targets[i].name);
+								turnMove.numTar = monFighters.size();
+								turnMove.targets = new Monsters[turnMove.numTar];
+								for (int i = 0; i <= monFighters.size()-1; i++)
+									turnMove.setTarget(monFighters.get(i));
 								Interface.heroAction = true;
 							} else if (turnMove.numTar == monFighters.size()) { //attacks all monsters if aoe attack or if only one option
 								for (int i = 0; i <= monFighters.size()-1; i++)
-									heroTargets.add(monFighters.get(i));
+									turnMove.setTarget(monFighters.get(i));
 								Interface.heroAction = true;
 							} else { //single target attacks
 								for (int i = 0; i <= turnMove.numTar-1; i++) {
@@ -70,11 +71,14 @@ public class Fight {
 										Interface.heroAction = false;
 										break;
 									}
-									heroTargets.add(monFighters.get(tarNum-1));
+									turnMove.setTarget(monFighters.get(tarNum-1));
 									Interface.heroAction = true;
 								}
 							}
 						} while (!Interface.heroAction);
+						break;
+					case 2: //temporarily raises evasion, and costs 2 mana
+						Interface.heroAction = true;
 						break;
 					case 3: //Check inventory
 						ArrayList<String> inventNames = Inventory.access();
@@ -95,9 +99,6 @@ public class Fight {
 							}
 							Interface.heroAction = true;
 						}
-						break;
-					case 2: //temporarily raises evasion, and costs 2 mana
-						Interface.heroAction = true;
 				}
 			}
 			System.out.println("-----------------------------------------------");
@@ -130,22 +131,13 @@ public class Fight {
 						attacker.eva -= 5;
 					switch (choice) {
 						case 1: //attacks inputed target
-							for (int j = 0; j <= turnMove.numTar-1; j++) {
+							/*for (int j = 0; j <= turnMove.numTar-1; j++) {
 								if (j < heroTargets.size())
 									turnMove.setTarget(heroTargets.get(j));
 								else
 									turnMove.setTarget(null);
-							}
+							}*/
 							turnMove.execute();
-							break;
-						case 3: //use inputed item
-							int inventIndex = 0; //this part is here in order to account for potion overrides
-							for (int j = 0; j < pickNum-1; j++) //Not great, searching for index multiple times
-								inventIndex += Inventory.inventoryList[inventIndex].numAmount;
-							
-							pick = Inventory.inventoryList[inventIndex];
-							potionBuff = true;
-							pick.useItem(attacker);
 							break;
 						case 2: //Try to flee
 							//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
@@ -157,6 +149,15 @@ public class Fight {
 								flee = true;
 							else
 								System.out.println("You fail to escape");*/
+							break;
+						case 3: //use inputed item
+							int inventIndex = 0; //this part is here in order to account for potion overrides
+							for (int j = 0; j < pickNum-1; j++) //Not great, searching for index multiple times
+								inventIndex += Inventory.inventoryList[inventIndex].numAmount;
+							
+							pick = Inventory.inventoryList[inventIndex];
+							potionBuff = true;
+							pick.useItem(attacker);
 					}
 					for (int j = 0; j < monFighters.size(); j++) { //check if any monster died
 						if (monFighters.get(j).hp <= 0) {

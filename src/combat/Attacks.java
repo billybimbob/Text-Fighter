@@ -13,7 +13,7 @@ public abstract class Attacks implements Cloneable {
 	protected double baseDamMod = 1;
 	public String name, description;
 	
-	public Object clone()throws CloneNotSupportedException {  
+	public Object clone()throws CloneNotSupportedException { //can't use copy constructor because the subclasses are the constructors
 		return super.clone();  
 	}
 	
