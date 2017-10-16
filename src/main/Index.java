@@ -35,5 +35,7 @@ public class Index {
 		Monsters[] monStore = {mon1, mon2, mon3};
 		monsterList = monStore;
 	}
-	
+	public void use () {
+		
+	}
 }

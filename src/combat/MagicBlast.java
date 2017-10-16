@@ -16,7 +16,7 @@ public class MagicBlast extends Attacks {
 		double attCheck = attackCheck(targets[0]); //Attack based on RNG and modified by stats, need to consider magic attack
 		attacker.mp -= manaCost;
 		if (attCheck > 0.1) { //Check if attack will be successful
-			
+			double storeDam = baseDam;
 			baseDam *= 1.15;
 			targetReduct(targets[0]);
 			
@@ -30,6 +30,7 @@ public class MagicBlast extends Attacks {
 					targets[0].stun = true;
 				}
 			}
+			baseDam = storeDam;
 		} else {
 			System.out.println(attacker.name + "'s attack missed");
 		}

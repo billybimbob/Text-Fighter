@@ -12,11 +12,17 @@ public class Interface {
 	public static void main(String[] args) throws InterruptedException { //All this is probably temporary
 		
 		Index stuff = new Index();
+		stuff.use(); //dummy method to get rid of yellow line
 		Scanner kboard = new Scanner(System.in);
 		ArrayList<Monsters> fighters = new ArrayList<>();
 		System.out.println("Welcome hero!");
 		System.out.print("Step forth and state your name: ");
 		String name = kboard.nextLine();
+		
+		ArrayList<String> availClass = new ArrayList<>(Arrays.asList("Warrior", "Mage"));
+		String classPrompt = "Would you like to be a warrior or a mage?\nThis will affect your stats and abilities";
+		int classChoice = choiceInput(kboard, false,availClass, classPrompt);
+		boolean selectedClass = classChoice == 1; //might expand to if and else to affect starting potions
 		
 		Inventory.addItems(Index.potionsList[0], 2);
 		Inventory.addItems(Index.potionsList[1], 3);
@@ -26,7 +32,7 @@ public class Interface {
 		Inventory.addItems(Index.potionsList[5], 1);
 		Inventory.addItems(Index.potionsList[6], 1);
 		
-		Hero player1 = new Hero(name, true);
+		Hero player1 = new Hero(name, selectedClass);
 		fighters.add(player1);
 		
 		hero = player1; //Temporary
@@ -37,9 +43,8 @@ public class Interface {
 		for (int i = 0; i <= Index.monsterList.length-1; i++) {
 			fighters.add(new Monsters(Index.monsterList[i]));
 		}
-		fighters.add(new Monsters(Index.monsterList[2]));
-		fighters.get(3).hp+= 5;
 		Fight.fighting(kboard, fighters);
+		
 		kboard.close();
 	}
 	
@@ -49,11 +54,12 @@ public class Interface {
 		if (back) //option for "back"
 			System.out.println("0. Back");
 		for (int i = 0; i <= list.size()-1; i++) { //Print out choices from an array
-			System.out.print(i+1 + ". " + list.get(i) + "\n");
+			System.out.println(i+1 + ". " + list.get(i));
 		}
+		System.out.println("-----------------------------------------------");
 		do {
 			try {
-				System.out.print("\n" + prompt + "\nSelect which number you want: ");
+				System.out.print(prompt + "\n\nSelect which number you want: ");
 				choice = Integer.parseInt(keyboard.nextLine());
 			} catch (Exception e) {} //might want to restructure somehow, right now, just preventing from crashing
 			
@@ -64,6 +70,7 @@ public class Interface {
 			else
 				System.out.println("\nInvalid choice, please try again");
 		} while (!heroAction);
+		
 		heroAction = false;
 		System.out.println("");
 		

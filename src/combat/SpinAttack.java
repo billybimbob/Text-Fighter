@@ -19,7 +19,6 @@ public class SpinAttack extends Attacks {
 			for (int i = 0; i <= targets.length-1; i++) { //Checks if hits for each monster
 				try { 
 					double damDealt = 0;
-					System.out.println(targets[i].name);
 					double attCheck = attackCheck(targets[i]); //Attack based on RNG and modified by stats
 					if (attCheck > 0.1) { //Check if attack will be successful
 						/*if (critCheck()) { //Might add later, with hashmap?

@@ -21,7 +21,7 @@ public class Fight {
 		Items pick = null;
 		int choice = 2, pickNum = 0;
 		Attacks turnMove = null;
-		//ArrayList<Monsters> heroTargets = new ArrayList<>(); //need to clear later
+		ArrayList<Monsters> heroTargets = new ArrayList<>(); //need to clear later
 		
 		while (fightControl) {
 			ArrayList<String> monFightersName = new ArrayList<>();
@@ -51,17 +51,16 @@ public class Fight {
 							if (attNum == 0)
 								break selection;
 							turnMove = Interface.hero.moveList[attNum-1];
-							
-							//heroTargets.clear();
+							heroTargets.clear();
 							if (turnMove.aoe) {//attacks all monsters, might change later
 								turnMove.numTar = monFighters.size();
 								turnMove.targets = new Monsters[turnMove.numTar];
 								for (int i = 0; i <= monFighters.size()-1; i++)
-									turnMove.setTarget(monFighters.get(i));
+									heroTargets.add(monFighters.get(i));
 								Interface.heroAction = true;
 							} else if (turnMove.numTar == monFighters.size()) { //attacks all monsters if aoe attack or if only one option
 								for (int i = 0; i <= monFighters.size()-1; i++)
-									turnMove.setTarget(monFighters.get(i));
+									heroTargets.add(monFighters.get(i));
 								Interface.heroAction = true;
 							} else { //single target attacks
 								for (int i = 0; i <= turnMove.numTar-1; i++) {
@@ -71,7 +70,8 @@ public class Fight {
 										Interface.heroAction = false;
 										break;
 									}
-									turnMove.setTarget(monFighters.get(tarNum-1));
+									heroTargets.add(monFighters.get(tarNum-1));
+									//System.out.println(turnMove.targets[i].name);
 									Interface.heroAction = true;
 								}
 							}
@@ -103,7 +103,7 @@ public class Fight {
 			}
 			System.out.println("-----------------------------------------------");
 			
-			for (int i = 0; i <= fighters.size()-1; i++) { //Goes through the move of each fighter
+			for (int i = 0; i <= fighters.size()-1; i++) { //Goes through the move of each fighter, if attacking, target set here
 				Monsters attacker = fighters.get(i);
 				if (target.hp <= 0) //got rid of flee maybe temporary
 					break;
@@ -117,13 +117,14 @@ public class Fight {
 					if (attacker.skip) {
 						monMove = attacker.moveList[attacker.store];
 						attacker.store = 0;
-					} else
+					} else {
 						monMove = attacker.moveList[monMoveNum];
-					attacker.store = monMoveNum; //does previous turn move
+						attacker.store = monMoveNum; //does previous turn move
+					}
 					monMove.setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
 					monMove.execute();
 					
-				} else { //Hero action
+				} else { //Hero action, attacks target set here or then targets somehow get overridden
 					Interface.heroAction = false; //sets default value, will by default ask for user input
 					if (potionBuff)
 						Potions.buffCheck (attacker, pick);
@@ -131,12 +132,13 @@ public class Fight {
 						attacker.eva -= 5;
 					switch (choice) {
 						case 1: //attacks inputed target
-							/*for (int j = 0; j <= turnMove.numTar-1; j++) {
+							for (int j = 0; j <= turnMove.numTar-1; j++) {
 								if (j < heroTargets.size())
 									turnMove.setTarget(heroTargets.get(j));
 								else
 									turnMove.setTarget(null);
-							}*/
+							}
+							System.out.println(turnMove.targets[0].name);
 							turnMove.execute();
 							break;
 						case 2: //Try to flee
