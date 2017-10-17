@@ -15,7 +15,6 @@ public class BasicAttack extends Attacks {
 		if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 			
 			baseDamage();
-			//double storeDam = baseDam;
 			if (critCheck()) { //Checks for critical hit
 				baseDam *= 2;
 				System.out.print("Critical Hit! ");
@@ -29,7 +28,6 @@ public class BasicAttack extends Attacks {
 				targets[0].hp -= baseDam;
 				System.out.println(attacker.name + " has hit " + targets[0].name + " for " + baseDam + " damage");
 			}
-			//baseDam = storeDam;
 		} else {
 			System.out.println(attacker.name + "'s attack missed");
 		}

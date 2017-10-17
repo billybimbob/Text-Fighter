@@ -34,8 +34,7 @@ public abstract class Attacks implements Cloneable {
 		if (attType) {
 			checkNum = Math.random()*attacker.att - Math.random()*targets[0].spe*.5;
 			return checkNum > target.def*skillCheck;
-		}
-		else {
+		} else {
 			checkNum = Math.random()*attacker.mag - Math.random()*targets[0].spe*.5;
 			return checkNum > target.magR*skillCheck;
 		}
