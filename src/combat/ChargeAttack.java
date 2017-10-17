@@ -18,8 +18,8 @@ public class ChargeAttack extends Attacks{
 	
 	public void execute() { //Change, too messy, might put the print statements in the fight class
 		if (turnCount == 1) { //Checks if attack charged for 1 turn
-			double attCheck = attackCheck(targets[0]); //Attack based on RNG and modified by stats
-			if (attCheck > 0.1) { //Check if attack will be successful
+			//Attack based on RNG and modified by stats
+			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 				
 				baseDamage();
 				if (critCheck()) { //Checks for critical hit
@@ -29,7 +29,8 @@ public class ChargeAttack extends Attacks{
 			
 				targets[0].hp -= baseDam;
 				System.out.println(attacker.name + " lands a powerful hit on " + targets[0].name + " for " + baseDam + " damage");
-				if (attCheck > 1.2) {
+				
+				if (attackCheck(targets[0], 0.1)) {
 					System.out.println(attacker.name + "'s charged attack stuns " + targets[0].name);
 					targets[0].stun = true;
 				}

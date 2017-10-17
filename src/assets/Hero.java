@@ -12,7 +12,7 @@ public class Hero extends Monsters {
 	public ArrayList<String> moveListNames = new ArrayList<>();
 	
 	public Hero (String name, boolean classes){ //if classes true, warrior
-		super(name, true, true, 25, 20, 5, 5, 5, 5, 5, 5, 5);
+		super(name, true, true, 25, 20, 5, 5, 5, 5, 5, 5);
 		level = 1;
 		try {
 			if (classes) {
@@ -45,7 +45,6 @@ public class Hero extends Monsters {
 		mag += level*levMult;
 		magR += level*levMult;
 		crit += level*levMult;
-		eva += level*levMult;
 		spe += level*levMult;
 	}
 	public void modStat (String stat, int val) {
@@ -70,9 +69,6 @@ public class Hero extends Monsters {
 			break;
 		case "crit":
 			crit += val;
-			break;
-		case "eva":
-			eva += val;
 			break;
 		case "spe":
 			spe += val;

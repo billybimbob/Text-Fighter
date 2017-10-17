@@ -16,10 +16,9 @@ public class Index {
 		Potions dfPotion = new Potions("def"); //3
 		Potions mgPotion = new Potions("mag"); //4
 		Potions mrPotion = new Potions("magR");//5
-		Potions crPotion = new Potions("crit");//6
-		Potions evPotion = new Potions("eva"); //7
-		Potions spPotion = new Potions("spe"); //8
-		Potions[] potStore = {hpPotion, mpPotion, atPotion, dfPotion, mgPotion, mrPotion, crPotion, evPotion, spPotion};
+		Potions spPotion = new Potions("spe"); //6
+		Potions crPotion = new Potions("crit");//7
+		Potions[] potStore = {hpPotion, mpPotion, atPotion, dfPotion, mgPotion, mrPotion, spPotion, crPotion};
 		potionsList = potStore;
 		
 		BasicAttack baseAtt = new BasicAttack();
@@ -30,10 +29,10 @@ public class Index {
 		Attacks[] attStore = {baseAtt, charge, spin, blast, froze};
 		attackList = attStore;
 		
-		// lvl ,hp, mp, atk, def, magic, mr, crit, eva, speed, special attack
-		Monsters mon1 = new Monsters("Bandit", false, true, 1, 15, 3, 3, 3, 3, 6, 6, 6, 1);
-		Monsters mon2 = new Monsters("Spider", false, false, 15, 15, 6, 2, 3, 3, 4, 4, 4, 4);
-		Monsters mon3 = new Monsters("Slime", false, false, 20, 10, 3, 5, 3, 3, 1, 1, 1, 3);
+		// lvl ,hp, mp, atk, def, magic, mres, speed, crit, special attack
+		Monsters mon1 = new Monsters("Bandit", false, true, 1, 15, 3, 3, 3, 3, 6, 6, 1);
+		Monsters mon2 = new Monsters("Spider", false, false, 15, 15, 6, 2, 3, 3, 4, 4, 4);
+		Monsters mon3 = new Monsters("Slime", false, false, 20, 10, 3, 5, 3, 3, 1, 1, 3);
 		Monsters[] monStore = {mon1, mon2, mon3};
 		monsterList = monStore;
 	}

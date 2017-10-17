@@ -39,7 +39,6 @@ public class Interface {
 		Inventory.addItems(Index.potionsList[1], 3);
 		Inventory.addItems(Index.potionsList[6], 1);
 		Inventory.addItems(Index.potionsList[7], 1);
-		Inventory.addItems(Index.potionsList[8], 1);
 		
 		fighters.add(player1);
 		hero = player1; //Temporary

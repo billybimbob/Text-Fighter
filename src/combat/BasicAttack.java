@@ -11,9 +11,8 @@ public class BasicAttack extends Attacks {
 	}
 	
 	public void execute() { //might need to change how the target is handled
-		double attCheck = attackCheck(targets[0]); //Attack based on RNG and modified by stats, need to consider magic attack
-		System.out.println(attCheck);
-		if (attCheck > 0.1) { //Check if attack will be successful
+		//Attack based on RNG and modified by stats, need to consider magic attack
+		if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 			
 			baseDamage();
 			//double storeDam = baseDam;

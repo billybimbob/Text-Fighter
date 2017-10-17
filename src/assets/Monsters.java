@@ -7,13 +7,13 @@ public class Monsters { //Temporary, probably make abstract later
 
 	public String name;
 	public int level = 0, store = 0; //Temporary
-	public double hp, maxHp, mp, maxMp, att, def, mag, magR, crit, eva, spe;
+	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit;
 	public boolean aggro, stun, skip;
 	public Attacks[] moveList;
 	public boolean attType = true; //true means physical attack
 	
 	//monster index constructor
-	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double crit, double eva, double spe, int special){
+	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit, int special){
 		this.name = name;
 		this.aggro = aggro;
 		this.hp = hp;
@@ -24,9 +24,8 @@ public class Monsters { //Temporary, probably make abstract later
 		this.def = def;
 		this.mag = mag;
 		this.magR = magR;
-		this.crit = crit;
-		this.eva = eva;
 		this.spe = spe;
+		this.crit = crit;
 		try {
 			Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[special].clone()};
 			moveList = moveStore;
@@ -36,7 +35,7 @@ public class Monsters { //Temporary, probably make abstract later
 		} catch (CloneNotSupportedException c) {}
 	}
 	//hero constructor, can have more than one ability
-	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double crit, double eva, double spe){
+	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit){
 		this.name = name;
 		this.aggro = aggro;
 		this.hp = hp;
@@ -47,9 +46,8 @@ public class Monsters { //Temporary, probably make abstract later
 		this.def = def;
 		this.mag = mag;
 		this.magR = magR;
-		this.crit = crit;
-		this.eva = eva;
 		this.spe = spe;
+		this.crit = crit;
 	}
 	//copies to a new instance
 	public Monsters (Monsters copy) {
@@ -63,9 +61,8 @@ public class Monsters { //Temporary, probably make abstract later
 		this.def = copy.def;
 		this.mag = copy.mag;
 		this.magR = copy.magR;
-		this.crit = copy.crit;
-		this.eva = copy.eva;
 		this.spe = copy.spe;
+		this.crit = copy.crit;
 		this.moveList = copy.moveList;
 		for (int i = 0; i <= moveList.length-1; i++) {
 			moveList[i].attacker = this;

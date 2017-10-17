@@ -129,7 +129,7 @@ public class Fight {
 					if (potionBuff)
 						Potions.buffCheck (attacker, pick);
 					if (flee)
-						attacker.eva -= 5;
+						attacker.spe -= 5;
 					switch (choice) {
 						case 1: //attacks inputed target
 							for (int j = 0; j <= turnMove.numTar-1; j++) {
@@ -143,7 +143,7 @@ public class Fight {
 						case 2: //Try to flee
 							//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
 							Interface.hero.mp -= 3;
-							Interface.hero.eva += 5;
+							Interface.hero.spe += 5;
 							System.out.println("You try dodge all incoming attacks, increasing evasion by 5");
 							flee = true;
 							/*if (escapeCheck > 1)

@@ -36,16 +36,12 @@ public class Potions extends Items {
 				name = "Element Barrier Potion";
 				modVal = 10;
 				break;
-			case "crit":
-				name = "Lucky Potion";
-				modVal = 10;
-				break;
-			case "eva":
-				name = "Dodge Potion";
-				modVal = 10;
-				break;
 			case "spe":
 				name = "Swiftness Potion";
+				modVal = 10;
+				break;
+			case "crit":
+				name = "Lucky Potion";
 				modVal = 10;
 				break;
 		}
@@ -70,14 +66,11 @@ public class Potions extends Items {
 			case "magR":
 				user.magR += modVal;
 				break;
-			case "crit":
-				user.crit += modVal;
-				break;
-			case "eva":
-				user.eva += modVal;
-				break;
 			case "spe":
 				user.spe += modVal;
+				break;
+			case "crit":
+				user.crit += modVal;
 				break;
 		}
 		turnStart = Fight.turnCount;
@@ -102,14 +95,11 @@ public class Potions extends Items {
 			case "magR":
 				user.magR -= used.modVal;
 				break;
-			case "crit":
-				user.crit -= used.modVal;
-				break;
-			case "eva":
-				user.eva -= used.modVal;
-				break;
 			case "spe":
 				user.spe -= used.modVal;
+				break;
+			case "crit":
+				user.crit -= used.modVal;
 				break;
 			}
 			System.out.println(used.name + " has worn off");
