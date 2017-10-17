@@ -28,10 +28,12 @@ public class Interface {
 			player1 = new Hero(name, true);
 			Inventory.addItems(Index.potionsList[2], 1);
 			Inventory.addItems(Index.potionsList[3], 1);
+			System.out.println("You are a warrior");
 		} else { //mage class
 			player1 = new Hero(name, false);
 			Inventory.addItems(Index.potionsList[4], 1);
 			Inventory.addItems(Index.potionsList[5], 1);
+			System.out.println("You are a mage");
 		}
 		Inventory.addItems(Index.potionsList[0], 3);
 		Inventory.addItems(Index.potionsList[1], 3);
@@ -73,7 +75,7 @@ public class Interface {
 			else if (back && choice == 0)
 				heroAction = true;
 			else
-				System.out.println("\nInvalid choice, please try again");
+				System.out.println("\nInvalid choice, please try again\n");
 		} while (!heroAction);
 		
 		heroAction = false;

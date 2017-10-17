@@ -8,7 +8,6 @@ public class SpinAttack extends Attacks {
 		this.attType = true; //melee attack; might make it based on the attacker
 		this.manaCost = 5;
 		this.aoe = true;
-		baseDamMod = 0.85;
 	}
 	
 	public void execute() { //current bug with null pointer
@@ -20,12 +19,14 @@ public class SpinAttack extends Attacks {
 				try {
 					double damDealt = 0;
 					double attCheck = attackCheck(targets[i]); //Attack based on RNG and modified by stats
+					System.out.println(attCheck);
 					if (attCheck > 0.1) { //Check if attack will be successful
 						/*if (critCheck()) { //Might add later, with hashmap?
 							baseDam *= 2;
 							System.out.println("Critical Hit!");
 						}*/
 						baseDamage();
+						System.out.println(baseDam);
 						double storeDam = baseDam;
 						targetReduct(targets[i]);
 						targets[i].hp -= baseDam;

@@ -13,7 +13,7 @@ public class ChargeAttack extends Attacks{
 		this.attType = true;
 		this.targets = new Monsters[numTar];
 		this.manaCost = 6;
-		this.baseDamMod = 2.5;
+		this.baseDamMod = 3;
 	}
 	
 	public void execute() { //Change, too messy, might put the print statements in the fight class
@@ -41,7 +41,7 @@ public class ChargeAttack extends Attacks{
 			if (attacker.aggro)
 				Interface.heroAction = false;
 			
-		} else if (turnCount == 0 && attacker.mp >= manaCost){ //Checks if sufficient mana
+		} else if (attacker.mp >= manaCost && turnCount == 0){ //Checks if sufficient mana
 			attacker.mp -= manaCost;
 			System.out.println(attacker.name + " readies their swing and uses " + manaCost + " mana");
 			attacker.def -= 3;

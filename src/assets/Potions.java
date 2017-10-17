@@ -42,7 +42,7 @@ public class Potions extends Items {
 				break;
 			case "eva":
 				name = "Dodge Potion";
-				modVal = 5;
+				modVal = 10;
 				break;
 			case "spe":
 				name = "Swiftness Potion";

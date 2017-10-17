@@ -171,7 +171,8 @@ public class Fight {
 					}
 					
 				}
-				attacker.mp += 1;
+				if (attacker.mp > attacker.maxMp)
+					attacker.mp += 1;
 				System.out.println("");
 				TimeUnit.SECONDS.sleep(2);
 			}

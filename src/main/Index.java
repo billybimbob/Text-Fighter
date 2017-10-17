@@ -30,7 +30,7 @@ public class Index {
 		Attacks[] attStore = {baseAtt, charge, spin, blast, froze};
 		attackList = attStore;
 		
-		// lvl ,hp, mp,  atk, def, magic, mr, crit, eva, speed, special attack
+		// lvl ,hp, mp, atk, def, magic, mr, crit, eva, speed, special attack
 		Monsters mon1 = new Monsters("Bandit", false, true, 1, 15, 3, 3, 3, 3, 6, 6, 6, 1);
 		Monsters mon2 = new Monsters("Spider", false, false, 15, 15, 6, 2, 3, 3, 4, 4, 4, 4);
 		Monsters mon3 = new Monsters("Slime", false, false, 20, 10, 3, 5, 3, 3, 1, 1, 1, 3);

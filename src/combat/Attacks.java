@@ -23,26 +23,24 @@ public abstract class Attacks implements Cloneable {
 		tarCount++;
 	}
 	
-	public void baseDamage () { //determines the damage if either a melee or magic attack
-		if (attType)
-			this.baseDam = (int)(Math.random() * (this.attacker.att));
-		else 
-			this.baseDam = (int)(Math.random() * (this.attacker.mag));
-	}
-	
 	public boolean critCheck () {
 		double check = Math.random();
-		boolean critHit = check < attacker.crit*0.01;		
+		boolean critHit = check < attacker.crit*0.05;		
 		
 		return critHit;
 	}
 	public double attackCheck (Monsters target) { //an attack damage check based on either the att or mag stat
 		if (attType)
-			return Math.random() + (attacker.att*0.5-targets[0].eva*0.3)*baseDamMod;
+			return Math.random()*attacker.att - Math.random()*targets[0].eva*.5;
 		else
-			return Math.random() + (attacker.mag*0.5-targets[0].eva*0.3)*baseDamMod;
+			return Math.random()*attacker.mag - Math.random()*targets[0].eva*.5;
 	}
-	
+	public void baseDamage () { //determines the damage if either a melee or magic attack
+		if (attType)
+			this.baseDam = (int) (Math.random()*(this.attacker.att*baseDamMod)+1);
+		else 
+			this.baseDam = (int) (Math.random()*(this.attacker.mag*baseDamMod)+1);
+	}
 	public void targetReduct (Monsters target) {
 		if (attType)
 			baseDam -= (int)(Math.random()*(target.def*.5));
