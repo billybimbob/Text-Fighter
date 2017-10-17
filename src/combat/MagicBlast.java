@@ -10,6 +10,7 @@ public class MagicBlast extends Attacks {
 		this.attType = false;
 		this.targets = new Monsters[numTar];
 		this.manaCost = 2;
+		baseDamMod = 1.25;
 	}
 	
 	public void execute() {
@@ -19,7 +20,6 @@ public class MagicBlast extends Attacks {
 			
 			baseDamage();
 			//double storeDam = baseDam;
-			baseDam *= 1.15;
 			targetReduct(targets[0]);
 			
 			if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
@@ -28,7 +28,7 @@ public class MagicBlast extends Attacks {
 				targets[0].hp -= baseDam;
 				System.out.println(attacker.name + " blasts " + targets[0].name + " for " + baseDam + " damage");
 				
-				if (attackCheck(targets[0], 0.15)) {
+				if (attackCheck(targets[0], 0.3)) {
 					System.out.println(attacker.name + "'s blast stuns " + targets[0].name);
 					targets[0].stun = true;
 				}

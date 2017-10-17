@@ -10,7 +10,7 @@ public class Freeze extends Attacks {
 		this.attType = false;
 		this.targets = new Monsters[numTar];
 		this.manaCost = 2;
-		baseDamMod = .85;
+		baseDamMod = .75;
 	}
 	
 	public void execute() {

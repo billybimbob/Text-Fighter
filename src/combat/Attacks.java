@@ -25,7 +25,7 @@ public abstract class Attacks implements Cloneable {
 	
 	public boolean critCheck () {
 		double check = Math.random();
-		boolean critHit = check < attacker.crit*0.05;		
+		boolean critHit = check < attacker.crit*0.02;		
 		
 		return critHit;
 	}
