@@ -3,11 +3,11 @@ package combat;
 public class SpinAttack extends Attacks {
 	
 	public SpinAttack () { //might change to get rid of enemies parameter
-		this.name = "Spin Attack";
-		this.description = "A spinning melee attack that damages all enemies for less damage than a basic attack";
-		this.attType = true; //melee attack; might make it based on the attacker
-		this.manaCost = 5;
-		this.aoe = true;
+		name = "Spin Attack";
+		description = "A spinning melee attack that damages all enemies for less damage than a basic attack";
+		attType = true; //melee attack; might make it based on the attacker
+		aoe = true;
+		manaCost = 4;
 	}
 	
 	public void execute() { //current bug with null pointer
@@ -15,16 +15,16 @@ public class SpinAttack extends Attacks {
 			attacker.mp -= manaCost;
 			
 			System.out.println(attacker.name + " spins around, hitting");
+			baseDamage();
 			for (int i = 0; i <= targets.length-1; i++) { //Checks if hits for each monster
 				try {
 					double damDealt = 0;
 					//Attack based on RNG and modified by stats
-					if (attackCheck(targets[i], 0.01)) { //Check if attack will be successful
+					if (attackCheck(targets[i], 0.005)) { //Check if attack will be successful
 						/*if (critCheck()) { //Might add later, with hashmap?
 							baseDam *= 2;
 							System.out.println("Critical Hit!");
 						}*/
-						baseDamage();
 						double storeDam = baseDam;
 						targetReduct(targets[i]);
 						targets[i].hp -= baseDam;

@@ -7,7 +7,7 @@ public class Monsters { //Temporary, probably make abstract later
 
 	public String name;
 	public int level = 0, store = 0; //Temporary
-	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit;
+	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit, damTurn = 0;
 	public boolean aggro, stun, skip;
 	public Attacks[] moveList;
 	public boolean attType = true; //true means physical attack

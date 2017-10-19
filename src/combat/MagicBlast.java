@@ -5,12 +5,12 @@ import assets.Monsters;
 public class MagicBlast extends Attacks {
 
 	public MagicBlast () {
-		this.name = "Magic Blast";
-		this.description = "A a magic attack with the same damage as a basic, but has chance to stun and ignores some armor";
-		this.attType = false;
-		this.targets = new Monsters[numTar];
-		this.manaCost = 2;
-		baseDamMod = 1.25;
+		name = "Magic Blast";
+		description = "A a magic attack with the same damage as a basic, but has chance to stun and ignores some armor";
+		attType = false;
+		targets = new Monsters[numTar];
+		manaCost = 2;
+		baseDamMod = 1.5;
 	}
 	
 	public void execute() {
@@ -27,7 +27,7 @@ public class MagicBlast extends Attacks {
 				targets[0].hp -= baseDam;
 				System.out.println(attacker.name + " blasts " + targets[0].name + " for " + baseDam + " damage");
 				
-				if (attackCheck(targets[0], 0.3)) {
+				if (attackCheck(targets[0], 0.4)) {
 					System.out.println(attacker.name + "'s blast stuns " + targets[0].name);
 					targets[0].stun = true;
 				}

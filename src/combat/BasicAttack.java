@@ -5,9 +5,9 @@ import assets.Monsters;
 public class BasicAttack extends Attacks {
 
 	public BasicAttack () {
-		this.name = "Basic Attack";
-		this.description = "A basic attack based off of the attack or magic skill of the attacker and modifiers with a chance to crit";
-		this.targets = new Monsters[numTar];
+		name = "Basic Attack";
+		description = "A basic attack based off of the attack or magic skill of the attacker and modifiers with a chance to crit";
+		targets = new Monsters[numTar];
 	}
 	
 	public void execute() { //might need to change how the target is handled

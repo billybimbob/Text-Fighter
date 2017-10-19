@@ -122,7 +122,10 @@ public class Fight {
 						attacker.store = monMoveNum; //does previous turn move
 					}
 					monMove.setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
+					double startHp = monMove.targets[0].hp;
 					monMove.execute();
+					monMove.targets[0].damTurn += (startHp - monMove.targets[0].hp);
+					attacker.damTurn = 0; //resets the amount of damage taken
 					
 				} else { //Hero action, attacks target set here or then targets somehow get overridden
 					Interface.heroAction = false; //sets default value, will by default ask for user input
@@ -132,13 +135,19 @@ public class Fight {
 						attacker.spe -= 5;
 					switch (choice) {
 						case 1: //attacks inputed target
+							double[] startHp = new double[heroTargets.size()];
 							for (int j = 0; j <= turnMove.numTar-1; j++) {
-								if (j < heroTargets.size())
+								if (j < heroTargets.size()) {
 									turnMove.setTarget(heroTargets.get(j));
-								else
+									startHp[j] = heroTargets.get(j).hp;
+								} else
 									turnMove.setTarget(null);
 							}
 							turnMove.execute();
+							for (int j = 0; j < startHp.length; j++) {
+								heroTargets.get(j).damTurn += (startHp[j] - turnMove.baseDam); //doing the last damage of spin attack, need to change
+							}
+							attacker.damTurn = 0; //resets the amount of damage taken
 							break;
 						case 2: //Try to flee
 							//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG

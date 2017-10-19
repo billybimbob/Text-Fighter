@@ -5,11 +5,11 @@ import assets.Monsters;
 public class Freeze extends Attacks {
 	
 	public Freeze () {
-		this.name = "Freeze";
-		this.description = "A a magic attack with the less damage, but lowers target's speed and evasion";
-		this.attType = false;
-		this.targets = new Monsters[numTar];
-		this.manaCost = 2;
+		name = "Freeze";
+		description = "A a magic attack with the less damage, but lowers target's speed and evasion";
+		attType = false;
+		targets = new Monsters[numTar];
+		manaCost = 2;
 		baseDamMod = .75;
 	}
 	
