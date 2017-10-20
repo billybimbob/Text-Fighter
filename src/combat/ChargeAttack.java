@@ -17,7 +17,16 @@ public class ChargeAttack extends Attacks{
 	}
 	
 	public void execute() { //Change, too messy, might put the print statements in the fight class
-		if (turnCount == 1) { //Checks if attack charged for 1 turn
+		if (attacker.mp >= manaCost && turnCount == 0) { //Checks if sufficient mana
+			attacker.mp -= manaCost;
+			System.out.println(attacker.name + " readies their swing and uses " + manaCost + " mana");
+			attacker.spe -= 3;
+			turnCount++;
+			if (attacker.aggro)
+				Interface.heroAction = true;
+			else
+				attacker.skip = true;
+		} else if (turnCount == 1) { //Checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
 			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 				
@@ -42,15 +51,6 @@ public class ChargeAttack extends Attacks{
 			if (attacker.aggro)
 				Interface.heroAction = false;
 			
-		} else if (attacker.mp >= manaCost && turnCount == 0){ //Checks if sufficient mana
-			attacker.mp -= manaCost;
-			System.out.println(attacker.name + " readies their swing and uses " + manaCost + " mana");
-			attacker.spe -= 3;
-			turnCount++;
-			if (attacker.aggro)
-				Interface.heroAction = true;
-			else
-				attacker.skip = true;
 		} else
 			System.out.println(attacker.name + " tries to use " + name + ", but has insufficient mana");
 	}

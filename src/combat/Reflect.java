@@ -15,7 +15,16 @@ public class Reflect extends Attacks {
 	}
 
 	public void execute() {
-		if (turnCount == 1) { //Checks if attack charged for 1 turn
+		if (attacker.mp >= manaCost && turnCount == 0) { //Checks if sufficient mana
+			attacker.mp -= manaCost;
+			System.out.println(attacker.name + " casts a reflecting shield for " + manaCost + " mana");
+			attacker.def -= 3;
+			turnCount++;
+			if (attacker.aggro)
+				Interface.heroAction = true;
+			else
+				attacker.skip = true;
+		} else if (turnCount == 1) { //Checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
 			baseDam = attacker.damTurn;
 			System.out.println(attacker.name + " channels damage received, and blasts ");
@@ -45,15 +54,6 @@ public class Reflect extends Attacks {
 			if (attacker.aggro)
 				Interface.heroAction = false;
 			
-		} else if (attacker.mp >= manaCost && turnCount == 0){ //Checks if sufficient mana
-			attacker.mp -= manaCost;
-			System.out.println(attacker.name + " casts a reflecting shield for " + manaCost + " mana");
-			attacker.def -= 3;
-			turnCount++;
-			if (attacker.aggro)
-				Interface.heroAction = true;
-			else
-				attacker.skip = true;
 		} else
 			System.out.println(attacker.name + " tries to use " + name + ", but has insufficient mana");
 
