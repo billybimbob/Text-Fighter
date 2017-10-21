@@ -27,7 +27,7 @@ public class Fight {
 			ArrayList<String> monFightersName = new ArrayList<>();
 			ArrayList<Monsters> monFighters = new ArrayList<>();
 			
-			Fight.attackOrder(fighters); //Orders the fighters by speed
+			attackOrder(fighters); //Orders the fighters by speed
 			System.out.println("-----------------------------------------------");
 			for (int i = 0; i <= fighters.size()-1; i++) { //Determine which is the hero, may change later, also prints each fighter and stats
 				System.out.println(fighters.get(i).name + " - " + fighters.get(i).hp + " hp" + " - " + fighters.get(i).mp + " mp");
@@ -37,9 +37,13 @@ public class Fight {
 				} else {
 					monFighters.add(fighters.get(i));
 					monFightersName.add(fighters.get(i).name);
+					if (fighters.get(i).name == "Slime")
+						fighters.get(i).priority = true;
 				}
 			}
-			while (!Interface.heroAction){ //Hero user input/determine hero actions
+			
+			//Hero user input/determine hero actions
+			while (!Interface.heroAction){
 				String fightPrompt = "Which action would you like to do?";
 				choice = Interface.choiceInput(keyboard, false, fightChoices, fightPrompt);
 				selection:
@@ -50,7 +54,10 @@ public class Fight {
 							int attNum = Interface.choiceInput(keyboard, true, Interface.hero.moveListNames, attPrompt); //Temporary
 							if (attNum == 0)
 								break selection;
+							
 							turnMove = Interface.hero.moveList[attNum-1];
+							if (turnMove.priority) //check if attack is priority
+								Interface.hero.priority = true;
 							heroTargets.clear();
 							if (turnMove.aoe) {//attacks all monsters, might change later
 								turnMove.numTar = monFighters.size();
@@ -101,8 +108,62 @@ public class Fight {
 						}
 				}
 			}
+			
+			//decides the turns of the monsters
+			int[] monMoves = new int[monFighters.size()];
+			for (int i = 0; i <= monFighters.size()-1; i++) {
+				monMoves[i] = (int)(Math.random()*monFighters.get(i).moveList.length);
+				System.out.println(monMoves[i]);
+				if (monFighters.get(i).moveList[monMoves[i]].priority)
+					monFighters.get(i).priority = true;
+			}
+			
 			System.out.println("-----------------------------------------------");
 			
+			//check for priority, need to check what happens if speed is same with 2 priorities
+			int priorCount = 0;
+			boolean pastHero;
+			for (int i = 0; i <= fighters.size()-1; i++) {
+				Monsters priorAttacker = fighters.get(i);
+				if (priorAttacker.priority && priorCount != i) { //need to fix when first fighter has priority true
+					if (fighters.get(i-1).priority) {
+						priorCount++;
+						//System.out.println("Got here");
+						break;
+					}
+					Monsters temp = null, temp2;
+					int swapCount;
+					pastHero = false;
+					for (swapCount = 0; swapCount <= fighters.size()-1; swapCount++) {
+						//System.out.println("yes" + priorAttacker.name+priorAttacker.spe);
+						Monsters priorCheck = fighters.get(swapCount);
+						if (priorAttacker.aggro)
+							pastHero = true;
+						//System.out.println(priorCheck.name+priorCheck.spe);
+						if (!priorCheck.priority || (priorCheck.priority && (priorCheck.spe < priorAttacker.spe))) {
+							temp = priorCheck;
+							//System.out.println("Got hered");
+							fighters.set(swapCount, priorAttacker);
+							if (!(priorAttacker.aggro || priorCheck.aggro)) {
+								int stoMove = monMoves[swapCount];
+								monMoves[swapCount] = monMoves[i];
+								monMoves[i] = stoMove;
+							}
+							break;
+						}
+					}
+					for (int j = swapCount+1; j <= fighters.size()-1; j++) {
+						temp2 = fighters.get(j);
+						//System.out.println(temp2.name);
+						fighters.set(j, temp);
+						if (j == i)
+							break;
+						temp = temp2;
+					}
+				}
+			}
+			
+			int monCount = 0;
 			for (int i = 0; i <= fighters.size()-1; i++) { //Goes through the move of each fighter, if attacking, target set here
 				Monsters attacker = fighters.get(i);
 				if (target.hp <= 0) //got rid of flee maybe temporary
@@ -112,7 +173,8 @@ public class Fight {
 					attacker.stun = false;
 					
 				} else if (!attacker.aggro) { //Monster attacks
-					int monMoveNum = (int)(Math.random()*attacker.moveList.length);
+					int monMoveNum = monMoves[monCount]; //might be wrong attack since priority order different
+					monCount++;
 					Attacks monMove = null;
 					if (attacker.skip) {
 						monMove = attacker.moveList[attacker.store];
@@ -169,7 +231,7 @@ public class Fight {
 							potionBuff = true;
 							pick.useItem(attacker);
 					}
-					for (int j = 0; j < monFighters.size(); j++) { //check if any monster died
+					for (int j = 0; j < monFighters.size(); j++) { //check if any monster died, immediately after hero's turn
 						if (monFighters.get(j).hp <= 0) {
 							if (j < i)
 								i--;
@@ -217,6 +279,7 @@ public class Fight {
 			}
 		}
 	}
+	
 	public static void fighterStatuses () {
 		
 	}

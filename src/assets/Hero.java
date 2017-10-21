@@ -25,6 +25,7 @@ public class Hero extends Monsters {
 				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[3].clone(), (Attacks)Index.attackList[4].clone(), (Attacks)Index.attackList[5].clone()};
 				moveList = moveStore;
 				attType = false;
+				hp = 40;
 				att = 7;
 				mag = 3;
 			}

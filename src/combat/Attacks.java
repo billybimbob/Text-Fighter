@@ -5,7 +5,7 @@ import assets.*;
 public abstract class Attacks implements Cloneable {
 
 	public double baseDam, manaCost;
-	public boolean attType, aoe = false;
+	public boolean attType, aoe = false, priority = false;
 	public Monsters attacker;
 	public Monsters[] targets; //might make it an array
 	public int numTar = 1, tarCount = 0; //number of targets default set to 1
