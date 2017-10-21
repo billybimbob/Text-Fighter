@@ -112,9 +112,9 @@ public class Fight {
 			//decides the turns of the monsters
 			int[] monMoves = new int[monFighters.size()];
 			for (int i = 0; i <= monFighters.size()-1; i++) {
-				if (!monFighters.get(i).skip) {
+				if (!(monFighters.get(i).skip || monFighters.get(i).stun)) {
 					monMoves[i] = (int)(Math.random()*monFighters.get(i).moveList.length);
-					System.out.println(monMoves[i]);
+					//System.out.println(monMoves[i]);
 					if (monFighters.get(i).moveList[monMoves[i]].priority)
 						monFighters.get(i).priority = true;
 				}
@@ -122,11 +122,10 @@ public class Fight {
 			
 			System.out.println("-----------------------------------------------");
 			
-			for (int i = 0; i <= fighters.size()-1; i++) {
+			/*for (int i = 0; i <= fighters.size()-1; i++) {
 				System.out.println(fighters.get(i).name);
-			}
+			}*/
 			//check for priority, need to check what happens if speed is same with 2 priorities
-			//monster attacks not lined up with priority changes when hero is priority
 			boolean pastHero = false;
 			for (int i = 0; i <= fighters.size()-1; i++) {
 				Monsters priorAttacker = fighters.get(i);
@@ -153,11 +152,11 @@ public class Fight {
 							temp = priorCheck;
 							//System.out.println("Got hered");
 							fighters.set(swapCount, priorAttacker);
-							if (!(priorAttacker.aggro && priorCheck.aggro)) { //always true currently
+							if (!priorAttacker.aggro) { //always true currently
 								int swapAtt = i;
 								//System.out.println(swapAtt + " " + swapAtt2);
 								if (pastHero) {
-									System.out.println("bleh");
+									//System.out.println("bleh");
 									swapAtt -= 1;
 								}
 								//System.out.println(swapAtt + " " + swapAtt2);
@@ -166,7 +165,7 @@ public class Fight {
 								
 								for (int j = pastPriorMon+1; j <= swapAtt; j++) {
 									stoMove2 = monMoves[j];
-									System.out.println("looping"+j+" "+stoMove+" "+stoMove2);
+									//System.out.println("looping"+j+" "+stoMove+" "+stoMove2);
 									monMoves[j] = stoMove;
 									stoMove = stoMove2;
 								}
@@ -184,9 +183,16 @@ public class Fight {
 					}
 				}
 			}
-			for (int i = 0; i <= monMoves.length-1; i++) {
+			/*for (int i = 0; i <= monMoves.length-1; i++) {
 				System.out.println(monMoves[i]);
 			}
+			for (int i = 0; i <= monFighters.size()-1; i++) {
+				System.out.print(monFighters.get(i).name);
+				for (int j = 0; j <= monFighters.get(i).moveList.length-1; j++) {
+					System.out.print(monFighters.get(i).moveList[j].name+" ");
+				}
+				System.out.println("");
+			}*/
 			
 			int monCount = 0;
 			for (int i = 0; i <= fighters.size()-1; i++) { //Goes through the move of each fighter, if attacking, target set here
@@ -197,18 +203,20 @@ public class Fight {
 					System.out.println(attacker.name + " is stunned");
 					attacker.stun = false;
 					
+				// error with null pointer exception?
 				} else if (!attacker.aggro) { //Monster attacks
 					int monMoveNum = monMoves[monCount]; //might be wrong attack since priority order different
 					monCount++;
 					Attacks monMove = null;
 					if (attacker.skip) {
-						monMove = attacker.moveList[attacker.store];
+						monMove = attacker.moveList[attacker.store]; //does previous turn move
 						attacker.store = 0;
 					} else {
 						monMove = attacker.moveList[monMoveNum];
-						attacker.store = monMoveNum; //does previous turn move
+						attacker.store = monMoveNum;
+						monMove.setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
 					}
-					monMove.setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
+					
 					double startHp = monMove.targets[0].hp;
 					monMove.execute();
 					monMove.targets[0].damTurn += (startHp - monMove.targets[0].hp);
@@ -267,7 +275,7 @@ public class Fight {
 					}
 					
 				}
-				if (attacker.mp > attacker.maxMp)
+				if (attacker.mp < attacker.maxMp)
 					attacker.mp += 1;
 				System.out.println("");
 				TimeUnit.SECONDS.sleep(2);

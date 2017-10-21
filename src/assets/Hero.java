@@ -20,16 +20,16 @@ public class Hero extends Monsters {
 				moveList = moveStore;
 				attType = true;
 				hp = 40;
-				mag = 7;
-				att = 3;
+				att = 7;
+				mag = 3;
 			} else {
 				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[4].clone(), (Attacks)Index.attackList[5].clone(), (Attacks)Index.attackList[6].clone()};
 				moveList = moveStore;
 				attType = false;
-				att = 7;
-				mag = 3;
+				mag = 7;
+				att = 3;
 			}
-			priority = true;
+			//priority = true;
 			for (int i = 0; i <= moveList.length-1; i++) {
 				moveList[i].attacker = this;
 			}
