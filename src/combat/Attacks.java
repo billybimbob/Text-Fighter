@@ -23,6 +23,7 @@ public abstract class Attacks implements Cloneable {
 		tarCount++;
 	}
 	
+	//fighting calculations
 	public boolean critCheck () {
 		double check = Math.random();
 		boolean critHit = check < attacker.crit*0.02;		
