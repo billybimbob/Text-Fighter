@@ -23,11 +23,12 @@ public class Index {
 		
 		BasicAttack baseAtt = new BasicAttack();
 		ChargeAttack charge = new ChargeAttack(); //start of melee abilites
+		Disrupt ram = new Disrupt();
 		SpinAttack spin = new SpinAttack();
 		MagicBlast blast = new MagicBlast(); //start of magic abilites
 		Freeze froze = new Freeze();
 		Reflect reflect = new Reflect();
-		Attacks[] attStore = {baseAtt, charge, spin, blast, froze, reflect};
+		Attacks[] attStore = {baseAtt, charge, ram, spin, blast, froze, reflect};
 		attackList = attStore;
 		
 		// lvl ,hp, mp, atk, def, magic, mres, speed, crit, special attack
