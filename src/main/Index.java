@@ -22,11 +22,12 @@ public class Index {
 		potionsList = potStore;
 		
 		BasicAttack baseAtt = new BasicAttack();
-		ChargeAttack charge = new ChargeAttack();
+		ChargeAttack charge = new ChargeAttack(); //start of melee abilites
 		SpinAttack spin = new SpinAttack();
 		MagicBlast blast = new MagicBlast(); //start of magic abilites
 		Freeze froze = new Freeze();
-		Attacks[] attStore = {baseAtt, charge, spin, blast, froze};
+		Reflect reflect = new Reflect();
+		Attacks[] attStore = {baseAtt, charge, spin, blast, froze, reflect};
 		attackList = attStore;
 		
 		// lvl ,hp, mp, atk, def, magic, mres, speed, crit, special attack

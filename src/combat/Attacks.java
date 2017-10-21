@@ -12,7 +12,7 @@ public abstract class Attacks implements Cloneable {
 	protected double baseDamMod = 1;
 	public String name, description;
 	
-	public Object clone()throws CloneNotSupportedException { //can't use copy constructor because the subclasses are the constructors
+	public Object clone() throws CloneNotSupportedException { //can't use copy constructor because the subclasses are the constructors
 		return super.clone();  
 	}
 	
@@ -23,21 +23,25 @@ public abstract class Attacks implements Cloneable {
 		tarCount++;
 	}
 	
+<<<<<<< HEAD
 	//fighting calculations
+=======
+	//critical hit check
+>>>>>>> branch 'master' of https://github.com/billybimbob/Text-Fighter.git
 	public boolean critCheck () {
 		double check = Math.random();
 		boolean critHit = check < attacker.crit*0.02;		
 		
 		return critHit;
 	}
-	public boolean attackCheck (Monsters target, double skillCheck) { //an attack damage check based on either the att or mag stat
+	public boolean attackCheck (Monsters target, double checkMod) { //an attack damage check based on either the att or mag stat
 		double checkNum;
 		if (attType) {
 			checkNum = Math.random()*attacker.att - Math.random()*targets[0].spe*.5;
-			return checkNum > target.def*skillCheck;
+			return checkNum > target.def*checkMod;
 		} else {
 			checkNum = Math.random()*attacker.mag - Math.random()*targets[0].spe*.5;
-			return checkNum > target.magR*skillCheck;
+			return checkNum > target.magR*checkMod;
 		}
 	}
 	public void baseDamage () { //determines the damage if either a melee or magic attack
@@ -53,7 +57,7 @@ public abstract class Attacks implements Cloneable {
 			baseDam -= (int)(Math.random()*(target.magR*.5));
 		
 		if (baseDam < 0)
-			baseDam = 0;
+			baseDam = 1;
 	}
 	
 	public abstract void execute ();
