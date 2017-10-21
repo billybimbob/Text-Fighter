@@ -108,7 +108,6 @@ public class Fight {
 						}
 				}
 			}
-			
 			//decides the turns of the monsters
 			int[] monMoves = new int[monFighters.size()];
 			for (int i = 0; i <= monFighters.size()-1; i++) {
@@ -119,12 +118,8 @@ public class Fight {
 						monFighters.get(i).priority = true;
 				}
 			}
-			
 			System.out.println("-----------------------------------------------");
 			
-			/*for (int i = 0; i <= fighters.size()-1; i++) {
-				System.out.println(fighters.get(i).name);
-			}*/
 			//check for priority, need to check what happens if speed is same with 2 priorities
 			boolean pastHero = false;
 			for (int i = 0; i <= fighters.size()-1; i++) {
