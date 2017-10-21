@@ -22,12 +22,7 @@ public abstract class Attacks implements Cloneable {
 		targets[tarCount] = target;
 		tarCount++;
 	}
-	
-<<<<<<< HEAD
-	//fighting calculations
-=======
-	//critical hit check
->>>>>>> branch 'master' of https://github.com/billybimbob/Text-Fighter.git
+
 	public boolean critCheck () {
 		double check = Math.random();
 		boolean critHit = check < attacker.crit*0.02;		
