@@ -7,7 +7,7 @@ import main.Index;
 
 public class Hero extends Monsters {
 
-	public boolean attType = true; //true means physical attack;
+	public boolean attType; //true means physical attack;
 	public final static double levMult = 2.5;
 	public ArrayList<String> moveListNames = new ArrayList<>();
 	
@@ -29,6 +29,7 @@ public class Hero extends Monsters {
 				att = 7;
 				mag = 3;
 			}
+			//priority = true;
 			for (int i = 0; i <= moveList.length-1; i++) {
 				moveList[i].attacker = this;
 			}

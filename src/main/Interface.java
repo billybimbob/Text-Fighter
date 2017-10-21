@@ -21,8 +21,8 @@ public class Interface {
 		
 		ArrayList<String> availClass = new ArrayList<>(Arrays.asList("Warrior", "Mage"));
 		String classPrompt = "Would you like to be a warrior or a mage?\nThis will affect your stats, potions, and abilities";
-		int classChoice = choiceInput(kboard, false,availClass, classPrompt);
-		
+		//int classChoice = choiceInput(kboard, false,availClass, classPrompt);
+		int classChoice = 1;
 		Hero player1 = null;
 		if (classChoice == 1) { //create warrior class
 			player1 = new Hero(name, true);

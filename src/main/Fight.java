@@ -13,7 +13,7 @@ public class Fight {
 
 	public static void fighting (Scanner keyboard, ArrayList<Monsters> fighters) throws InterruptedException {
 		System.out.println("Press enter when you are ready to fight");
-		keyboard.nextLine();
+		//keyboard.nextLine();
 		
 		Monsters target = null;
 		boolean fightControl = true, flee = false;
@@ -30,14 +30,14 @@ public class Fight {
 			attackOrder(fighters); //Orders the fighters by speed
 			System.out.println("-----------------------------------------------");
 			for (int i = 0; i <= fighters.size()-1; i++) { //Determine which is the hero, may change later, also prints each fighter and stats
-				System.out.println(fighters.get(i).name + " - " + fighters.get(i).hp + " hp" + " - " + fighters.get(i).mp + " mp");
+				System.out.println(fighters.get(i).name + " - " + fighters.get(i).hp + " hp" + " - " + fighters.get(i).mp + " mp" + " - " + fighters.get(i).spe+ " speed");
 				
 				if (fighters.get(i).aggro) {
 					target = fighters.get(i);
 				} else {
 					monFighters.add(fighters.get(i));
 					monFightersName.add(fighters.get(i).name);
-					if (fighters.get(i).name == "Slime")
+					if (fighters.get(i).name == "Spider")
 						fighters.get(i).priority = true;
 				}
 			}
@@ -112,42 +112,75 @@ public class Fight {
 			//decides the turns of the monsters
 			int[] monMoves = new int[monFighters.size()];
 			for (int i = 0; i <= monFighters.size()-1; i++) {
-				monMoves[i] = (int)(Math.random()*monFighters.get(i).moveList.length);
-				System.out.println(monMoves[i]);
-				if (monFighters.get(i).moveList[monMoves[i]].priority)
-					monFighters.get(i).priority = true;
+				if (!monFighters.get(i).skip) {
+					monMoves[i] = (int)(Math.random()*monFighters.get(i).moveList.length);
+					System.out.println(monMoves[i]);
+					if (monFighters.get(i).moveList[monMoves[i]].priority)
+						monFighters.get(i).priority = true;
+				}
 			}
 			
 			System.out.println("-----------------------------------------------");
 			
+			for (int i = 0; i <= fighters.size()-1; i++) {
+				System.out.println(fighters.get(i).name);
+			}
 			//check for priority, need to check what happens if speed is same with 2 priorities
-			int priorCount = 0;
-			boolean pastHero;
+			//int priorCount = 0; //monster attacks not lined up with priority changes when hero is priority
+			boolean pastHero = false, pastHero2;
 			for (int i = 0; i <= fighters.size()-1; i++) {
 				Monsters priorAttacker = fighters.get(i);
-				if (priorAttacker.priority && priorCount != i) { //need to fix when first fighter has priority true
+				if (priorAttacker.aggro) {
+					pastHero = true;
+				}
+				if (priorAttacker.priority && i != 0) { //need to fix when first fighter has priority true
+					//System.out.println(pastHero);
 					if (fighters.get(i-1).priority) {
-						priorCount++;
+						//priorCount++;
 						//System.out.println("Got here");
 						break;
 					}
 					Monsters temp = null, temp2;
 					int swapCount;
-					pastHero = false;
+					int pastPriorMon = 0;
+					pastHero2 = false;
 					for (swapCount = 0; swapCount <= fighters.size()-1; swapCount++) {
 						//System.out.println("yes" + priorAttacker.name+priorAttacker.spe);
 						Monsters priorCheck = fighters.get(swapCount);
-						if (priorAttacker.aggro)
-							pastHero = true;
+						
 						//System.out.println(priorCheck.name+priorCheck.spe);
 						if (!priorCheck.priority || (priorCheck.priority && (priorCheck.spe < priorAttacker.spe))) {
+							if (priorCheck.priority && !priorCheck.aggro) {
+								System.out.println("mehe");
+								pastPriorMon++;
+							}
 							temp = priorCheck;
 							//System.out.println("Got hered");
 							fighters.set(swapCount, priorAttacker);
-							if (!(priorAttacker.aggro || priorCheck.aggro)) {
-								int stoMove = monMoves[swapCount];
-								monMoves[swapCount] = monMoves[i];
-								monMoves[i] = stoMove;
+							if (!(priorAttacker.aggro && priorCheck.aggro)) { //always true currently
+								int swapAtt = pastPriorMon, swapAtt2 = i;
+								//System.out.println(swapAtt + " " + swapAtt2);
+								if (pastHero) {
+									System.out.println("bleh");
+									swapAtt2 -= 1;
+								}
+								if (pastHero2) {
+									System.out.println("meh");
+									swapAtt += 1;
+								}
+								System.out.println(swapAtt + " " + swapAtt2);
+								int stoMove = monMoves[swapAtt], stoMove2;
+								monMoves[swapAtt] = monMoves[swapAtt2];
+								//monMoves[swapAtt2] = stoMove;
+								
+								for (int j = swapAtt+1; j <= swapAtt2; j++) {
+									
+									stoMove2 = monMoves[j];
+									System.out.println("looping"+j+" "+stoMove+" "+stoMove2);
+									monMoves[j] = stoMove;
+									stoMove = stoMove2;
+								}
+								System.out.println("done");
 							}
 							break;
 						}
@@ -163,6 +196,9 @@ public class Fight {
 				}
 			}
 			
+			for (int i = 0; i <= monMoves.length-1; i++) {
+				System.out.println(monMoves[i]);
+			}
 			int monCount = 0;
 			for (int i = 0; i <= fighters.size()-1; i++) { //Goes through the move of each fighter, if attacking, target set here
 				Monsters attacker = fighters.get(i);
