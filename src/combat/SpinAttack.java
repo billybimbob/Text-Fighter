@@ -7,7 +7,7 @@ public class SpinAttack extends Attacks {
 		description = "A spinning melee attack that damages all enemies for less damage than a basic attack";
 		attType = true; //melee attack; might make it based on the attacker
 		aoe = true;
-		manaCost = 4;
+		manaCost = 5;
 	}
 	
 	public void execute() { //current bug with null pointer

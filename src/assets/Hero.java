@@ -7,7 +7,7 @@ import main.Index;
 
 public class Hero extends Monsters {
 
-	public boolean attType = true; //true means physical attack;
+	public boolean attType; //true means physical attack;
 	public final static double levMult = 2.5;
 	public ArrayList<String> moveListNames = new ArrayList<>();
 	
@@ -16,18 +16,20 @@ public class Hero extends Monsters {
 		level = 1;
 		try {
 			if (classes) {
-				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[1].clone(), (Attacks)Index.attackList[2].clone()};
+				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[1].clone(), (Attacks)Index.attackList[2].clone(), (Attacks)Index.attackList[3].clone()};
 				moveList = moveStore;
 				attType = true;
-				mag = 7;
-				att = 3;
-			} else {
-				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[3].clone(), (Attacks)Index.attackList[4].clone(), (Attacks)Index.attackList[5].clone()};
-				moveList = moveStore;
-				attType = false;
+				hp = 40;
 				att = 7;
 				mag = 3;
+			} else {
+				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[4].clone(), (Attacks)Index.attackList[5].clone(), (Attacks)Index.attackList[6].clone()};
+				moveList = moveStore;
+				attType = false;
+				mag = 7;
+				att = 3;
 			}
+			//priority = true;
 			for (int i = 0; i <= moveList.length-1; i++) {
 				moveList[i].attacker = this;
 			}

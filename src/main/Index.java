@@ -22,18 +22,19 @@ public class Index {
 		potionsList = potStore;
 		
 		BasicAttack baseAtt = new BasicAttack();
-		ChargeAttack charge = new ChargeAttack(); //start of melee abilites
+		ChargeAttack charge = new ChargeAttack(); //start of melee abilites, 1
+		Disrupt ram = new Disrupt();
 		SpinAttack spin = new SpinAttack();
-		MagicBlast blast = new MagicBlast(); //start of magic abilites
+		MagicBlast blast = new MagicBlast(); //start of magic abilites, 4
 		Freeze froze = new Freeze();
 		Reflect reflect = new Reflect();
-		Attacks[] attStore = {baseAtt, charge, spin, blast, froze, reflect};
+		Attacks[] attStore = {baseAtt, charge, ram, spin, blast, froze, reflect};
 		attackList = attStore;
 		
 		// lvl ,hp, mp, atk, def, magic, mres, speed, crit, special attack
 		Monsters mon1 = new Monsters("Bandit", false, true, 1, 15, 3, 3, 3, 3, 6, 6, 1);
-		Monsters mon2 = new Monsters("Spider", false, false, 15, 15, 6, 2, 3, 3, 4, 4, 4);
-		Monsters mon3 = new Monsters("Slime", false, false, 20, 10, 3, 5, 3, 3, 1, 1, 3);
+		Monsters mon2 = new Monsters("Spider", false, false, 15, 15, 6, 2, 3, 3, 4, 4, 5);
+		Monsters mon3 = new Monsters("Slime", false, false, 20, 10, 3, 5, 3, 3, 1, 1, 4);
 		Monsters[] monStore = {mon1, mon2, mon3};
 		monsterList = monStore;
 	}

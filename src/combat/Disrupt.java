@@ -1,9 +1,44 @@
 package combat;
 
-public class Disrupt {
+import assets.Monsters;
+
+public class Disrupt extends Attacks {
 
 	public Disrupt() {
-		// TODO Auto-generated constructor stub
+		name = "Disrupt";
+		description = "A quick bash disrupting a target while injuring yourself";
+		attType = true;
+		targets = new Monsters[numTar];
+		priority = true;
+		manaCost = 5;
+		baseDamMod = 0.75;
+	}
+	
+	public void execute() {
+		if (attacker.mp >= manaCost) {
+			//Attack based on RNG and modified by stats, need to consider magic attack
+			attacker.mp -= manaCost;
+			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
+				baseDamage();
+				
+				if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+					System.out.println(attacker.name + "'s ram was resisted by " + targets[0].name);
+				} else {
+					targets[0].hp -= baseDam;
+					System.out.println(attacker.name + " rams into " + targets[0].name + " for " + baseDam + " damage");
+					if (attackCheck(targets[0], 0.4)) {
+						System.out.println(attacker.name + "'s blow stuns " + targets[0].name);
+						targets[0].stun = true;
+					}
+				}
+				
+			} else {
+				System.out.println(attacker.name + "'s attack missed");
+			}
+		} else {
+			System.out.println(attacker.name + " tries to use " + name + ", but has insufficient mana");
+		}
+		attacker.priority = false;
 	}
 
 }
