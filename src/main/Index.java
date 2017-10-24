@@ -34,7 +34,7 @@ public class Index {
 		// lvl ,hp, mp, atk, def, magic, mres, speed, crit, special attack
 		Monsters mon1 = new Monsters("Bandit", false, true, 1, 15, 3, 3, 3, 3, 6, 6, 1);
 		Monsters mon2 = new Monsters("Spider", false, false, 15, 15, 6, 2, 3, 3, 4, 4, 5);
-		Monsters mon3 = new Monsters("Slime", false, false, 20, 10, 3, 5, 3, 3, 1, 1, 4);
+		Monsters mon3 = new Monsters("Slime", false, true, 20, 10, 3, 5, 3, 3, 1, 1, 4);
 		Monsters[] monStore = {mon1, mon2, mon3};
 		monsterList = monStore;
 	}

@@ -10,7 +10,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit, damTurn = 0;
 	public boolean aggro, stun, skip, priority;
 	public Attacks[] moveList;
-	public boolean attType = true; //true means physical attack
+	public boolean attType; //true means physical attack
 	
 	//monster index constructor
 	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit, int special){

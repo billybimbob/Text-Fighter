@@ -129,7 +129,7 @@ public class Fight {
 				if (priorAttacker.aggro) {
 					pastHero = true;
 				}
-				if (priorAttacker.priority && i != 0) { //need to fix when first fighter has priority true
+				if (priorAttacker.priority && i != 0) {
 					if (fighters.get(i-1).priority) {
 						//priorCount++;
 						//System.out.println("Got here");
@@ -191,16 +191,16 @@ public class Fight {
 				System.out.println("");
 			}*/
 			
+			//Goes through the move of each fighter, if attacking, target set here
 			int monCount = 0;
-			for (int i = 0; i <= fighters.size()-1; i++) { //Goes through the move of each fighter, if attacking, target set here
+			for (int i = 0; i <= fighters.size()-1; i++) {
 				Monsters attacker = fighters.get(i);
-				if (target.hp <= 0) //got rid of flee maybe temporary
+				if (target.hp <= 0) //got rid of flee, maybe temporary
 					break;
 				else if (attacker.stun) { //checks if fighter is stunned, if so, skips turn
 					System.out.println(attacker.name + " is stunned");
 					attacker.stun = false;
 					
-				// error with null pointer exception?
 				} else if (!attacker.aggro) { //Monster attacks
 					int monMoveNum = monMoves[monCount]; //might be wrong attack since priority order different
 					monCount++;

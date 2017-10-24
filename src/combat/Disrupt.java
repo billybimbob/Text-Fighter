@@ -11,7 +11,6 @@ public class Disrupt extends Attacks {
 		targets = new Monsters[numTar];
 		priority = true;
 		manaCost = 5;
-		baseDamMod = 0.75;
 	}
 	
 	public void execute() {
@@ -21,13 +20,16 @@ public class Disrupt extends Attacks {
 			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 				baseDamage();
 				
+				double selfDam = (int)(baseDam*.5);
+				attacker.hp -= selfDam;
+				System.out.println(attacker.name + " charges, dealing " + selfDam + " damage to self from recoil");
 				if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 					System.out.println(attacker.name + "'s ram was resisted by " + targets[0].name);
 				} else {
 					targets[0].hp -= baseDam;
-					System.out.println(attacker.name + " rams into " + targets[0].name + " for " + baseDam + " damage");
+					System.out.println(attacker.name + " rams " + targets[0].name + " for " + baseDam + " damage");
 					if (attackCheck(targets[0], 0.4)) {
-						System.out.println(attacker.name + "'s blow stuns " + targets[0].name);
+						System.out.println(attacker.name + "'s blow also stuns " + targets[0].name);
 						targets[0].stun = true;
 					}
 				}
