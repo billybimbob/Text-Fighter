@@ -9,7 +9,6 @@ public class Fight {
 	
 	private static final String[] fightChoices = {"Attack", "Dodge", "Inventory"};
 	public static int turnCount;
-	public static boolean potionBuff = false;
 
 	public static void fighting (Scanner keyboard, ArrayList<Monsters> fighters) throws InterruptedException {
 		System.out.println("Press enter when you are ready to fight");
@@ -98,7 +97,7 @@ public class Fight {
 							pickNum = Interface.choiceInput(keyboard, true, inventNames, itemPrompt);
 							if (pickNum == 0)
 								break selection;
-							else if (potionBuff && Potions.timeLength >= (turnCount-Potions.turnStart)) { //Will trigger debuff
+							else if (Interface.hero.status[1][2]!="0" && Potions.timeLength >= (turnCount-Potions.turnStart)) { //Will trigger debuff
 								String usePrompt = "Another buff is still active, and will be canceled by this potion\nAre you sure you want to do this?";
 								int confirmUse = Interface.choiceInput(keyboard, false, Interface.responseOptions, usePrompt);
 								if (confirmUse == 1)
@@ -113,7 +112,7 @@ public class Fight {
 			//decides the turns of the monsters
 			int[] monMoves = new int[monFighters.size()];
 			for (int i = 0; i <= monFighters.size()-1; i++) {
-				if (!(monFighters.get(i).skip || monFighters.get(i).stun)) {
+				if (!(monFighters.get(i).multTurn || monFighters.get(i).status[1][3] != "0")) { //change later
 					monMoves[i] = (int)(Math.random()*monFighters.get(i).moveList.length);
 					//System.out.println(monMoves[i]);
 					if (monFighters.get(i).moveList[monMoves[i]].priority)
@@ -193,19 +192,58 @@ public class Fight {
 			
 			//Goes through the move of each fighter, if attacking, target set here
 			int monCount = 0;
+			boolean skipTurn;
 			for (int i = 0; i <= fighters.size()-1; i++) {
 				Monsters attacker = fighters.get(i);
+				skipTurn = false;
 				if (target.hp <= 0) //got rid of flee, maybe temporary
 					break;
-				else if (attacker.stun) { //checks if fighter is stunned, if so, skips turn
+				
+				//status effect check of each monster
+				for (int j = 0; j < attacker.status[0].length; j++) {
+					int statTurn = Integer.parseInt(attacker.status[1][j]);
+					switch(attacker.status[0][j]) {
+						case "burn":
+							if (statTurn != 0) {
+								int burnDam = (int)(attacker.hp*0.05);
+								attacker.hp -= burnDam;
+								System.out.println(attacker.name + " is burned, and takes " + burnDam + " damage");
+								if (turnCount-statTurn == 5)
+									attacker.status[0][j] = "0";
+							}
+							break;
+						case "poison":
+							if (statTurn != 0) {
+								int poiDam = (int)(attacker.hp*0.01*((turnCount-statTurn)%10));
+								attacker.hp -= poiDam;
+								System.out.println(attacker.name + " is burned, and takes " + poiDam + " damage");
+							}
+							break;
+						case "potion":
+							if (statTurn != 0) {
+								Potions.buffCheck (attacker, pick);
+							}
+							break;
+						case "stun":
+							if (statTurn != 0) {
+								System.out.println(attacker.name + " is stunned");
+								skipTurn = true;
+								attacker.status[0][j] = "0";
+							}
+							break;
+					}
+				}
+				
+				/*if (attacker.stun) { //checks if fighter is stunned, if so, skips turn
 					System.out.println(attacker.name + " is stunned");
 					attacker.stun = false;
 					
-				} else if (!attacker.aggro) { //Monster attacks
+				}*/
+				if (!(skipTurn || attacker.aggro)) { //Monster attacks
 					int monMoveNum = monMoves[monCount]; //might be wrong attack since priority order different
 					monCount++;
 					Attacks monMove = null;
-					if (attacker.skip) {
+					if (attacker.multTurn) {
 						monMove = attacker.moveList[attacker.store]; //does previous turn move
 						attacker.store = 0;
 					} else {
@@ -219,10 +257,8 @@ public class Fight {
 					monMove.targets[0].damTurn += (startHp - monMove.targets[0].hp);
 					attacker.damTurn = 0; //resets the amount of damage taken
 					
-				} else { //Hero action, attacks target set here or then targets somehow get overridden
+				} else if (!skipTurn && attacker.aggro){ //Hero action, attacks target set here or then targets somehow get overridden
 					Interface.heroAction = false; //sets default value, will by default ask for user input
-					if (potionBuff)
-						Potions.buffCheck (attacker, pick);
 					if (flee)
 						attacker.spe -= 7;
 					switch (choice) {
@@ -258,7 +294,7 @@ public class Fight {
 								inventIndex += Inventory.inventoryList[inventIndex].numAmount;
 							
 							pick = Inventory.inventoryList[inventIndex];
-							potionBuff = true;
+							attacker.status[1][2] = "1";
 							pick.useItem(attacker);
 					}
 					for (int j = 0; j < monFighters.size(); j++) { //check if any monster died, immediately after hero's turn

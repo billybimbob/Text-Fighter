@@ -23,7 +23,7 @@ public class Reflect extends Attacks {
 			if (attacker.aggro)
 				Interface.heroAction = true;
 			else
-				attacker.skip = true;
+				attacker.multTurn = true;
 		} else if (turnCount == 1) { //Checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
 			baseDam = attacker.damTurn;

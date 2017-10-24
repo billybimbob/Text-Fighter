@@ -25,7 +25,7 @@ public class ChargeAttack extends Attacks{
 			if (attacker.aggro)
 				Interface.heroAction = true;
 			else
-				attacker.skip = true;
+				attacker.multTurn = true;
 		} else if (turnCount == 1) { //Checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
 			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
@@ -41,7 +41,7 @@ public class ChargeAttack extends Attacks{
 				
 				if (attackCheck(targets[0], 0.1)) {
 					System.out.println(attacker.name + "'s charged attack stuns " + targets[0].name);
-					targets[0].stun = true;
+					targets[0].status[1][3] = "1";
 				}
 			} else {
 				System.out.println(attacker.name + "'s attack missed");

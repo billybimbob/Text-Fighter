@@ -103,7 +103,7 @@ public class Potions extends Items {
 				break;
 			}
 			System.out.println(used.name + " has worn off");
-			Fight.potionBuff = false;
+			user.status[1][2] = "0";
 		} else if (used.statMod.equals("hp") || used.statMod.equals("mp")){ //Gain over time, could be better, scattered between here and useItem method
 			switch (used.statMod) {
 				case "hp":
