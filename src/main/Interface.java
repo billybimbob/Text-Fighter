@@ -5,7 +5,7 @@ import assets.*;
 
 public class Interface {
 	
-	public static final ArrayList<String> responseOptions = new ArrayList<>(Arrays.asList("Yes", "No"));
+	public static final String[] responseOptions = {"Yes", "No"};
 	public static boolean heroAction = false;
 	public static Hero hero;
 	
@@ -19,7 +19,7 @@ public class Interface {
 		System.out.print("Step forth and state your name: ");
 		String name = kboard.nextLine();
 		
-		ArrayList<String> availClass = new ArrayList<>(Arrays.asList("Warrior", "Mage"));
+		String[] availClass = {"Warrior", "Mage"};
 		String classPrompt = "Would you like to be a warrior or a mage?\nThis will affect your stats, potions, and abilities";
 		int classChoice = choiceInput(kboard, false,availClass, classPrompt);
 		//int classChoice = 1;
@@ -43,8 +43,9 @@ public class Interface {
 		fighters.add(player1);
 		hero = player1; //Temporary
 		
+		player1.moveListNames = new String[player1.moveList.length];
 		for (int i = 0; i <= player1.moveList.length-1; i++)
-			player1.moveListNames.add(player1.moveList[i].name + " - " + (int)player1.moveList[i].manaCost + " mana");
+			player1.moveListNames[i] = player1.moveList[i].name + " - " + (int)player1.moveList[i].manaCost + " mana";
 
 		for (int i = 0; i <= Index.monsterList.length-1; i++) {
 			fighters.add(new Monsters(Index.monsterList[i]));
@@ -54,13 +55,13 @@ public class Interface {
 		kboard.close();
 	}
 	
-	public static int choiceInput (Scanner keyboard, boolean back, ArrayList<String> list, String prompt) { //Returns user input from choices
+	public static int choiceInput (Scanner keyboard, boolean back, String[] list, String prompt) { //Returns user input from choices
 		int choice = 0;
 		System.out.println("-----------------------------------------------");
 		if (back) //option for "back"
 			System.out.println("0. Back");
-		for (int i = 0; i <= list.size()-1; i++) { //Print out choices from an array
-			System.out.println(i+1 + ". " + list.get(i));
+		for (int i = 0; i <= list.length-1; i++) { //Print out choices from an array
+			System.out.println(i+1 + ". " + list[i]);
 		}
 		System.out.println("-----------------------------------------------");
 		do {
@@ -69,7 +70,7 @@ public class Interface {
 				choice = Integer.parseInt(keyboard.nextLine());
 			} catch (Exception e) {} //might want to restructure somehow, right now, just preventing from crashing
 			
-			if (choice <= list.size() && choice > 0) //Checks if input is valid
+			if (choice <= list.length && choice > 0) //Checks if input is valid
 				heroAction = true;
 			else if (back && choice == 0)
 				heroAction = true;

@@ -7,7 +7,7 @@ import combat.*;
 
 public class Fight {
 	
-	private static final ArrayList<String> fightChoices = new ArrayList<>(Arrays.asList("Attack", "Dodge", "Inventory"));
+	private static final String[] fightChoices = {"Attack", "Dodge", "Inventory"};
 	public static int turnCount;
 	public static boolean potionBuff = false;
 
@@ -24,7 +24,7 @@ public class Fight {
 		ArrayList<Monsters> heroTargets = new ArrayList<>(); //need to clear later
 		
 		while (fightControl) {
-			ArrayList<String> monFightersName = new ArrayList<>();
+			String[] monFightersName;
 			ArrayList<Monsters> monFighters = new ArrayList<>();
 			
 			attackOrder(fighters); //Orders the fighters by speed
@@ -36,10 +36,13 @@ public class Fight {
 					target = fighters.get(i);
 				} else {
 					monFighters.add(fighters.get(i));
-					monFightersName.add(fighters.get(i).name);
 					if (fighters.get(i).name == "Slimes")
 						fighters.get(i).priority = true;
 				}
+			}
+			monFightersName = new String[monFighters.size()];
+			for (int i = 0; i <= monFighters.size()-1; i++) {
+				monFightersName[i] = monFighters.get(i).name;
 			}
 			
 			//Hero user input/determine hero actions
@@ -88,7 +91,7 @@ public class Fight {
 						Interface.heroAction = true;
 						break;
 					case 3: //Check inventory
-						ArrayList<String> inventNames = Inventory.access();
+						String[] inventNames = Inventory.access();
 						if (Inventory.empty) {
 							System.out.println("You have no items in your inventory\n");
 						} else {

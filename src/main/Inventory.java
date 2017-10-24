@@ -61,16 +61,19 @@ public class Inventory {
 		}
 	}
 	
-	public static ArrayList<String> access () { //Goes through the inventory, accounting for duplicates, and sets each item to an index in an Array
+	public static String[] access () { //Goes through the inventory, accounting for duplicates, and sets each item to an index in an Array
 		empty = true;
-		ArrayList<String> inventName = new ArrayList<>();
+		ArrayList<String> inventStore = new ArrayList<>();
 		for (int i = 0; i <= inventSpace-1; i++) {
 			if (inventoryList[i] != null) {
-				String itemAndQuant = inventoryList[i].name + " x " + inventoryList[i].numAmount;
-				inventName.add(itemAndQuant);
+				inventStore.add(inventoryList[i].name);
 				i += inventoryList[i].numAmount-1; //Accounts for the step increment of the for loop
 				empty = false;
 			}
+		}
+		String[] inventName = new String [inventStore.size()];
+		for (int i = 0; i <= inventName.length-1; i++) {
+			inventName[i] = inventStore.get(i) + " x " + inventoryList[i].numAmount;
 		}
 		
 		return inventName;

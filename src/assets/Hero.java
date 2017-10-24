@@ -1,7 +1,5 @@
 package assets;
 
-import java.util.ArrayList;
-
 import combat.*;
 import main.Index;
 
@@ -9,7 +7,7 @@ public class Hero extends Monsters {
 
 	public boolean attType; //true means physical attack;
 	public final static double levMult = 2.5;
-	public ArrayList<String> moveListNames = new ArrayList<>();
+	public String[] moveListNames;
 	
 	public Hero (String name, boolean classes){ //if classes true, warrior
 		super(name, true, true, 25, 20, 5, 5, 5, 5, 5, 5);
