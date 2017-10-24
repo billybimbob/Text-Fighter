@@ -18,6 +18,7 @@ public class Hero extends Monsters {
 				moveList = moveStore;
 				attType = true;
 				hp = 40;
+				maxHp = hp;
 				att = 7;
 				mag = 3;
 			} else {

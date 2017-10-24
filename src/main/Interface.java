@@ -70,9 +70,7 @@ public class Interface {
 				choice = Integer.parseInt(keyboard.nextLine());
 			} catch (Exception e) {} //might want to restructure somehow, right now, just preventing from crashing
 			
-			if (choice <= list.length && choice > 0) //Checks if input is valid
-				heroAction = true;
-			else if (back && choice == 0)
+			if ((choice <= list.length && choice > 0) || (back && choice == 0)) //Checks if input is valid
 				heroAction = true;
 			else
 				System.out.println("\nInvalid choice, please try again\n");

@@ -36,8 +36,6 @@ public class Fight {
 					target = fighters.get(i);
 				} else {
 					monFighters.add(fighters.get(i));
-					if (fighters.get(i).name == "Slimes")
-						fighters.get(i).priority = true;
 				}
 			}
 			monFightersName = new String[monFighters.size()];
@@ -62,6 +60,7 @@ public class Fight {
 							if (turnMove.priority) //check if attack is priority
 								Interface.hero.priority = true;
 							heroTargets.clear();
+							//determine the targets of hero move
 							if (turnMove.aoe) {//attacks all monsters, might change later
 								turnMove.numTar = monFighters.size();
 								turnMove.targets = new Monsters[turnMove.numTar];

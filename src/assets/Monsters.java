@@ -34,7 +34,7 @@ public class Monsters { //Temporary, probably make abstract later
 			}
 		} catch (CloneNotSupportedException c) {}
 	}
-	//hero constructor, can have more than one ability
+	//constructor to have more than one ability
 	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit){
 		this.name = name;
 		this.aggro = aggro;
