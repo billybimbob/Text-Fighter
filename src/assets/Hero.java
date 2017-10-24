@@ -22,7 +22,7 @@ public class Hero extends Monsters {
 				att = 7;
 				mag = 3;
 			} else {
-				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[4].clone(), (Attacks)Index.attackList[5].clone(), (Attacks)Index.attackList[6].clone()};
+				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[4].clone(), (Attacks)Index.attackList[5].clone(), (Attacks)Index.attackList[6].clone(), (Attacks)Index.attackList[7].clone()};
 				moveList = moveStore;
 				attType = false;
 				mag = 7;
