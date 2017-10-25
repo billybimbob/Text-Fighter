@@ -97,7 +97,7 @@ public class Fight {
 							pickNum = Interface.choiceInput(keyboard, true, inventNames, itemPrompt);
 							if (pickNum == 0)
 								break selection;
-							else if (Interface.hero.status[1][2]!="0" && Potions.timeLength >= (turnCount-Potions.turnStart)) { //Will trigger debuff
+							else if (Interface.hero.status[2]!=0 && Potions.timeLength >= (turnCount-Potions.turnStart)) { //will trigger debuff
 								String usePrompt = "Another buff is still active, and will be canceled by this potion\nAre you sure you want to do this?";
 								int confirmUse = Interface.choiceInput(keyboard, false, Interface.responseOptions, usePrompt);
 								if (confirmUse == 1)
@@ -112,7 +112,7 @@ public class Fight {
 			//decides the turns of the monsters
 			int[] monMoves = new int[monFighters.size()];
 			for (int i = 0; i <= monFighters.size()-1; i++) {
-				if (!(monFighters.get(i).multTurn || monFighters.get(i).status[1][3] != "0")) { //change later
+				if (!(monFighters.get(i).multTurn || monFighters.get(i).status[3] != 0)) { //change later
 					monMoves[i] = (int)(Math.random()*monFighters.get(i).moveList.length);
 					//System.out.println(monMoves[i]);
 					if (monFighters.get(i).moveList[monMoves[i]].priority)
@@ -200,35 +200,35 @@ public class Fight {
 					break;
 				
 				//status effect check of each monster
-				for (int j = 0; j < attacker.status[0].length; j++) {
-					int statTurn = Integer.parseInt(attacker.status[1][j]);
-					switch(attacker.status[0][j]) {
-						case "burn":
+				for (int j = 0; j < attacker.status.length; j++) {
+					int statTurn = attacker.status[i];
+					switch(i) {
+						case 0: //burn status
 							if (statTurn != 0) {
 								int burnDam = (int)(attacker.hp*0.05);
 								attacker.hp -= burnDam;
 								System.out.println(attacker.name + " is burned, and takes " + burnDam + " damage");
 								if (turnCount-statTurn == 5)
-									attacker.status[0][j] = "0";
+									attacker.status[j] = 0;
 							}
 							break;
-						case "poison":
+						case 1: //poison status
 							if (statTurn != 0) {
 								int poiDam = (int)(attacker.hp*0.01*((turnCount-statTurn)%10));
 								attacker.hp -= poiDam;
 								System.out.println(attacker.name + " is burned, and takes " + poiDam + " damage");
 							}
 							break;
-						case "potion":
+						case 2: //potion status
 							if (statTurn != 0) {
 								Potions.buffCheck (attacker, pick);
 							}
 							break;
-						case "stun":
+						case 3: //stun status
 							if (statTurn != 0) {
 								System.out.println(attacker.name + " is stunned");
 								skipTurn = true;
-								attacker.status[0][j] = "0";
+								attacker.status[j] = 0;
 							}
 							break;
 					}
@@ -294,7 +294,7 @@ public class Fight {
 								inventIndex += Inventory.inventoryList[inventIndex].numAmount;
 							
 							pick = Inventory.inventoryList[inventIndex];
-							attacker.status[1][2] = "1";
+							attacker.status[2] = 1;
 							pick.useItem(attacker);
 					}
 					for (int j = 0; j < monFighters.size(); j++) { //check if any monster died, immediately after hero's turn

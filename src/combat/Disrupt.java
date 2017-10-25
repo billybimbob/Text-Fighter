@@ -30,7 +30,7 @@ public class Disrupt extends Attacks {
 					System.out.println(attacker.name + " rams " + targets[0].name + " for " + baseDam + " damage");
 					if (attackCheck(targets[0], 0.4)) {
 						System.out.println(attacker.name + "'s blow also stuns " + targets[0].name);
-						targets[0].status[1][3] = "1";
+						targets[0].status[3] = 1;
 					}
 				}
 				

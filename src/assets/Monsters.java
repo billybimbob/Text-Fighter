@@ -9,7 +9,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public int level = 0, store = 0; //Temporary
 	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit, damTurn = 0;
 	public boolean aggro, multTurn, priority;
-	public String[][] status; //burn, poison, potion, stun
+	public int[] status; //burn, poison, potion, stun
 	public Attacks[] moveList;
 	public boolean attType; //true means physical attack
 	
@@ -27,8 +27,7 @@ public class Monsters { //Temporary, probably make abstract later
 		this.magR = magR;
 		this.spe = spe;
 		this.crit = crit;
-		String[][] statusStore = {{"burn", "poison", "potion", "stun"}, {"0", "0", "0", "0"}};
-		status = statusStore;
+		status = new int[4];
 		try {
 			Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[special].clone()};
 			moveList = moveStore;
@@ -51,8 +50,7 @@ public class Monsters { //Temporary, probably make abstract later
 		this.magR = magR;
 		this.spe = spe;
 		this.crit = crit;
-		String[][] statusStore = {{"burn", "poison", "potion", "stun"}, {"0", "0", "0", "0"}};
-		status = statusStore;
+		status = new int[4];
 	}
 	//copies to a new instance
 	public Monsters (Monsters copy) {
@@ -68,8 +66,7 @@ public class Monsters { //Temporary, probably make abstract later
 		this.magR = copy.magR;
 		this.spe = copy.spe;
 		this.crit = copy.crit;
-		String[][] statusStore = {{"burn", "poison", "potion", "stun"}, {"0", "0", "0", "0"}};
-		status = statusStore;
+		status = new int[4];
 		this.moveList = copy.moveList;
 		for (int i = 0; i <= moveList.length-1; i++) {
 			moveList[i].attacker = this;
