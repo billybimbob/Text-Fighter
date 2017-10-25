@@ -201,7 +201,7 @@ public class Fight {
 				
 				//status effect check of each monster
 				for (int j = 0; j < attacker.status.length; j++) {
-					int statTurn = attacker.status[i];
+					int statTurn = attacker.status[j];
 					switch(i) {
 						case 0: //burn status
 							if (statTurn != 0) {
