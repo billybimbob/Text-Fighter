@@ -200,12 +200,12 @@ public class Fight {
 					break;
 				
 				//status effect check of each monster
-				for (int j = 0; j < attacker.status.length; j++) {
+				for (int j = 0; j <= attacker.status.length-1; j++) {
 					int statTurn = attacker.status[j];
-					switch(i) {
+					switch(j) {
 						case 0: //burn status
 							if (statTurn != 0) {
-								int burnDam = (int)(attacker.hp*0.05);
+								int burnDam = (int)(attacker.hp*0.1);
 								attacker.hp -= burnDam;
 								System.out.println(attacker.name + " is burned, and takes " + burnDam + " damage");
 								if (turnCount-statTurn == 5)
@@ -297,16 +297,17 @@ public class Fight {
 							attacker.status[2] = 1;
 							pick.useItem(attacker);
 					}
-					for (int j = 0; j < monFighters.size(); j++) { //check if any monster died, immediately after hero's turn
+					for (int j = 0; j <= monFighters.size()-1; j++) { //check if any monster died, immediately after hero's turn
+						//System.out.print(monFighters.get(j).name + j + " " + monFighters.size());
 						if (monFighters.get(j).hp <= 0) {
 							if (j < i)
 								i--;
 							fighters.remove(monFighters.get(j));
 							System.out.println("\n" + monFighters.get(j).name + " has died");
 							monFighters.remove(monFighters.get(j));
+							j=-1; //probably temporary
 						}
 					}
-					
 				}
 				if (attacker.mp < attacker.maxMp)
 					attacker.mp += 1;

@@ -23,8 +23,11 @@ public class LifeDrain extends Attacks {
 				System.out.println(attacker.name + "'s drain was resisted by " + targets[0].name);
 			} else {
 				targets[0].hp -= baseDam;
-				attacker.hp += selfHeal;
-				System.out.println(attacker.name + " drains " + targets[0].name + " for " + baseDam + " damage\nand heals self for " + selfHeal);
+				System.out.println(attacker.name + " drains " + targets[0].name + " for " + baseDam + " damage");
+				if (selfHeal > 0 && attacker.hp < attacker.maxHp) {
+					attacker.hp += selfHeal;
+					System.out.println("and absorbs " + selfHeal + " health");
+				}
 			}
 		} else {
 			System.out.println(attacker.name + "'s attack missed");
