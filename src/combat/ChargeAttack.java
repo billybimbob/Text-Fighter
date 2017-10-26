@@ -35,8 +35,8 @@ public class ChargeAttack extends Attacks{
 					baseDam *= 2;
 					System.out.print("Critical Hit! ");
 				}
-			
-				targets[0].hp -= baseDam;
+				
+				loseHp(targets[0], baseDam);
 				System.out.println(attacker.name + " lands a powerful hit on " + targets[0].name + " for " + baseDam + " damage");
 				
 				if (attackCheck(targets[0], 0.1)) {

@@ -39,7 +39,7 @@ public class Reflect extends Attacks {
 						}*/
 						double storeDam = baseDam;
 						targetReduct(targets[i]);
-						targets[i].hp -= baseDam;
+						loseHp(targets[i], baseDam);
 						damDealt = baseDam;
 						baseDam = storeDam;
 					}
