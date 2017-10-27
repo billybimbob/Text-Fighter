@@ -55,13 +55,13 @@ public class Interface {
 		kboard.close();
 	}
 	
-	public static int choiceInput (Scanner keyboard, boolean back, String[] list, String prompt) { //Returns user input from choices
+	public static int choiceInput (Scanner keyboard, boolean back, String[] options, String prompt) { //Returns user input from choices
 		int choice = 0;
 		System.out.println("-----------------------------------------------");
 		if (back) //option for "back"
 			System.out.println("0. Back");
-		for (int i = 0; i <= list.length-1; i++) { //Print out choices from an array
-			System.out.println(i+1 + ". " + list[i]);
+		for (int i = 0; i <= options.length-1; i++) { //Print out choices from an array
+			System.out.println(i+1 + ". " + options[i]);
 		}
 		System.out.println("-----------------------------------------------");
 		do {
@@ -70,7 +70,7 @@ public class Interface {
 				choice = Integer.parseInt(keyboard.nextLine());
 			} catch (Exception e) {} //might want to restructure somehow, right now, just preventing from crashing
 			
-			if ((choice <= list.length && choice > 0) || (back && choice == 0)) //Checks if input is valid
+			if ((choice <= options.length && choice > 0) || (back && choice == 0)) //Checks if input is valid
 				heroAction = true;
 			else
 				System.out.println("\nInvalid choice, please try again\n");
