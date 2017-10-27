@@ -234,11 +234,6 @@ public class Fight {
 					}
 				}
 				
-				/*if (attacker.stun) { //checks if fighter is stunned, if so, skips turn
-					System.out.println(attacker.name + " is stunned");
-					attacker.stun = false;
-					
-				}*/
 				if (!(skipTurn || attacker.aggro)) { //Monster attacks
 					int monMoveNum = monMoves[monCount]; //might be wrong attack since priority order different
 					monCount++;
@@ -309,7 +304,7 @@ public class Fight {
 						}
 					}
 				}
-				attacker.damTurn = 0; //resets the amount of damage taken
+				attacker.damTurn = 0; //resets the amount of damage taken for one turn
 				if (attacker.mp < attacker.maxMp)
 					attacker.mp += 1;
 				System.out.println("");
