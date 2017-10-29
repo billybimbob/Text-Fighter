@@ -2,6 +2,8 @@ package main;
 
 import assets.*;
 import combat.*;
+import combat.magic.*;
+import combat.melee.*;
 
 public class Index {
 

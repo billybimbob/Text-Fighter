@@ -1,5 +1,6 @@
-package assets;
+package combat.magic;
 
+import assets.Monsters;
 import combat.Attacks;
 import main.Fight;
 

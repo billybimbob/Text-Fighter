@@ -1,7 +1,6 @@
-package combat;
+package combat.magic;
 
-import assets.Monsters;
-import assets.ShapeShift;
+import assets.*;
 import main.Index;
 
 public class Polymorph extends ShapeShift { //doesn't account for if the moveLists are different length

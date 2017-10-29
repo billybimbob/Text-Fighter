@@ -1,4 +1,6 @@
-package combat;
+package combat.melee;
+
+import combat.Attacks;
 
 public class SpinAttack extends Attacks {
 	

@@ -1,6 +1,7 @@
-package combat;
+package combat.magic;
 
 import assets.Monsters;
+import combat.Attacks;
 
 public class MagicBlast extends Attacks {
 

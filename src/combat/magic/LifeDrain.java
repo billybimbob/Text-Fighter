@@ -1,6 +1,7 @@
-package combat;
+package combat.magic;
 
 import assets.Monsters;
+import combat.Attacks;
 
 public class LifeDrain extends Attacks {
 
@@ -10,7 +11,7 @@ public class LifeDrain extends Attacks {
 		attType = false;
 		targets = new Monsters[numTar];
 		manaCost = 3;
-		baseDamMod = 2;
+		baseDamMod = 1.4;
 	}
 
 	public void execute() {

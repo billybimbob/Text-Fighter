@@ -1,6 +1,7 @@
-package combat;
+package combat.melee;
 
 import assets.Monsters;
+import combat.Attacks;
 import main.Interface;
 
 public class ChargeAttack extends Attacks{

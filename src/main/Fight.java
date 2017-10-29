@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import assets.*;
 import combat.*;
+import combat.magic.*;
 
 public class Fight {
 	
