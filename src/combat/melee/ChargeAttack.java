@@ -6,7 +6,7 @@ import main.Interface;
 
 public class ChargeAttack extends Attacks{
 	
-	public int turnCount = 0;
+	private int turnCount = 0;
 	
 	public ChargeAttack () {
 		name = "Charged Strike";
@@ -32,6 +32,7 @@ public class ChargeAttack extends Attacks{
 			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 				
 				baseDamage();
+				targetReduct(targets[0]);
 				if (critCheck()) { //Checks for critical hit
 					baseDam *= 2;
 					System.out.print("Critical Hit! ");
@@ -42,7 +43,7 @@ public class ChargeAttack extends Attacks{
 				
 				if (attackCheck(targets[0], 0.1)) {
 					System.out.println(attacker.name + "'s charged attack stuns " + targets[0].name);
-					targets[0].setStatus(4, 1, 0);
+					targets[0].setStatus(4, true);
 				}
 			} else {
 				System.out.println(attacker.name + "'s attack missed");

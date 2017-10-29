@@ -5,7 +5,7 @@ import main.Interface;
 
 public class Reflect extends Attacks { //might change attack to be a buff instead of mult-turn attack
 
-	public int turnCount = 0;
+	private int turnCount = 0;
 	
 	public Reflect () {
 		name = "Reflect";

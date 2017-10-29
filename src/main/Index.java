@@ -1,8 +1,11 @@
 package main;
 
+import java.util.Scanner;
+
 import assets.*;
 import combat.*;
 import combat.magic.*;
+import combat.magic.shapeshift.*;
 import combat.melee.*;
 
 public class Index {
@@ -12,7 +15,7 @@ public class Index {
 	public static Monsters[] monsterList;
 	public static Monsters[] shiftMonList;
 	
-	public Index() {
+	public Index(Scanner keyboard) {
 		Potions hpPotion = new Potions("hp");  //0, Potion indices
 		Potions mpPotion = new Potions("mp");  //1
 		Potions atPotion = new Potions("att"); //2
@@ -34,7 +37,8 @@ public class Index {
 		Attacks polym = new Polymorph();
 		Attacks reflt = new Reflect();
 		Attacks sheep = new SheepAttacks();
-		Attacks[] attStore = {baseA, charg, disrt, spins, blast, drain, froze, polym, reflt, sheep};
+		Attacks shift = new ChangeForm(keyboard);
+		Attacks[] attStore = {baseA, charg, disrt, spins, blast, drain, froze, polym, reflt, sheep, shift};
 		attackList = attStore;
 		
 		// hp, mp, atk, def, magic, mres, speed, crit, special attack
@@ -42,7 +46,7 @@ public class Index {
 		Monsters mon2 = new Monsters("Spider", false, false, 10, 15, 6, 2, 3, 3, 4, 4, 5);
 		Monsters mon3 = new Monsters("Slime", false, true, 20, 10, 3, 5, 3, 3, 1, 1, 6);
 		Monsters mon4 = new Monsters("Eagle", true, true, 12, 15, 7, 1, 1, 2, 10, 5, 1); //temporary, should add shapeshifter constructor
-		Monsters mon5 = new Monsters("Pangolin", true, true, 30, 15, 1, 10, 10, 3, 5, 1);
+		Monsters mon5 = new Monsters("Pangolin", true, true, 30, 15, 1, 10, 1, 10, 3, 5, 1);
 		Monsters mon6 = new Monsters("Salamander", true, false, 25, 15, 1, 4, 5, 5, 5, 5, 1);
 		Monsters mon7 = new Monsters("Sheep", false, true, 5, 5,  0, 0, 0, 0, 0, 0, 9);
 		Monsters[] monStore = {mon1, mon2, mon3, mon4, mon5, mon6};

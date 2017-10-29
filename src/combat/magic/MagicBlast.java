@@ -30,7 +30,7 @@ public class MagicBlast extends Attacks {
 					
 					if (attackCheck(targets[0], 0.4)) {
 						System.out.println(attacker.name + "'s blast stuns " + targets[0].name);
-						targets[0].setStatus(4, 1, 0);
+						targets[0].setStatus(4, true);
 					}
 				}
 			} else {

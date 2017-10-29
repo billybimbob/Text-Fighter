@@ -6,7 +6,7 @@ import main.Index;
 public class Monsters { //Temporary, probably make abstract later
 
 	public String name;
-	public int level = 1, storeTurn = 0; //Temporary
+	public int level = 1, storeTurn = 0, minDam; //Temporary
 	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit, damTurn = 0;
 	public boolean aggro, multTurn, priority;
 	public int[][] status; //burn, poison, potion, shapeshift, stun; 1st row is turn when activated, 2nd row is duration
@@ -75,9 +75,31 @@ public class Monsters { //Temporary, probably make abstract later
 		}
 	}
 	
+	public void addAttack(Attacks adding) {
+		Attacks[] moveStore = new Attacks[moveList.length+1];
+		for (int i = 0; i <= moveList.length-1; i++) {
+			moveStore[i] = moveList[i];
+		}
+		moveStore[moveList.length] = adding;
+		moveList = null;
+		moveList = moveStore;
+		
+	}
+	
+	//set status effects
+	public void setMinDam() {
+		
+	}
 	public void setStatus(int index, int startTurn, int duration) {
 		status[index][0] = startTurn;
 		status[index][1] = duration;
+	}
+	public void setStatus(int index, boolean toggle) {
+		status[index][1] = 0;
+		if (toggle)
+			status[index][0] = 1;
+		else
+			status[index][0] = 0;
 	}
 	
 	//modifies stats based and restores health and mana

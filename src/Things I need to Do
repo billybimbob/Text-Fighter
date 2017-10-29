@@ -6,6 +6,10 @@ Mana regen? and cost
 Rogue class?
 	fast, weak, stealth
 	instakill, maybe an ultimate?
+Shifter class
+	add to interface
+	test out
+Add passives - in status of monsters
 an inventory item that can be used as a 1 turn consumable to deal damage. example: select a rock on the inventory to deal 8 dmg on one monster once
 Flesh out potion effects
 Maybe: add title to choice options?
@@ -24,6 +28,7 @@ Add stun mechanic- reset stuns at the end of the turn
 Account for max inventory??
 Hp cost abilities- recoil
 	priority attack
+Reflect
 Bug: monster seems to reset attack move possibly after another monster's turn is skipped from being stunned
 
 Done
@@ -31,5 +36,4 @@ Assess the UI. Right now the ui is built so that the hero always goes first. Mak
 Bug: Used crit potions, then crit potion after gave 0 crit, check this for all potions
 Buffs override other buffs instead of waiting for the duration of one buff to expire
 Add "back" option in choices
-Reflect
 figure out how to have an attack be multiple turns

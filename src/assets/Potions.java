@@ -76,9 +76,9 @@ public class Potions extends Items {
 		turnStart = Fight.turnCount;
 		Inventory.removeItems(this);
 		if (!(statMod.equals("hp") || statMod.equals("mp")))
-			System.out.println("You have used " + this.name + " and have gained " + modVal + " " + statMod);
+			System.out.println(user.name + " has used " + this.name + " and gained " + modVal + " " + statMod);
 		else
-			System.out.println("You have used " + this.name + " and have gained " + modVal*2 + " " + statMod +" and will gain " + this.statMod + " over time");
+			System.out.println(user.name + " has used " + this.name + " and gained " + modVal*2 + " " + statMod +" \nand will also gain " + statMod + " over time");
 	}
 	public static void buffCheck (Monsters user, Items used) { //Checks if buff wears off/ updates healing over time
 		if (Potions.timeLength <= Math.abs(Fight.turnCount-Potions.turnStart)) {
@@ -103,7 +103,7 @@ public class Potions extends Items {
 				break;
 			}
 			System.out.println(used.name + " has worn off");
-			user.setStatus(2, 0, 0);
+			user.setStatus(2, false);
 		} else if (used.statMod.equals("hp") || used.statMod.equals("mp")){ //Gain over time, could be better, scattered between here and useItem method
 			switch (used.statMod) {
 				case "hp":

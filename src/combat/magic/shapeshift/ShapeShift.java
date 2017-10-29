@@ -1,10 +1,10 @@
-package combat.magic;
+package combat.magic.shapeshift;
 
 import assets.Monsters;
 import combat.Attacks;
 import main.Fight;
 
-public abstract class ShapeShift extends Attacks {
+public abstract class ShapeShift extends Attacks { //abstract so doesn't have to implement execute
 
 	private int turnLength;
 	
@@ -47,7 +47,7 @@ public abstract class ShapeShift extends Attacks {
 		target.magR = target.storedShifter.magR;
 		target.spe = target.storedShifter.spe;
 		target.crit = target.storedShifter.crit;
-		target.status = new int[5][2];
+		target.status = new int[5][2]; //resets statuses
 		target.moveList = target.storedShifter.moveList;
 		target.hp*=hpRatio;
 		target.storedShifter = null;

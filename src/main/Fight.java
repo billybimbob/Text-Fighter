@@ -4,11 +4,11 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import assets.*;
 import combat.*;
-import combat.magic.*;
+import combat.magic.shapeshift.*;
 
 public class Fight {
 	
-	private static final String[] fightChoices = {"Attack", "Dodge", "Inventory"};
+	private static final String[] fightChoices = {"Fight", "Dodge", "Inventory"};
 	public static int turnCount;
 
 	public static void fighting (Scanner keyboard, ArrayList<Monsters> fighters) throws InterruptedException {
@@ -47,6 +47,11 @@ public class Fight {
 			
 			//Hero user input/determine hero actions
 			while (!Interface.heroAction){
+				
+				Interface.hero.moveListNames = new String[Interface.hero.moveList.length]; //updates the moveListNames of hero
+				for (int i = 0; i <= Interface.hero.moveListNames.length-1; i++)
+					Interface.hero.moveListNames[i] = Interface.hero.moveList[i].getName() + " - " + (int)Interface.hero.moveList[i].getCost() + " mana";
+				
 				String fightPrompt = "Which action would you like to do?";
 				choice = Interface.choiceInput(keyboard, false, fightChoices, fightPrompt);
 				selection:
@@ -64,7 +69,9 @@ public class Fight {
 							heroTargets.clear();
 							
 							//determine the targets of hero move
-							if (turnMove.getAoe()) {//attacks all monsters, might change later
+							if (turnMove.getSelfTar()){
+								Interface.heroAction = true; //temporary, want to select transformation here
+							} else if (turnMove.getAoe()) {//attacks all monsters, might change later
 								turnMove.setNumTar(monFighters.size());
 								//turnMove.targets = new Monsters[turnMove.numTar];
 								for (int i = 0; i <= monFighters.size()-1; i++)
@@ -209,7 +216,7 @@ public class Fight {
 								attacker.hp -= burnDam;
 								System.out.println(attacker.name + " is burned, and takes " + burnDam + " damage");
 								if (turnCount-statTurn == duration)
-									attacker.setStatus(j, 0, 0);
+									attacker.setStatus(j, false);
 							}
 							break;
 						case 1: //poison status
@@ -234,7 +241,7 @@ public class Fight {
 							if (statTurn != 0) { //triggered by chargeatt, magblast, disrupt
 								System.out.println(attacker.name + " is stunned");
 								skipTurn = true;
-								attacker.setStatus(j, 0, 0);
+								attacker.setStatus(j, false);
 							}
 							break;
 					}
@@ -264,19 +271,16 @@ public class Fight {
 						attacker.spe -= 7;
 					switch (choice) {
 						case 1: //attacks inputed target
-							//double[] startHp = new double[heroTargets.size()];
-							for (int j = 0; j <= turnMove.getTargets().length-1; j++) {
-								if (j < heroTargets.size()) {
-									turnMove.setTarget(heroTargets.get(j));
-									//startHp[j] = heroTargets.get(j).hp;
-								} else
-									turnMove.setTarget(null);
+							if (!turnMove.getSelfTar()) {
+								for (int j = 0; j <= turnMove.getTargets().length-1; j++) {
+									if (j < heroTargets.size()) {
+										turnMove.setTarget(heroTargets.get(j));
+										//startHp[j] = heroTargets.get(j).hp;
+									} else
+										turnMove.setTarget(null);
+								}
 							}
 							turnMove.execute();
-							/*for (int j = 0; j < startHp.length; j++) {
-								heroTargets.get(j).damTurn += (startHp[j] - turnMove.baseDam); //doing the last damage of spin attack, need to change
-							}
-							attacker.damTurn = 0; //resets the amount of damage taken*/
 							break;
 						case 2: //Try to flee
 							//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
@@ -295,7 +299,7 @@ public class Fight {
 								inventIndex += Inventory.inventoryList[inventIndex].numAmount;
 							
 							pick = Inventory.inventoryList[inventIndex];
-							attacker.setStatus(2, 1, 0);
+							attacker.setStatus(2, true);
 							pick.useItem(attacker);
 					}
 					for (int j = 0; j <= monFighters.size()-1; j++) { //check if any monster died, immediately after hero's turn
@@ -310,7 +314,7 @@ public class Fight {
 						}
 					}
 				}
-				attacker.damTurn = 0; //resets the amount of damage taken for one turn
+				attacker.damTurn = 0; //resets the amount of damage taken in one turn
 				if (attacker.mp < attacker.maxMp)
 					attacker.mp += 1;
 				System.out.println("");

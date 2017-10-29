@@ -8,7 +8,7 @@ public abstract class Attacks implements Cloneable {
 	protected Monsters attacker;
 	//public double baseDam; //temporary
 	protected double manaCost, baseDam;
-	protected boolean attType, aoe = false, priority = false; //aoe attacks can't work with monsters
+	protected boolean attType, aoe = false, priority = false, selfTar = false; //aoe attacks can't work with monsters
 	protected Monsters[] targets; //might make it an array
 	protected int numTar = 1, tarCount = 0; //number of targets default set to 1
 	protected double baseDamMod = 1;
@@ -28,6 +28,9 @@ public abstract class Attacks implements Cloneable {
 	}
 	public boolean getPriority() {
 		return priority;
+	}
+	public boolean getSelfTar() {
+		return selfTar;
 	}
 	public Monsters[] getTargets() {
 		return targets;
@@ -80,8 +83,8 @@ public abstract class Attacks implements Cloneable {
 		else
 			baseDam -= (int)(Math.random()*(target.magR*.65));
 		
-		if (baseDam < 0)
-			baseDam = 1;
+		if (baseDam < target.minDam)
+			baseDam = target.minDam;
 	}
 	public void loseHp (Monsters target, double damage) {
 		target.hp -= damage;

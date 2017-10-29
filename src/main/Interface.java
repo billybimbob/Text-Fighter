@@ -10,10 +10,10 @@ public class Interface {
 	public static Hero hero;
 	
 	public static void main(String[] args) throws InterruptedException { //All this is probably temporary
-		
-		Index stuff = new Index();
-		stuff.use(); //dummy method to get rid of yellow line
 		Scanner kboard = new Scanner(System.in);
+		Index stuff = new Index(kboard);
+		stuff.use(); //dummy method to get rid of yellow line
+		
 		ArrayList<Monsters> fighters = new ArrayList<>();
 		System.out.println("Welcome hero!");
 		System.out.print("Step forth and state your name: ");

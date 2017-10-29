@@ -1,4 +1,4 @@
-package combat.magic;
+package combat.magic.shapeshift;
 
 import assets.*;
 import main.Index;
