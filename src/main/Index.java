@@ -8,6 +8,7 @@ public class Index {
 	public static Attacks[] attackList;
 	public static Potions[] potionsList;
 	public static Monsters[] monsterList;
+	public static Monsters[] shiftMonList;
 	
 	public Index() {
 		Potions hpPotion = new Potions("hp");  //0, Potion indices
@@ -28,16 +29,23 @@ public class Index {
 		Attacks blast = new MagicBlast();   //start of magic abilites, 4
 		Attacks drain = new LifeDrain();
 		Attacks froze = new Freeze();
+		Attacks polym = new Polymorph();
 		Attacks reflt = new Reflect();
-		Attacks[] attStore = {baseA, charg, disrt, spins, blast, drain, froze, reflt};
+		Attacks[] attStore = {baseA, charg, disrt, spins, blast, drain, froze, polym, reflt};
 		attackList = attStore;
 		
-		// lvl ,hp, mp, atk, def, magic, mres, speed, crit, special attack
+		// hp, mp, atk, def, magic, mres, speed, crit, special attack
 		Monsters mon1 = new Monsters("Bandit", false, true, 15, 15, 3, 3, 3, 3, 6, 6, 1);
 		Monsters mon2 = new Monsters("Spider", false, false, 10, 15, 6, 2, 3, 3, 4, 4, 5);
 		Monsters mon3 = new Monsters("Slime", false, true, 20, 10, 3, 5, 3, 3, 1, 1, 6);
-		Monsters[] monStore = {mon1, mon2, mon3};
+		Monsters mon4 = new Monsters("Eagle", true, true, 12, 15, 7, 1, 1, 2, 10, 5, 1); //temporary, should add shapeshifter constructor
+		Monsters mon5 = new Monsters("Pangolin", true, true, 30, 15, 1, 10, 10, 3, 5, 1);
+		Monsters mon6 = new Monsters("Salamander", true, false, 25, 15, 1, 4, 5, 5, 5, 5, 1);
+		Monsters mon7 = new Monsters("Sheep", false, true, 5, 5, 1, 1, 1, 1, 1, 1, 1);
+		Monsters[] monStore = {mon1, mon2, mon3, mon4, mon5, mon6};
+		Monsters[] shapeStore = {mon4, mon5, mon6, mon7};
 		monsterList = monStore;
+		shiftMonList =shapeStore;
 	}
 	public void use () { //dummy method
 		

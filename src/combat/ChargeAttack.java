@@ -41,7 +41,7 @@ public class ChargeAttack extends Attacks{
 				
 				if (attackCheck(targets[0], 0.1)) {
 					System.out.println(attacker.name + "'s charged attack stuns " + targets[0].name);
-					targets[0].status[3] = 1;
+					targets[0].status[4] = 1;
 				}
 			} else {
 				System.out.println(attacker.name + "'s attack missed");

@@ -47,7 +47,7 @@ public class Interface {
 		for (int i = 0; i <= player1.moveList.length-1; i++)
 			player1.moveListNames[i] = player1.moveList[i].getName() + " - " + (int)player1.moveList[i].getCost() + " mana";
 
-		for (int i = 0; i <= Index.monsterList.length-1; i++) {
+		for (int i = 0; i <= 2; i++) {
 			fighters.add(new Monsters(Index.monsterList[i]));
 		}
 		Fight.fighting(kboard, fighters);

@@ -10,7 +10,7 @@ public class LifeDrain extends Attacks {
 		attType = false;
 		targets = new Monsters[numTar];
 		manaCost = 3;
-		baseDamMod = 1.2;
+		baseDamMod = 2;
 	}
 
 	public void execute() {

@@ -29,7 +29,7 @@ public class Disrupt extends Attacks {
 					System.out.println(" for " + baseDam + " damage");
 					if (attackCheck(targets[0], 0.4)) {
 						System.out.println(attacker.name + "'s blow also stuns " + targets[0].name);
-						targets[0].status[3] = 1;
+						targets[0].status[4] = 1;
 					}
 				}
 				double selfDam = (int)(baseDam*.5);

@@ -59,6 +59,7 @@ public class Fight {
 							if (turnMove.getPriority()) //check if attack is priority
 								Interface.hero.priority = true;
 							heroTargets.clear();
+							
 							//determine the targets of hero move
 							if (turnMove.getAoe()) {//attacks all monsters, might change later
 								turnMove.setNumTar(monFighters.size());
@@ -220,12 +221,16 @@ public class Fight {
 							}
 							break;
 						case 2: //potion status
-							if (statTurn != 0) {
+							if (statTurn != 0) { //triggered only by player
 								Potions.buffCheck (attacker, pick);
 							}
 							break;
-						case 3: //stun status
-							if (statTurn != 0) {
+						case 3: //shapeshift
+							if (turnCount-attacker.status[3] == 5)
+								ShapeShift.revert(attacker);
+							break;
+						case 4: //stun status
+							if (statTurn != 0) { //triggered by chargeatt, magblast, disrupt
 								System.out.println(attacker.name + " is stunned");
 								skipTurn = true;
 								attacker.status[j] = 0;

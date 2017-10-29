@@ -2,7 +2,7 @@ package combat;
 
 import main.Interface;
 
-public class Reflect extends Attacks {
+public class Reflect extends Attacks { //might change attack to be a buff instead of mult-turn attack
 
 	public int turnCount = 0;
 	
@@ -18,7 +18,7 @@ public class Reflect extends Attacks {
 		if (attacker.mp >= manaCost && turnCount == 0) { //Checks if sufficient mana
 			attacker.mp -= manaCost;
 			System.out.println(attacker.name + " casts a reflecting shield for " + manaCost + " mana");
-			attacker.def -= 3;
+			attacker.def -= 5;
 			turnCount++;
 			if (attacker.aggro)
 				Interface.heroAction = true;
@@ -26,7 +26,7 @@ public class Reflect extends Attacks {
 				attacker.multTurn = true;
 		} else if (turnCount == 1) { //Checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
-			baseDam = attacker.damTurn;
+			baseDam = attacker.damTurn*2;
 			System.out.println(attacker.name + " channels damage received, and blasts ");
 			for (int i = 0; i <= targets.length-1; i++) { //Checks if hits for each monster
 				try {
@@ -49,7 +49,7 @@ public class Reflect extends Attacks {
 						System.out.println(targets[i].name + " for " + damDealt + " damage");
 				} catch (Exception e) {System.out.print(e);}
 			}
-			attacker.def += 3; //might later set to a variable
+			attacker.def += 5; //might later set to a variable
 			turnCount = 0;
 			if (attacker.aggro)
 				Interface.heroAction = false;
