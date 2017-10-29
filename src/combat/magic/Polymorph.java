@@ -17,7 +17,7 @@ public class Polymorph extends ShapeShift { //doesn't account for if the moveLis
 			attacker.mp -= manaCost;
 			if (attackCheck(targets[0], 0.05)) { //Check if attack will be successful
 				System.out.println(attacker.name + " has transformed " + targets[0].name + " into a sheep");
-				transform(targets[0], Index.shiftMonList[3]);
+				transform(targets[0], Index.shiftMonList[3], 3); //last 3 turns
 			} else {
 				System.out.println(attacker.name + " 's spell failed");
 			}

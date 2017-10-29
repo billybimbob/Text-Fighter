@@ -12,7 +12,7 @@ public abstract class ShapeShift extends Attacks {
 		return turnLength;
 	}
 	
-	public void transform (Monsters target, Monsters shiftedMon) { //might want to find a way to use Monster constructor to change values 
+	public void transform (Monsters target, Monsters shiftedMon, int duration) { //might want to find a way to use Monster constructor to change values 
 		Monsters store = new Monsters(target); //stores original attacker
 		//target = new Monsters(shiftedMon);
 		target.name = shiftedMon.name;
@@ -25,14 +25,14 @@ public abstract class ShapeShift extends Attacks {
 		target.magR = shiftedMon.magR;
 		target.spe = shiftedMon.spe;
 		target.crit = shiftedMon.crit;
-		target.status = new int[5];
+		target.status = new int[5][2];
 		target.moveList = shiftedMon.moveList; 
 		for (int i = 0; i <= target.moveList.length-1; i++) {
 			target.moveList[i].setAttacker(target);
 		}
 		target.storedShifter = store;
 		target.hp*=(target.storedShifter.maxHp/target.storedShifter.hp);
-		target.status[3] = Fight.turnCount;
+		target.setStatus(3, Fight.turnCount, duration);
 	}
 	public static void revert (Monsters target) { //look at comment on transform method
 		double hpRatio = target.hp/target.maxHp;
@@ -47,7 +47,8 @@ public abstract class ShapeShift extends Attacks {
 		target.magR = target.storedShifter.magR;
 		target.spe = target.storedShifter.spe;
 		target.crit = target.storedShifter.crit;
-		target.status = new int[5];
+		target.status = new int[5][2];
+		target.moveList = target.storedShifter.moveList;
 		target.hp*=hpRatio;
 		target.storedShifter = null;
 	}

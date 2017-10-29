@@ -101,7 +101,7 @@ public class Fight {
 							pickNum = Interface.choiceInput(keyboard, true, inventNames, itemPrompt);
 							if (pickNum == 0)
 								break selection;
-							else if (Interface.hero.status[2]!=0 && Potions.timeLength >= (turnCount-Potions.turnStart)) { //will trigger debuff
+							else if (Interface.hero.status[2][0]!=0 && Potions.timeLength >= (turnCount-Potions.turnStart)) { //will trigger debuff
 								String usePrompt = "Another buff is still active, and will be canceled by this potion\nAre you sure you want to do this?";
 								int confirmUse = Interface.choiceInput(keyboard, false, Interface.responseOptions, usePrompt);
 								if (confirmUse == 1)
@@ -116,7 +116,7 @@ public class Fight {
 			//decides the turns of the monsters
 			int[] monMoves = new int[monFighters.size()];
 			for (int i = 0; i <= monFighters.size()-1; i++) {
-				if (!(monFighters.get(i).multTurn || monFighters.get(i).status[3] != 0)) { //change later
+				if (!(monFighters.get(i).multTurn || monFighters.get(i).status[3][0] != 0)) { //change later
 					monMoves[i] = (int)(Math.random()*monFighters.get(i).moveList.length);
 					//System.out.println(monMoves[i]);
 					if (monFighters.get(i).moveList[monMoves[i]].getPriority())
@@ -201,15 +201,15 @@ public class Fight {
 				
 				//status effect check of each monster
 				for (int j = 0; j <= attacker.status.length-1; j++) {
-					int statTurn = attacker.status[j];
+					int statTurn = attacker.status[j][0], duration = attacker.status[j][1];
 					switch(j) {
 						case 0: //burn status
 							if (statTurn != 0) {
 								int burnDam = (int)(attacker.hp*0.1);
 								attacker.hp -= burnDam;
 								System.out.println(attacker.name + " is burned, and takes " + burnDam + " damage");
-								if (turnCount-statTurn == 5)
-									attacker.status[j] = 0;
+								if (turnCount-statTurn == duration)
+									attacker.setStatus(j, 0, 0);
 							}
 							break;
 						case 1: //poison status
@@ -225,7 +225,7 @@ public class Fight {
 							}
 							break;
 						case 3: //shapeshift
-							if (statTurn != 0 && turnCount-statTurn >= 5) {
+							if (statTurn != 0 && turnCount-statTurn >= duration) { //want to set length to a variable
 								ShapeShift.revert(attacker);
 								System.out.println(attacker.name + " reverted back");
 							}
@@ -234,7 +234,7 @@ public class Fight {
 							if (statTurn != 0) { //triggered by chargeatt, magblast, disrupt
 								System.out.println(attacker.name + " is stunned");
 								skipTurn = true;
-								attacker.status[j] = 0;
+								attacker.setStatus(j, 0, 0);
 							}
 							break;
 					}
@@ -245,11 +245,11 @@ public class Fight {
 					monCount++;
 					Attacks monMove = null;
 					if (attacker.multTurn) {
-						monMove = attacker.moveList[attacker.store]; //does previous turn move
-						attacker.store = 0;
+						monMove = attacker.moveList[attacker.storeTurn]; //does previous turn move
+						attacker.storeTurn = 0;
 					} else {
 						monMove = attacker.moveList[monMoveNum];
-						attacker.store = monMoveNum;
+						attacker.storeTurn = monMoveNum;
 						monMove.setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
 					}
 					
@@ -295,7 +295,7 @@ public class Fight {
 								inventIndex += Inventory.inventoryList[inventIndex].numAmount;
 							
 							pick = Inventory.inventoryList[inventIndex];
-							attacker.status[2] = 1;
+							attacker.setStatus(2, 1, 0);
 							pick.useItem(attacker);
 					}
 					for (int j = 0; j <= monFighters.size()-1; j++) { //check if any monster died, immediately after hero's turn

@@ -44,11 +44,11 @@ public class Index {
 		Monsters mon4 = new Monsters("Eagle", true, true, 12, 15, 7, 1, 1, 2, 10, 5, 1); //temporary, should add shapeshifter constructor
 		Monsters mon5 = new Monsters("Pangolin", true, true, 30, 15, 1, 10, 10, 3, 5, 1);
 		Monsters mon6 = new Monsters("Salamander", true, false, 25, 15, 1, 4, 5, 5, 5, 5, 1);
-		Monsters mon7 = new Monsters("Sheep", false, true, 5, 5, 1, 1, 1, 1, 1, 1, 9);
+		Monsters mon7 = new Monsters("Sheep", false, true, 5, 5,  0, 0, 0, 0, 0, 0, 9);
 		Monsters[] monStore = {mon1, mon2, mon3, mon4, mon5, mon6};
 		Monsters[] shapeStore = {mon4, mon5, mon6, mon7};
 		monsterList = monStore;
-		shiftMonList =shapeStore;
+		shiftMonList = shapeStore;
 	}
 	public void use () { //dummy method
 		
