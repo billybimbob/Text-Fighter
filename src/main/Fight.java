@@ -132,38 +132,34 @@ public class Fight {
 				if (priorAttacker.aggro) {
 					pastHero = true;
 				}
-				if (priorAttacker.priority && i != 0) {
+				if (priorAttacker.priority && i != 0) { //if priority and first, no need to move
 					if (fighters.get(i-1).priority) {
 						//priorCount++;
-						//System.out.println("Got here");
 						break;
 					}
 					Monsters temp = null, temp2;
-					int swapCount, pastPriorMon = 0;
-					for (swapCount = 0; swapCount <= fighters.size()-1; swapCount++) {
-						//System.out.println("yes" + priorAttacker.name+priorAttacker.spe);
+					int swapCount, pastPriorMon = 0; //swapCount is location of where to swap, pastPriorMon is the number of priority monsters past
+					for (swapCount = 0; swapCount <= fighters.size()-1; swapCount++) { //finds where to switch, as highest speed priority is 1st
 						Monsters priorCheck = fighters.get(swapCount);
 						//System.out.println(priorCheck.name+priorCheck.spe);
 						if (!priorCheck.priority || (priorCheck.priority && (priorCheck.spe < priorAttacker.spe))) {
-							if (priorCheck.priority && !priorCheck.aggro) {
-								System.out.println("mehe");
+							
+							if (priorCheck.priority && !priorCheck.aggro) { //swaps the monster attack in move list associated with priority shifts
+								//System.out.println("mehe");
 								pastPriorMon++;
 							}
 							temp = priorCheck;
-							//System.out.println("Got hered");
 							fighters.set(swapCount, priorAttacker);
-							if (!priorAttacker.aggro) { //always true currently
-								int swapAtt = i;
-								//System.out.println(swapAtt + " " + swapAtt2);
+							if (!priorAttacker.aggro) {
+								int swapAttr = i, stoMove = monMoves[pastPriorMon], stoMove2;
 								if (pastHero) {
 									//System.out.println("bleh");
-									swapAtt -= 1;
+									swapAttr -= 1;
 								}
 								//System.out.println(swapAtt + " " + swapAtt2);
-								int stoMove = monMoves[pastPriorMon], stoMove2;
-								monMoves[pastPriorMon] = monMoves[swapAtt];
+								monMoves[pastPriorMon] = monMoves[swapAttr];
 								
-								for (int j = pastPriorMon+1; j <= swapAtt; j++) {
+								for (int j = pastPriorMon+1; j <= swapAttr; j++) {
 									stoMove2 = monMoves[j];
 									//System.out.println("looping"+j+" "+stoMove+" "+stoMove2);
 									monMoves[j] = stoMove;
@@ -173,7 +169,7 @@ public class Fight {
 							break;
 						}
 					}
-					for (int j = swapCount+1; j <= fighters.size()-1; j++) {
+					for (int j = swapCount+1; j <= fighters.size()-1; j++) { //switches priority and scoots down rest behind
 						temp2 = fighters.get(j);
 						//System.out.println(temp2.name);
 						fighters.set(j, temp);
