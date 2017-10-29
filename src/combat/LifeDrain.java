@@ -14,24 +14,28 @@ public class LifeDrain extends Attacks {
 	}
 
 	public void execute() {
-		if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
+		if (attacker.mp >= manaCost) {
 			attacker.mp -= manaCost;
-			baseDamage();
-			targetReduct(targets[0]);
-			double selfHeal = (int)(baseDam*0.5);
-			if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				System.out.println(attacker.name + "'s drain was resisted by " + targets[0].name);
-			} else {
-				loseHp(targets[0], baseDam);
-				System.out.println(attacker.name + " drains " + targets[0].name + " for " + baseDam + " damage");
-				if (selfHeal > 0 && attacker.hp < attacker.maxHp) {
-					attacker.hp += selfHeal;
-					System.out.println("and absorbs " + selfHeal + " health");
+			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
+				attacker.mp -= manaCost;
+				baseDamage();
+				targetReduct(targets[0]);
+				double selfHeal = (int)(baseDam*0.5);
+				if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+					System.out.println(attacker.name + "'s drain was resisted by " + targets[0].name);
+				} else {
+					loseHp(targets[0], baseDam);
+					System.out.println(attacker.name + " drains " + targets[0].name + " for " + baseDam + " damage");
+					if (selfHeal > 0 && attacker.hp < attacker.maxHp) {
+						attacker.hp += selfHeal;
+						System.out.println("and absorbs " + selfHeal + " health");
+					}
 				}
+			} else {
+				System.out.println(attacker.name + "'s attack missed");
 			}
 		} else {
-			System.out.println(attacker.name + "'s attack missed");
+			System.out.println(attacker.name + " tries to use " + name + ", but has insufficient mana");
 		}
-
 	}
 }

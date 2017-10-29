@@ -15,7 +15,6 @@ public class MagicBlast extends Attacks {
 	
 	public void execute() {
 		if (attacker.mp >= manaCost) {
-			//Attack based on RNG and modified by stats, need to consider magic attack
 			attacker.mp -= manaCost;
 			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 				

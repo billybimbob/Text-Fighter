@@ -26,6 +26,8 @@ public class Fight {
 			String[] monFightersName;
 			ArrayList<Monsters> monFighters = new ArrayList<>();
 			
+			turnCount++; //turn counter
+			
 			attackOrder(fighters); //Orders the fighters by speed
 			System.out.println("-----------------------------------------------");
 			for (int i = 0; i <= fighters.size()-1; i++) { //Determine which is the hero, may change later, also prints each fighter and stats
@@ -226,8 +228,10 @@ public class Fight {
 							}
 							break;
 						case 3: //shapeshift
-							if (turnCount-attacker.status[3] == 5)
+							if (statTurn != 0 && turnCount-statTurn >= 5) {
 								ShapeShift.revert(attacker);
+								System.out.println(attacker.name + " reverted back");
+							}
 							break;
 						case 4: //stun status
 							if (statTurn != 0) { //triggered by chargeatt, magblast, disrupt
@@ -315,7 +319,6 @@ public class Fight {
 				System.out.println("");
 				TimeUnit.SECONDS.sleep(2);
 			}
-			turnCount++; //turn counter
 			
 			if (target.hp <= 0) { //Check if hero hp is zero
 				System.out.println("You have received a fatal blow, and have died");
