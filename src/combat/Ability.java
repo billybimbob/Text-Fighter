@@ -63,10 +63,10 @@ public abstract class Ability implements Cloneable {
 	public boolean attackCheck (Monsters target, double checkMod) { //an attack damage check based on either the att or mag stat
 		double checkNum;
 		if (attType) {
-			checkNum = Math.random()*attacker.att - Math.random()*targets[0].spe*.4;
+			checkNum = Math.random()*attacker.att - Math.random()*targets[0].spe*.5;
 			return checkNum > target.def*checkMod;
 		} else {
-			checkNum = Math.random()*attacker.mag - Math.random()*targets[0].spe*.4;
+			checkNum = Math.random()*attacker.mag - Math.random()*targets[0].spe*.5;
 			return checkNum > target.magR*checkMod;
 		}
 	}

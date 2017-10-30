@@ -45,9 +45,9 @@ public class Index {
 		Monsters mon1 = new Monsters("Bandit", false, true, 15, 15, 3, 3, 3, 3, 6, 6, 1);
 		Monsters mon2 = new Monsters("Spider", false, false, 10, 15, 6, 2, 3, 3, 4, 4, 5);
 		Monsters mon3 = new Monsters("Slime", false, true, 20, 10, 3, 5, 3, 3, 1, 1, 6);
-		Monsters mon4 = new Monsters("Eagle", true, true, 15, 15, 8, 2, 2, 2, 10, 5, 2); //temporary, should add shapeshifter constructor
+		Monsters mon4 = new Monsters("Eagle", true, true, 15, 15, 8, 2, 2, 2, 18, 5, 2); //temporary, should add shapeshifter constructor
 		Monsters mon5 = new Monsters("Pangolin", true, true, 30, 15, 2, 10, 1, 10, 3, 5, 1);
-		Monsters mon6 = new Monsters("Salamander", true, false, 25, 15, 1, 5, 5, 6, 5, 5, 6);
+		Monsters mon6 = new Monsters("Salamander", true, false, 25, 15, 1, 5, 5, 6, 5, 5, 5);
 		Monsters mon7 = new Monsters("Sheep", false, true, 5, 5, 1, 1, 1, 1, 1, 1, 9);
 		Monsters[] monStore = {mon1, mon2, mon3, mon4, mon5, mon6};
 		Monsters[] shapeStore = {mon4, mon5, mon6, mon7};
