@@ -11,6 +11,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public boolean aggro, multTurn, priority;
 	public int[][] status; //burn, passive, poison, potion, shapeshift, stun; 1st row is turn when activated, 2nd row is duration
 	public Ability[] moveList;
+	public Ability passive;
 	public boolean attType; //true means physical attack
 	public Monsters storedShifter;
 	public final static double levMult = 2.5;
@@ -84,18 +85,13 @@ public class Monsters { //Temporary, probably make abstract later
 		moveList = null;
 		moveList = moveStore;
 	}
-	
-	//set status effects
-	public void setMinDam() {
-		
-	}
 	public static int getStatNum(String stat) {
 		int statNum = -1;
 		switch(stat) {
-			case "burn":
+			case "passive":
 				statNum = 0;
 				break;
-			case "passive":
+			case "burn":
 				statNum = 1;
 				break;
 			case "poison":
@@ -111,8 +107,16 @@ public class Monsters { //Temporary, probably make abstract later
 				statNum = 5;
 				break;
 		}
-		return statNum;
+		return statNum;	
+	}
+	
+	//set status effects
+	public void setMinDam() {
 		
+	}
+	public void setPassive(Ability passive) {
+		this.passive = passive;
+		setStatus("passive", true);
 	}
 	public void setStatus(String stat, int startTurn, int duration) {
 		int index = getStatNum(stat);

@@ -210,7 +210,12 @@ public class Fight {
 				for (int j = 0; j <= attacker.status.length-1; j++) {
 					int statTurn = attacker.status[j][0], duration = attacker.status[j][1];
 					switch(j) {
-						case 0: //burn status
+						case 0: //passive ability, should always go first
+							if (statTurn != 0) {
+								attacker.passive.execute();
+							}
+							break;
+						case 1: //burn status
 							if (statTurn != 0) {
 								int burnDam = (int)(attacker.hp*0.1);
 								attacker.hp -= burnDam;
@@ -219,25 +224,25 @@ public class Fight {
 									attacker.setStatus("burn", false);
 							}
 							break;
-						case 1: //poison status
+						case 2: //poison status
 							if (statTurn != 0) {
 								int poiDam = (int)(attacker.hp*0.01*((turnCount-statTurn)%10));
 								attacker.hp -= poiDam;
 								System.out.println(attacker.name + " is burned, and takes " + poiDam + " damage");
 							}
 							break;
-						case 2: //potion status
+						case 3: //potion status
 							if (statTurn != 0) { //triggered only by player
 								Potions.buffCheck (attacker, pick);
 							}
 							break;
-						case 3: //shapeshift
+						case 4: //shapeshift
 							if (statTurn != 0 && turnCount-statTurn >= duration) { //triggered by shapeshift
 								ShapeShift.revert(attacker);
 								System.out.println(attacker.name + " reverted back");
 							}
 							break;
-						case 4: //stun status
+						case 5: //stun status
 							if (statTurn != 0) { //triggered by chargeatt, magblast, disrupt
 								System.out.println(attacker.name + " is stunned");
 								skipTurn = true;
