@@ -21,7 +21,7 @@ public class ChangeForm extends ShapeShift {
 	
 	public void execute() {
 		//this.shifter = (Hero)attacker;
-		if (formList == null) { //temporary, can put in constructor because null pointer
+		if (formList == null) { //temporary, can't put in constructor because null pointer
 			Monsters[] formListStore = {Index.shiftMonList[0], Index.shiftMonList[1], Index.shiftMonList[2]};
 			formList = formListStore;
 		}

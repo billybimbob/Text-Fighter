@@ -10,6 +10,8 @@ public class Fight {
 	
 	private static final String[] fightChoices = {"Fight", "Dodge", "Inventory"};
 	public static int turnCount;
+	private static boolean skipTurn;
+	private static Items pick; //temporary
 
 	public static void fighting (Scanner keyboard, ArrayList<Monsters> fighters) throws InterruptedException {
 		System.out.println("Press enter when you are ready to fight");
@@ -18,7 +20,7 @@ public class Fight {
 		Monsters target = null;
 		boolean fightControl = true, flee = false;
 		turnCount = 0;
-		Items pick = null;
+		pick = null;
 		int choice = 2, pickNum = 0;
 		Ability turnMove = null;
 		ArrayList<Monsters> heroTargets = new ArrayList<>(); //need to clear later
@@ -199,7 +201,6 @@ public class Fight {
 			
 			//Goes through the move of each fighter, if attacking, target set here
 			int monCount = 0;
-			boolean skipTurn;
 			for (int i = 0; i <= fighters.size()-1; i++) {
 				Monsters attacker = fighters.get(i);
 				skipTurn = false;
@@ -207,50 +208,13 @@ public class Fight {
 					break;
 				
 				//status effect check of each monster
-				for (int j = 0; j <= attacker.status.length-1; j++) {
+				/*for (int j = 0; j <= attacker.status.length-1; j++) {
 					int statTurn = attacker.status[j][0], duration = attacker.status[j][1];
-					switch(j) {
-						case 0: //passive ability, should always go first
-							if (statTurn != 0) {
-								attacker.passive.execute();
-							}
-							break;
-						case 1: //burn status
-							if (statTurn != 0) {
-								int burnDam = (int)(attacker.hp*0.1);
-								attacker.hp -= burnDam;
-								System.out.println(attacker.name + " is burned, and takes " + burnDam + " damage");
-								if (turnCount-statTurn == duration)
-									attacker.setStatus("burn", false);
-							}
-							break;
-						case 2: //poison status
-							if (statTurn != 0) {
-								int poiDam = (int)(attacker.hp*0.01*((turnCount-statTurn)%10));
-								attacker.hp -= poiDam;
-								System.out.println(attacker.name + " is burned, and takes " + poiDam + " damage");
-							}
-							break;
-						case 3: //potion status
-							if (statTurn != 0) { //triggered only by player
-								Potions.buffCheck (attacker, pick);
-							}
-							break;
-						case 4: //shapeshift
-							if (statTurn != 0 && turnCount-statTurn >= duration) { //triggered by shapeshift
-								ShapeShift.revert(attacker);
-								System.out.println(attacker.name + " reverted back");
-							}
-							break;
-						case 5: //stun status
-							if (statTurn != 0) { //triggered by chargeatt, magblast, disrupt
-								System.out.println(attacker.name + " is stunned");
-								skipTurn = true;
-								attacker.setStatus("stun", false);
-							}
-							break;
-					}
-				}
+				}*/
+				statusCheck(attacker, "passive");
+				statusCheck(attacker, "burn");
+				statusCheck(attacker, "potion");
+				statusCheck(attacker, "stun");
 				
 				if (!(skipTurn || attacker.aggro)) { //Monster attacks
 					int monMoveNum = monMoves[monCount]; //might be wrong attack since priority order different
@@ -319,6 +283,10 @@ public class Fight {
 						}
 					}
 				}
+				//end of turn
+				statusCheck(attacker, "poison");
+				statusCheck(attacker, "shapeshift");
+				
 				attacker.damTurn = 0; //resets the amount of damage taken in one turn
 				if (attacker.mp < attacker.maxMp)
 					attacker.mp += 1;
@@ -357,7 +325,50 @@ public class Fight {
 		}
 	}
 	
-	public static void fighterStatuses () {
-		
+	public static void statusCheck (Monsters checking, String statName) {
+		int stat = Monsters.getStatNum(statName);
+		int statTurn = checking.status[stat][0], duration = checking.status[stat][1];
+		switch(stat) {
+			case 0: //passive ability, should always go first, rest are alphabetized
+				if (statTurn != 0) {
+					checking.passive.execute();
+				}
+				break;
+			case 1: //burn status
+				if (statTurn != 0) {
+					int burnDam = (int)(checking.hp*0.1);
+					checking.hp -= burnDam;
+					System.out.println(checking.name + " is burned, and takes " + burnDam + " damage");
+					if (turnCount-statTurn == duration)
+						checking.setStatus("burn", false);
+				}
+				break;
+			case 2: //poison status
+				if (statTurn != 0) {
+					int poiDam = (int)(checking.hp*0.01*((turnCount-statTurn)%10));
+					checking.hp -= poiDam;
+					System.out.println(checking.name + " is burned, and takes " + poiDam + " damage");
+				}
+				break;
+			case 3: //potion status
+				if (statTurn != 0) { //triggered only by player
+					Potions.buffCheck (checking, pick);
+				}
+				break;
+			case 4: //shapeshift
+				if (statTurn != 0 && turnCount-statTurn >= duration) { //triggered by shapeshift
+					ShapeShift.revert(checking);
+					System.out.println(checking.name + " reverted back");
+				}
+				break;
+			case 5: //stun status
+				if (statTurn != 0) { //triggered by chargeatt, magblast, disrupt
+					System.out.println(checking.name + " is stunned");
+					skipTurn = true;
+					checking.setStatus("stun", false);
+				}
+				break;
+		}
 	}
+	
 }

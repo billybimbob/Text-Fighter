@@ -5,12 +5,6 @@ import combat.*;
 import main.Fight;
 
 public abstract class ShapeShift extends Ability { //abstract so doesn't have to implement execute
-
-	private int turnLength;
-	
-	public int getTurnLength() {
-		return turnLength;
-	}
 	
 	public void transform (Monsters target, Monsters shiftedMon, int duration) { //might want to find a way to use Monster constructor to change values 
 		Monsters store = new Monsters(target); //stores original attacker
@@ -25,17 +19,17 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 		target.magR = shiftedMon.magR;
 		target.spe = shiftedMon.spe;
 		target.crit = shiftedMon.crit;
-		target.status = new int[5][2];
+		target.status = new int[Monsters.statusLen][2];
 		target.moveList = shiftedMon.moveList; 
 		for (int i = 0; i <= target.moveList.length-1; i++) {
 			target.moveList[i].setAttacker(target);
 		}
 		target.storedShifter = store;
-		target.hp*=(target.storedShifter.maxHp/target.storedShifter.hp);
+		target.hp*=(int)(target.storedShifter.maxHp/target.storedShifter.hp);
 		target.setStatus("shapeshift", Fight.turnCount, duration);
 	}
 	public static void revert (Monsters target) { //look at comment on transform method
-		double hpRatio = target.hp/target.maxHp;
+		double hpRatio = (int)target.hp/target.maxHp;
 		//target = new Monsters(target.storedShifter);
 		target.name = target.storedShifter.name;
 		target.aggro = target.storedShifter.aggro;
@@ -47,7 +41,7 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 		target.magR = target.storedShifter.magR;
 		target.spe = target.storedShifter.spe;
 		target.crit = target.storedShifter.crit;
-		target.status = new int[6][2]; //resets statuses
+		target.status = new int[Monsters.statusLen][2]; //resets statuses
 		target.moveList = target.storedShifter.moveList;
 		target.hp*=hpRatio;
 		target.storedShifter = null;

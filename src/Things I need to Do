@@ -9,6 +9,7 @@ Rogue class?
 Shifter class
 	add to interface
 	test out
+Bug: monster target changing somehow, only seen affecting bandit, when in middle of attacks
 Add passives - in status of monsters
 an inventory item that can be used as a 1 turn consumable to deal damage. example: select a rock on the inventory to deal 8 dmg on one monster once
 Flesh out potion effects

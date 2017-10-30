@@ -9,11 +9,12 @@ public class Monsters { //Temporary, probably make abstract later
 	public int level = 1, storeTurn = 0, minDam; //Temporary
 	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit, damTurn = 0;
 	public boolean aggro, multTurn, priority;
-	public int[][] status; //burn, passive, poison, potion, shapeshift, stun; 1st row is turn when activated, 2nd row is duration
+	public int[][] status; //passive, burn, poison, potion, shapeshift, stun; 1st row is turn when activated, 2nd row is duration
 	public Ability[] moveList;
 	public Ability passive;
 	public boolean attType; //true means physical attack
 	public Monsters storedShifter;
+	public static int statusLen = 6;
 	public final static double levMult = 2.5;
 	
 	//monster index constructor, basic attack and one special attack
@@ -30,7 +31,7 @@ public class Monsters { //Temporary, probably make abstract later
 		this.magR = magR;
 		this.spe = spe;
 		this.crit = crit;
-		status = new int[6][2];
+		status = new int[statusLen][2];
 		try {
 			Ability[] moveStore = {(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[special].clone()};
 			moveList = moveStore;
@@ -53,7 +54,7 @@ public class Monsters { //Temporary, probably make abstract later
 		this.magR = magR;
 		this.spe = spe;
 		this.crit = crit;
-		status = new int[6][2];
+		status = new int[statusLen][2];
 	}
 	//copies to a new instance
 	public Monsters (Monsters copy) { //not sure if deep or shallow
@@ -69,22 +70,13 @@ public class Monsters { //Temporary, probably make abstract later
 		this.magR = copy.magR;
 		this.spe = copy.spe;
 		this.crit = copy.crit;
-		status = new int[6][2];
+		status = new int[statusLen][2];
 		this.moveList = copy.moveList; 
 		for (int i = 0; i <= moveList.length-1; i++) {
 			moveList[i].setAttacker(this);
 		}
 	}
 	
-	public void addAttack(Ability adding) {
-		Ability[] moveStore = new Ability[moveList.length+1];
-		for (int i = 0; i <= moveList.length-1; i++) {
-			moveStore[i] = moveList[i];
-		}
-		moveStore[moveList.length] = adding;
-		moveList = null;
-		moveList = moveStore;
-	}
 	public static int getStatNum(String stat) {
 		int statNum = -1;
 		switch(stat) {
@@ -110,17 +102,29 @@ public class Monsters { //Temporary, probably make abstract later
 		return statNum;	
 	}
 	
-	//set status effects
-	public void setMinDam(boolean attType) { //max value for now is 20
-		minDam = 5;
-		if (attType) {
-			for (int i = 20; i >= def; i/=2)
-				minDam--;
-		} else {
-			for (int i = 20; i >= magR; i/=2)
-				minDam--;
+	//setters
+	public void addAttack(Ability adding) {
+		Ability[] moveStore = new Ability[moveList.length+1];
+		for (int i = 0; i <= moveList.length-1; i++) {
+			moveStore[i] = moveList[i];
 		}
+		moveStore[moveList.length] = adding;
+		moveList = null;
+		moveList = moveStore;
+	}
+	public void setMinDam(boolean attType) { //max value for now is 10 for def and magR
+		minDam = 5;
+		double stat = 0;
+		if (attType)
+			stat = def;
+		else
+			stat = magR;
 		
+		for (int i = 0; i < stat; i+=2) {
+			minDam--;
+			if (minDam == 0)
+				break;
+		}
 		System.out.println(minDam);
 	}
 	public void setPassive(Ability passive) {
