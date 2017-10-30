@@ -24,17 +24,24 @@ public class Interface {
 		int classChoice = choiceInput(kboard, false,availClass, classPrompt);
 		//int classChoice = 1;
 		Hero player1 = null;
-		if (classChoice == 1) { //create warrior class
+		
+		switch (classChoice) {
+		case 0: //warrior
 			player1 = new Hero(name, true);
 			Inventory.addItems(Index.potionsList[2], 1);
 			Inventory.addItems(Index.potionsList[3], 1);
 			System.out.println("You are a warrior");
-		} else { //mage class
+			break;
+		case 1: //mage
 			player1 = new Hero(name, false);
 			Inventory.addItems(Index.potionsList[4], 1);
 			Inventory.addItems(Index.potionsList[5], 1);
 			System.out.println("You are a mage");
+			break;
+		case 2: //shifter, make hero constructor have switch case and int parameters
+			break;
 		}
+		
 		Inventory.addItems(Index.potionsList[0], 3);
 		Inventory.addItems(Index.potionsList[1], 3);
 		Inventory.addItems(Index.potionsList[6], 1);

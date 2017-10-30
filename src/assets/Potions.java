@@ -10,68 +10,68 @@ public class Potions extends Items {
 		statMod = stat;
 		numAmount = 0;
 		switch (stat) {
-			case "hp":
-				name = "Health Potion";
-				modVal = 2;
-				baseModVal = modVal;
-				break;
-			case "mp":
-				name = "Mana Potion";
-				modVal = 2;
-				baseModVal = modVal;
-				break;
-			case "att":
-				name = "Potion of Offense";
-				modVal = 7;
-				break;
-			case "def":
-				name = "Ironskin Potion";
-				modVal = 10;
-				break;
-			case "mag":
-				name = "Potion of Elements";
-				modVal = 7;
-				break;
-			case "magR":
-				name = "Element Barrier Potion";
-				modVal = 10;
-				break;
-			case "spe":
-				name = "Swiftness Potion";
-				modVal = 10;
-				break;
-			case "crit":
-				name = "Lucky Potion";
-				modVal = 10;
-				break;
+		case "hp":
+			name = "Health Potion";
+			modVal = 2;
+			baseModVal = modVal;
+			break;
+		case "mp":
+			name = "Mana Potion";
+			modVal = 2;
+			baseModVal = modVal;
+			break;
+		case "att":
+			name = "Potion of Offense";
+			modVal = 7;
+			break;
+		case "def":
+			name = "Ironskin Potion";
+			modVal = 10;
+			break;
+		case "mag":
+			name = "Potion of Elements";
+			modVal = 7;
+			break;
+		case "magR":
+			name = "Element Barrier Potion";
+			modVal = 10;
+			break;
+		case "spe":
+			name = "Swiftness Potion";
+			modVal = 10;
+			break;
+		case "crit":
+			name = "Lucky Potion";
+			modVal = 10;
+			break;
 		}
 	}
 	public void useItem (Monsters user) {
 		switch (statMod) {
-			case "hp":
-				user.att += modVal*2;
-				break;
-			case "mp":
-				user.mp +=  modVal*2;
-				break;
-			case "att":
-				user.att += modVal;
-				break;
-			case "def":
-				user.def += modVal;
-				break;
-			case "mag":
-				user.mag += modVal;
-				break;
-			case "magR":
-				user.magR += modVal;
-				break;
-			case "spe":
-				user.spe += modVal;
-				break;
-			case "crit":
-				user.crit += modVal;
-				break;
+		case "hp":
+			user.att += modVal*2;
+			break;
+		case "mp":
+			user.mp +=  modVal*2;
+			break;
+		case "att":
+			user.att += modVal;
+			break;
+		case "def":
+			user.def += modVal;
+			break;
+		case "mag":
+			user.mag += modVal;
+			break;
+		case "magR":
+			user.magR += modVal;
+			break;
+		case "spe":
+			user.spe += modVal;
+			break;
+		case "crit":
+			user.crit += modVal;
+			break;
 		}
 		turnStart = Fight.turnCount;
 		Inventory.removeItems(this);
@@ -106,24 +106,24 @@ public class Potions extends Items {
 			user.setStatus("potion", false);
 		} else if (used.statMod.equals("hp") || used.statMod.equals("mp")){ //Gain over time, could be better, scattered between here and useItem method
 			switch (used.statMod) {
-				case "hp":
-					double tempHp = user.hp;
-					user.hp += used.modVal;
-					if (user.hp > user.maxHp) {
-						user.hp = user.maxHp;
-						used.modVal = (int)(user.hp - tempHp);
-						System.out.println("You cannot be healed past max health");
-					}
-					break;
-				case "mp":
-					double tempMp = user.mp;
-					user.mp += used.modVal;
-					if (user.mp > user.maxMp) {
-						user.mp = user.maxMp;
-						used.modVal = (int)(user.mp - tempMp);
-						System.out.println("You cannot gain past max mana");
-					}
-					break;
+			case "hp":
+				double tempHp = user.hp;
+				user.hp += used.modVal;
+				if (user.hp > user.maxHp) {
+					user.hp = user.maxHp;
+					used.modVal = (int)(user.hp - tempHp);
+					System.out.println("You cannot be healed past max health");
+				}
+				break;
+			case "mp":
+				double tempMp = user.mp;
+				user.mp += used.modVal;
+				if (user.mp > user.maxMp) {
+					user.mp = user.maxMp;
+					used.modVal = (int)(user.mp - tempMp);
+					System.out.println("You cannot gain past max mana");
+				}
+				break;
 			}
 			System.out.println("You gain " + used.modVal + " " + used.statMod + " from the " + used.name);
 			used.modVal = used.baseModVal;

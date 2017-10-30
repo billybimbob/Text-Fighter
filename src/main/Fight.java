@@ -58,68 +58,68 @@ public class Fight {
 				choice = Interface.choiceInput(keyboard, false, fightChoices, fightPrompt);
 				selection:
 				switch (choice) {
-					case 1: //Attack a prompted target
-						do { //probably change, flow is really bad and confusing
-							String attPrompt = "Which attack do you want to use?";
-							int attNum = Interface.choiceInput(keyboard, true, Interface.hero.moveListNames, attPrompt); //Temporary
-							if (attNum == 0)
-								break selection;
-							
-							turnMove = Interface.hero.moveList[attNum-1];
-							if (turnMove.getPriority()) //check if attack is priority
-								Interface.hero.priority = true;
-							heroTargets.clear();
-							
-							//determine the targets of hero move
-							if (turnMove.getSelfTar()){
-								Interface.heroAction = true; //temporary, want to select transformation here
-							} else if (turnMove.getAoe()) {//attacks all monsters, might change later
-								turnMove.setNumTar(monFighters.size());
-								//turnMove.targets = new Monsters[turnMove.numTar];
-								for (int i = 0; i <= monFighters.size()-1; i++)
-									heroTargets.add(monFighters.get(i));
-								Interface.heroAction = true;
-							} else if (turnMove.getTargets().length == monFighters.size()) { //attacks all monsters if aoe attack or if only one option
-								for (int i = 0; i <= monFighters.size()-1; i++)
-									heroTargets.add(monFighters.get(i));
-								Interface.heroAction = true;
-							} else { //single target attacks
-								for (int i = 0; i <= turnMove.getTargets().length-1; i++) {
-									String tarPrompt = "Which monster would you want to target?";
-									int tarNum = Interface.choiceInput(keyboard, true, monFightersName, tarPrompt);
-									if (tarNum == 0) {//have to change how to implement
-										Interface.heroAction = false;
-										break;
-									}
-									heroTargets.add(monFighters.get(tarNum-1));
-									//System.out.println(turnMove.targets[i].name);
-									Interface.heroAction = true;
-								}
-							}
-						} while (!Interface.heroAction);
-						break;
-					case 2: //temporarily raises evasion, and costs 2 mana
-						Interface.heroAction = true;
-						break;
-					case 3: //Check inventory
-						String[] inventNames = Inventory.access();
-						if (Inventory.empty) {
-							System.out.println("You have no items in your inventory\n");
-						} else {
-							String itemPrompt = "Which item do you want to use?";
-							pickNum = Interface.choiceInput(keyboard, true, inventNames, itemPrompt);
-							if (pickNum == 0)
-								break selection;
-							else if (Interface.hero.status[2][0]!=0 && Potions.timeLength >= (turnCount-Potions.turnStart)) { //will trigger debuff
-								String usePrompt = "Another buff is still active, and will be canceled by this potion\nAre you sure you want to do this?";
-								int confirmUse = Interface.choiceInput(keyboard, false, Interface.responseOptions, usePrompt);
-								if (confirmUse == 1)
-									Potions.turnStart = turnCount+Potions.timeLength;
-								else
-									break selection;
-							}
+				case 1: //Attack a prompted target
+					do { //probably change, flow is really bad and confusing
+						String attPrompt = "Which attack do you want to use?";
+						int attNum = Interface.choiceInput(keyboard, true, Interface.hero.moveListNames, attPrompt); //Temporary
+						if (attNum == 0)
+							break selection;
+						
+						turnMove = Interface.hero.moveList[attNum-1];
+						if (turnMove.getPriority()) //check if attack is priority
+							Interface.hero.priority = true;
+						heroTargets.clear();
+						
+						//determine the targets of hero move
+						if (turnMove.getSelfTar()){
+							Interface.heroAction = true; //temporary, want to select transformation here
+						} else if (turnMove.getAoe()) {//attacks all monsters, might change later
+							turnMove.setNumTar(monFighters.size());
+							//turnMove.targets = new Monsters[turnMove.numTar];
+							for (int i = 0; i <= monFighters.size()-1; i++)
+								heroTargets.add(monFighters.get(i));
 							Interface.heroAction = true;
+						} else if (turnMove.getTargets().length == monFighters.size()) { //attacks all monsters if aoe attack or if only one option
+							for (int i = 0; i <= monFighters.size()-1; i++)
+								heroTargets.add(monFighters.get(i));
+							Interface.heroAction = true;
+						} else { //single target attacks
+							for (int i = 0; i <= turnMove.getTargets().length-1; i++) {
+								String tarPrompt = "Which monster would you want to target?";
+								int tarNum = Interface.choiceInput(keyboard, true, monFightersName, tarPrompt);
+								if (tarNum == 0) {//have to change how to implement
+									Interface.heroAction = false;
+									break;
+								}
+								heroTargets.add(monFighters.get(tarNum-1));
+								//System.out.println(turnMove.targets[i].name);
+								Interface.heroAction = true;
+							}
 						}
+					} while (!Interface.heroAction);
+					break;
+				case 2: //temporarily raises evasion, and costs 2 mana
+					Interface.heroAction = true;
+					break;
+				case 3: //Check inventory
+					String[] inventNames = Inventory.access();
+					if (Inventory.empty) {
+						System.out.println("You have no items in your inventory\n");
+					} else {
+						String itemPrompt = "Which item do you want to use?";
+						pickNum = Interface.choiceInput(keyboard, true, inventNames, itemPrompt);
+						if (pickNum == 0)
+							break selection;
+						else if (Interface.hero.status[2][0]!=0 && Potions.timeLength >= (turnCount-Potions.turnStart)) { //will trigger debuff
+							String usePrompt = "Another buff is still active, and will be canceled by this potion\nAre you sure you want to do this?";
+							int confirmUse = Interface.choiceInput(keyboard, false, Interface.responseOptions, usePrompt);
+							if (confirmUse == 1)
+								Potions.turnStart = turnCount+Potions.timeLength;
+							else
+								break selection;
+						}
+						Interface.heroAction = true;
+					}
 				}
 			}
 			//decides the turns of the monsters
@@ -239,37 +239,37 @@ public class Fight {
 					if (flee)
 						attacker.spe -= 7;
 					switch (choice) {
-						case 1: //attacks inputed target
-							if (!turnMove.getSelfTar()) {
-								for (int j = 0; j <= turnMove.getTargets().length-1; j++) {
-									if (j < heroTargets.size()) {
-										turnMove.setTarget(heroTargets.get(j));
-										//startHp[j] = heroTargets.get(j).hp;
-									} else
-										turnMove.setTarget(null);
-								}
+					case 1: //attacks inputed target
+						if (!turnMove.getSelfTar()) {
+							for (int j = 0; j <= turnMove.getTargets().length-1; j++) {
+								if (j < heroTargets.size()) {
+									turnMove.setTarget(heroTargets.get(j));
+									//startHp[j] = heroTargets.get(j).hp;
+								} else
+									turnMove.setTarget(null);
 							}
-							turnMove.execute();
-							break;
-						case 2: //Try to flee
-							//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
-							Interface.hero.mp -= 3;
-							Interface.hero.spe += 7;
-							System.out.println("You try dodge all incoming attacks, increasing evasion by 7");
+						}
+						turnMove.execute();
+						break;
+					case 2: //Try to flee
+						//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
+						Interface.hero.mp -= 3;
+						Interface.hero.spe += 7;
+						System.out.println("You try dodge all incoming attacks, increasing evasion by 7");
+						flee = true;
+						/*if (escapeCheck > 1)
 							flee = true;
-							/*if (escapeCheck > 1)
-								flee = true;
-							else
-								System.out.println("You fail to escape");*/
-							break;
-						case 3: //use inputed item
-							int inventIndex = 0; //this part is here in order to account for potion overrides
-							for (int j = 0; j < pickNum-1; j++) //Not great, searching for index multiple times
-								inventIndex += Inventory.inventoryList[inventIndex].numAmount;
-							
-							pick = Inventory.inventoryList[inventIndex];
-							attacker.setStatus("potion", true);
-							pick.useItem(attacker);
+						else
+							System.out.println("You fail to escape");*/
+						break;
+					case 3: //use inputed item
+						int inventIndex = 0; //this part is here in order to account for potion overrides
+						for (int j = 0; j < pickNum-1; j++) //Not great, searching for index multiple times
+							inventIndex += Inventory.inventoryList[inventIndex].numAmount;
+						
+						pick = Inventory.inventoryList[inventIndex];
+						attacker.setStatus("potion", true);
+						pick.useItem(attacker);
 					}
 					for (int j = 0; j <= monFighters.size()-1; j++) { //check if any monster died, immediately after hero's turn
 						//System.out.print(monFighters.get(j).name + j + " " + monFighters.size());
@@ -329,45 +329,45 @@ public class Fight {
 		int stat = Monsters.getStatNum(statName);
 		int statTurn = checking.status[stat][0], duration = checking.status[stat][1];
 		switch(stat) {
-			case 0: //passive ability, should always go first, rest are alphabetized
-				if (statTurn != 0) {
-					checking.passive.execute();
-				}
-				break;
-			case 1: //burn status
-				if (statTurn != 0) {
-					int burnDam = (int)(checking.hp*0.1);
-					checking.hp -= burnDam;
-					System.out.println(checking.name + " is burned, and takes " + burnDam + " damage");
-					if (turnCount-statTurn == duration)
-						checking.setStatus("burn", false);
-				}
-				break;
-			case 2: //poison status
-				if (statTurn != 0) {
-					int poiDam = (int)(checking.hp*0.01*((turnCount-statTurn)%10));
-					checking.hp -= poiDam;
-					System.out.println(checking.name + " is burned, and takes " + poiDam + " damage");
-				}
-				break;
-			case 3: //potion status
-				if (statTurn != 0) { //triggered only by player
-					Potions.buffCheck (checking, pick);
-				}
-				break;
-			case 4: //shapeshift
-				if (statTurn != 0 && turnCount-statTurn >= duration) { //triggered by shapeshift
-					ShapeShift.revert(checking);
-					System.out.println(checking.name + " reverted back");
-				}
-				break;
-			case 5: //stun status
-				if (statTurn != 0) { //triggered by chargeatt, magblast, disrupt
-					System.out.println(checking.name + " is stunned");
-					skipTurn = true;
-					checking.setStatus("stun", false);
-				}
-				break;
+		case 0: //passive ability, should always go first, rest are alphabetized
+			if (statTurn != 0) {
+				checking.passive.execute();
+			}
+			break;
+		case 1: //burn status
+			if (statTurn != 0) {
+				int burnDam = (int)(checking.hp*0.1);
+				checking.hp -= burnDam;
+				System.out.println(checking.name + " is burned, and takes " + burnDam + " damage");
+				if (turnCount-statTurn == duration)
+					checking.setStatus("burn", false);
+			}
+			break;
+		case 2: //poison status
+			if (statTurn != 0) {
+				int poiDam = (int)(checking.hp*0.01*((turnCount-statTurn)%10));
+				checking.hp -= poiDam;
+				System.out.println(checking.name + " is burned, and takes " + poiDam + " damage");
+			}
+			break;
+		case 3: //potion status
+			if (statTurn != 0) { //triggered only by player
+				Potions.buffCheck (checking, pick);
+			}
+			break;
+		case 4: //shapeshift
+			if (statTurn != 0 && turnCount-statTurn >= duration) { //triggered by shapeshift
+				ShapeShift.revert(checking);
+				System.out.println(checking.name + " reverted back");
+			}
+			break;
+		case 5: //stun status
+			if (statTurn != 0) { //triggered by chargeatt, magblast, disrupt
+				System.out.println(checking.name + " is stunned");
+				skipTurn = true;
+				checking.setStatus("stun", false);
+			}
+			break;
 		}
 	}
 	
