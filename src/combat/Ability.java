@@ -6,9 +6,8 @@ public abstract class Ability implements Cloneable {
 
 	protected String name, description;
 	protected Monsters attacker;
-	//public double baseDam; //temporary
 	protected double manaCost, baseDam;
-	protected boolean attType, aoe = false, priority = false, selfTar = false; //aoe attacks can't work with monsters
+	protected boolean attType, aoe = false, priority = false, selfTar = false, passive = false; //aoe attacks can't work with monsters
 	protected Monsters[] targets; //might make it an array
 	protected int numTar = 1, tarCount = 0; //number of targets default set to 1
 	protected double baseDamMod = 1;
@@ -83,8 +82,11 @@ public abstract class Ability implements Cloneable {
 		else
 			baseDam -= (int)(Math.random()*(target.magR*.65));
 		
-		if (baseDam < target.minDam)
+		target.setMinDam(attType);
+		if (baseDam < target.minDam) {
+			System.out.println("minDam");
 			baseDam = target.minDam;
+		}
 	}
 	public void loseHp (Monsters target, double damage) {
 		target.hp -= damage;

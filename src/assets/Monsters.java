@@ -111,8 +111,17 @@ public class Monsters { //Temporary, probably make abstract later
 	}
 	
 	//set status effects
-	public void setMinDam() {
+	public void setMinDam(boolean attType) { //max value for now is 20
+		minDam = 5;
+		if (attType) {
+			for (int i = 20; i >= def; i/=2)
+				minDam--;
+		} else {
+			for (int i = 20; i >= magR; i/=2)
+				minDam--;
+		}
 		
+		System.out.println(minDam);
 	}
 	public void setPassive(Ability passive) {
 		this.passive = passive;
