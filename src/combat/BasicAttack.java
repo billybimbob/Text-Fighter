@@ -2,7 +2,7 @@ package combat;
 
 import assets.Monsters;
 
-public class BasicAttack extends Attacks {
+public class BasicAttack extends Ability {
 
 	public BasicAttack () {
 		name = "Basic Attack";

@@ -2,7 +2,7 @@ package combat;
 
 import assets.Monsters;
 
-public class SheepAttacks extends Attacks{
+public class SheepAttacks extends Ability{
 
 	public SheepAttacks() {
 		name = "Sheep Attacks";

@@ -2,7 +2,7 @@ package combat;
 
 import assets.*;
 
-public abstract class Attacks implements Cloneable {
+public abstract class Ability implements Cloneable {
 
 	protected String name, description;
 	protected Monsters attacker;

@@ -1,9 +1,9 @@
 package combat.magic;
 
 import assets.Monsters;
-import combat.Attacks;
+import combat.*;
 
-public class MagicBlast extends Attacks {
+public class MagicBlast extends Ability {
 
 	public MagicBlast () {
 		name = "Magic Blast";
@@ -30,7 +30,7 @@ public class MagicBlast extends Attacks {
 					
 					if (attackCheck(targets[0], 0.4)) {
 						System.out.println(attacker.name + "'s blast stuns " + targets[0].name);
-						targets[0].setStatus(4, true);
+						targets[0].setStatus("stun", true);
 					}
 				}
 			} else {

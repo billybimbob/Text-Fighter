@@ -1,8 +1,8 @@
 package combat.melee;
 
-import combat.Attacks;
+import combat.*;
 
-public class SpinAttack extends Attacks {
+public class SpinAttack extends Ability {
 	
 	public SpinAttack () { //might change to get rid of enemies parameter
 		name = "Spin Attack";

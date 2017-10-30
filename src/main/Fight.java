@@ -20,7 +20,7 @@ public class Fight {
 		turnCount = 0;
 		Items pick = null;
 		int choice = 2, pickNum = 0;
-		Attacks turnMove = null;
+		Ability turnMove = null;
 		ArrayList<Monsters> heroTargets = new ArrayList<>(); //need to clear later
 		
 		while (fightControl) {
@@ -216,7 +216,7 @@ public class Fight {
 								attacker.hp -= burnDam;
 								System.out.println(attacker.name + " is burned, and takes " + burnDam + " damage");
 								if (turnCount-statTurn == duration)
-									attacker.setStatus(j, false);
+									attacker.setStatus("burn", false);
 							}
 							break;
 						case 1: //poison status
@@ -232,7 +232,7 @@ public class Fight {
 							}
 							break;
 						case 3: //shapeshift
-							if (statTurn != 0 && turnCount-statTurn >= duration) { //want to set length to a variable
+							if (statTurn != 0 && turnCount-statTurn >= duration) { //triggered by shapeshift
 								ShapeShift.revert(attacker);
 								System.out.println(attacker.name + " reverted back");
 							}
@@ -241,7 +241,7 @@ public class Fight {
 							if (statTurn != 0) { //triggered by chargeatt, magblast, disrupt
 								System.out.println(attacker.name + " is stunned");
 								skipTurn = true;
-								attacker.setStatus(j, false);
+								attacker.setStatus("stun", false);
 							}
 							break;
 					}
@@ -250,7 +250,7 @@ public class Fight {
 				if (!(skipTurn || attacker.aggro)) { //Monster attacks
 					int monMoveNum = monMoves[monCount]; //might be wrong attack since priority order different
 					monCount++;
-					Attacks monMove = null;
+					Ability monMove = null;
 					if (attacker.multTurn) {
 						monMove = attacker.moveList[attacker.storeTurn]; //does previous turn move
 						attacker.storeTurn = 0;
@@ -299,7 +299,7 @@ public class Fight {
 								inventIndex += Inventory.inventoryList[inventIndex].numAmount;
 							
 							pick = Inventory.inventoryList[inventIndex];
-							attacker.setStatus(2, true);
+							attacker.setStatus("potion", true);
 							pick.useItem(attacker);
 					}
 					for (int j = 0; j <= monFighters.size()-1; j++) { //check if any monster died, immediately after hero's turn

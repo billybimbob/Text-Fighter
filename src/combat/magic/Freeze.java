@@ -1,9 +1,9 @@
 package combat.magic;
 
 import assets.Monsters;
-import combat.Attacks;
+import combat.Ability;
 
-public class Freeze extends Attacks {
+public class Freeze extends Ability {
 	
 	public Freeze () {
 		name = "Freeze";

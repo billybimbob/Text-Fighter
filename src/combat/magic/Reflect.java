@@ -1,9 +1,9 @@
 package combat.magic;
 
-import combat.Attacks;
+import combat.*;
 import main.Interface;
 
-public class Reflect extends Attacks { //might change attack to be a buff instead of mult-turn attack
+public class Reflect extends Ability { //might change attack to be a buff instead of mult-turn attack
 
 	private int turnCount = 0;
 	

@@ -1,10 +1,10 @@
 package combat.melee;
 
 import assets.Monsters;
-import combat.Attacks;
+import combat.Ability;
 import main.Interface;
 
-public class ChargeAttack extends Attacks{
+public class ChargeAttack extends Ability {
 	
 	private int turnCount = 0;
 	
@@ -43,7 +43,7 @@ public class ChargeAttack extends Attacks{
 				
 				if (attackCheck(targets[0], 0.1)) {
 					System.out.println(attacker.name + "'s charged attack stuns " + targets[0].name);
-					targets[0].setStatus(4, true);
+					targets[0].setStatus("stun", true);
 				}
 			} else {
 				System.out.println(attacker.name + "'s attack missed");

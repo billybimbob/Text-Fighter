@@ -1,9 +1,9 @@
 package combat.magic;
 
 import assets.Monsters;
-import combat.Attacks;
+import combat.*;
 
-public class LifeDrain extends Attacks {
+public class LifeDrain extends Ability {
 
 	public LifeDrain() {
 		name = "Life Drain";

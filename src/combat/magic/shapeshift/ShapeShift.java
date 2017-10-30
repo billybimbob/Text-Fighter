@@ -1,10 +1,10 @@
 package combat.magic.shapeshift;
 
 import assets.Monsters;
-import combat.Attacks;
+import combat.*;
 import main.Fight;
 
-public abstract class ShapeShift extends Attacks { //abstract so doesn't have to implement execute
+public abstract class ShapeShift extends Ability { //abstract so doesn't have to implement execute
 
 	private int turnLength;
 	
@@ -32,7 +32,7 @@ public abstract class ShapeShift extends Attacks { //abstract so doesn't have to
 		}
 		target.storedShifter = store;
 		target.hp*=(target.storedShifter.maxHp/target.storedShifter.hp);
-		target.setStatus(3, Fight.turnCount, duration);
+		target.setStatus("shapeshift", Fight.turnCount, duration);
 	}
 	public static void revert (Monsters target) { //look at comment on transform method
 		double hpRatio = target.hp/target.maxHp;
@@ -47,7 +47,7 @@ public abstract class ShapeShift extends Attacks { //abstract so doesn't have to
 		target.magR = target.storedShifter.magR;
 		target.spe = target.storedShifter.spe;
 		target.crit = target.storedShifter.crit;
-		target.status = new int[5][2]; //resets statuses
+		target.status = new int[6][2]; //resets statuses
 		target.moveList = target.storedShifter.moveList;
 		target.hp*=hpRatio;
 		target.storedShifter = null;

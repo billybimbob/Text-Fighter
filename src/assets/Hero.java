@@ -12,8 +12,8 @@ public class Hero extends Monsters {
 		level = 1;
 		try {
 			if (classes) {
-				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[1].clone(),
-						(Attacks)Index.attackList[2].clone(), (Attacks)Index.attackList[3].clone()};
+				Ability[] moveStore = {(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[1].clone(),
+						(Ability)Index.attackList[2].clone(), (Ability)Index.attackList[3].clone()};
 				moveList = moveStore;
 				attType = true;
 				hp = 40;
@@ -21,9 +21,9 @@ public class Hero extends Monsters {
 				att = 7;
 				mag = 3;
 			} else {
-				Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[4].clone(),
-						(Attacks)Index.attackList[5].clone(), (Attacks)Index.attackList[6].clone(),
-						(Attacks)Index.attackList[7].clone(), (Attacks)Index.attackList[8].clone(), (Attacks)Index.attackList[10].clone()};
+				Ability[] moveStore = {(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[4].clone(),
+						(Ability)Index.attackList[5].clone(), (Ability)Index.attackList[6].clone(),
+						(Ability)Index.attackList[7].clone(), (Ability)Index.attackList[8].clone(), (Ability)Index.attackList[10].clone()};
 				moveList = moveStore;
 				attType = false;
 				mag = 7;

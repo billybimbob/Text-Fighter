@@ -10,7 +10,7 @@ import combat.melee.*;
 
 public class Index {
 
-	public static Attacks[] attackList;
+	public static Ability[] attackList;
 	public static Potions[] potionsList;
 	public static Monsters[] monsterList;
 	public static Monsters[] shiftMonList;
@@ -27,27 +27,27 @@ public class Index {
 		Potions[] potStore = {hpPotion, mpPotion, atPotion, dfPotion, mgPotion, mrPotion, spPotion, crPotion};
 		potionsList = potStore;
 		
-		Attacks baseA = new BasicAttack();
-		Attacks charg = new ChargeAttack(); //start of melee abilites, 1
-		Attacks disrt = new Disrupt();
-		Attacks spins = new SpinAttack();
-		Attacks blast = new MagicBlast();   //start of magic abilites, 4
-		Attacks drain = new LifeDrain();
-		Attacks froze = new Freeze();
-		Attacks polym = new Polymorph();
-		Attacks reflt = new Reflect();
-		Attacks sheep = new SheepAttacks();
-		Attacks shift = new ChangeForm(keyboard);
-		Attacks[] attStore = {baseA, charg, disrt, spins, blast, drain, froze, polym, reflt, sheep, shift};
+		Ability baseA = new BasicAttack();
+		Ability charg = new ChargeAttack(); //start of melee abilites, 1
+		Ability disrt = new Disrupt();
+		Ability spins = new SpinAttack();
+		Ability blast = new MagicBlast();   //start of magic abilites, 4
+		Ability drain = new LifeDrain();
+		Ability froze = new Freeze();
+		Ability polym = new Polymorph();
+		Ability reflt = new Reflect();
+		Ability sheep = new SheepAttacks();
+		Ability shift = new ChangeForm(keyboard);
+		Ability[] attStore = {baseA, charg, disrt, spins, blast, drain, froze, polym, reflt, sheep, shift};
 		attackList = attStore;
 		
 		// hp, mp, atk, def, magic, mres, speed, crit, special attack
 		Monsters mon1 = new Monsters("Bandit", false, true, 15, 15, 3, 3, 3, 3, 6, 6, 1);
 		Monsters mon2 = new Monsters("Spider", false, false, 10, 15, 6, 2, 3, 3, 4, 4, 5);
 		Monsters mon3 = new Monsters("Slime", false, true, 20, 10, 3, 5, 3, 3, 1, 1, 6);
-		Monsters mon4 = new Monsters("Eagle", true, true, 12, 15, 7, 1, 1, 2, 10, 5, 1); //temporary, should add shapeshifter constructor
+		Monsters mon4 = new Monsters("Eagle", true, true, 12, 15, 7, 1, 1, 2, 10, 5, 2); //temporary, should add shapeshifter constructor
 		Monsters mon5 = new Monsters("Pangolin", true, true, 30, 15, 1, 10, 1, 10, 3, 5, 1);
-		Monsters mon6 = new Monsters("Salamander", true, false, 25, 15, 1, 4, 5, 5, 5, 5, 1);
+		Monsters mon6 = new Monsters("Salamander", true, false, 25, 15, 1, 4, 5, 5, 5, 5, 6);
 		Monsters mon7 = new Monsters("Sheep", false, true, 5, 5,  0, 0, 0, 0, 0, 0, 9);
 		Monsters[] monStore = {mon1, mon2, mon3, mon4, mon5, mon6};
 		Monsters[] shapeStore = {mon4, mon5, mon6, mon7};

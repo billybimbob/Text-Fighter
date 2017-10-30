@@ -9,8 +9,8 @@ public class Monsters { //Temporary, probably make abstract later
 	public int level = 1, storeTurn = 0, minDam; //Temporary
 	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit, damTurn = 0;
 	public boolean aggro, multTurn, priority;
-	public int[][] status; //burn, poison, potion, shapeshift, stun; 1st row is turn when activated, 2nd row is duration
-	public Attacks[] moveList;
+	public int[][] status; //burn, passive, poison, potion, shapeshift, stun; 1st row is turn when activated, 2nd row is duration
+	public Ability[] moveList;
 	public boolean attType; //true means physical attack
 	public Monsters storedShifter;
 	public final static double levMult = 2.5;
@@ -29,9 +29,9 @@ public class Monsters { //Temporary, probably make abstract later
 		this.magR = magR;
 		this.spe = spe;
 		this.crit = crit;
-		status = new int[5][2];
+		status = new int[6][2];
 		try {
-			Attacks[] moveStore = {(Attacks)Index.attackList[0].clone(), (Attacks)Index.attackList[special].clone()};
+			Ability[] moveStore = {(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[special].clone()};
 			moveList = moveStore;
 			for (int i = 0; i <= moveList.length-1; i++) {
 				moveList[i].setAttacker(this);
@@ -52,7 +52,7 @@ public class Monsters { //Temporary, probably make abstract later
 		this.magR = magR;
 		this.spe = spe;
 		this.crit = crit;
-		status = new int[5][2];
+		status = new int[6][2];
 	}
 	//copies to a new instance
 	public Monsters (Monsters copy) { //not sure if deep or shallow
@@ -68,33 +68,59 @@ public class Monsters { //Temporary, probably make abstract later
 		this.magR = copy.magR;
 		this.spe = copy.spe;
 		this.crit = copy.crit;
-		status = new int[5][2];
+		status = new int[6][2];
 		this.moveList = copy.moveList; 
 		for (int i = 0; i <= moveList.length-1; i++) {
 			moveList[i].setAttacker(this);
 		}
 	}
 	
-	public void addAttack(Attacks adding) {
-		Attacks[] moveStore = new Attacks[moveList.length+1];
+	public void addAttack(Ability adding) {
+		Ability[] moveStore = new Ability[moveList.length+1];
 		for (int i = 0; i <= moveList.length-1; i++) {
 			moveStore[i] = moveList[i];
 		}
 		moveStore[moveList.length] = adding;
 		moveList = null;
 		moveList = moveStore;
-		
 	}
 	
 	//set status effects
 	public void setMinDam() {
 		
 	}
-	public void setStatus(int index, int startTurn, int duration) {
+	public static int getStatNum(String stat) {
+		int statNum = -1;
+		switch(stat) {
+			case "burn":
+				statNum = 0;
+				break;
+			case "passive":
+				statNum = 1;
+				break;
+			case "poison":
+				statNum = 2;
+				break;
+			case "potion":
+				statNum = 3;
+				break;
+			case "shapeshift":
+				statNum = 4;
+				break;
+			case "stun":
+				statNum = 5;
+				break;
+		}
+		return statNum;
+		
+	}
+	public void setStatus(String stat, int startTurn, int duration) {
+		int index = getStatNum(stat);
 		status[index][0] = startTurn;
 		status[index][1] = duration;
 	}
-	public void setStatus(int index, boolean toggle) {
+	public void setStatus(String stat, boolean toggle) {
+		int index = getStatNum(stat);
 		status[index][1] = 0;
 		if (toggle)
 			status[index][0] = 1;

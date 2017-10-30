@@ -1,9 +1,9 @@
 package combat.melee;
 
 import assets.Monsters;
-import combat.Attacks;
+import combat.Ability;
 
-public class Disrupt extends Attacks {
+public class Disrupt extends Ability {
 
 	public Disrupt() {
 		name = "Disrupt";
@@ -30,7 +30,7 @@ public class Disrupt extends Attacks {
 					System.out.println(" for " + baseDam + " damage");
 					if (attackCheck(targets[0], 0.4)) {
 						System.out.println(attacker.name + "'s blow also stuns " + targets[0].name);
-						targets[0].setStatus(4, true);
+						targets[0].setStatus("stun", true);
 					}
 				}
 				double selfDam = (int)(baseDam*.5);
