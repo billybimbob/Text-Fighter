@@ -38,25 +38,27 @@ public class ChangeForm extends ShapeShift {
 			String changePrompt = "Which form do you want to take?";
 			
 			int availChange = formList.length;
-			String[] formNames = new String[availChange];
-			for (int i = 0; i <= formList.length-1; i++) { //determine available transformations
+			Monsters[] tempList = new Monsters[availChange];
+			for (int i = 0; i <= formList.length-1; i++) { //determine available transformations, creates form list for this iteration
 				if (!(attacker.name == formList[i].name)) {
-					formNames[i-(formList.length-availChange)] = formList[i].name;
+					tempList[i-(formList.length-availChange)] = formList[i];
 				} else {
 					availChange--;
-					String[] formStore = new String[availChange];
-					for(int j = 0; j <= formStore.length-1; j++) {
-						formStore[j] = formNames[j];
+					Monsters[] tempStore = new Monsters[availChange];
+					for(int j = 0; j <= tempStore.length-1; j++) {
+						tempStore[j] = tempList[j];
 					}
-					formNames = null;
-					formNames = formStore;
+					tempList = null;
+					tempList = tempStore;
 				}
 			}
+			String[] formNames = new String[tempList.length]; //sets list of names of available transformations
+			for (int i = 0; i <= tempList.length-1; i++)
+				formNames[i] = tempList[i].name;
 			
 			int formChoice = Interface.choiceInput(keyboard, true, formNames, changePrompt)-1;
-			System.out.println(attacker.name + " has transformed into " + formList[formChoice].name);
-			
-			transform(attacker, formList[formChoice], 5);
+			System.out.println(attacker.name + " has transformed into " + tempList[formChoice].name);
+			transform(attacker, tempList[formChoice], 5);
 		} else {
 			System.out.println(attacker.name + " tries to use " + name + ", but has insufficient mana");
 		}
