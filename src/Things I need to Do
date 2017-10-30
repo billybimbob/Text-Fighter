@@ -3,6 +3,7 @@ Start working on abilities that have each unique scaling calculators on damage. 
 	Add magic attacks
 	Add description of abilities
 Mana regen? and cost
+Make monster variables private
 Rogue class?
 	fast, weak, stealth
 	instakill, maybe an ultimate?

@@ -84,7 +84,7 @@ public abstract class Ability implements Cloneable {
 		
 		target.setMinDam(attType);
 		if (baseDam < target.minDam) {
-			System.out.println("minDam");
+			//System.out.println("minDam");
 			baseDam = target.minDam;
 		}
 	}

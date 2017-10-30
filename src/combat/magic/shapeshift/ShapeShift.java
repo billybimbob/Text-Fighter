@@ -25,11 +25,11 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 			target.moveList[i].setAttacker(target);
 		}
 		target.storedShifter = store;
-		target.hp*=(int)(target.storedShifter.maxHp/target.storedShifter.hp);
+		target.hp*=(int)(target.storedShifter.hp/target.storedShifter.maxHp);
 		target.setStatus("shapeshift", Fight.turnCount, duration);
 	}
 	public static void revert (Monsters target) { //look at comment on transform method
-		double hpRatio = (int)target.hp/target.maxHp;
+		int hpRatio = (int)(target.hp/target.maxHp);
 		//target = new Monsters(target.storedShifter);
 		target.name = target.storedShifter.name;
 		target.aggro = target.storedShifter.aggro;

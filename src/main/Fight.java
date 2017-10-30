@@ -9,9 +9,9 @@ import combat.magic.shapeshift.*;
 public class Fight {
 	
 	private static final String[] fightChoices = {"Fight", "Dodge", "Inventory"};
-	public static int turnCount;
 	private static boolean skipTurn;
 	private static Items pick; //temporary
+	public static int turnCount;
 
 	public static void fighting (Scanner keyboard, ArrayList<Monsters> fighters) throws InterruptedException {
 		System.out.println("Press enter when you are ready to fight");

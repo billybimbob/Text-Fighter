@@ -3,6 +3,7 @@ package combat.magic.shapeshift;
 import java.util.Scanner;
 
 import assets.*;
+import combat.Ability;
 import main.Index;
 import main.Interface;
 
@@ -22,8 +23,15 @@ public class ChangeForm extends ShapeShift {
 	public void execute() {
 		//this.shifter = (Hero)attacker;
 		if (formList == null) { //temporary, can't put in constructor because null pointer
-			Monsters[] formListStore = {Index.shiftMonList[0], Index.shiftMonList[1], Index.shiftMonList[2]};
+			Monsters[] formListStore = {new Monsters(Index.shiftMonList[0]), new Monsters(Index.shiftMonList[1]), new Monsters(Index.shiftMonList[2])};
 			formList = formListStore;
+			for (int i = 0; i <= formList.length-1; i++) {
+				try {
+					formList[i].addAttack((Ability)Index.attackList[10].clone());
+				} catch (CloneNotSupportedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		if (attacker.mp >= manaCost) {
 			attacker.mp -= manaCost;
@@ -33,16 +41,16 @@ public class ChangeForm extends ShapeShift {
 			String[] formNames = new String[availChange];
 			for (int i = 0; i <= formList.length-1; i++) { //determine available transformations
 				if (!(attacker.name == formList[i].name)) {
-					formNames[i] = formList[i].name;
+					formNames[i-(formList.length-availChange)] = formList[i].name;
 				} else {
 					availChange--;
 					String[] formStore = new String[availChange];
-					for(int j = 0; j <= formStore.length; j++) {
+					for(int j = 0; j <= formStore.length-1; j++) {
 						formStore[j] = formNames[j];
 					}
 					formNames = null;
 					formNames = formStore;
-				}	
+				}
 			}
 			
 			int formChoice = Interface.choiceInput(keyboard, true, formNames, changePrompt)-1;

@@ -19,26 +19,27 @@ public class Interface {
 		System.out.print("Step forth and state your name: ");
 		String name = kboard.nextLine();
 		
-		String[] availClass = {"Warrior", "Mage"};
+		String[] availClass = {"Warrior", "Mage", "Shifter"};
 		String classPrompt = "Would you like to be a warrior or a mage?\nThis will affect your stats, potions, and abilities";
 		int classChoice = choiceInput(kboard, false,availClass, classPrompt);
 		//int classChoice = 1;
-		Hero player1 = null;
+		Hero player1 = new Hero(name, classChoice);
 		
 		switch (classChoice) {
-		case 0: //warrior
-			player1 = new Hero(name, true);
+		case 1: //warrior
 			Inventory.addItems(Index.potionsList[2], 1);
 			Inventory.addItems(Index.potionsList[3], 1);
 			System.out.println("You are a warrior");
 			break;
-		case 1: //mage
-			player1 = new Hero(name, false);
+		case 2: //mage
 			Inventory.addItems(Index.potionsList[4], 1);
 			Inventory.addItems(Index.potionsList[5], 1);
 			System.out.println("You are a mage");
 			break;
-		case 2: //shifter, make hero constructor have switch case and int parameters
+		case 3: //shifter
+			Inventory.addItems(Index.potionsList[4], 1);
+			Inventory.addItems(Index.potionsList[5], 1);
+			System.out.println("You are a shifter");
 			break;
 		}
 		

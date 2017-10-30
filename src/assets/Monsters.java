@@ -80,24 +80,24 @@ public class Monsters { //Temporary, probably make abstract later
 	public static int getStatNum(String stat) {
 		int statNum = -1;
 		switch(stat) {
-			case "passive":
-				statNum = 0;
-				break;
-			case "burn":
-				statNum = 1;
-				break;
-			case "poison":
-				statNum = 2;
-				break;
-			case "potion":
-				statNum = 3;
-				break;
-			case "shapeshift":
-				statNum = 4;
-				break;
-			case "stun":
-				statNum = 5;
-				break;
+		case "passive":
+			statNum = 0;
+			break;
+		case "burn":
+			statNum = 1;
+			break;
+		case "poison":
+			statNum = 2;
+			break;
+		case "potion":
+			statNum = 3;
+			break;
+		case "shapeshift":
+			statNum = 4;
+			break;
+		case "stun":
+			statNum = 5;
+			break;
 		}
 		return statNum;	
 	}
@@ -120,12 +120,12 @@ public class Monsters { //Temporary, probably make abstract later
 		else
 			stat = magR;
 		
-		for (int i = 0; i < stat; i+=2) {
+		for (int i = 1; i < stat; i+=2) {
 			minDam--;
 			if (minDam == 0)
 				break;
 		}
-		System.out.println(minDam);
+		//System.out.println(minDam);
 	}
 	public void setPassive(Ability passive) {
 		this.passive = passive;
