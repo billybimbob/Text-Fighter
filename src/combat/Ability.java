@@ -34,6 +34,9 @@ public abstract class Ability implements Cloneable {
 	public boolean getSelfTar() {
 		return selfTar;
 	}
+	public boolean getPassive() {
+		return passive;
+	}
 	public Monsters[] getTargets() {
 		return targets;
 	}
@@ -103,4 +106,5 @@ public abstract class Ability implements Cloneable {
 		Fight.statusCheck(attacker, target, "reflect", damage);
 	}
 	public abstract void execute ();
+
 }

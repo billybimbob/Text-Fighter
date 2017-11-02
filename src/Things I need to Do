@@ -2,14 +2,13 @@ List of Things I Need to Change
 Start working on abilities that have each unique scaling calculators on damage. Make it so monster can use abilities but its rng.
 	Add magic attacks
 	Add description of abilities
-Mana regen? and cost
 Make monster variables private
 Rogue class?
 	fast, weak, stealth
 	instakill, maybe an ultimate?
 Shifter class
-	add to interface
-	test out
+	add more passives
+	
 Bug: monster target changing somehow, only seen affecting bandit, when in middle of attacks
 Bug: changing form to pangolin as eagle changes to eagle
 Add passives - in status of monsters
@@ -26,6 +25,7 @@ calculations
 Ish - might want to revist
 Spin attack: doesn't account for when an enemy dies
 Regenerate mana somehow?
+	Mana regen? and cost
 	Ability or over time
 Add stun mechanic- reset stuns at the end of the turn
 Account for max inventory??
@@ -40,3 +40,6 @@ Bug: Used crit potions, then crit potion after gave 0 crit, check this for all p
 Buffs override other buffs instead of waiting for the duration of one buff to expire
 Add "back" option in choices
 figure out how to have an attack be multiple turns
+Shifter class
+	add to interface
+	test out

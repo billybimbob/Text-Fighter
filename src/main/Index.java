@@ -7,7 +7,7 @@ import combat.*;
 import combat.magic.*;
 import combat.magic.shapeshift.*;
 import combat.melee.*;
-import combat.passive.Intimidate;
+import combat.passive.*;
 
 public class Index {
 
@@ -42,8 +42,9 @@ public class Index {
 		Ability[] attStore = {baseA, charg, disrt, spins, blast, drain, froze, polym, reflt, sheep, shift};
 		attackList = attStore;
 		
+		Ability flury = new Flurry();
 		Ability intim = new Intimidate();
-		Ability[] passStore = {intim};
+		Ability[] passStore = {flury, intim};
 		passiveList = passStore;
 		
 		// hp, mp, atk, def, magic, mres, speed, crit, special attack

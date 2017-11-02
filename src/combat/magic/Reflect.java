@@ -3,7 +3,7 @@ package combat.magic;
 import combat.*;
 import main.Fight;
 
-public class Reflect extends Ability { //might change attack to be a buff instead of mult-turn attack
+public class Reflect extends Ability { //not sure if should be priority or not
 
 	public Reflect () {
 		name = "Reflect";

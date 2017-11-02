@@ -82,7 +82,7 @@ public class Fight {
 							for (int i = 0; i <= monFighters.size()-1; i++)
 								turnMove.setTarget(monFighters.get(i));
 							Interface.heroAction = true;*/
-						} else { //single target attacks
+						} else { //attacks with numTar less then available targets
 							for (int i = 0; i <= turnMove.getTargets().length-1; i++) {
 								String tarPrompt = "Which monster would you want to target?";
 								int tarNum = Interface.choiceInput(keyboard, true, monFightersName, tarPrompt);
@@ -215,7 +215,6 @@ public class Fight {
 				}*/
 				passiveCheck(attacker, fighters);
 				statusCheck(attacker, "burn");
-				statusCheck(attacker, "potion");
 				statusCheck(attacker, "stun");
 				
 				if (!(skipTurn || attacker.aggro)) { //Monster attacks
@@ -287,6 +286,8 @@ public class Fight {
 				}
 				//end of turn
 				statusCheck(attacker, "poison");
+				statusCheck(attacker, "potion"); //not sure if should be end of turn or beginning
+				statusCheck(attacker, "reflect");
 				statusCheck(attacker, "shapeshift");
 				
 				attacker.damTurn = 0; //resets the amount of damage taken in one turn
@@ -375,7 +376,7 @@ public class Fight {
 			break;
 		}
 	}
-	public static void statusCheck(Monsters attacker, Monsters target, String statName, double damDeal) { //target based status checks
+	public static void statusCheck(Monsters attacker, Monsters target, String statName, double damDeal) { //target based status checks, might move to monsters class
 		int stat = Monsters.getStatNum(statName);
 		int statTurn = target.status[stat][0];
 		switch(stat) {
@@ -390,13 +391,14 @@ public class Fight {
 	}
 	public static void passiveCheck (Monsters user, ArrayList<Monsters> fighters) { //not sure if should be all enemies or all non-user
 		if (user.passive != null) {
-			ArrayList<Monsters> nonSelf = new ArrayList<Monsters>();
-			for (Monsters mon: fighters) {
-				if (mon != user)
-					nonSelf.add(mon);
-			}
-			if (user.passive.getAoe())
+			if (user.passive.getAoe()) {
+				ArrayList<Monsters> nonSelf = new ArrayList<Monsters>();
+				for (Monsters mon: fighters) {
+					if (mon != user)
+						nonSelf.add(mon);
+				}
 				user.passive.setAllTar(nonSelf);
+			}
 			user.passive.execute();
 		}
 	}

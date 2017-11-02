@@ -137,7 +137,10 @@ public class Monsters { //Temporary, probably make abstract later
 		//System.out.println(minDam);
 	}
 	public void setPassive(Ability passive) {
-		this.passive = passive;
+		if (passive.getPassive()) 
+			this.passive = passive;
+		else
+			System.out.println("Not a valid ability");
 	}
 	public void setStatus(String stat, int startTurn, int duration) {
 		int index = getStatNum(stat);
