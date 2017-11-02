@@ -13,7 +13,8 @@ public class Hero extends Monsters {
 		try {
 			switch(classes) {
 			case 1: //warrior
-				Ability[] moveStore1 = {(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[1].clone(),
+				Ability[] moveStore1 = {
+						(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[1].clone(),
 						(Ability)Index.attackList[2].clone(), (Ability)Index.attackList[3].clone()};
 				moveList = moveStore1;
 				attType = true;
@@ -24,7 +25,8 @@ public class Hero extends Monsters {
 				def = 7;
 				break;
 			case 2: //mage
-				Ability[] moveStore2 = {(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[4].clone(),
+				Ability[] moveStore2 = {
+						(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[4].clone(),
 						(Ability)Index.attackList[5].clone(), (Ability)Index.attackList[6].clone(),
 						(Ability)Index.attackList[7].clone(), (Ability)Index.attackList[8].clone()};
 				moveList = moveStore2;

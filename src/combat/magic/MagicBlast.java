@@ -25,8 +25,8 @@ public class MagicBlast extends Ability {
 				if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 					System.out.println(attacker.name + "'s magic blast was resisted by " + targets[0].name);
 				} else {
-					loseHp(targets[0], baseDam);
 					System.out.println(attacker.name + " blasts " + targets[0].name + " for " + baseDam + " damage");
+					loseHp(targets[0], baseDam);
 					
 					if (attackCheck(targets[0], 0.4)) {
 						System.out.println(attacker.name + "'s blast stuns " + targets[0].name);

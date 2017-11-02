@@ -20,9 +20,7 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 		target.spe = shiftedMon.spe;
 		target.crit = shiftedMon.crit;
 		target.status = new int[Monsters.statusLen][2];
-		System.out.println("got hered");
 		if (shiftedMon.passive != null) {
-			System.out.println("got here");
 			target.setPassive(shiftedMon.passive);
 			target.passive.setAttacker(target);
 			//System.out.println(target.passive.getName());

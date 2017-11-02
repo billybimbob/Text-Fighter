@@ -26,7 +26,7 @@ public class ChargeAttack extends Ability {
 			if (attacker.aggro)
 				Interface.heroAction = true;
 			else
-				attacker.multTurn = true;
+				attacker.storeTurn = this;
 		} else if (turnCount == 1) { //checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
 			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
@@ -38,8 +38,8 @@ public class ChargeAttack extends Ability {
 					System.out.print("Critical Hit! ");
 				}
 				
-				loseHp(targets[0], baseDam);
 				System.out.println(attacker.name + " lands a powerful hit on " + targets[0].name + " for " + baseDam + " damage");
+				loseHp(targets[0], baseDam);
 				
 				if (attackCheck(targets[0], 0.1)) {
 					System.out.println(attacker.name + "'s charged attack stuns " + targets[0].name);
@@ -53,7 +53,7 @@ public class ChargeAttack extends Ability {
 			if (attacker.aggro) //use store move and turnMove?
 				Interface.heroAction = false;
 			else
-				attacker.multTurn = false;
+				attacker.storeTurn = null;
 			
 		} else
 			System.out.println(attacker.name + " tries to use " + name + ", but has insufficient mana");

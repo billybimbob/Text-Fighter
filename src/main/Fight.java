@@ -125,7 +125,7 @@ public class Fight {
 			//decides the turns of the monsters
 			Ability[] monMoves = new Ability[monFighters.size()];
 			for (int i = 0; i <= monFighters.size()-1; i++) {
-				if (!(monFighters.get(i).multTurn || monFighters.get(i).status[Monsters.getStatNum("stun")][0] != 0)) { //change later
+				if (!(monFighters.get(i).storeTurn!=null || monFighters.get(i).status[Monsters.getStatNum("stun")][0] != 0)) { //change later
 					monMoves[i] = monFighters.get(i).moveList[(int)(Math.random()*monFighters.get(i).moveList.length)];
 					System.out.println(monMoves[i].getName());
 					monMoves[i].setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
@@ -222,18 +222,15 @@ public class Fight {
 					//might be wrong attack since priority order different
 					monCount++;
 					Ability monMove = null;
-					if (attacker.multTurn) {
+					if (attacker.storeTurn != null) {
 						monMove = attacker.storeTurn; //does previous turn move
-						attacker.storeTurn = null;
 					} else {
 						monMove = monMoves[monCount];
-						attacker.storeTurn = monMove;
 					}
 					//System.out.println(attacker.name + " targets are");
 					//for (Monsters k: monMove.getTargets()) {
 					//	System.out.println(k.name);
 					//}
-					//double startHp = monMove.getTargets()[0].hp;
 					monMove.execute();
 					
 				} else if (!skipTurn && attacker.aggro){ //Hero action, attacks target set here or then targets somehow get overridden
@@ -330,39 +327,40 @@ public class Fight {
 		}
 	}
 	
-	public static void statusCheck (Monsters checking, String statName) {
+	public static void statusCheck (Monsters checking, String statName) { //each turn effects
 		int stat = Monsters.getStatNum(statName);
 		int statTurn = checking.status[stat][0], duration = checking.status[stat][1];
 		switch(stat) {
-		case 0: //passive ability, should always go first, rest are alphabetized
-			/*if (statTurn != 0) {
-				checking.passive.execute();
-			}*/
-			break;
-		case 1: //burn status
+		case 0: //burn status
 			if (statTurn != 0) {
 				int burnDam = (int)(checking.hp*0.1);
 				checking.hp -= burnDam;
 				System.out.println(checking.name + " is burned, and takes " + burnDam + " damage");
-				if (turnCount-statTurn == duration)
+				if (turnCount-statTurn == duration) {
 					checking.setStatus("burn", false);
+					System.out.println(checking.name + " is no longer burned");
+				}
 			}
 			break;
-		case 2: //poison status
+		case 1: //poison status
 			if (statTurn != 0) {
 				int poiDam = (int)(checking.hp*0.01*((turnCount-statTurn)%10));
 				checking.hp -= poiDam;
 				System.out.println(checking.name + " is burned, and takes " + poiDam + " damage");
 			}
 			break;
-		case 3: //potion status
+		case 2: //potion status
 			if (statTurn != 0) { //triggered only by player
 				Potions.buffCheck (checking, pick);
 			}
 			break;
+		case 3: //reflect status
+			if (statTurn != 0 && turnCount-statTurn >= duration) {
+				checking.setStatus("reflect", false);
+				System.out.println(checking.name + "'s reflect has worn off");
+			}
+			break;
 		case 4: //shapeshift
-			if (statTurn != 0 && checking.passive == null)
-				System.out.println("yes");
 			if (statTurn != 0 && turnCount-statTurn >= duration) { //triggered by shapeshift
 				ShapeShift.revert(checking);
 				System.out.println(checking.name + " reverted back");
@@ -373,6 +371,19 @@ public class Fight {
 				System.out.println(checking.name + " is stunned");
 				skipTurn = true;
 				checking.setStatus("stun", false);
+			}
+			break;
+		}
+	}
+	public static void statusCheck(Monsters attacker, Monsters target, String statName, double damDeal) { //target based status checks
+		int stat = Monsters.getStatNum(statName);
+		int statTurn = target.status[stat][0];
+		switch(stat) {
+		case 3: //reflect status
+			if (statTurn != 0) {
+				double refDam = (int)(damDeal*0.5); 
+				attacker.hp -= refDam;
+				System.out.println(target.name + " reflects " + refDam + " damage to " + attacker.name);
 			}
 			break;
 		}

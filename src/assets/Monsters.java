@@ -8,15 +8,17 @@ public class Monsters { //Temporary, probably make abstract later
 	public String name;
 	public int level = 1, minDam;
 	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit, damTurn = 0;
-	public boolean attType, aggro, multTurn, priority; //attType true means physical attack
-	public int[][] status; //passive, burn, poison, potion, shapeshift, stun; 1st row is turn when activated, 2nd row is duration
+	public boolean attType, aggro, priority; //attType true means physical attack
+	public int[][] status; //burn, poison, potion, reflect, shapeshift, stun; 1st row is turn activated, 2nd is duration
 	public Ability[] moveList;
 	public Ability passive, storeTurn; //temporary?
 	public Monsters storedShifter;
 	public final static int statusLen = 6, levMult = 2;
 	
 	//monster index constructor, basic attack and one special attack
-	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit, int special){
+	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp,
+			double att, double def, double mag, double magR, double spe, double crit,
+			int special){
 		this.name = name;
 		this.aggro = aggro;
 		this.attType = attType;
@@ -32,7 +34,8 @@ public class Monsters { //Temporary, probably make abstract later
 		this.crit = crit;
 		status = new int[statusLen][2];
 		try {
-			Ability[] moveStore = {(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[special].clone()};
+			Ability[] moveStore = {
+					(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[special].clone()};
 			moveList = moveStore;
 			for (int i = 0; i <= moveList.length-1; i++) {
 				moveList[i].setAttacker(this);
@@ -40,7 +43,8 @@ public class Monsters { //Temporary, probably make abstract later
 		} catch (CloneNotSupportedException c) {}
 	}
 	//constructor to have more than one ability
-	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit){
+	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, 
+			double att, double def, double mag, double magR, double spe, double crit) {
 		this.name = name;
 		this.aggro = aggro;
 		this.attType = attType;
@@ -85,16 +89,16 @@ public class Monsters { //Temporary, probably make abstract later
 	public static int getStatNum(String stat) { //returns the index number of inputted status
 		int statNum = -1;
 		switch(stat) {
-		case "passive":
+		case "burn":
 			statNum = 0;
 			break;
-		case "burn":
+		case "poison":
 			statNum = 1;
 			break;
-		case "poison":
+		case "potion":
 			statNum = 2;
 			break;
-		case "potion":
+		case "reflect":
 			statNum = 3;
 			break;
 		case "shapeshift":
@@ -134,7 +138,6 @@ public class Monsters { //Temporary, probably make abstract later
 	}
 	public void setPassive(Ability passive) {
 		this.passive = passive;
-		setStatus("passive", true);
 	}
 	public void setStatus(String stat, int startTurn, int duration) {
 		int index = getStatNum(stat);

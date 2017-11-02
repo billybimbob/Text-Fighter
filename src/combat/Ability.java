@@ -3,6 +3,7 @@ package combat;
 import java.util.ArrayList;
 
 import assets.*;
+import main.Fight;
 
 public abstract class Ability implements Cloneable {
 
@@ -99,6 +100,7 @@ public abstract class Ability implements Cloneable {
 	public void loseHp (Monsters target, double damage) {
 		target.hp -= damage;
 		target.damTurn += damage;
+		Fight.statusCheck(attacker, target, "reflect", damage);
 	}
 	public abstract void execute ();
 }

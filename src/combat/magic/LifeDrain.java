@@ -25,11 +25,11 @@ public class LifeDrain extends Ability {
 				if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 					System.out.println(attacker.name + "'s drain was resisted by " + targets[0].name);
 				} else {
-					loseHp(targets[0], baseDam);
 					System.out.println(attacker.name + " drains " + targets[0].name + " for " + baseDam + " damage");
+					loseHp(targets[0], baseDam);
 					if (selfHeal > 0 && attacker.hp < attacker.maxHp) {
 						attacker.hp += selfHeal;
-						System.out.println("and absorbs " + selfHeal + " health");
+						System.out.println(attacker.name + " absorbs " + selfHeal + " health");
 					}
 				}
 			} else {

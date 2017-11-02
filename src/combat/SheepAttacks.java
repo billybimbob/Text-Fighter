@@ -25,8 +25,8 @@ public class SheepAttacks extends Ability{
 			case 3:
 				if(Math.random()>0.99) {
 					double secretDam = (int)(Math.random()*(targets[0].hp))*2;
-					loseHp(targets[0], secretDam);
 					System.out.println("Woah! " + attacker.name + " is angry, and bites on " + targets[0].name + " for " + secretDam + " damage!");
+					loseHp(targets[0], secretDam);
 				} else {
 					System.out.println("Just a little old goat");
 				}

@@ -26,8 +26,8 @@ public class Freeze extends Ability {
 				if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 					System.out.println(attacker.name + "'s freeze was resisted by " + targets[0].name);
 				} else {
-					loseHp(targets[0], baseDam);
 					System.out.println(attacker.name + " freezes " + targets[0].name + " for " + baseDam + " damage");
+					loseHp(targets[0], baseDam);
 					if (targets[0].spe > 0) {
 						targets[0].spe -= statDam;
 						System.out.println(targets[0].name + "'s speed was lowered by " + statDam);
