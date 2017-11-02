@@ -54,6 +54,8 @@ public class Reflect extends Ability { //might change attack to be a buff instea
 			turnCount = 0;
 			if (attacker.aggro)
 				Interface.heroAction = false;
+			else 
+				attacker.multTurn = false;
 			
 		} else
 			System.out.println(attacker.name + " tries to use " + name + ", but has insufficient mana");

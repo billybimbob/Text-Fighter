@@ -50,8 +50,10 @@ public class ChargeAttack extends Ability {
 			}
 			attacker.spe += 3; //might later set to a variable
 			turnCount = 0;
-			if (attacker.aggro)
+			if (attacker.aggro) //use store move and turnMove?
 				Interface.heroAction = false;
+			else
+				attacker.multTurn = false;
 			
 		} else
 			System.out.println(attacker.name + " tries to use " + name + ", but has insufficient mana");
