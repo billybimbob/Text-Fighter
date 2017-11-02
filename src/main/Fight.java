@@ -73,16 +73,13 @@ public class Fight {
 						//determine the targets of hero move
 						if (turnMove.getSelfTar()){
 							Interface.heroAction = true; //temporary, want to select transformation here
-						} else if (turnMove.getAoe()) {//attacks all monsters, might change later
-							turnMove.setNumTar(monFighters.size());
-							//turnMove.targets = new Monsters[turnMove.numTar];
-							for (int i = 0; i <= monFighters.size()-1; i++)
-								heroTargets.add(monFighters.get(i));
+						} else if (turnMove.getAoe() || turnMove.getTargets().length == monFighters.size()) {//attacks all monsters, might change later
+							turnMove.setAllTar(monFighters);
 							Interface.heroAction = true;
-						} else if (turnMove.getTargets().length == monFighters.size()) { //attacks all monsters if aoe attack or if only one option
+						/*} else if (turnMove.getTargets().length == monFighters.size()) { //attacks all monsters if aoe attack or if only one option
 							for (int i = 0; i <= monFighters.size()-1; i++)
-								heroTargets.add(monFighters.get(i));
-							Interface.heroAction = true;
+								turnMove.setTarget(monFighters.get(i));
+							Interface.heroAction = true;*/
 						} else { //single target attacks
 							for (int i = 0; i <= turnMove.getTargets().length-1; i++) {
 								String tarPrompt = "Which monster would you want to target?";
@@ -91,7 +88,8 @@ public class Fight {
 									Interface.heroAction = false;
 									break;
 								}
-								heroTargets.add(monFighters.get(tarNum-1));
+								//heroTargets.add(monFighters.get(tarNum-1));
+								turnMove.setTarget(monFighters.get(tarNum-1));
 								//System.out.println(turnMove.targets[i].name);
 								Interface.heroAction = true;
 							}
@@ -240,7 +238,7 @@ public class Fight {
 						attacker.spe -= 7;
 					switch (choice) {
 					case 1: //attacks inputed target
-						if (!turnMove.getSelfTar()) {
+						/*if (!turnMove.getSelfTar()) {
 							for (int j = 0; j <= turnMove.getTargets().length-1; j++) {
 								if (j < heroTargets.size()) {
 									turnMove.setTarget(heroTargets.get(j));
@@ -248,7 +246,7 @@ public class Fight {
 								} else
 									turnMove.setTarget(null);
 							}
-						}
+						}*/
 						turnMove.execute();
 						break;
 					case 2: //Try to flee

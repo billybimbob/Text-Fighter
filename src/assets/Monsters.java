@@ -8,14 +8,12 @@ public class Monsters { //Temporary, probably make abstract later
 	public String name;
 	public int level = 1, storeTurn = 0, minDam; //Temporary
 	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit, damTurn = 0;
-	public boolean aggro, multTurn, priority;
+	public boolean atType, aggro, multTurn, priority; //attType true means physical attack
 	public int[][] status; //passive, burn, poison, potion, shapeshift, stun; 1st row is turn when activated, 2nd row is duration
 	public Ability[] moveList;
 	public Ability passive;
-	public boolean attType; //true means physical attack
 	public Monsters storedShifter;
-	public static int statusLen = 6;
-	public final static double levMult = 2.5;
+	public final static int statusLen = 6, levMult = 2;
 	
 	//monster index constructor, basic attack and one special attack
 	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit, int special){
@@ -77,7 +75,7 @@ public class Monsters { //Temporary, probably make abstract later
 		}
 	}
 	
-	public static int getStatNum(String stat) {
+	public static int getStatNum(String stat) { //returns the index number of inputted status
 		int statNum = -1;
 		switch(stat) {
 		case "passive":

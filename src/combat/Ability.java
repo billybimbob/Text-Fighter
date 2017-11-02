@@ -1,5 +1,7 @@
 package combat;
 
+import java.util.ArrayList;
+
 import assets.*;
 
 public abstract class Ability implements Cloneable {
@@ -48,6 +50,12 @@ public abstract class Ability implements Cloneable {
 			tarCount = 0;
 		targets[tarCount] = target;
 		tarCount++;
+	}
+	public void setAllTar (ArrayList<Monsters> enemies) {
+		this.setNumTar(enemies.size());
+		//turnMove.targets = new Monsters[turnMove.numTar];
+		for (int i = 0; i <= targets.length-1; i++)
+			setTarget(enemies.get(i));
 	}
 	
 	public Object clone() throws CloneNotSupportedException { //can't use copy constructor because the subclasses are the constructors
