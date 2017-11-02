@@ -20,6 +20,13 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 		target.spe = shiftedMon.spe;
 		target.crit = shiftedMon.crit;
 		target.status = new int[Monsters.statusLen][2];
+		System.out.println("got hered");
+		if (shiftedMon.passive != null) {
+			System.out.println("got here");
+			target.setPassive(shiftedMon.passive);
+			target.passive.setAttacker(target);
+			//System.out.println(target.passive.getName());
+		}
 		target.moveList = shiftedMon.moveList; 
 		for (int i = 0; i <= target.moveList.length-1; i++) {
 			target.moveList[i].setAttacker(target);
@@ -42,6 +49,14 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 		target.spe = target.storedShifter.spe;
 		target.crit = target.storedShifter.crit;
 		target.status = new int[Monsters.statusLen][2]; //resets statuses
+		
+		if (target.storedShifter.passive != null) {
+			
+			target.setPassive(target.storedShifter.passive);
+			target.passive.setAttacker(target);
+			//System.out.println(target.passive.getName());
+		} else
+			target.setPassive(null);
 		target.moveList = target.storedShifter.moveList;
 		target.hp = (int)(target.hp*hpRatio);
 		target.storedShifter = null;

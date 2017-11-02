@@ -209,7 +209,7 @@ public class Fight {
 				/*for (int j = 0; j <= attacker.status.length-1; j++) {
 					int statTurn = attacker.status[j][0], duration = attacker.status[j][1];
 				}*/
-				statusCheck(attacker, "passive");
+				passiveCheck(attacker, fighters);
 				statusCheck(attacker, "burn");
 				statusCheck(attacker, "potion");
 				statusCheck(attacker, "stun");
@@ -226,7 +226,10 @@ public class Fight {
 						attacker.storeTurn = monMoveNum;
 						monMove.setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
 					}
-					
+					System.out.println(attacker.name + " targets are");
+					for (Monsters k: monMove.getTargets()) {
+						System.out.println(k.name);
+					}
 					//double startHp = monMove.getTargets()[0].hp;
 					monMove.execute();
 					//monMove.getTargets()[0].damTurn += (startHp - monMove.getTargets()[0].hp);
@@ -247,6 +250,9 @@ public class Fight {
 									turnMove.setTarget(null);
 							}
 						}*/
+						//System.out.println(attacker.name + " targets are");
+						//for (Monsters k: turnMove.getTargets())
+						//	System.out.println(k.name);
 						turnMove.execute();
 						break;
 					case 2: //Try to flee
@@ -328,9 +334,9 @@ public class Fight {
 		int statTurn = checking.status[stat][0], duration = checking.status[stat][1];
 		switch(stat) {
 		case 0: //passive ability, should always go first, rest are alphabetized
-			if (statTurn != 0) {
+			/*if (statTurn != 0) {
 				checking.passive.execute();
-			}
+			}*/
 			break;
 		case 1: //burn status
 			if (statTurn != 0) {
@@ -354,6 +360,8 @@ public class Fight {
 			}
 			break;
 		case 4: //shapeshift
+			if (statTurn != 0 && checking.passive == null)
+				System.out.println("yes");
 			if (statTurn != 0 && turnCount-statTurn >= duration) { //triggered by shapeshift
 				ShapeShift.revert(checking);
 				System.out.println(checking.name + " reverted back");
@@ -368,5 +376,16 @@ public class Fight {
 			break;
 		}
 	}
-	
+	public static void passiveCheck (Monsters user, ArrayList<Monsters> fighters) { //not sure if should be all enemies or all non-user
+		if (user.passive != null) {
+			ArrayList<Monsters> nonSelf = new ArrayList<Monsters>();
+			for (Monsters mon: fighters) {
+				if (mon != user)
+					nonSelf.add(mon);
+			}
+			if (user.passive.getAoe())
+				user.passive.setAllTar(nonSelf);
+			user.passive.execute();
+		}
+	}
 }

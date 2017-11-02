@@ -13,7 +13,8 @@ public class Intimidate extends Ability {
 	public void execute() {
 		System.out.println(attacker.name + " intimidates all enemies, and decreases all of their speed");
 		for (int i = 0; i <= targets.length-1; i++) {
-			targets[i].spe--;
+			if (targets[i].spe > 0)
+				targets[i].spe--;
 		}
 	}
 

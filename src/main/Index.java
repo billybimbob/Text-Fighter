@@ -7,10 +7,11 @@ import combat.*;
 import combat.magic.*;
 import combat.magic.shapeshift.*;
 import combat.melee.*;
+import combat.passive.Intimidate;
 
 public class Index {
 
-	public static Ability[] attackList;
+	public static Ability[] attackList, passiveList;
 	public static Potions[] potionsList;
 	public static Monsters[] monsterList;
 	public static Monsters[] shiftMonList;
@@ -41,6 +42,10 @@ public class Index {
 		Ability[] attStore = {baseA, charg, disrt, spins, blast, drain, froze, polym, reflt, sheep, shift};
 		attackList = attStore;
 		
+		Ability intim = new Intimidate();
+		Ability[] passStore = {intim};
+		passiveList = passStore;
+		
 		// hp, mp, atk, def, magic, mres, speed, crit, special attack
 		Monsters mon1 = new Monsters("Bandit", false, true, 15, 15, 3, 3, 3, 3, 6, 6, 1);
 		Monsters mon2 = new Monsters("Spider", false, false, 10, 15, 6, 2, 3, 3, 4, 4, 5);
@@ -51,8 +56,17 @@ public class Index {
 		Monsters mon7 = new Monsters("Sheep", false, true, 5, 5, 1, 1, 1, 1, 1, 1, 9);
 		Monsters[] monStore = {mon1, mon2, mon3, mon4, mon5, mon6};
 		Monsters[] shapeStore = {mon4, mon5, mon6, mon7};
+		
 		monsterList = monStore;
 		shiftMonList = shapeStore;
+		
+		for (int i = 0; i <= passiveList.length-1; i++) {//temporary
+			try {
+				shiftMonList[i].setPassive((Ability)passiveList[i].clone());
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	public void use () { //dummy method
 		

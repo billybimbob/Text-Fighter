@@ -12,6 +12,7 @@ public class BasicAttack extends Ability {
 	
 	public void execute() { //might need to change how the target is handled
 		//Attack based on RNG and modified by stats, need to consider magic attack
+		attType = attacker.attType; //might be temporary
 		if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 			
 			baseDamage();

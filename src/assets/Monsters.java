@@ -8,7 +8,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public String name;
 	public int level = 1, storeTurn = 0, minDam; //Temporary
 	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit, damTurn = 0;
-	public boolean atType, aggro, multTurn, priority; //attType true means physical attack
+	public boolean attType, aggro, multTurn, priority; //attType true means physical attack
 	public int[][] status; //passive, burn, poison, potion, shapeshift, stun; 1st row is turn when activated, 2nd row is duration
 	public Ability[] moveList;
 	public Ability passive;
@@ -19,6 +19,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit, int special){
 		this.name = name;
 		this.aggro = aggro;
+		this.attType = attType;
 		this.hp = hp;
 		this.maxHp = hp;
 		this.mp = mp;
@@ -42,6 +43,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit){
 		this.name = name;
 		this.aggro = aggro;
+		this.attType = attType;
 		this.hp = hp;
 		this.maxHp = hp;
 		this.mp = mp;
@@ -58,6 +60,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public Monsters (Monsters copy) { //not sure if deep or shallow
 		this.name = copy.name;
 		this.aggro = copy.aggro;
+		this.attType = copy.attType;
 		this.hp = copy.hp;
 		this.maxHp = copy.maxHp;
 		this.mp = copy.mp;
@@ -69,6 +72,10 @@ public class Monsters { //Temporary, probably make abstract later
 		this.spe = copy.spe;
 		this.crit = copy.crit;
 		status = new int[statusLen][2];
+		if (copy.passive != null) {
+			this.setPassive(copy.passive);
+			this.passive.setAttacker(this);
+		}
 		this.moveList = copy.moveList; 
 		for (int i = 0; i <= moveList.length-1; i++) {
 			moveList[i].setAttacker(this);
@@ -117,7 +124,7 @@ public class Monsters { //Temporary, probably make abstract later
 			stat = def;
 		else
 			stat = magR;
-		
+			//System.out.print("magR " + stat + " ");
 		for (int i = 1; i < stat; i+=2) {
 			minDam--;
 			if (minDam == 0)
