@@ -6,12 +6,12 @@ import main.Index;
 public class Monsters { //Temporary, probably make abstract later
 
 	public String name;
-	public int level = 1, storeTurn = 0, minDam; //Temporary
+	public int level = 1, minDam;
 	public double hp, maxHp, mp, maxMp, att, def, mag, magR, spe, crit, damTurn = 0;
 	public boolean attType, aggro, multTurn, priority; //attType true means physical attack
 	public int[][] status; //passive, burn, poison, potion, shapeshift, stun; 1st row is turn when activated, 2nd row is duration
 	public Ability[] moveList;
-	public Ability passive;
+	public Ability passive, storeTurn; //temporary?
 	public Monsters storedShifter;
 	public final static int statusLen = 6, levMult = 2;
 	

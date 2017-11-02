@@ -41,6 +41,8 @@ public class Fight {
 				} else {
 					monFighters.add(fighters.get(i));
 				}
+				if (fighters.get(i).name == "Slime")
+					fighters.get(i).priority = true;
 			}
 			monFightersName = new String[monFighters.size()];
 			for (int i = 0; i <= monFighters.size()-1; i++) {
@@ -121,12 +123,13 @@ public class Fight {
 				}
 			}
 			//decides the turns of the monsters
-			int[] monMoves = new int[monFighters.size()];
+			Ability[] monMoves = new Ability[monFighters.size()];
 			for (int i = 0; i <= monFighters.size()-1; i++) {
-				if (!(monFighters.get(i).multTurn || monFighters.get(i).status[3][0] != 0)) { //change later
-					monMoves[i] = (int)(Math.random()*monFighters.get(i).moveList.length);
-					//System.out.println(monMoves[i]);
-					if (monFighters.get(i).moveList[monMoves[i]].getPriority())
+				if (!(monFighters.get(i).multTurn || monFighters.get(i).status[Monsters.getStatNum("stun")][0] != 0)) { //change later
+					monMoves[i] = monFighters.get(i).moveList[(int)(Math.random()*monFighters.get(i).moveList.length)];
+					System.out.println(monMoves[i].getName());
+					monMoves[i].setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
+					if (monMoves[i].getPriority())
 						monFighters.get(i).priority = true;
 				}
 			}
@@ -158,15 +161,16 @@ public class Fight {
 							temp = priorCheck;
 							fighters.set(swapCount, priorAttacker);
 							if (!priorAttacker.aggro) {
-								int swapAttr = i, stoMove = monMoves[pastPriorMon], stoMove2;
+								int swapIndx = i;
+								Ability stoMove = monMoves[pastPriorMon], stoMove2;
 								if (pastHero) {
 									//System.out.println("bleh");
-									swapAttr -= 1;
+									swapIndx -= 1;
 								}
 								//System.out.println(swapAtt + " " + swapAtt2);
-								monMoves[pastPriorMon] = monMoves[swapAttr];
+								monMoves[pastPriorMon] = monMoves[swapIndx];
 								
-								for (int j = pastPriorMon+1; j <= swapAttr; j++) {
+								for (int j = pastPriorMon+1; j <= swapIndx; j++) {
 									stoMove2 = monMoves[j];
 									//System.out.println("looping"+j+" "+stoMove+" "+stoMove2);
 									monMoves[j] = stoMove;
@@ -198,7 +202,7 @@ public class Fight {
 			}*/
 			
 			//Goes through the move of each fighter, if attacking, target set here
-			int monCount = 0;
+			int monCount = -1;
 			for (int i = 0; i <= fighters.size()-1; i++) {
 				Monsters attacker = fighters.get(i);
 				skipTurn = false;
@@ -215,25 +219,22 @@ public class Fight {
 				statusCheck(attacker, "stun");
 				
 				if (!(skipTurn || attacker.aggro)) { //Monster attacks
-					int monMoveNum = monMoves[monCount]; //might be wrong attack since priority order different
+					//might be wrong attack since priority order different
 					monCount++;
 					Ability monMove = null;
 					if (attacker.multTurn) {
-						monMove = attacker.moveList[attacker.storeTurn]; //does previous turn move
-						attacker.storeTurn = 0;
+						monMove = attacker.storeTurn; //does previous turn move
+						attacker.storeTurn = null;
 					} else {
-						monMove = attacker.moveList[monMoveNum];
-						attacker.storeTurn = monMoveNum;
-						monMove.setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
+						monMove = monMoves[monCount];
+						attacker.storeTurn = monMove;
 					}
-					System.out.println(attacker.name + " targets are");
-					for (Monsters k: monMove.getTargets()) {
-						System.out.println(k.name);
-					}
+					//System.out.println(attacker.name + " targets are");
+					//for (Monsters k: monMove.getTargets()) {
+					//	System.out.println(k.name);
+					//}
 					//double startHp = monMove.getTargets()[0].hp;
 					monMove.execute();
-					//monMove.getTargets()[0].damTurn += (startHp - monMove.getTargets()[0].hp);
-					//attacker.damTurn = 0; //resets the amount of damage taken
 					
 				} else if (!skipTurn && attacker.aggro){ //Hero action, attacks target set here or then targets somehow get overridden
 					Interface.heroAction = false; //sets default value, will by default ask for user input
