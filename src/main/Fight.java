@@ -215,6 +215,7 @@ public class Fight {
 				}*/
 				passiveCheck(attacker, fighters);
 				statusCheck(attacker, "burn");
+				statusCheck(attacker, "potion"); //not sure if should be end of turn or beginning
 				statusCheck(attacker, "stun");
 				
 				if (!(skipTurn || attacker.aggro)) { //Monster attacks
@@ -286,7 +287,6 @@ public class Fight {
 				}
 				//end of turn
 				statusCheck(attacker, "poison");
-				statusCheck(attacker, "potion"); //not sure if should be end of turn or beginning
 				statusCheck(attacker, "reflect");
 				statusCheck(attacker, "shapeshift");
 				
