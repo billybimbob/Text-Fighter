@@ -180,7 +180,7 @@ public class Fight {
 							break;
 						}
 					}
-					for (int j = swapCount+1; j <= fighters.size()-1; j++) { //switches priority and scoots down rest behind
+					for (int j = swapCount+1; j <= fighters.size()-1; j++) { //switches priority and scoots down rest behind, don't use add method because don't want to scoot entire list
 						temp2 = fighters.get(j);
 						//System.out.println(temp2.name);
 						fighters.set(j, temp);
@@ -218,20 +218,22 @@ public class Fight {
 				statusCheck(attacker, "potion"); //not sure if should be end of turn or beginning
 				statusCheck(attacker, "stun");
 				
-				if (!(skipTurn || attacker.aggro)) { //Monster attacks
+				if (!attacker.aggro) { //Monster attacks
 					//might be wrong attack since priority order different
 					monCount++;
-					Ability monMove = null;
-					if (attacker.storeTurn != null) {
-						monMove = attacker.storeTurn; //does previous turn move
-					} else {
-						monMove = monMoves[monCount];
+					if (!skipTurn) {
+						Ability monMove = null;
+						if (attacker.storeTurn != null) {
+							monMove = attacker.storeTurn; //does previous turn move
+						} else {
+							monMove = monMoves[monCount];
+						}
+						//System.out.println(attacker.name + " targets are");
+						//for (Monsters k: monMove.getTargets()) {
+						//	System.out.println(k.name);
+						//}
+						monMove.execute();
 					}
-					//System.out.println(attacker.name + " targets are");
-					//for (Monsters k: monMove.getTargets()) {
-					//	System.out.println(k.name);
-					//}
-					monMove.execute();
 					
 				} else if (!skipTurn && attacker.aggro){ //Hero action, attacks target set here or then targets somehow get overridden
 					Interface.heroAction = false; //sets default value, will by default ask for user input
