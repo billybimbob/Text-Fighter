@@ -20,7 +20,7 @@ public class Interface {
 		String name = kboard.nextLine();
 		
 		String[] availClass = {"Warrior", "Mage", "Shifter"};
-		String classPrompt = "Would you like to be a warrior or a mage?\nThis will affect your stats, potions, and abilities";
+		String classPrompt = "Which class you would like to be?\nThis will affect your stats, potions, and abilities";
 		int classChoice = choiceInput(kboard, false,availClass, classPrompt);
 		//int classChoice = 1;
 		Hero player1 = new Hero(name, classChoice);

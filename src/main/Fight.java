@@ -83,6 +83,7 @@ public class Fight {
 								turnMove.setTarget(monFighters.get(i));
 							Interface.heroAction = true;*/
 						} else { //attacks with numTar less then available targets
+							heroTargets.clear();
 							for (int i = 0; i <= turnMove.getTargets().length-1; i++) {
 								String tarPrompt = "Which monster would you want to target?";
 								int tarNum = Interface.choiceInput(keyboard, true, monFightersName, tarPrompt);
@@ -90,8 +91,9 @@ public class Fight {
 									Interface.heroAction = false;
 									break;
 								}
-								//heroTargets.add(monFighters.get(tarNum-1));
-								turnMove.setTarget(monFighters.get(tarNum-1));
+								heroTargets.add(monFighters.get(tarNum-1));
+								//turnMove.setTarget(monFighters.get(tarNum-1));
+								//System.out.println(turnMove.getTargets()[i].name);
 								//System.out.println(turnMove.targets[i].name);
 								Interface.heroAction = true;
 							}
@@ -127,8 +129,8 @@ public class Fight {
 			for (int i = 0; i <= monFighters.size()-1; i++) {
 				if (!(monFighters.get(i).storeTurn!=null || monFighters.get(i).status[Monsters.getStatNum("stun")][0] != 0)) { //change later
 					monMoves[i] = monFighters.get(i).moveList[(int)(Math.random()*monFighters.get(i).moveList.length)];
-					System.out.println(monMoves[i].getName());
-					monMoves[i].setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
+					//System.out.println(monMoves[i].getName());
+					//monMoves[i].setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
 					if (monMoves[i].getPriority())
 						monFighters.get(i).priority = true;
 				}
@@ -204,6 +206,7 @@ public class Fight {
 			//Goes through the move of each fighter, if attacking, target set here
 			int monCount = -1;
 			for (int i = 0; i <= fighters.size()-1; i++) {
+				//System.out.println(turnMove.getTargets()[0].name);
 				Monsters attacker = fighters.get(i);
 				skipTurn = false;
 				if (target.hp <= 0) //got rid of flee, maybe temporary
@@ -228,10 +231,7 @@ public class Fight {
 						} else {
 							monMove = monMoves[monCount];
 						}
-						//System.out.println(attacker.name + " targets are");
-						//for (Monsters k: monMove.getTargets()) {
-						//	System.out.println(k.name);
-						//}
+						monMoves[monCount].setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
 						monMove.execute();
 					}
 					
@@ -241,7 +241,7 @@ public class Fight {
 						attacker.spe -= 7;
 					switch (choice) {
 					case 1: //attacks inputed target
-						/*if (!turnMove.getSelfTar()) {
+						if (!turnMove.getSelfTar()) {
 							for (int j = 0; j <= turnMove.getTargets().length-1; j++) {
 								if (j < heroTargets.size()) {
 									turnMove.setTarget(heroTargets.get(j));
@@ -249,10 +249,7 @@ public class Fight {
 								} else
 									turnMove.setTarget(null);
 							}
-						}*/
-						//System.out.println(attacker.name + " targets are");
-						//for (Monsters k: turnMove.getTargets())
-						//	System.out.println(k.name);
+						}
 						turnMove.execute();
 						break;
 					case 2: //Try to flee
