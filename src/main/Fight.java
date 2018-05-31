@@ -77,8 +77,6 @@ public class Fight {
 							Interface.heroAction = true; //temporary, want to select transformation here
 						} else if (turnMove.getAoe() || turnMove.getTargets().length == monFighters.size()) {//attacks all monsters, might change later
 							turnMove.setAllTar(monFighters);
-							/*for (Monsters targetTest: turnMove.getTargets())
-								System.out.println(targetTest.name);*/
 							Interface.heroAction = true;
 						/*} else if (turnMove.getAoe() || turnMove.getTargets().length==monFighters.size()) { //attacks all monsters if aoe attack or if only one option
 							for (Monsters enemy: monFighters)
@@ -126,12 +124,14 @@ public class Fight {
 			//decides the turns of the monsters
 			Ability[] monMoves = new Ability[monFighters.size()];
 			for (int i = 0; i < monFighters.size(); i++) {
-				if (!(monFighters.get(i).storeTurn!=null || monFighters.get(i).status[Monsters.getStatNum("stun")][0]!=0)) { //change later
+				if (monFighters.get(i).storeTurn==null) {
 					monMoves[i] = monFighters.get(i).moveList[(int)(Math.random()*monFighters.get(i).moveList.length)];
 					//System.out.println(monMoves[i].getName());
 					//monMoves[i].setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
 					if (monMoves[i].getPriority())
 						monFighters.get(i).priority = true;
+				} else {
+					monMoves[i] = monFighters.get(i).storeTurn;
 				}
 			}
 			System.out.println("-----------------------------------------------");
