@@ -39,13 +39,13 @@ public class ChangeForm extends ShapeShift {
 			
 			int availChange = formList.length;
 			Monsters[] tempList = new Monsters[availChange];
-			for (int i = 0; i <= formList.length-1; i++) { //determine available transformations, creates form list for this iteration
-				if (!(attacker.name == formList[i].name)) {
+			for (int i = 0; i < formList.length; i++) { //determine available transformations, removes caster from list
+				if (attacker.name != formList[i].name) {
 					tempList[i-(formList.length-availChange)] = formList[i];
 				} else {
 					availChange--;
 					Monsters[] tempStore = new Monsters[availChange];
-					for(int j = 0; j <= tempStore.length-1; j++) {
+					for(int j = 0; j < tempStore.length; j++) {
 						tempStore[j] = tempList[j];
 					}
 					tempList = null;
@@ -53,7 +53,7 @@ public class ChangeForm extends ShapeShift {
 				}
 			}
 			String[] formNames = new String[tempList.length]; //sets list of names of available transformations
-			for (int i = 0; i <= tempList.length-1; i++)
+			for (int i = 0; i < tempList.length; i++)
 				formNames[i] = tempList[i].name;
 			
 			int formChoice = Interface.choiceInput(keyboard, true, formNames, changePrompt)-1;
