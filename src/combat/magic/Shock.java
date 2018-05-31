@@ -3,14 +3,15 @@ package combat.magic;
 import assets.Monsters;
 import combat.*;
 
-public class MagicBlast extends Ability {
+public class Shock extends Ability {
 
-	public MagicBlast () {
-		name = "Magic Blast";
+	public Shock () {
+		name = "Shock";
 		description = "A a magic attack with the same damage as a basic, but has chance to stun and ignores some armor";
 		attType = false;
 		targets = new Monsters[numTar];
-		manaCost = 2;
+		priority = true;
+		manaCost = 6;
 		baseDamMod = 1.5;
 	}
 	

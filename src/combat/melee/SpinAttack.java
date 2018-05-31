@@ -1,5 +1,6 @@
 package combat.melee;
 
+import assets.Monsters;
 import combat.*;
 
 public class SpinAttack extends Ability {
@@ -18,25 +19,25 @@ public class SpinAttack extends Ability {
 			
 			System.out.println(attacker.name + " spins around, hitting");
 			baseDamage();
-			for (int i = 0; i <= targets.length-1; i++) { //Checks if hits for each monster
+			for (Monsters target: targets) { //Checks if hits for each monster
 				try {
 					double damDealt = 0;
 					//Attack based on RNG and modified by stats
-					if (attackCheck(targets[i], 0.005)) { //Check if attack will be successful
+					if (attackCheck(target, 0.005)) { //Check if attack will be successful
 						/*if (critCheck()) { //Might add later, with hashmap?
 							baseDam *= 2;
 							System.out.println("Critical Hit!");
 						}*/
 						double storeDam = baseDam;
-						targetReduct(targets[i]);
-						loseHp(targets[i], baseDam);
+						targetReduct(target);
+						loseHp(target, baseDam);
 						damDealt = baseDam;
 						baseDam = storeDam;
 					}
 					if (damDealt < 0)
-						 System.out.println("but is blocked by " + targets[i].name);
+						 System.out.println("but is blocked by " + target.name);
 					else
-						System.out.println(targets[i].name + " for " + damDealt + " damage");
+						System.out.println(target.name + " for " + damDealt + " damage");
 				} catch (Exception e) {System.out.print(e);}
 			}
 		

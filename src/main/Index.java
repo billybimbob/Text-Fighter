@@ -32,14 +32,14 @@ public class Index {
 		Ability charg = new ChargeAttack(); //start of melee abilites, 1
 		Ability disrt = new Disrupt();
 		Ability spins = new SpinAttack();
-		Ability blast = new MagicBlast();   //start of magic abilites, 4
+		Ability shock = new Shock();   //start of magic abilites, 4
 		Ability drain = new LifeDrain();
 		Ability froze = new Freeze();
 		Ability polym = new Polymorph();
 		Ability reflt = new Reflect();
 		Ability sheep = new SheepAttacks();
 		Ability shift = new ChangeForm(keyboard);
-		Ability[] attStore = {baseA, charg, disrt, spins, blast, drain, froze, polym, reflt, sheep, shift};
+		Ability[] attStore = {baseA, charg, disrt, spins, shock, drain, froze, polym, reflt, sheep, shift};
 		attackList = attStore;
 		
 		Ability flury = new Flurry();

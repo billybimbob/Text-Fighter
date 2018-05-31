@@ -77,24 +77,23 @@ public class Fight {
 							Interface.heroAction = true; //temporary, want to select transformation here
 						} else if (turnMove.getAoe() || turnMove.getTargets().length == monFighters.size()) {//attacks all monsters, might change later
 							turnMove.setAllTar(monFighters);
+							/*for (Monsters targetTest: turnMove.getTargets())
+								System.out.println(targetTest.name);*/
 							Interface.heroAction = true;
-						/*} else if (turnMove.getTargets().length == monFighters.size()) { //attacks all monsters if aoe attack or if only one option
-							for (int i = 0; i <= monFighters.size()-1; i++)
-								turnMove.setTarget(monFighters.get(i));
+						/*} else if (turnMove.getAoe() || turnMove.getTargets().length==monFighters.size()) { //attacks all monsters if aoe attack or if only one option
+							for (Monsters enemy: monFighters)
+								heroTargets.add(enemy);
 							Interface.heroAction = true;*/
 						} else { //attacks with numTar less then available targets
 							heroTargets.clear();
-							for (int i = 0; i <= turnMove.getTargets().length-1; i++) {
+							for (int i = 0; i < turnMove.getTargets().length; i++) {
 								String tarPrompt = "Which monster would you want to target?";
 								int tarNum = Interface.choiceInput(keyboard, true, monFightersName, tarPrompt);
 								if (tarNum == 0) {//have to change how to implement
 									Interface.heroAction = false;
 									break;
 								}
-								heroTargets.add(monFighters.get(tarNum-1));
-								//turnMove.setTarget(monFighters.get(tarNum-1));
-								//System.out.println(turnMove.getTargets()[i].name);
-								//System.out.println(turnMove.targets[i].name);
+								turnMove.setTarget(monFighters.get(tarNum-1));
 								Interface.heroAction = true;
 							}
 						}
@@ -126,21 +125,14 @@ public class Fight {
 			}
 			//decides the turns of the monsters
 			Ability[] monMoves = new Ability[monFighters.size()];
-			for (int i = 0; i <= monFighters.size()-1; i++) {
-				if (!(monFighters.get(i).storeTurn!=null || monFighters.get(i).status[Monsters.getStatNum("stun")][0] != 0)) { //change later
+			for (int i = 0; i < monFighters.size(); i++) {
+				if (!(monFighters.get(i).storeTurn!=null || monFighters.get(i).status[Monsters.getStatNum("stun")][0]!=0)) { //change later
 					monMoves[i] = monFighters.get(i).moveList[(int)(Math.random()*monFighters.get(i).moveList.length)];
 					//System.out.println(monMoves[i].getName());
 					//monMoves[i].setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
 					if (monMoves[i].getPriority())
 						monFighters.get(i).priority = true;
 				}
-			}
-			
-			for (Monsters fighter: fighters) {
-				System.out.println(fighter.name);
-			}
-			for (Ability monMove: monMoves) {
-				System.out.println(monMove.getName());
 			}
 			System.out.println("-----------------------------------------------");
 			
@@ -156,7 +148,7 @@ public class Fight {
 						//priorCount++;
 						break;
 					}*/
-					Monsters temp = null;
+					Monsters stoFitr = null, stoFitr2;
 					int dst;// pastPriMon = 0; //swapCount is location of where to swap, pastPriorMon is the number of priority monsters past
 					boolean pastHero2 = false;
 					for (dst = 0; dst < fighters.size(); dst++) { //finds where to switch, as highest speed priority is 1st
@@ -171,45 +163,29 @@ public class Fight {
 								int monSrc = src, monDst = dst;
 								if (pastHero)
 									monSrc -= 1;
-								if (pastHero2)
+								if (pastHero2 && dst!=0)
 									monDst -= 1;
 								
-								Ability stoMove = monMoves[monDst];
+								Ability stoMove = monMoves[monDst], stoMove2;
 								monMoves[monDst] = monMoves[monSrc];	
 								for (int j = monDst+1; j <= monSrc; j++) {
+									stoMove2 = monMoves[j];
 									monMoves[j] = stoMove;
-									stoMove = monMoves[j];
+									stoMove = stoMove2;
 								}
 							}
-							temp = priCheck;
+							stoFitr = priCheck;
 							fighters.set(dst, priAttacker);
 							break;
 						}
 					}
 					for (int j = dst+1; j <= src; j++) { //switches priority and scoots down rest behind, don't use add method because don't want to scoot entire list
-						fighters.set(j, temp);
-						temp = fighters.get(j);
+						stoFitr2 = fighters.get(j);
+						fighters.set(j, stoFitr);
+						stoFitr = stoFitr2;
 					}
 				}
 			}
-			/*for (int i = 0; i <= monMoves.length-1; i++) {
-				System.out.println(monMoves[i]);
-			}
-			for (int i = 0; i <= monFighters.size()-1; i++) {
-				System.out.print(monFighters.get(i).name);
-				for (int j = 0; j <= monFighters.get(i).moveList.length-1; j++) {
-					System.out.print(monFighters.get(i).moveList[j].name+" ");
-				}
-				System.out.println("");
-			}*/
-			
-			for (Monsters fighter: fighters) {
-				System.out.println(fighter.name);
-			}
-			for (Ability monMove: monMoves) {
-				System.out.println(monMove.getName());
-			}
-			
 			
 			//Goes through the move of each fighter, if attacking, target set here
 			int monCount = 0;
@@ -238,8 +214,6 @@ public class Fight {
 						} else {
 							monMove = monMoves[monCount];
 						}
-						System.out.println(monCount + " " + monMoves.length);
-						System.out.println(monMoves[monCount]);
 						monMoves[monCount].setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
 						monMove.execute();
 					}
@@ -250,15 +224,14 @@ public class Fight {
 						attacker.spe -= 7;
 					switch (choice) {
 					case 1: //attacks inputed target
-						if (!turnMove.getSelfTar()) {
-							for (int j = 0; j <= turnMove.getTargets().length-1; j++) {
+						/*if (!turnMove.getSelfTar()) {
+							for (int j = 0; j < turnMove.getTargets().length; j++) {
 								if (j < heroTargets.size()) {
 									turnMove.setTarget(heroTargets.get(j));
 									//startHp[j] = heroTargets.get(j).hp;
-								} else
-									turnMove.setTarget(null);
+								}
 							}
-						}
+						}*/
 						turnMove.execute();
 						break;
 					case 2: //Try to flee
