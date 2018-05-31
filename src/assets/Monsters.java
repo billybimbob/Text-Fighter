@@ -86,7 +86,7 @@ public class Monsters { //Temporary, probably make abstract later
 		}
 	}
 	
-	public static int getStatNum(String stat) { //returns the index number of inputted status
+	public static int getStatNum(String stat) { //returns the index number of inputed status
 		int statNum = -1;
 		switch(stat) {
 		case "burn":
@@ -121,19 +121,25 @@ public class Monsters { //Temporary, probably make abstract later
 		moveList = null;
 		moveList = moveStore;
 	}
-	public void setMinDam(boolean attType) { //max value for now is 10 for def and magR
-		minDam = 5;
+	public void setMinDam(Monsters attacker, boolean attType) { //max value for now is 10 for def and magR
+		minDam = 0;
 		double stat = 0;
-		if (attType)
+		if (attType) {
+			minDam = (int)attacker.att;
 			stat = def;
-		else
+		} else {
+			minDam = (int)attacker.mag;
 			stat = magR;
 			//System.out.print("magR " + stat + " ");
-		for (int i = 1; i < stat; i+=2) {
+		}
+		minDam -= ((int)stat/2);
+		if (minDam < 0)
+			minDam = 0;
+		/*for (int i = 1; i < stat; i+=2) {
 			minDam--;
 			if (minDam == 0)
 				break;
-		}
+		}*/
 		//System.out.println(minDam);
 	}
 	public void setPassive(Ability passive) {

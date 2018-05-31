@@ -135,60 +135,60 @@ public class Fight {
 						monFighters.get(i).priority = true;
 				}
 			}
+			
+			for (Monsters fighter: fighters) {
+				System.out.println(fighter.name);
+			}
+			for (Ability monMove: monMoves) {
+				System.out.println(monMove.getName());
+			}
 			System.out.println("-----------------------------------------------");
 			
 			//check for priority, need to check what happens if speed is same with 2 priorities
 			boolean pastHero = false;
-			for (int i = 0; i <= fighters.size()-1; i++) {
-				Monsters priorAttacker = fighters.get(i);
-				if (priorAttacker.aggro) {
+			for (int src = 0; src < fighters.size(); src++) {
+				Monsters priAttacker = fighters.get(src);
+				if (priAttacker.aggro) {
 					pastHero = true;
 				}
-				if (priorAttacker.priority && i != 0) { //if priority and first, no need to move
-					if (fighters.get(i-1).priority) {
+				if (priAttacker.priority && src != 0) { //if priority and first, no need to move
+					/*if (fighters.get(i-1).priority) {
 						//priorCount++;
 						break;
-					}
-					Monsters temp = null, temp2;
-					int swapCount, pastPriorMon = 0; //swapCount is location of where to swap, pastPriorMon is the number of priority monsters past
-					for (swapCount = 0; swapCount <= fighters.size()-1; swapCount++) { //finds where to switch, as highest speed priority is 1st
-						Monsters priorCheck = fighters.get(swapCount);
-						//System.out.println(priorCheck.name+priorCheck.spe);
-						if (!priorCheck.priority || (priorCheck.priority && (priorCheck.spe < priorAttacker.spe))) {
-							
-							if (priorCheck.priority && !priorCheck.aggro) { //swaps the monster attack in move list associated with priority shifts
-								//System.out.println("mehe");
-								pastPriorMon++;
-							}
-							temp = priorCheck;
-							fighters.set(swapCount, priorAttacker);
-							if (!priorAttacker.aggro) {
-								int swapIndx = i;
-								Ability stoMove = monMoves[pastPriorMon], stoMove2;
-								if (pastHero) {
-									//System.out.println("bleh");
-									swapIndx -= 1;
-								}
-								//System.out.println(swapAtt + " " + swapAtt2);
-								monMoves[pastPriorMon] = monMoves[swapIndx];
+					}*/
+					Monsters temp = null;
+					int dst;// pastPriMon = 0; //swapCount is location of where to swap, pastPriorMon is the number of priority monsters past
+					boolean pastHero2 = false;
+					for (dst = 0; dst < fighters.size(); dst++) { //finds where to switch, as highest speed priority is 1st
+						Monsters priCheck = fighters.get(dst);
+						if (priCheck.aggro)
+							pastHero2 = true;
+						if (!priCheck.priority || (priCheck.priority && (priCheck.spe < priAttacker.spe))) {	
+							//if (priCheck.priority && !priCheck.aggro) { //swaps the monster attack in move list associated with priority shifts
+							//	pastPriMon++;
+							//}
+							if (!priAttacker.aggro) {
+								int monSrc = src, monDst = dst;
+								if (pastHero)
+									monSrc -= 1;
+								if (pastHero2)
+									monDst -= 1;
 								
-								for (int j = pastPriorMon+1; j <= swapIndx; j++) {
-									stoMove2 = monMoves[j];
-									//System.out.println("looping"+j+" "+stoMove+" "+stoMove2);
+								Ability stoMove = monMoves[monDst];
+								monMoves[monDst] = monMoves[monSrc];	
+								for (int j = monDst+1; j <= monSrc; j++) {
 									monMoves[j] = stoMove;
-									stoMove = stoMove2;
+									stoMove = monMoves[j];
 								}
 							}
+							temp = priCheck;
+							fighters.set(dst, priAttacker);
 							break;
 						}
 					}
-					for (int j = swapCount+1; j <= fighters.size()-1; j++) { //switches priority and scoots down rest behind, don't use add method because don't want to scoot entire list
-						temp2 = fighters.get(j);
-						//System.out.println(temp2.name);
+					for (int j = dst+1; j <= src; j++) { //switches priority and scoots down rest behind, don't use add method because don't want to scoot entire list
 						fighters.set(j, temp);
-						if (j == i)
-							break;
-						temp = temp2;
+						temp = fighters.get(j);
 					}
 				}
 			}
@@ -203,8 +203,16 @@ public class Fight {
 				System.out.println("");
 			}*/
 			
+			for (Monsters fighter: fighters) {
+				System.out.println(fighter.name);
+			}
+			for (Ability monMove: monMoves) {
+				System.out.println(monMove.getName());
+			}
+			
+			
 			//Goes through the move of each fighter, if attacking, target set here
-			int monCount = -1;
+			int monCount = 0;
 			for (int i = 0; i <= fighters.size()-1; i++) {
 				//System.out.println(turnMove.getTargets()[0].name);
 				Monsters attacker = fighters.get(i);
@@ -223,7 +231,6 @@ public class Fight {
 				
 				if (!attacker.aggro) { //Monster attacks
 					//might be wrong attack since priority order different
-					monCount++;
 					if (!skipTurn) {
 						Ability monMove = null;
 						if (attacker.storeTurn != null) {
@@ -231,10 +238,12 @@ public class Fight {
 						} else {
 							monMove = monMoves[monCount];
 						}
+						System.out.println(monCount + " " + monMoves.length);
+						System.out.println(monMoves[monCount]);
 						monMoves[monCount].setTarget(target); //doesn't account for multiple targets, maybe do rng to select other targets?
 						monMove.execute();
 					}
-					
+					monCount++;
 				} else if (!skipTurn && attacker.aggro){ //Hero action, attacks target set here or then targets somehow get overridden
 					Interface.heroAction = false; //sets default value, will by default ask for user input
 					if (flee)
@@ -329,7 +338,7 @@ public class Fight {
 	
 	public static void statusCheck (Monsters checking, String statName) { //each turn effects
 		int stat = Monsters.getStatNum(statName);
-		int statTurn = checking.status[stat][0], duration = checking.status[stat][1];
+		int statTurn = checking.status[stat][0], duration = checking.status[stat][1]; //statTurn is turn activated
 		switch(stat) {
 		case 0: //burn status
 			if (statTurn != 0) {
@@ -388,7 +397,7 @@ public class Fight {
 			break;
 		}
 	}
-	public static void passiveCheck (Monsters user, ArrayList<Monsters> fighters) { //not sure if should be all enemies or all non-user
+	public static void passiveCheck (Monsters user, ArrayList<Monsters> fighters) { //not sure if should be all enemies or all non-user, inefficient
 		if (user.passive != null) {
 			if (user.passive.getAoe()) {
 				ArrayList<Monsters> nonSelf = new ArrayList<Monsters>();

@@ -58,8 +58,8 @@ public abstract class Ability implements Cloneable {
 	public void setAllTar (ArrayList<Monsters> enemies) {
 		this.setNumTar(enemies.size());
 		//turnMove.targets = new Monsters[turnMove.numTar];
-		for (int i = 0; i <= targets.length-1; i++)
-			setTarget(enemies.get(i));
+		for (Monsters enemy: targets)
+			setTarget(enemy);
 	}
 	
 	public Object clone() throws CloneNotSupportedException { //can't use copy constructor because the subclasses are the constructors
@@ -94,7 +94,7 @@ public abstract class Ability implements Cloneable {
 		else
 			baseDam -= (int)(Math.random()*(target.magR*.65));
 		
-		target.setMinDam(attType);
+		target.setMinDam(attacker, attType);
 		if (baseDam < target.minDam) {
 			//System.out.println("minDam");
 			baseDam = target.minDam;
