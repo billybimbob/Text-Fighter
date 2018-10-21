@@ -27,21 +27,21 @@ public class Inventory {
 		sortInvent();
 	}
 	public static void removeItems (Items remove) { //Removes item and gets rid of null gaps
-		for (int i = 0; i <= inventoryList.length-1; i++) {
+		for (int i = 0; i < inventoryList.length; i++) {
 			if (inventoryList[i] != null && remove.name.equals(inventoryList[i].name)) {
 				inventoryList[i] = null;
 				int gap;
-				for (gap = i; gap < inventoryList.length-1; gap++) {
+				for (gap = i; gap < inventoryList.length-1; gap++) { //shift all items down
 					inventoryList[gap] = inventoryList[gap+1];
 				}
 				inventoryList[gap] = null;
-				remove.numAmount --;
+				remove.numAmount--;
 				break;
 			}
 		}
 		sortInvent(); //Might not need this
 	}
-	public static void sortInvent () { //Sorts the items alphabetically, similar to the attackOrder method, doesn't account for null gaps; called every time item added or removed
+	private static void sortInvent () { //Sorts the items alphabetically, similar to the attackOrder method, doesn't account for null gaps; called every time item added or removed
 		int count = 0;
 		while (count < inventoryList.length-1) {
 			if ( inventoryList[count+1] != null && inventoryList[count].name.compareTo(inventoryList[count+1].name) > 0) {
@@ -64,7 +64,7 @@ public class Inventory {
 	public static String[] access () { //Goes through the inventory, accounting for duplicates, and sets each item to an index in an Array
 		empty = true;
 		ArrayList<String> inventStore = new ArrayList<>();
-		for (int i = 0; i <= inventSpace-1; i++) {
+		for (int i = 0; i < inventSpace; i++) {
 			if (inventoryList[i] != null) {
 				inventStore.add(inventoryList[i].name);
 				i += inventoryList[i].numAmount-1; //Accounts for the step increment of the for loop
@@ -72,7 +72,7 @@ public class Inventory {
 			}
 		}
 		String[] inventName = new String [inventStore.size()];
-		for (int i = 0; i <= inventName.length-1; i++) {
+		for (int i = 0; i < inventName.length; i++) {
 			inventName[i] = inventStore.get(i) + " x " + inventoryList[i].numAmount;
 		}
 		

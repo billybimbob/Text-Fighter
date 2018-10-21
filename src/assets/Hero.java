@@ -10,7 +10,7 @@ public class Hero extends Monsters {
 	public Hero (String name, int classes){ //if classes true, warrior
 		super(name, true, true, 25, 20, 5, 5, 5, 5, 5, 5);
 		level = 1;
-		try {
+		try { //redfine from starting vals
 			switch(classes) {
 			case 1: //warrior
 				Ability[] moveStore1 = {
@@ -18,11 +18,11 @@ public class Hero extends Monsters {
 						(Ability)Index.attackList[2].clone(), (Ability)Index.attackList[3].clone()};
 				moveList = moveStore1;
 				attType = true;
-				hp = 40;
-				maxHp = hp;
-				att = 7;
-				mag = 1;
-				def = 7;
+				stats.put("maxHp", 40.0); //try iterating later
+				stats.put("hp", stats.get("maxHp"));
+				stats.put("att", 7.0);
+				stats.put("mag", 1.0);
+				stats.put("def", 7.0);
 				break;
 			case 2: //mage
 				Ability[] moveStore2 = {
@@ -31,23 +31,24 @@ public class Hero extends Monsters {
 						(Ability)Index.attackList[7].clone(), (Ability)Index.attackList[8].clone()};
 				moveList = moveStore2;
 				attType = false;
-				mag = 7;
-				att = 1;
-				magR = 7;
-				def = 4;
+				stats.put("mag", 7.0);
+				stats.put("att", 1.0);
+				stats.put("magR", 7.0);
+				stats.put("def", 4.0);
+				stats.put("mag", 7.0);
 				break;
 			case 3: //shifter
 				Ability[] moveStore3 = {(Ability)Index.attackList[10].clone()};
 				moveList = moveStore3;
 				attType = false;
-				hp = 10;
-				maxHp = hp;
-				att = 1;
-				mag = 1;
-				def = 1;
-				magR = 1;
-				spe = 7;
-				crit = 1;
+				stats.put("hp", 10.0);
+				stats.put("maxHp", stats.get("hp"));
+				stats.put("att", 1.0);
+				stats.put("mag", 1.0);
+				stats.put("def", 1.0);
+				stats.put("magR", 1.0);
+				stats.put("spe", 7.0);
+				stats.put("crit", 1.0);
 				break;
 			}
 			
@@ -55,34 +56,5 @@ public class Hero extends Monsters {
 				moveList[i].setAttacker(this);
 			}
 		} catch (CloneNotSupportedException c) {}
-	}
-	
-	public void modStat (String stat, int val) {
-		switch (stat) {
-		case "hp":
-			hp += val;
-			break;
-		case "mp":
-			mp += val;
-			break;
-		case "att":
-			att += val;
-			break;
-		case "def":
-			def += val;
-			break;
-		case "mag":
-			mag += val;
-			break;
-		case "magR":
-			magR += val;
-			break;
-		case "crit":
-			crit += val;
-			break;
-		case "spe":
-			spe += val;
-			break;
-		}
 	}
 }
