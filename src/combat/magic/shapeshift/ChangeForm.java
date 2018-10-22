@@ -1,7 +1,6 @@
 package combat.magic.shapeshift;
 
 import java.util.Scanner;
-
 import assets.*;
 import combat.Ability;
 import main.Index;

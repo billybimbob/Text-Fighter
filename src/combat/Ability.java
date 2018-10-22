@@ -1,7 +1,6 @@
 package combat;
 
 import java.util.ArrayList;
-
 import assets.*;
 import main.Fight;
 

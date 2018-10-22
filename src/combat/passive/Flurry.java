@@ -11,7 +11,7 @@ public class Flurry extends Ability {
 	}
 	public void execute() {
 		System.out.println(attacker.name + " gains attack boost");
-		attacker.att += 1;
+		attacker.modStat("att", 1);
 	}
 
 }

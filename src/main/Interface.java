@@ -85,7 +85,7 @@ public class Interface {
 		} while (!heroAction);
 		
 		heroAction = false;
-		System.out.println("");
+		System.out.println();
 		
 		return choice;
 	}
