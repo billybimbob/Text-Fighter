@@ -12,11 +12,10 @@ public class Fight {
 	private static boolean skipTurn;
 	private static Items pick; //temporary
 	public static int turnCount;
+	public static ArrayList<Monsters> fighters;
 
-	public static void fighting (Scanner keyboard, ArrayList<Monsters> fighters) throws InterruptedException {
-		System.out.println("Press enter when you are ready to fight");
-		keyboard.nextLine();
-		
+	public static void fighting (Scanner keyboard, ArrayList<Monsters> fightersIn) throws InterruptedException {
+		fighters = fightersIn;
 		Monsters target = null;
 		boolean fightControl = true, flee = false;
 		turnCount = 0;
@@ -25,6 +24,8 @@ public class Fight {
 		Ability turnMove = null;
 		ArrayList<Monsters> heroTargets = new ArrayList<>(); //need to clear later
 		
+		System.out.println("Press enter when you are ready to fight");
+		keyboard.nextLine();
 		while (fightControl) {
 			String[] monFightersName;
 			ArrayList<Monsters> monFighters = new ArrayList<>();
@@ -34,7 +35,7 @@ public class Fight {
 			attackOrder(fighters); //Orders the fighters by speed
 			System.out.println("-----------------------------------------------");
 			for (int i = 0; i <= fighters.size()-1; i++) { //Determine which is the hero, may change later, also prints each fighter and stats
-				System.out.println(fighters.get(i).name + " - " + fighters.get(i).hp + " hp" + " - " + fighters.get(i).mp + " mp" + " - " + fighters.get(i).spe+ " speed");
+				System.out.println(fighters.get(i).name + " - " + fighters.get(i).getStat("hp") + " hp" + " - " + fighters.get(i).getStat("mp") + " mp" + " - " + fighters.get(i).getStat("spe") + " speed");
 				
 				if (fighters.get(i).aggro) {
 					target = fighters.get(i);
@@ -109,7 +110,7 @@ public class Fight {
 						pickNum = Interface.choiceInput(keyboard, true, inventNames, itemPrompt);
 						if (pickNum == 0)
 							break selection;
-						else if (Interface.hero.status[2][0]!=0 && Potions.timeLength >= (turnCount-Potions.turnStart)) { //will trigger debuff
+						else if (Interface.hero.getStatus("potion")[0]!=0 && Potions.timeLength >= (turnCount-Potions.turnStart)) { //will trigger debuff
 							String usePrompt = "Another buff is still active, and will be canceled by this potion\nAre you sure you want to do this?";
 							int confirmUse = Interface.choiceInput(keyboard, false, Interface.responseOptions, usePrompt);
 							if (confirmUse == 1)
@@ -155,7 +156,7 @@ public class Fight {
 						Monsters priCheck = fighters.get(dst);
 						if (priCheck.aggro)
 							pastHero2 = true;
-						if (!priCheck.priority || (priCheck.priority && (priCheck.spe < priAttacker.spe))) {	
+						if (!priCheck.priority || (priCheck.priority && (priCheck.getStat("spe") < priAttacker.getStat("spe")))) {	
 							//if (priCheck.priority && !priCheck.aggro) { //swaps the monster attack in move list associated with priority shifts
 							//	pastPriMon++;
 							//}
@@ -193,14 +194,14 @@ public class Fight {
 				//System.out.println(turnMove.getTargets()[0].name);
 				Monsters attacker = fighters.get(i);
 				skipTurn = false;
-				if (target.hp <= 0) //got rid of flee, maybe temporary
+				if (target.getStat("hp") <= 0) //got rid of flee, maybe temporary
 					break;
 				
 				//status effect check of each monster
 				/*for (int j = 0; j <= attacker.status.length-1; j++) {
 					int statTurn = attacker.status[j][0], duration = attacker.status[j][1];
 				}*/
-				passiveCheck(attacker, fighters);
+				passiveCheck(attacker);
 				statusCheck(attacker, "burn");
 				statusCheck(attacker, "potion"); //not sure if should be end of turn or beginning
 				statusCheck(attacker, "stun");
@@ -221,7 +222,7 @@ public class Fight {
 				} else if (!skipTurn && attacker.aggro){ //Hero action, attacks target set here or then targets somehow get overridden
 					Interface.heroAction = false; //sets default value, will by default ask for user input
 					if (flee)
-						attacker.spe -= 7;
+						attacker.modStat("spe", -7);
 					switch (choice) {
 					case 1: //attacks inputed target
 						/*if (!turnMove.getSelfTar()) {
@@ -236,8 +237,8 @@ public class Fight {
 						break;
 					case 2: //Try to flee
 						//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
-						Interface.hero.mp -= 3;
-						Interface.hero.spe += 7;
+						Interface.hero.modStat("mp", -3);
+						Interface.hero.modStat("spe", 7);
 						System.out.println("You try dodge all incoming attacks, increasing evasion by 7");
 						flee = true;
 						/*if (escapeCheck > 1)
@@ -256,7 +257,7 @@ public class Fight {
 					}
 					for (int j = 0; j <= monFighters.size()-1; j++) { //check if any monster died, immediately after hero's turn
 						//System.out.print(monFighters.get(j).name + j + " " + monFighters.size());
-						if (monFighters.get(j).hp <= 0) {
+						if (monFighters.get(j).getStat("hp") <= 0) {
 							if (j < i)
 								i--;
 							fighters.remove(monFighters.get(j));
@@ -272,13 +273,13 @@ public class Fight {
 				statusCheck(attacker, "shapeshift");
 				
 				attacker.damTurn = 0; //resets the amount of damage taken in one turn
-				if (attacker.mp < attacker.maxMp)
-					attacker.mp += 1;
-				System.out.println("");
+				if (attacker.getStat("mp") < attacker.getStat("maxMp")) //passive mp gain, could change the val
+					attacker.modStat("mp", 1);
+				System.out.println();
 				TimeUnit.SECONDS.sleep(2);
 			}
 			
-			if (target.hp <= 0) { //Check if hero hp is zero
+			if (target.getStat("hp") <= 0) { //Check if hero hp is zero
 				System.out.println("You have received a fatal blow, and have died");
 				fightControl = false;
 			} else if (monFighters.size() == 0) { //Check if all monsters are killed
@@ -294,10 +295,10 @@ public class Fight {
 	public static void attackOrder (ArrayList<Monsters> list) { //orders the combatants from highest speed to lowest
 		int count = 0;
 		while (count < list.size()-1) {
-			if (list.get(count).spe < list.get(count+1).spe) {
+			if (list.get(count).getStat("spe") < list.get(count+1).getStat("spe")) {
 				
 				for (int i = list.size()-1; i >= 0; i--) {
-					if (list.get(count).spe < list.get(i).spe) {
+					if (list.get(count).getStat("spe") < list.get(i).getStat("spe")) {
 						list.add(i, list.remove(count));
 						count = 0;
 						break;
@@ -309,47 +310,47 @@ public class Fight {
 		}
 	}
 	
-	public static void statusCheck (Monsters checking, String statName) { //each turn effects
-		int stat = Monsters.getStatNum(statName);
-		int statTurn = checking.status[stat][0], duration = checking.status[stat][1]; //statTurn is turn activated
-		switch(stat) {
-		case 0: //burn status
-			if (statTurn != 0) {
-				int burnDam = (int)(checking.hp*0.1);
-				checking.hp -= burnDam;
+	public static void statusCheck (Monsters checking, String statusName) { //each turn effects
+		int[] statusData = checking.getStatus(statusName);
+		int startTurn = statusData[0], duration = statusData[1]; //statTurn is turn activated
+		switch(statusName) {
+		case "burn":
+			if (startTurn != 0) {
+				int burnDam = (int)(checking.getStat("hp")*0.1);
+				checking.setStat("hp", -burnDam);
 				System.out.println(checking.name + " is burned, and takes " + burnDam + " damage");
-				if (turnCount-statTurn == duration) {
+				if (turnCount-startTurn == duration) {
 					checking.setStatus("burn", false);
 					System.out.println(checking.name + " is no longer burned");
 				}
 			}
 			break;
-		case 1: //poison status
-			if (statTurn != 0) {
-				int poiDam = (int)(checking.hp*0.01*((turnCount-statTurn)%10));
-				checking.hp -= poiDam;
-				System.out.println(checking.name + " is burned, and takes " + poiDam + " damage");
+		case "poison":
+			if (startTurn != 0) {
+				int poiDam = (int)(checking.getStat("hp")*0.01*((turnCount-startTurn)%10));
+				checking.setStat("hp", -poiDam);
+				System.out.println(checking.name + " is poisoned, and takes " + poiDam + " damage");
 			}
 			break;
-		case 2: //potion status
-			if (statTurn != 0) { //triggered only by player
+		case "potion":
+			if (startTurn != 0) { //triggered only by player
 				Potions.buffCheck (checking, pick);
 			}
 			break;
-		case 3: //reflect status
-			if (statTurn != 0 && turnCount-statTurn >= duration) {
+		case "reflect":
+			if (startTurn != 0 && turnCount-startTurn >= duration) {
 				checking.setStatus("reflect", false);
 				System.out.println(checking.name + "'s reflect has worn off");
 			}
 			break;
-		case 4: //shapeshift
-			if (statTurn != 0 && turnCount-statTurn >= duration) { //triggered by shapeshift
+		case "shapeshift":
+			if (startTurn != 0 && turnCount-startTurn >= duration) { //triggered by shapeshift
 				ShapeShift.revert(checking);
 				System.out.println(checking.name + " reverted back");
 			}
 			break;
-		case 5: //stun status
-			if (statTurn != 0) { //triggered by chargeatt, magblast, disrupt
+		case "stun":
+			if (startTurn != 0) { //triggered by chargeatt, magblast, disrupt
 				System.out.println(checking.name + " is stunned");
 				skipTurn = true;
 				checking.setStatus("stun", false);
@@ -357,20 +358,24 @@ public class Fight {
 			break;
 		}
 	}
-	public static void statusCheck(Monsters attacker, Monsters target, String statName, double damDeal) { //target based status checks, might move to monsters class
-		int stat = Monsters.getStatNum(statName);
-		int statTurn = target.status[stat][0];
-		switch(stat) {
-		case 3: //reflect status
-			if (statTurn != 0) {
+	public static void statusCheck(Monsters attacker, Monsters target, String statusName, double damDeal) { //target based status checks, might move to monsters class
+		int[] statusData = target.getStatus(statusName);
+		int startTurn = statusData[0], duration = statusData[1]; //statTurn is turn activated
+		switch (statusName) {
+		case "reflect":
+			if (startTurn != 0) {
 				double refDam = (int)(damDeal*0.5); 
-				attacker.hp -= refDam;
+				attacker.modStat("hp", -refDam);
 				System.out.println(target.name + " reflects " + refDam + " damage to " + attacker.name);
+			}
+			if (startTurn != 0 && turnCount-startTurn >= duration) {
+				target.setStatus(statusName, false);
+				System.out.println(target.name + "'s reflect has worn off");
 			}
 			break;
 		}
 	}
-	public static void passiveCheck (Monsters user, ArrayList<Monsters> fighters) { //not sure if should be all enemies or all non-user, inefficient
+	public static void passiveCheck (Monsters user) { //not sure if should be all enemies or all non-user, inefficient
 		if (user.passive != null) {
 			if (user.passive.getAoe()) {
 				ArrayList<Monsters> nonSelf = new ArrayList<Monsters>();

@@ -35,6 +35,7 @@ public class Monsters { //Temporary, probably make abstract later
 
 		Integer[] startStatus = {0, 0};
 		for (int i=0; i<statusName.length; i++) {
+			System.out.println(statusName[i]);
 			status.put(statusName[i], startStatus.clone());
 		}
 
@@ -128,6 +129,7 @@ public class Monsters { //Temporary, probably make abstract later
 		else
 			System.out.println("Not a valid ability");
 	}
+
 	public void setStat (String stat, double val) {
 		stats.put(stat, val);
 	}
