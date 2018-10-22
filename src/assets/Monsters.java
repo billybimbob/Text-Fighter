@@ -88,8 +88,9 @@ public class Monsters { //Temporary, probably make abstract later
 			moveList[i].setAttacker(this);
 		}
 	}
-	
-	//setters
+
+
+	//mutators
 	public void addAttack(Ability adding) {
 		Ability[] moveStore = new Ability[moveList.length+1];
 		for (int i = 0; i <= moveList.length-1; i++) {
@@ -126,6 +127,10 @@ public class Monsters { //Temporary, probably make abstract later
 		else
 			System.out.println("Not a valid ability");
 	}
+	public void modStat (String stat, int val) { //changes stat by val
+		double newVal = stats.get(stat)+val;	
+		stats.put(stat, newVal);
+	}
 	public void setStatus(String stat, int startTurn, int duration) {
 		//int index = getStatNum(stat);
 		status.get(stat)[0] = startTurn;
@@ -140,10 +145,6 @@ public class Monsters { //Temporary, probably make abstract later
 			status.get(stat)[0] = 0;
 	}
 	
-	public static void modStat (Monsters mon, String stat, int val) {
-		double newVal = mon.stats.get(stat)+val;	
-		mon.stats.put(stat, newVal);
-	}
 	//modifies stats based and restores health and mana
 	public void levelUp () {
 		level += 1;
@@ -151,7 +152,7 @@ public class Monsters { //Temporary, probably make abstract later
 		for (int i=0; i<statsName.length; i++) {
 			String stat = statsName[i];
 			if (i != 0 && i != 2 ) { //for hp and mp
-				modStat(this, stat, level*levMult);
+				modStat(stat, level*levMult);
 			}
 		}
 		stats.put("hp", stats.get("maxHp"));

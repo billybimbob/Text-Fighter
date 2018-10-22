@@ -47,86 +47,44 @@ public class Potions extends Items {
 		}
 	}
 	public void useItem (Monsters user) {
-		switch (statMod) {
-		case "hp":
-			user.att += modVal*2;
-			break;
-		case "mp":
-			user.mp +=  modVal*2;
-			break;
-		case "att":
-			user.att += modVal;
-			break;
-		case "def":
-			user.def += modVal;
-			break;
-		case "mag":
-			user.mag += modVal;
-			break;
-		case "magR":
-			user.magR += modVal;
-			break;
-		case "spe":
-			user.spe += modVal;
-			break;
-		case "crit":
-			user.crit += modVal;
-			break;
-		}
+		user.modStat(this.statMod, this.modVal);
+
 		turnStart = Fight.turnCount;
 		Inventory.removeItems(this);
 		if (!(statMod.equals("hp") || statMod.equals("mp")))
 			System.out.println(user.name + " has used " + this.name + " and gained " + modVal + " " + statMod);
 		else
-			System.out.println(user.name + " has used " + this.name + " and gained " + modVal*2 + " " + statMod +" \nand will also gain " + statMod + " over time");
+			System.out.println(user.name + " has used " + this.name + " and gained " + modVal + " " + statMod +" \nand will also gain " + statMod + " over time");
 	}
-	public static void buffCheck (Monsters user, Items used) { //Checks if buff wears off/ updates healing over time
-		if (Potions.timeLength <= Math.abs(Fight.turnCount-Potions.turnStart)) {
-			switch (used.statMod) {
-			case "att":
-				user.att -= used.modVal;
-				break;
-			case "def":
-				user.def -= used.modVal;
-				break;
-			case "mag":
-				user.mag -= used.modVal;
-				break;
-			case "magR":
-				user.magR -= used.modVal;
-				break;
-			case "spe":
-				user.spe -= used.modVal;
-				break;
-			case "crit":
-				user.crit -= used.modVal;
-				break;
-			}
-			System.out.println(used.name + " has worn off");
-			user.setStatus("potion", false);
-		} else if (used.statMod.equals("hp") || used.statMod.equals("mp")){ //Gain over time, could be better, scattered between here and useItem method
+
+	public static void buffCheck (Monsters user, Items used) { //Checks if buff wears off/ updates healing over time only for hero
+		if (used.statMod.equals("hp") || used.statMod.equals("mp")){ //Gain over time, could be better, scattered between here and useItem method
+			user.modStat(used.statMod, used.modVal);
+
+			double max;
 			switch (used.statMod) {
 			case "hp":
-				double tempHp = user.hp;
-				user.hp += used.modVal;
-				if (user.hp > user.maxHp) {
-					user.hp = user.maxHp;
-					used.modVal = (int)(user.hp - tempHp);
+				max = user.stats.get("maxHp");
+				if (user.stats.get(used.statMod) > max) {
+					user.stats.put(used.statMod, max);
 					System.out.println("You cannot be healed past max health");
 				}
 				break;
 			case "mp":
-				double tempMp = user.mp;
-				user.mp += used.modVal;
-				if (user.mp > user.maxMp) {
-					user.mp = user.maxMp;
-					used.modVal = (int)(user.mp - tempMp);
+				max = user.stats.get("maxMp");
+				if (user.stats.get(used.statMod) > max) {
+					user.stats.put(used.statMod, max);
 					System.out.println("You cannot gain past max mana");
 				}
 				break;
 			}
 			System.out.println("You gain " + used.modVal + " " + used.statMod + " from the " + used.name);
 			used.modVal = used.baseModVal;
+		} else if (Potions.timeLength <= Math.abs(Fight.turnCount-Potions.turnStart)) {
+			user.modStat(used.statMod, used.modVal);
+			System.out.println(used.name + " has worn off");
+			user.setStatus("potion", false);
+
 		}
 	}
 }
