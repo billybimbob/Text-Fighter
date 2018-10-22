@@ -27,13 +27,12 @@ public class Monsters { //Temporary, probably make abstract later
 		this.aggro = aggro;
 		this.attType = attType;
 
-		stats = new HashMap<String, Double>();
+		stats = new HashMap<String, Double>(); //set stats
 		double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
 		for (int i=0; i<statName.length; i++) {
 			setStat(statName[i], statVals[i]);
 		}
-
-		status = new HashMap<String, Integer[]>();
+		status = new HashMap<String, Integer[]>(); //set status
 		Integer[] startStatus = {0, 0};
 		for (int i=0; i<statusName.length; i++) {
 			status.put(statusName[i], startStatus.clone());
@@ -47,7 +46,7 @@ public class Monsters { //Temporary, probably make abstract later
 			}
 		} catch (CloneNotSupportedException c) {}
 	}
-	//constructor to have more than one ability
+	//constructor to have no ability
 	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit) {
 		this.name = name;
 		this.aggro = aggro;
@@ -151,12 +150,10 @@ public class Monsters { //Temporary, probably make abstract later
 		setStat(stat, newVal);
 	}
 	public void setStatus(String stat, int startTurn, int duration) {
-		//int index = getStatNum(stat);
 		status.get(stat)[0] = startTurn;
 		status.get(stat)[1] = duration;
 	}
 	public void setStatus(String stat, boolean toggle) {
-		//int index = getStatNum(stat);
 		status.get(stat)[1] = 0; //does not matter
 		if (toggle)
 			status.get(stat)[0] = 1;
@@ -167,7 +164,6 @@ public class Monsters { //Temporary, probably make abstract later
 	//modifies stats based and restores health and mana
 	public void levelUp () {
 		level += 1;
-
 		for (int i=0; i<statName.length; i++) {
 			String stat = statName[i];
 			if (i != 0 && i != 2 ) { //for hp and mp
