@@ -15,9 +15,9 @@ public class Freeze extends Ability {
 	}
 	
 	public void execute() {
-		if (attacker.mp >= manaCost) {
+		if (attacker.getStat("mp") >= manaCost) {
 			//Attack based on RNG and modified by stats, need to consider magic attack
-			attacker.mp -= manaCost;
+			attacker.modStat("mp", -manaCost);
 			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 				baseDamage();
 				int statDam = 1;
@@ -28,8 +28,8 @@ public class Freeze extends Ability {
 				} else {
 					System.out.println(attacker.name + " freezes " + targets[0].name + " for " + baseDam + " damage");
 					loseHp(targets[0], baseDam);
-					if (targets[0].spe > 0) {
-						targets[0].spe -= statDam;
+					if (targets[0].getStat("spe") > 0) {
+						targets[0].modStat("spe", -statDam);
 						System.out.println(targets[0].name + "'s speed was lowered by " + statDam);
 					}
 				}

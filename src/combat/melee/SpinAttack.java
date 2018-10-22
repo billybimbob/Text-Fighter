@@ -14,8 +14,8 @@ public class SpinAttack extends Ability {
 	}
 	
 	public void execute() { //current bug with null pointer
-		if (attacker.mp >= manaCost) {
-			attacker.mp -= manaCost;
+		if (attacker.getStat("mp") >= manaCost) {
+			attacker.modStat("mp", -manaCost);
 			
 			System.out.println(attacker.name + " spins around, hitting");
 			baseDamage();

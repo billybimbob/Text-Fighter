@@ -94,9 +94,9 @@ public abstract class Ability implements Cloneable {
 			baseDam = target.minDam;
 		}
 	}
-	
+
 	public void loseHp (Monsters target, double damage) {
-		target.modStat("hp", damage);
+		target.modStat("hp", -damage);
 		target.damTurn += damage;
 		Fight.statusCheck(attacker, target, "reflect", damage);
 	}

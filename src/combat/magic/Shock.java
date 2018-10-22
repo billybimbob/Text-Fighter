@@ -16,8 +16,8 @@ public class Shock extends Ability {
 	}
 	
 	public void execute() {
-		if (attacker.mp >= manaCost) {
-			attacker.mp -= manaCost;
+		if (attacker.getStat("mp") >= manaCost) {
+			attacker.modStat("mp", -manaCost);
 			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 				
 				baseDamage();

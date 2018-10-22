@@ -18,10 +18,10 @@ public class ChargeAttack extends Ability {
 	}
 	
 	public void execute() { //Change, too messy, might put the print statements in the fight class
-		if (attacker.mp >= manaCost && turnCount == 0) { //checks if sufficient mana, and starts charged turn
-			attacker.mp -= manaCost;
+		if (attacker.getStat("mp") >= manaCost && turnCount == 0) { //checks if sufficient mana, and starts charged turn
+			attacker.modStat("mp", -manaCost);
 			System.out.println(attacker.name + " readies their swing");
-			attacker.spe -= 3;
+			attacker.modStat("mp", -3);
 			turnCount++;
 			if (attacker.aggro)
 				Interface.heroAction = true;
@@ -48,7 +48,7 @@ public class ChargeAttack extends Ability {
 			} else {
 				System.out.println(attacker.name + "'s attack missed");
 			}
-			attacker.spe += 3; //might later set to a variable
+			attacker.modStat("mp", 3); //might later set to a variable
 			turnCount = 0;
 			if (attacker.aggro) //use store move and turnMove?
 				Interface.heroAction = false;

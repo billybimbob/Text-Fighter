@@ -15,10 +15,9 @@ public class LifeDrain extends Ability {
 	}
 
 	public void execute() {
-		if (attacker.mp >= manaCost) {
-			attacker.mp -= manaCost;
+		if (attacker.getStat("mp") >= manaCost) {
+			attacker.modStat("mp", -manaCost);
 			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
-				attacker.mp -= manaCost;
 				baseDamage();
 				targetReduct(targets[0]);
 				double selfHeal = (int)(baseDam*0.5);
@@ -27,8 +26,8 @@ public class LifeDrain extends Ability {
 				} else {
 					System.out.println(attacker.name + " drains " + targets[0].name + " for " + baseDam + " damage");
 					loseHp(targets[0], baseDam);
-					if (selfHeal > 0 && attacker.hp < attacker.maxHp) {
-						attacker.hp += selfHeal;
+					if (selfHeal > 0 && attacker.getStat("hp") < attacker.getStat("maxHp")) {
+						attacker.modStat("hp", selfHeal);
 						System.out.println(attacker.name + " absorbs " + selfHeal + " health");
 					}
 				}

@@ -15,9 +15,9 @@ public class Disrupt extends Ability {
 	}
 	
 	public void execute() {
-		if (attacker.mp >= manaCost) {
+		if (attacker.getStat("mp") >= manaCost) {
 			//Attack based on RNG and modified by stats, need to consider magic attack
-			attacker.mp -= manaCost;
+			attacker.modStat("mp", -manaCost);
 			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 				baseDamage();
 				targetReduct(targets[0]);
@@ -35,7 +35,7 @@ public class Disrupt extends Ability {
 				}
 				double selfDam = (int)(baseDam*.5);
 				if (selfDam > 0) {
-					attacker.hp -= selfDam; //might add to damage received in turn?
+					attacker.modStat("hp", -selfDam); //might add to damage received in turn?
 					System.out.println(attacker.name + " deals " + selfDam + " damage to self from recoil");
 				}
 			} else {

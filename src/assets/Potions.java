@@ -81,7 +81,7 @@ public class Potions extends Items {
 			System.out.println("You gain " + used.modVal + " " + used.statMod + " from the " + used.name);
 			used.modVal = used.baseModVal;
 		} else if (Potions.timeLength <= Math.abs(Fight.turnCount-Potions.turnStart)) {
-			user.modStat(used.statMod, used.modVal);
+			user.modStat(used.statMod, -used.modVal);
 			System.out.println(used.name + " has worn off");
 			user.setStatus("potion", false);
 

@@ -33,8 +33,8 @@ public class ChangeForm extends ShapeShift {
 				}
 			}
 		}
-		if (attacker.mp >= manaCost) {
-			attacker.mp -= manaCost;
+		if (attacker.getStat("mp") >= manaCost) {
+			attacker.modStat("mp", -manaCost);
 			String changePrompt = "Which form do you want to take?";
 			
 			int availChange = formList.length;

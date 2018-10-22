@@ -13,8 +13,8 @@ public class Polymorph extends ShapeShift { //doesn't account for if the moveLis
 	}
 	
 	public void execute() {
-		if (attacker.mp >= manaCost) {
-			attacker.mp -= manaCost;
+		if (attacker.getStat("mp") >= manaCost) {
+			attacker.modStat("mp", -manaCost);
 			if (attackCheck(targets[0], 0.05)) { //Check if attack will be successful
 				System.out.println(attacker.name + " has transformed " + targets[0].name + " into a sheep");
 				transform(targets[0], Index.shiftMonList[3], 3); //last 3 turns
