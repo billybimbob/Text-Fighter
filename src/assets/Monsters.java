@@ -72,7 +72,7 @@ public class Monsters { //Temporary, probably make abstract later
 		this.attType = copy.attType;
 		
 		stats = new HashMap<String, Double>();
-		for (int i=0; i<statusName.length; i++) {
+		for (int i=0; i<statName.length; i++) {
 			String stat = statName[i];
 			this.setStat(stat, copy.getStat(stat));
 		}
@@ -97,6 +97,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public double getStat (String stat) {
 		double ret = 0;
 		//try {
+			//System.out.println(this.name);
 			ret = this.stats.get(stat);
 		//} catch (Exception e) {
 		//	System.out.println(e);
@@ -142,6 +143,7 @@ public class Monsters { //Temporary, probably make abstract later
 	}
 
 	public void setStat (String stat, double val) {
+		//System.out.println("setting " + this.name + "\'s " + stat);
 		stats.put(stat, val);
 	}
 	public void modStat (String stat, double val) { //changes stat by val
@@ -167,7 +169,7 @@ public class Monsters { //Temporary, probably make abstract later
 		level += 1;
 
 		for (int i=0; i<statName.length; i++) {
-			String stat = statsName[i];
+			String stat = statName[i];
 			if (i != 0 && i != 2 ) { //for hp and mp
 				modStat(stat, level*levMult);
 			}

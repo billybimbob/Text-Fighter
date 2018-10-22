@@ -13,8 +13,8 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 
 		target.name = shiftedMon.name;
 		target.aggro = shiftedMon.aggro;
-		for (int i=0; i<Monsters.statsName.length; i++) { //copy stats
-			String stat = Monsters.statsName[i];
+		for (int i=0; i<Monsters.statName.length; i++) { //copy stats
+			String stat = Monsters.statName[i];
 			target.setStat(stat, shiftedMon.getStat(stat));
 		}
 
@@ -40,8 +40,8 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 		
 		target.name = target.storedShifter.name;
 		target.aggro = target.storedShifter.aggro;
-		for (int i=0; i<Monsters.statsName.length; i++) { //copy stats
-			String stat = Monsters.statsName[i];
+		for (int i=0; i<Monsters.statName.length; i++) { //copy stats
+			String stat = Monsters.statName[i];
 			target.setStat(stat, target.storedShifter.getStat(stat));
 		}
 
