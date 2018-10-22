@@ -16,7 +16,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public Ability passive, storeTurn; //temporary?
 	public Monsters storedShifter;
 	
-	public static final String[] statsName = {"hp", "maxHp", "mp", "maxMp", "att", "def", "mag", "magR", "spe"};
+	public static final String[] statName = {"hp", "maxHp", "mp", "maxMp", "att", "def", "mag", "magR", "spe"};
 	public static final String[] statusName = {"burn", "poison", "potion", "reflect", "shapeshift", "stun"};
 	public final static int levMult = 2;
 	
@@ -29,8 +29,8 @@ public class Monsters { //Temporary, probably make abstract later
 
 		stats = new HashMap<String, Double>();
 		double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
-		for (int i=0; i<statsName.length; i++) {
-			setStat(statsName[i], statVals[i]);
+		for (int i=0; i<statName.length; i++) {
+			setStat(statName[i], statVals[i]);
 		}
 
 		status = new HashMap<String, Integer[]>();
@@ -55,8 +55,8 @@ public class Monsters { //Temporary, probably make abstract later
 
 		stats = new HashMap<String, Double>();
 		double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
-		for (int i=0; i<statsName.length; i++) {
-			setStat(statsName[i], statVals[i]);
+		for (int i=0; i<statName.length; i++) {
+			setStat(statName[i], statVals[i]);
 		}
 
 		status = new HashMap<String, Integer[]>();
@@ -73,7 +73,7 @@ public class Monsters { //Temporary, probably make abstract later
 		
 		stats = new HashMap<String, Double>();
 		for (int i=0; i<statusName.length; i++) {
-			String stat = statusName[i];
+			String stat = statName[i];
 			this.setStat(stat, copy.getStat(stat));
 		}
 		
@@ -166,7 +166,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public void levelUp () {
 		level += 1;
 
-		for (int i=0; i<statsName.length; i++) {
+		for (int i=0; i<statName.length; i++) {
 			String stat = statsName[i];
 			if (i != 0 && i != 2 ) { //for hp and mp
 				modStat(stat, level*levMult);
