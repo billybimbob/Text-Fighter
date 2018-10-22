@@ -18,11 +18,11 @@ public class Hero extends Monsters {
 						(Ability)Index.attackList[2].clone(), (Ability)Index.attackList[3].clone()};
 				moveList = moveStore1;
 				attType = true;
-				stats.put("maxHp", 40.0); //try iterating later
-				stats.put("hp", stats.get("maxHp"));
-				stats.put("att", 7.0);
-				stats.put("mag", 1.0);
-				stats.put("def", 7.0);
+				setStat("maxHp", 40.0); //try iterating later
+				setStat("hp", getStat("maxHp"));
+				setStat("att", 7.0);
+				setStat("mag", 1.0);
+				setStat("def", 7.0);
 				break;
 			case 2: //mage
 				Ability[] moveStore2 = {
@@ -31,24 +31,24 @@ public class Hero extends Monsters {
 						(Ability)Index.attackList[7].clone(), (Ability)Index.attackList[8].clone()};
 				moveList = moveStore2;
 				attType = false;
-				stats.put("mag", 7.0);
-				stats.put("att", 1.0);
-				stats.put("magR", 7.0);
-				stats.put("def", 4.0);
-				stats.put("mag", 7.0);
+				setStat("mag", 7.0);
+				setStat("att", 1.0);
+				setStat("magR", 7.0);
+				setStat("def", 4.0);
+				setStat("mag", 7.0);
 				break;
 			case 3: //shifter
 				Ability[] moveStore3 = {(Ability)Index.attackList[10].clone()};
 				moveList = moveStore3;
 				attType = false;
-				stats.put("hp", 10.0);
-				stats.put("maxHp", stats.get("hp"));
-				stats.put("att", 1.0);
-				stats.put("mag", 1.0);
-				stats.put("def", 1.0);
-				stats.put("magR", 1.0);
-				stats.put("spe", 7.0);
-				stats.put("crit", 1.0);
+				setStat("hp", 10.0);
+				setStat("maxHp", getStat("hp"));
+				setStat("att", 1.0);
+				setStat("mag", 1.0);
+				setStat("def", 1.0);
+				setStat("magR", 1.0);
+				setStat("spe", 7.0);
+				setStat("crit", 1.0);
 				break;
 			}
 			

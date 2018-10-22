@@ -70,30 +70,23 @@ public abstract class Ability implements Cloneable {
 	//combat calculations
 	public boolean critCheck () {
 		double check = Math.random();
-		boolean critHit = check < attacker.crit*0.02;		
+		boolean critHit = check < attacker.getStat("crit")*0.02;		
 		return critHit;
 	}
 	public boolean attackCheck (Monsters target, double checkMod) { //an attack damage check based on either the att or mag stat
-		double checkNum;
-		if (attType) {
-			checkNum = Math.random()*attacker.att - Math.random()*targets[0].spe*.5;
-			return checkNum > target.def*checkMod;
-		} else {
-			checkNum = Math.random()*attacker.mag - Math.random()*targets[0].spe*.5;
-			return checkNum > target.magR*checkMod;
-		}
+		String hitStat = attType?"att":"mag", blockStat = attType?"def":"magR";
+		double checkNum = Math.random()*attacker.getStat(hitStat) - Math.random()*target.getStat("spe")*.5;
+		return checkNum > target.getStat(blockStat)*checkMod;
 	}
+
 	public void baseDamage () { //determines the damage if either a melee or magic attack
-		if (attType)
-			baseDam = (int)(Math.random()*(attacker.att*baseDamMod)+1);
-		else 
-			baseDam = (int)(Math.random()*(attacker.mag*baseDamMod)+1);
+		String hitStat = attType?"att":"mag";
+		baseDam = (int)(Math.random()*(attacker.getStat(hitStat)*baseDamMod)+1);
 	}
+
 	public void targetReduct (Monsters target) {
-		if (attType)
-			baseDam -= (int)(Math.random()*(target.def*.65));
-		else
-			baseDam -= (int)(Math.random()*(target.magR*.65));
+		String blockStat = attType?"def":"magR";
+		baseDam -= (int)(Math.random()*(target.getStat(blockStat)*.65));
 		
 		target.setMinDam(attacker, attType);
 		if (baseDam < target.minDam) {
@@ -101,8 +94,9 @@ public abstract class Ability implements Cloneable {
 			baseDam = target.minDam;
 		}
 	}
+	
 	public void loseHp (Monsters target, double damage) {
-		target.hp -= damage;
+		target.modStat("hp", damage);
 		target.damTurn += damage;
 		Fight.statusCheck(attacker, target, "reflect", damage);
 	}

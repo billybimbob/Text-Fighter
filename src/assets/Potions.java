@@ -64,16 +64,16 @@ public class Potions extends Items {
 			double max;
 			switch (used.statMod) {
 			case "hp":
-				max = user.stats.get("maxHp");
-				if (user.stats.get(used.statMod) > max) {
-					user.stats.put(used.statMod, max);
+				max = user.getStat("maxHp");
+				if (user.getStat(used.statMod) > max) {
+					user.setStat(used.statMod, max);
 					System.out.println("You cannot be healed past max health");
 				}
 				break;
 			case "mp":
-				max = user.stats.get("maxMp");
-				if (user.stats.get(used.statMod) > max) {
-					user.stats.put(used.statMod, max);
+				max = user.getStat("maxMp");
+				if (user.getStat(used.statMod) > max) {
+					user.setStat(used.statMod, max);
 					System.out.println("You cannot gain past max mana");
 				}
 				break;

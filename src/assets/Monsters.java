@@ -9,8 +9,8 @@ public class Monsters { //Temporary, probably make abstract later
 	public String name;
 	public int level = 1, minDam;
 	public double damTurn = 0;
-	public HashMap<String, Double> stats;
-	public HashMap<String, Integer[]> status; //1st row is turn activated, 2nd is duration
+	private HashMap<String, Double> stats;
+	private HashMap<String, Integer[]> status; //1st row is turn activated, 2nd is duration
 	public boolean attType, aggro, priority; //attType true means physical attack
 	public Ability[] moveList;
 	public Ability passive, storeTurn; //temporary?
@@ -21,22 +21,21 @@ public class Monsters { //Temporary, probably make abstract later
 	public final static int levMult = 2;
 	
 	//monster index constructor, basic attack and one special attack
-	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp,
-			double att, double def, double mag, double magR, double spe, double crit,
-			int special){
-		this.name = name;
-		this.aggro = aggro;
-		this.attType = attType;
-
-		stats = new HashMap<String, Double>();
-		double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
-		for (int i=0; i<statsName.length; i++) { //initial stats
-			stats.put(statsName[i], statVals[i]);
-		}
-
-		Integer[] startStatus = {0, 0};
-		for (int i=0; i<statusName.length; i++) { //initialize status
-			status.put(statusName[i], startStatus.clone());
+	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit,
+		int special){
+			this.name = name;
+			this.aggro = aggro;
+			this.attType = attType;
+	
+			stats = new HashMap<String, Double>();
+			double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
+			for (int i=0; i<statsName.length; i++) {
+				setStat(statsName[i], statVals[i]);
+			}
+	
+			Integer[] startStatus = {0, 0};
+			for (int i=0; i<statusName.length; i++) {
+				status.put(statusName[i], startStatus.clone());
 		}
 
 		try {
@@ -56,7 +55,7 @@ public class Monsters { //Temporary, probably make abstract later
 		stats = new HashMap<String, Double>();
 		double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
 		for (int i=0; i<statsName.length; i++) {
-			stats.put(statsName[i], statVals[i]);
+			setStat(statsName[i], statVals[i]);
 		}
 
 		Integer[] startStatus = {0, 0};
@@ -71,7 +70,7 @@ public class Monsters { //Temporary, probably make abstract later
 		this.attType = copy.attType;
 		for (int i=0; i<statusName.length; i++) {
 			String stat = statusName[i];
-			this.stats.put(stat, copy.stats.get(stat));
+			this.setStat(stat, copy.getStat(stat));
 		}
 		
 		Integer[] startStatus = {0, 0};
@@ -89,6 +88,15 @@ public class Monsters { //Temporary, probably make abstract later
 		}
 	}
 
+	//accessors
+	public double getStat (String stat) {
+		return this.stats.get(stat);
+	}
+	public int[] getStatus (String status) { //convert to int[]
+		int[] ret = {this.status.get(status)[0], this.status.get(status)[1]};
+		return ret;
+	} 
+
 
 	//mutators
 	public void addAttack(Ability adding) {
@@ -101,16 +109,9 @@ public class Monsters { //Temporary, probably make abstract later
 		moveList = moveStore;
 	}
 	public void setMinDam(Monsters attacker, boolean attType) { //max value for now is 10 for def and magR
-		minDam = 0;
-		double stat = 0;
-		if (attType) {
-			minDam = attacker.stats.get("att").intValue();
-			stat = this.stats.get("def");
-		} else {
-			minDam = attacker.stats.get("mag").intValue();
-			stat = this.stats.get("magR");
-			//System.out.print("magR " + stat + " ");
-		}
+		String hitStat = attType?"att":"mag", blockStat = attType?"def":"magR";
+		minDam = (int)attacker.getStat(hitStat);
+		double stat = this.getStat(blockStat);
 		minDam -= ((int)stat/2);
 		if (minDam < 0)
 			minDam = 0;
@@ -127,9 +128,12 @@ public class Monsters { //Temporary, probably make abstract later
 		else
 			System.out.println("Not a valid ability");
 	}
-	public void modStat (String stat, int val) { //changes stat by val
+	public void setStat (String stat, double val) {
+		stats.put(stat, val);
+	}
+	public void modStat (String stat, double val) { //changes stat by val
 		double newVal = stats.get(stat)+val;	
-		stats.put(stat, newVal);
+		setStat(stat, newVal);
 	}
 	public void setStatus(String stat, int startTurn, int duration) {
 		//int index = getStatNum(stat);
@@ -155,8 +159,8 @@ public class Monsters { //Temporary, probably make abstract later
 				modStat(stat, level*levMult);
 			}
 		}
-		stats.put("hp", stats.get("maxHp"));
-		stats.put("mp", stats.get("maxMp"));
+		setStat("hp", getStat("maxHp"));
+		setStat("mp", getStat("maxMp"));
 	}
 	
 }
