@@ -16,7 +16,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public Ability passive, storeTurn; //temporary?
 	public Monsters storedShifter;
 	
-	public static final String[] statName = {"hp", "maxHp", "mp", "maxMp", "att", "def", "mag", "magR", "spe"};
+	public static final String[] statName = {"hp", "maxHp", "mp", "maxMp", "att", "def", "mag", "magR", "spe", "crit"};
 	public static final String[] statusName = {"burn", "poison", "potion", "reflect", "shapeshift", "stun"};
 	public final static int levMult = 2;
 	
@@ -94,7 +94,7 @@ public class Monsters { //Temporary, probably make abstract later
 	}
 
 	//accessors
-	public double getStat (String stat) {
+	public double getStat (String stat) { //most likely where nulls arise
 		double ret = 0;
 		//try {
 			//System.out.println(this.name);
@@ -108,7 +108,7 @@ public class Monsters { //Temporary, probably make abstract later
 	public int[] getStatus (String status) { //convert to int[]
 		int[] ret = {this.status.get(status)[0], this.status.get(status)[1]};
 		return ret;
-	} 
+	}
 
 
 	//mutators
