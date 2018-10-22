@@ -33,9 +33,9 @@ public class Monsters { //Temporary, probably make abstract later
 			setStat(statsName[i], statVals[i]);
 		}
 
+		status = new HashMap<String, Integer[]>();
 		Integer[] startStatus = {0, 0};
 		for (int i=0; i<statusName.length; i++) {
-			System.out.println(statusName[i]);
 			status.put(statusName[i], startStatus.clone());
 		}
 
@@ -59,6 +59,7 @@ public class Monsters { //Temporary, probably make abstract later
 			setStat(statsName[i], statVals[i]);
 		}
 
+		status = new HashMap<String, Integer[]>();
 		Integer[] startStatus = {0, 0};
 		for (int i=0; i<statusName.length; i++) {
 			status.put(statusName[i], startStatus.clone());
@@ -69,11 +70,14 @@ public class Monsters { //Temporary, probably make abstract later
 		this.name = copy.name;
 		this.aggro = copy.aggro;
 		this.attType = copy.attType;
+		
+		stats = new HashMap<String, Double>();
 		for (int i=0; i<statusName.length; i++) {
 			String stat = statusName[i];
 			this.setStat(stat, copy.getStat(stat));
 		}
 		
+		status = new HashMap<String, Integer[]>();
 		Integer[] startStatus = {0, 0};
 		for (int i=0; i<statusName.length; i++) {
 			status.put(statusName[i], startStatus.clone());
@@ -91,7 +95,14 @@ public class Monsters { //Temporary, probably make abstract later
 
 	//accessors
 	public double getStat (String stat) {
-		return this.stats.get(stat);
+		double ret = 0;
+		//try {
+			ret = this.stats.get(stat);
+		//} catch (Exception e) {
+		//	System.out.println(e);
+		//}
+
+		return ret;
 	}
 	public int[] getStatus (String status) { //convert to int[]
 		int[] ret = {this.status.get(status)[0], this.status.get(status)[1]};

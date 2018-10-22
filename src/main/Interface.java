@@ -56,6 +56,7 @@ public class Interface {
 			player1.moveListNames[i] = player1.moveList[i].getName() + " - " + (int)player1.moveList[i].getCost() + " mana";
 
 		for (int i = 0; i <= 2; i++) {
+			System.out.println(Index.monsterList[i].name + " " + Index.monsterList[i].getStat("hp"));
 			fighters.add(new Monsters(Index.monsterList[i]));
 		}
 		Fight.fighting(kboard, fighters);
