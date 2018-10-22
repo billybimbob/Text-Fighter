@@ -156,6 +156,8 @@ public class Monsters { //Temporary, probably make abstract later
 		}
 		stats.put("hp", stats.get("maxHp"));
 		stats.put("mp", stats.get("maxMp"));
+
+		
 	}
 	
 }
