@@ -155,10 +155,7 @@ public class Monsters { //Temporary, probably make abstract later
 	}
 	public void setStatus(String stat, boolean toggle) {
 		status.get(stat)[1] = 0; //does not matter
-		if (toggle)
-			status.get(stat)[0] = 1;
-		else
-			status.get(stat)[0] = 0;
+		status.get(stat)[0] = toggle?1:0;
 	}
 	
 	//modifies stats based and restores health and mana

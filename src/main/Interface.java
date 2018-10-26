@@ -6,6 +6,7 @@ import assets.*;
 public class Interface {
 	
 	public static final String[] responseOptions = {"Yes", "No"};
+	public static final String lineSpace = "-----------------------------------------------";
 	public static boolean heroAction = false;
 	public static Hero hero;
 	
@@ -65,13 +66,13 @@ public class Interface {
 	
 	public static int choiceInput (Scanner keyboard, boolean back, String[] options, String prompt) { //Returns user input from choices
 		int choice = 0;
-		System.out.println("-----------------------------------------------");
+		System.out.println(lineSpace);
 		if (back) //option for "back"
 			System.out.println("0. Back");
 		for (int i = 0; i <= options.length-1; i++) { //Print out choices from an array
 			System.out.println(i+1 + ". " + options[i]);
 		}
-		System.out.println("-----------------------------------------------");
+		System.out.println(lineSpace);
 		do {
 			try {
 				System.out.print(prompt + "\n\nSelect which number you want: ");

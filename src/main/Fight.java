@@ -33,7 +33,7 @@ public class Fight {
 			turnCount++; //turn counter
 			
 			attackOrder(fighters); //Orders the fighters by speed
-			System.out.println("-----------------------------------------------");
+			System.out.println(Interface.lineSpace);
 			for (int i = 0; i <= fighters.size()-1; i++) { //Determine which is the hero, may change later, also prints each fighter and stats
 				System.out.println(fighters.get(i).name + " - " + fighters.get(i).getStat("hp") + " hp" + " - " + fighters.get(i).getStat("mp") + " mp" + " - " + fighters.get(i).getStat("spe") + " speed");
 				
@@ -55,7 +55,7 @@ public class Fight {
 				
 				Interface.hero.moveListNames = new String[Interface.hero.moveList.length]; //updates the moveListNames of hero
 				for (int i = 0; i <= Interface.hero.moveListNames.length-1; i++)
-					Interface.hero.moveListNames[i] = Interface.hero.moveList[i].getName() + " - " + (int)Interface.hero.moveList[i].getCost() + " mana";
+					Interface.hero.moveListNames[i] = Interface.hero.moveList[i].toString()  + "\n"; //temporary for now
 				
 				String fightPrompt = "Which action would you like to do?";
 				choice = Interface.choiceInput(keyboard, false, fightChoices, fightPrompt);
@@ -135,7 +135,7 @@ public class Fight {
 					monMoves[i] = monFighters.get(i).storeTurn;
 				}
 			}
-			System.out.println("-----------------------------------------------");
+			System.out.println(Interface.lineSpace);
 			
 			//check for priority, need to check what happens if speed is same with 2 priorities
 			boolean pastHero = false;

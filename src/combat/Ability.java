@@ -51,8 +51,7 @@ public abstract class Ability implements Cloneable {
 	public void setTarget (Monsters target) { //probably useless
 		if (tarCount >= numTar)
 			tarCount = 0;
-		targets[tarCount] = target;
-		tarCount++;
+		targets[tarCount++] = target;
 	}
 	public void setAllTar (ArrayList<Monsters> enemies) {
 		this.setNumTar(enemies.size());
@@ -99,6 +98,11 @@ public abstract class Ability implements Cloneable {
 		target.damTurn += damage;
 		Fight.statusCheck(attacker, target, "reflect", damage);
 	}
+
+	public String toString() {
+		return name + " - " + manaCost + " mana\n\t" + description;
+	}
+
 	public abstract void execute ();
 
 }

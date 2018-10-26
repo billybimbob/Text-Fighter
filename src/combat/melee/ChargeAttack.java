@@ -10,7 +10,7 @@ public class ChargeAttack extends Ability {
 	
 	public ChargeAttack () {
 		name = "Charged Strike";
-		description = "A powerful melee attack able to hit with twice the accuarcy and damage and ignores armor\nBut requires a turn to charge, and more vulnerable";
+		description = "A melee attack able to hit with twice accuarcy and damage, ignores armor, but requires a turn to charge, and more vulnerable";
 		attType = true;
 		targets = new Monsters[numTar];
 		manaCost = 6;

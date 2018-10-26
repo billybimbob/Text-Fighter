@@ -6,7 +6,7 @@ public class BasicAttack extends Ability {
 
 	public BasicAttack () {
 		name = "Basic Attack";
-		description = "A basic attack based off of the attack or magic skill of the attacker and modifiers with a chance to crit";
+		description = "A basic attack based off of the attack or magic skill of the attacker with a chance to crit";
 		targets = new Monsters[numTar];
 	}
 	
