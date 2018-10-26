@@ -170,5 +170,9 @@ public class Monsters { //Temporary, probably make abstract later
 		setStat("hp", getStat("maxHp"));
 		setStat("mp", getStat("maxMp"));
 	}
+
+	public String toString () {
+		return name + " - " + getStat("hp") + " hp" + " - " + getStat("mp") + " mp" + " - " + getStat("spe") + " speed";
+	}
 	
 }

@@ -33,19 +33,19 @@ public class Fight {
 			
 			attackOrder(fighters); //Orders the fighters by speed
 			System.out.println(Interface.lineSpace);
-			for (int i = 0; i <= fighters.size()-1; i++) { //Determine which is the hero, may change later, also prints each fighter and stats
-				System.out.println(fighters.get(i).name + " - " + fighters.get(i).getStat("hp") + " hp" + " - " + fighters.get(i).getStat("mp") + " mp" + " - " + fighters.get(i).getStat("spe") + " speed");
+			for (Monsters fighter: fighters) { //Determine which is the hero, may change later, also prints each fighter and stats
+				System.out.println(fighter);
 				
-				if (fighters.get(i).aggro) {
-					target = fighters.get(i);
+				if (fighter.aggro) {
+					target = fighter;
 				} else {
-					monFighters.add(fighters.get(i));
+					monFighters.add(fighter);
 				}
-				if (fighters.get(i).name == "Slime")
-					fighters.get(i).priority = true;
+				if (fighter.name == "Slime") //test priority
+					fighter.priority = true;
 			}
 			monFightersName = new String[monFighters.size()];
-			for (int i = 0; i <= monFighters.size()-1; i++) {
+			for (int i = 0; i < monFighters.size(); i++) {
 				monFightersName[i] = monFighters.get(i).name;
 			}
 			
