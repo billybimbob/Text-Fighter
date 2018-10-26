@@ -22,7 +22,6 @@ public class Fight {
 		pick = null;
 		int choice = 2, pickNum = 0;
 		Ability turnMove = null;
-		ArrayList<Monsters> heroTargets = new ArrayList<>(); //need to clear later
 		
 		System.out.println("Press enter when you are ready to fight");
 		keyboard.nextLine();
@@ -71,7 +70,6 @@ public class Fight {
 						turnMove = Interface.hero.moveList[attNum-1];
 						if (turnMove.getPriority()) //check if attack is priority
 							Interface.hero.priority = true;
-						heroTargets.clear();
 						
 						//determine the targets of hero move
 						if (turnMove.getSelfTar()){
@@ -84,7 +82,6 @@ public class Fight {
 								heroTargets.add(enemy);
 							Interface.heroAction = true;*/
 						} else { //attacks with numTar less then available targets
-							heroTargets.clear();
 							for (int i = 0; i < turnMove.getTargets().length; i++) {
 								String tarPrompt = "Which monster would you want to target?";
 								int tarNum = Interface.choiceInput(keyboard, true, monFightersName, tarPrompt);

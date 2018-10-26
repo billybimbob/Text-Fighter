@@ -4,8 +4,9 @@ import assets.Monsters;
 import combat.*;
 
 public class SpinAttack extends Ability {
+
 	
-	public SpinAttack () { //might change to get rid of enemies parameter
+	public SpinAttack () { //might change to get rid of enemies parameter; max amount of targets is 5
 		name = "Spin Attack";
 		description = "A spinning melee attack that damages all enemies for less damage than a basic attack";
 		attType = true; //melee attack; might make it based on the attacker
@@ -28,11 +29,11 @@ public class SpinAttack extends Ability {
 							baseDam *= 2;
 							System.out.println("Critical Hit!");
 						}*/
-						double storeDam = baseDam;
+						//double storeDam = baseDam;
 						targetReduct(target);
 						loseHp(target, baseDam);
 						damDealt = baseDam;
-						baseDam = storeDam;
+						//baseDam = storeDam;
 					}
 					if (damDealt < 0)
 						 System.out.println("but is blocked by " + target.name);
