@@ -119,6 +119,53 @@ public class Fight {
 					}
 				}
 			}
+			System.out.println(Interface.lineSpace);
+			
+			//check for priority, need to check what happens if speed is same with 2 priorities
+			boolean pastHero = false;
+			for (int src = 0; src < fighters.size(); src++) {
+				Monsters priAttacker = fighters.get(src);
+				if (priAttacker.aggro) {
+					pastHero = true;
+				}
+				if (priAttacker.priority && src != 0) { //if priority and first, no need to move
+					Monsters stoFitr = null, stoFitr2;
+					int dst;// pastPriMon = 0; //dst is location of where to swap, pastPriorMon is the number of priority monsters past
+					boolean pastHero2 = false;
+					for (dst = 0; dst < fighters.size(); dst++) { //finds where to switch, as highest speed priority is 1st
+						Monsters priCheck = fighters.get(dst);
+						if (priCheck.aggro)
+							pastHero2 = true;
+						if (!priCheck.priority || (priCheck.priority && (priCheck.getStat("spe") < priAttacker.getStat("spe")))) {	
+							if (!priAttacker.aggro) { //monster attacker
+								int monSrc = src, monDst = dst;
+								if (pastHero)
+									monSrc -= 1;
+								if (pastHero2 && dst!=0)
+									monDst -= 1;
+								/*
+								Ability stoMove = monMoves[monDst], stoMove2;
+								monMoves[monDst] = monMoves[monSrc];	
+								for (int j = monDst+1; j <= monSrc; j++) {
+									stoMove2 = monMoves[j];
+									monMoves[j] = stoMove;
+									stoMove = stoMove2;
+								}*/
+							}
+							//stoFitr = priCheck;
+							//fighters.set(dst, priAttacker);
+							break;
+						}
+					}
+					fighters.add(dst, fighters.remove(src));
+					/*
+					for (int j = dst+1; j <= src; j++) { //switches priority and scoots down rest behind, don't use add method because don't want to scoot entire list
+						stoFitr2 = fighters.get(j);
+						fighters.set(j, stoFitr);
+						stoFitr = stoFitr2;
+					}*/
+				}
+			}
 			//decides the turns of the monsters
 			Ability[] monMoves = new Ability[monFighters.size()];
 			for (int i = 0; i < monFighters.size(); i++) {
@@ -130,58 +177,6 @@ public class Fight {
 						monFighters.get(i).priority = true;
 				} else {
 					monMoves[i] = monFighters.get(i).storeTurn;
-				}
-			}
-			System.out.println(Interface.lineSpace);
-			
-			//check for priority, need to check what happens if speed is same with 2 priorities
-			boolean pastHero = false;
-			for (int src = 0; src < fighters.size(); src++) {
-				Monsters priAttacker = fighters.get(src);
-				if (priAttacker.aggro) {
-					pastHero = true;
-				}
-				if (priAttacker.priority && src != 0) { //if priority and first, no need to move
-					/*if (fighters.get(i-1).priority) {
-						//priorCount++;
-						break;
-					}*/
-					Monsters stoFitr = null, stoFitr2;
-					int dst;// pastPriMon = 0; //swapCount is location of where to swap, pastPriorMon is the number of priority monsters past
-					boolean pastHero2 = false;
-					for (dst = 0; dst < fighters.size(); dst++) { //finds where to switch, as highest speed priority is 1st
-						Monsters priCheck = fighters.get(dst);
-						if (priCheck.aggro)
-							pastHero2 = true;
-						if (!priCheck.priority || (priCheck.priority && (priCheck.getStat("spe") < priAttacker.getStat("spe")))) {	
-							//if (priCheck.priority && !priCheck.aggro) { //swaps the monster attack in move list associated with priority shifts
-							//	pastPriMon++;
-							//}
-							if (!priAttacker.aggro) {
-								int monSrc = src, monDst = dst;
-								if (pastHero)
-									monSrc -= 1;
-								if (pastHero2 && dst!=0)
-									monDst -= 1;
-								
-								Ability stoMove = monMoves[monDst], stoMove2;
-								monMoves[monDst] = monMoves[monSrc];	
-								for (int j = monDst+1; j <= monSrc; j++) {
-									stoMove2 = monMoves[j];
-									monMoves[j] = stoMove;
-									stoMove = stoMove2;
-								}
-							}
-							stoFitr = priCheck;
-							fighters.set(dst, priAttacker);
-							break;
-						}
-					}
-					for (int j = dst+1; j <= src; j++) { //switches priority and scoots down rest behind, don't use add method because don't want to scoot entire list
-						stoFitr2 = fighters.get(j);
-						fighters.set(j, stoFitr);
-						stoFitr = stoFitr2;
-					}
 				}
 			}
 			
