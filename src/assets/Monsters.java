@@ -13,7 +13,7 @@ public class Monsters { //Temporary, probably make abstract later
 	private HashMap<String, Integer[]> status; //1st row is turn activated, 2nd is duration
 	public boolean attType, aggro, priority; //attType true means physical attack
 	public Ability[] moveList;
-	public Ability passive, storeTurn; //temporary?
+	public Ability passive, turnMove, storeTurn; //temporary?
 	public Monsters storedShifter;
 	
 	public static final String[] statName = {"hp", "maxHp", "mp", "maxMp", "att", "def", "mag", "magR", "spe", "crit"};
