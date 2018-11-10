@@ -8,7 +8,7 @@ public abstract class Ability implements Cloneable {
 
 	protected String name, description;
 	protected Monsters attacker;
-	protected double manaCost, baseDam;
+	protected float manaCost, baseDam;
 	protected boolean attType, aoe = false, priority = false, selfTar = false, passive = false; //aoe attacks can't work with monsters
 	protected Monsters[] targets;
 	protected int numTar = 1, tarCount = 0; //number of targets default set to 1
@@ -93,7 +93,7 @@ public abstract class Ability implements Cloneable {
 		}
 	}
 
-	public void loseHp (Monsters target, double damage) {
+	public void loseHp (Monsters target, float damage) {
 		target.modStat("hp", -damage);
 		target.damTurn += damage;
 		Fight.statusCheck(attacker, target, "reflect", damage);

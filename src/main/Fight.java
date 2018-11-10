@@ -22,13 +22,13 @@ public class Fight {
 		pick = null;
 		int choice = 2, pickNum = 0;
 		Ability heroTurn = Interface.hero.turnMove;
+		ArrayList<Monsters> monFighters = new ArrayList<>();
+		String[] monFightersName;
 		
 		System.out.println("Press enter when you are ready to fight");
 		keyboard.nextLine();
 		while (fightControl) {
-			String[] monFightersName;
-			ArrayList<Monsters> monFighters = new ArrayList<>();
-			
+			monFighters.clear();
 			turnCount++; //turn counter
 			
 			attackOrder(fighters); //Orders the fighters by speed
@@ -44,14 +44,18 @@ public class Fight {
 				if (fighter.name == "Slime") //test priority
 					fighter.priority = true;
 			}
-			
+
+			if (monFighters.size() == 0) { //Check if all monsters are killed
+				System.out.println("All of the monsters have been killed, you win!");
+				fightControl = false;
+			}
 			monFightersName = new String[monFighters.size()];
 			for (int i = 0; i < monFighters.size(); i++) {
 				monFightersName[i] = monFighters.get(i).name;
 			}
-			
+
 			//Hero user input/determine hero actions
-			while (!Interface.heroAction){
+			while (!Interface.heroAction) {
 				
 				Interface.hero.moveListNames = new String[Interface.hero.moveList.length]; //updates the moveListNames of hero
 				for (int i = 0; i <= Interface.hero.moveListNames.length-1; i++)
@@ -199,15 +203,13 @@ public class Fight {
 						attacker.setStatus("potion", true);
 						pick.useItem(attacker);
 					}
-					for (int j = 0; j <= monFighters.size()-1; j++) { //check if any monster died, immediately after hero's turn
+					for (int j = 0; j < monFighters.size(); j++) { //check if any monster died, immediately after hero's turn
 						//System.out.print(monFighters.get(j).name + j + " " + monFighters.size());
 						if (monFighters.get(j).getStat("hp") <= 0) {
 							if (j < i)
 								i--;
 							fighters.remove(monFighters.get(j));
 							System.out.println("\n" + monFighters.get(j).name + " has died");
-							monFighters.remove(monFighters.get(j));
-							j=-1; //probably temporary
 						}
 					}
 				}
@@ -222,12 +224,9 @@ public class Fight {
 				System.out.println();
 				TimeUnit.SECONDS.sleep(2);
 			}
-			
+
 			if (target.getStat("hp") <= 0) { //Check if hero hp is zero
 				System.out.println("You have received a fatal blow, and have died");
-				fightControl = false;
-			} else if (monFighters.size() == 0) { //Check if all monsters are killed
-				System.out.println("All of the monsters have been killed, you win!");
 				fightControl = false;
 			/*} else if (flee) {
 				System.out.println("You have successfully escaped");
@@ -308,7 +307,7 @@ public class Fight {
 		switch (statusName) {
 		case "reflect":
 			if (startTurn != 0) {
-				double refDam = (int)(damDeal*0.5); 
+				float refDam = (int)(damDeal*0.5); 
 				attacker.modStat("hp", -refDam);
 				System.out.println(target.name + " reflects " + refDam + " damage to " + attacker.name);
 			}

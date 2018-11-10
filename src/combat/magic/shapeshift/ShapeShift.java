@@ -7,7 +7,7 @@ import main.Fight;
 public abstract class ShapeShift extends Ability { //abstract so doesn't have to implement execute
 	
 	public void transform (Monsters target, Monsters shiftedMon, int duration) { //might want to find a way to use Monster constructor to change values 
-		double hpRatio = target.getStat("hp")/target.getStat("maxHp");
+		float hpRatio = target.getStat("hp")/target.getStat("maxHp");
 		Monsters store = new Monsters(target); //stores original attacker
 		target.storedShifter = store;
 
@@ -36,7 +36,7 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 		target.setStatus("shapeshift", Fight.turnCount, duration);
 	}
 	public static void revert (Monsters target) { //look at comment on transform method
-		double hpRatio = target.getStat("hp")/target.getStat("maxHp");
+		float hpRatio = target.getStat("hp")/target.getStat("maxHp");
 		
 		target.name = target.storedShifter.name;
 		target.aggro = target.storedShifter.aggro;

@@ -9,28 +9,31 @@ public class Monsters { //Temporary, probably make abstract later
 	public String name;
 	public int level = 1, minDam;
 	public double damTurn = 0;
-	private HashMap<String, Double> stats;
+	private HashMap<String, Float> stats;
 	private HashMap<String, Integer[]> status; //1st row is turn activated, 2nd is duration
 	public boolean attType, aggro, priority; //attType true means physical attack
 	public Ability[] moveList;
 	public Ability passive, turnMove, storeTurn; //temporary?
 	public Monsters storedShifter;
 	
-	public static final String[] statName = {"hp", "maxHp", "mp", "maxMp", "att", "def", "mag", "magR", "spe", "crit"};
+	public static final String[] statName = {"hp", "maxHp", "mp", "maxMp", "att", "def", "mag", "magR", "spe", "crit"}; //need to add edge cases for max health
 	public static final String[] statusName = {"burn", "poison", "potion", "reflect", "shapeshift", "stun"};
 	public final static int levMult = 2;
 	
 	//monster index constructor, basic attack and one special attack
-	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit,
-		int special){
+	public Monsters (String name, boolean aggro, boolean attType, float[] stats, int special) {
+	//public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit, int special){
 		this.name = name;
 		this.aggro = aggro;
 		this.attType = attType;
 
-		stats = new HashMap<String, Double>(); //set stats
-		double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
+		this.stats = new HashMap<String, Float>(); //set stats
+		//double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
+		int j = 0;
 		for (int i=0; i<statName.length; i++) {
-			setStat(statName[i], statVals[i]);
+			setStat(statName[i], stats[j]);
+			if (statName[i] != "hp" && statName[i] != "mp")
+				j++;
 		}
 		status = new HashMap<String, Integer[]>(); //set status
 		Integer[] startStatus = {0, 0};
@@ -47,15 +50,19 @@ public class Monsters { //Temporary, probably make abstract later
 		} catch (CloneNotSupportedException c) {}
 	}
 	//constructor to have no ability
-	public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit) {
+	public Monsters (String name, boolean aggro, boolean attType, float[] stats) {
+	//public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit) {
 		this.name = name;
 		this.aggro = aggro;
 		this.attType = attType;
 
-		stats = new HashMap<String, Double>();
-		double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
+		this.stats = new HashMap<String, Float>();
+		//double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
+		int j = 0;
 		for (int i=0; i<statName.length; i++) {
-			setStat(statName[i], statVals[i]);
+			setStat(statName[i], stats[j]);
+			if (statName[i] != "hp" && statName[i] != "mp")
+				j++;
 		}
 
 		status = new HashMap<String, Integer[]>();
@@ -70,7 +77,7 @@ public class Monsters { //Temporary, probably make abstract later
 		this.aggro = copy.aggro;
 		this.attType = copy.attType;
 		
-		stats = new HashMap<String, Double>();
+		stats = new HashMap<String, Float>();
 		for (int i=0; i<statName.length; i++) {
 			String stat = statName[i];
 			this.setStat(stat, copy.getStat(stat));
@@ -87,14 +94,14 @@ public class Monsters { //Temporary, probably make abstract later
 			this.passive.setAttacker(this);
 		}
 		this.moveList = copy.moveList; 
-		for (int i = 0; i <= moveList.length-1; i++) {
+		for (int i = 0; i < moveList.length; i++) {
 			moveList[i].setAttacker(this);
 		}
 	}
 
 	//accessors
-	public double getStat (String stat) { //most likely where nulls arise
-		double ret = 0;
+	public float getStat (String stat) { //most likely where nulls arise
+		float ret = 0;
 		//try {
 			//System.out.println(this.name);
 			ret = this.stats.get(stat);
@@ -141,12 +148,12 @@ public class Monsters { //Temporary, probably make abstract later
 			System.out.println("Not a valid ability");
 	}
 
-	public void setStat (String stat, double val) {
+	public void setStat (String stat, float val) {
 		//System.out.println("setting " + this.name + "\'s " + stat);
 		stats.put(stat, val);
 	}
-	public void modStat (String stat, double val) { //changes stat by val
-		double newVal = stats.get(stat)+val;	
+	public void modStat (String stat, float val) { //changes stat by val add max mod cases
+		float newVal = stats.get(stat)+val;	
 		setStat(stat, newVal);
 	}
 	public void setStatus(String stat, int startTurn, int duration) {

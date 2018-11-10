@@ -61,7 +61,7 @@ public class Potions extends Items {
 		if (used.statMod.equals("hp") || used.statMod.equals("mp")){ //Gain over time, could be better, scattered between here and useItem method
 			user.modStat(used.statMod, used.modVal);
 
-			double max;
+			float max;
 			switch (used.statMod) {
 			case "hp":
 				max = user.getStat("maxHp");

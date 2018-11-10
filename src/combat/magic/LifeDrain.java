@@ -20,7 +20,7 @@ public class LifeDrain extends Ability {
 			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
 				baseDamage();
 				targetReduct(targets[0]);
-				double selfHeal = (int)(baseDam*0.5);
+				float selfHeal = (int)(baseDam*0.5);
 				if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 					System.out.println(attacker.name + "'s drain was resisted by " + targets[0].name);
 				} else {

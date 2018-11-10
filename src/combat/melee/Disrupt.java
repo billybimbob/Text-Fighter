@@ -33,7 +33,7 @@ public class Disrupt extends Ability {
 						targets[0].setStatus("stun", true);
 					}
 				}
-				double selfDam = (int)(baseDam*.5);
+				float selfDam = (int)(baseDam*.5);
 				if (selfDam > 0) {
 					attacker.modStat("hp", -selfDam); //might add to damage received in turn?
 					System.out.println(attacker.name + " deals " + selfDam + " damage to self from recoil");
