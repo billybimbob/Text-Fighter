@@ -28,7 +28,8 @@ public class Fight {
 		System.out.println("Press enter when you are ready to fight");
 		keyboard.nextLine();
 		while (fightControl) {
-			monFighters.clear();
+			monFighters.clear(); //not sure, might be ineffcient
+			monFightersName = null;
 			turnCount++; //turn counter
 			
 			attackOrder(fighters); //Orders the fighters by speed
@@ -45,10 +46,6 @@ public class Fight {
 					fighter.priority = true;
 			}
 
-			if (monFighters.size() == 0) { //Check if all monsters are killed
-				System.out.println("All of the monsters have been killed, you win!");
-				fightControl = false;
-			}
 			monFightersName = new String[monFighters.size()];
 			for (int i = 0; i < monFighters.size(); i++) {
 				monFightersName[i] = monFighters.get(i).name;
@@ -210,6 +207,7 @@ public class Fight {
 								i--;
 							fighters.remove(monFighters.get(j));
 							System.out.println("\n" + monFighters.get(j).name + " has died");
+							monFighters.remove(j--);
 						}
 					}
 				}
@@ -225,7 +223,11 @@ public class Fight {
 				TimeUnit.SECONDS.sleep(2);
 			}
 
-			if (target.getStat("hp") <= 0) { //Check if hero hp is zero
+			
+			if (monFighters.size() == 0) { //Check if all monsters are killed
+				System.out.println("All of the monsters have been killed, you win!");
+				fightControl = false;
+			} else if (target.getStat("hp") <= 0) { //Check if hero hp is zero
 				System.out.println("You have received a fatal blow, and have died");
 				fightControl = false;
 			/*} else if (flee) {

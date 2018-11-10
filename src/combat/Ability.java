@@ -49,9 +49,11 @@ public abstract class Ability implements Cloneable {
 		targets = new Monsters[numTar];
 	}
 	public void setTarget (Monsters target) { //probably useless
+		System.out.println("attacker: " + this.attacker.name);
 		if (tarCount >= numTar)
 			tarCount = 0;
 		targets[tarCount++] = target;
+		System.out.println("target: " + target.name);
 	}
 	public void setAllTar (ArrayList<Monsters> enemies) {
 		this.setNumTar(enemies.size());
