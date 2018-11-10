@@ -69,9 +69,7 @@ public class Fight {
 							break selection;
 						
 						heroTurn = Interface.hero.moveList[attNum-1];
-						if (heroTurn.getPriority()) //check if attack is priority
-							Interface.hero.priority = true;
-						
+						Interface.hero.priority = heroTurn.getPriority(); //check if attack is priority
 						//determine the targets of hero move
 						if (heroTurn.getSelfTar()){
 							Interface.heroAction = true; //temporary, want to select transformation here
@@ -83,7 +81,7 @@ public class Fight {
 								heroTargets.add(enemy);
 							Interface.heroAction = true;*/
 						} else { //attacks with numTar less then available targets
-							for (int i = 0; i < heroTurn.getTargets().length; i++) {
+							for (int j = 0; j < heroTurn.getTargets().length; j++) {
 								String tarPrompt = "Which monster would you want to target?";
 								int tarNum = Interface.choiceInput(keyboard, true, monFightersName, tarPrompt);
 								if (tarNum == 0) {//have to change how to implement
@@ -94,6 +92,7 @@ public class Fight {
 								Interface.heroAction = true;
 							}
 						}
+
 					} while (!Interface.heroAction);
 					break;
 				case 2: //temporarily raises evasion, and costs 2 mana
@@ -127,11 +126,10 @@ public class Fight {
 				Monsters mon = monFighters.get(i);
 				if (mon.storeTurn==null) {
 					mon.turnMove = mon.moveList[(int)(Math.random()*mon.moveList.length)];
-					if (mon.turnMove.getPriority())
-						mon.priority = true;
 				} else {
 					mon.turnMove = mon.storeTurn;
 				}
+				mon.priority = mon.turnMove.getPriority();
 			}
 			
 			//check for priority, need to check what happens if speed is same with 2 priorities
