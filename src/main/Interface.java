@@ -5,24 +5,24 @@ import assets.*;
 
 public class Interface {
 	
-	public static final String[] responseOptions = {"Yes", "No"};
-	public static final String lineSpace = "-----------------------------------------------";
+	public static final String[] RESPONSEOPTIONS = {"Yes", "No"};
+	public static final String LINESPACE = "-----------------------------------------------";
+	public static final Scanner KEYBOARD = new Scanner(System.in);
 	public static boolean heroAction = false;
 	public static Hero hero;
 	
 	public static void main(String[] args) throws InterruptedException { //All this is probably temporary
-		Scanner kboard = new Scanner(System.in);
-		Index stuff = new Index(kboard);
+		Index stuff = new Index();
 		stuff.use(); //dummy method to get rid of yellow line
 		
 		ArrayList<Monsters> fighters = new ArrayList<>();
 		System.out.println("Welcome hero!");
 		System.out.print("Step forth and state your name: ");
-		String name = kboard.nextLine();
+		String name = KEYBOARD.nextLine();
 		
 		String[] availClass = {"Warrior", "Mage", "Shifter"};
 		String classPrompt = "Which class you would like to be?\nThis will affect your stats, potions, and abilities";
-		int classChoice = choiceInput(kboard, false,availClass, classPrompt);
+		int classChoice = choiceInput(false,availClass, classPrompt);
 		//int classChoice = 1;
 		Hero player1 = new Hero(name, classChoice);
 		
@@ -59,24 +59,24 @@ public class Interface {
 		for (int i = 0; i <= 2; i++) {
 			fighters.add(new Monsters(Index.monsterList[i]));
 		}
-		Fight.fighting(kboard, fighters);
+		Fight.fighting(fighters);
 		
-		kboard.close();
+		KEYBOARD.close();
 	}
 	
-	public static int choiceInput (Scanner keyboard, boolean back, String[] options, String prompt) { //Returns user input from choices
+	public static int choiceInput (boolean back, String[] options, String prompt) { //Returns user input from choices
 		int choice = 0;
-		System.out.println(lineSpace);
+		System.out.println(LINESPACE);
 		if (back) //option for "back"
 			System.out.println("0. Back");
 		for (int i = 0; i <= options.length-1; i++) { //Print out choices from an array
 			System.out.println(i+1 + ". " + options[i]);
 		}
-		System.out.println(lineSpace);
+		System.out.println(LINESPACE);
 		do {
 			try {
 				System.out.print(prompt + "\n\nSelect which number you want: ");
-				choice = Integer.parseInt(keyboard.nextLine());
+				choice = Integer.parseInt(KEYBOARD.nextLine());
 			} catch (Exception e) {} //might want to restructure somehow, right now, just preventing from crashing
 			
 			if ((choice <= options.length && choice > 0) || (back && choice == 0)) //Checks if input is valid

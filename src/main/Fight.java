@@ -8,13 +8,13 @@ import combat.magic.shapeshift.*;
 
 public class Fight {
 	
-	private static final String[] fightChoices = {"Fight", "Dodge", "Inventory"};
+	private static final String[] FIGHTCHOICES = {"Fight", "Dodge", "Inventory"};
 	private static boolean skipTurn;
 	private static Items pick; //temporary
 	public static int turnCount;
-	public static ArrayList<Monsters> fighters;
+	public static List<Monsters> fighters;
 
-	public static void fighting (Scanner keyboard, ArrayList<Monsters> fightersIn) throws InterruptedException {
+	public static void fighting (List<Monsters> fightersIn) throws InterruptedException {
 		fighters = fightersIn;
 		Monsters target = null;
 		boolean fightControl = true, flee = false;
@@ -22,18 +22,18 @@ public class Fight {
 		pick = null;
 		int choice = 2, pickNum = 0;
 		Ability heroTurn = Interface.hero.turnMove;
-		ArrayList<Monsters> monFighters = new ArrayList<>();
+		List<Monsters> monFighters = new ArrayList<>();
 		String[] monFightersName;
 		
 		System.out.println("Press enter when you are ready to fight");
-		keyboard.nextLine();
+		Interface.KEYBOARD.nextLine();
 		while (fightControl) {
 			monFighters.clear(); //not sure, might be ineffcient
 			monFightersName = null;
 			turnCount++; //turn counter
 			
 			attackOrder(fighters); //Orders the fighters by speed
-			System.out.println(Interface.lineSpace);
+			System.out.println(Interface.LINESPACE);
 			for (Monsters fighter: fighters) { //Determine which is the hero, may change later, also prints each fighter and stats
 				System.out.println(fighter);
 				
@@ -59,13 +59,13 @@ public class Fight {
 					Interface.hero.moveListNames[i] = Interface.hero.moveList[i].toString()  + "\n"; //temporary for now
 				
 				String fightPrompt = "Which action would you like to do?";
-				choice = Interface.choiceInput(keyboard, false, fightChoices, fightPrompt);
+				choice = Interface.choiceInput(false, FIGHTCHOICES, fightPrompt);
 				selection:
 				switch (choice) {
 				case 1: //Attack a prompted target
 					do { //probably change, flow is really bad and confusing
 						String attPrompt = "Which attack do you want to use?";
-						int attNum = Interface.choiceInput(keyboard, true, Interface.hero.moveListNames, attPrompt); //Temporary
+						int attNum = Interface.choiceInput(true, Interface.hero.moveListNames, attPrompt); //Temporary
 						if (attNum == 0)
 							break selection;
 						
@@ -84,7 +84,7 @@ public class Fight {
 						} else { //attacks with numTar less then available targets
 							for (int j = 0; j < heroTurn.getTargets().length; j++) {
 								String tarPrompt = "Which monster would you want to target?";
-								int tarNum = Interface.choiceInput(keyboard, true, monFightersName, tarPrompt);
+								int tarNum = Interface.choiceInput(true, monFightersName, tarPrompt);
 								if (tarNum == 0) {//have to change how to implement
 									Interface.heroAction = false;
 									break;
@@ -105,12 +105,12 @@ public class Fight {
 						System.out.println("You have no items in your inventory\n");
 					} else {
 						String itemPrompt = "Which item do you want to use?";
-						pickNum = Interface.choiceInput(keyboard, true, inventNames, itemPrompt);
+						pickNum = Interface.choiceInput(true, inventNames, itemPrompt);
 						if (pickNum == 0)
 							break selection;
 						else if (Interface.hero.getStatus("potion")[0]!=0 && Potions.timeLength >= (turnCount-Potions.turnStart)) { //will trigger debuff
 							String usePrompt = "Another buff is still active, and will be canceled by this potion\nAre you sure you want to do this?";
-							int confirmUse = Interface.choiceInput(keyboard, false, Interface.responseOptions, usePrompt);
+							int confirmUse = Interface.choiceInput(false, Interface.RESPONSEOPTIONS, usePrompt);
 							if (confirmUse == 1)
 								Potions.turnStart = turnCount+Potions.timeLength;
 							else
@@ -120,7 +120,7 @@ public class Fight {
 					}
 				}
 			}
-			System.out.println(Interface.lineSpace);
+			System.out.println(Interface.LINESPACE);
 
 			//decides the turns of the monsters
 			for (int i = 0; i < monFighters.size(); i++) {
@@ -237,7 +237,7 @@ public class Fight {
 		}
 	}
 	
-	public static void attackOrder (ArrayList<Monsters> list) { //orders the combatants from highest speed to lowest
+	public static void attackOrder (List<Monsters> list) { //orders the combatants from highest speed to lowest
 		int count = 0;
 		while (count < list.size()-1) {
 			if (list.get(count).getStat("spe") < list.get(count+1).getStat("spe")) {
@@ -323,7 +323,7 @@ public class Fight {
 	public static void passiveCheck (Monsters user) { //not sure if should be all enemies or all non-user, inefficient
 		if (user.passive != null) {
 			if (user.passive.getAoe()) {
-				ArrayList<Monsters> nonSelf = new ArrayList<Monsters>();
+				List<Monsters> nonSelf = new ArrayList<>();
 				for (Monsters mon: fighters) {
 					if (mon != user)
 						nonSelf.add(mon);

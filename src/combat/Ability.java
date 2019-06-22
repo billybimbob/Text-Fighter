@@ -1,6 +1,6 @@
 package combat;
 
-import java.util.ArrayList;
+import java.util.List;
 import assets.*;
 import main.Fight;
 
@@ -55,7 +55,7 @@ public abstract class Ability implements Cloneable {
 		targets[tarCount++] = target;
 		System.out.println("target: " + target.name);
 	}
-	public void setAllTar (ArrayList<Monsters> enemies) {
+	public void setAllTar (List<Monsters> enemies) {
 		this.setNumTar(enemies.size());
 		//turnMove.targets = new Monsters[turnMove.numTar];
 		for (Monsters enemy: enemies) {

@@ -9,14 +9,12 @@ import main.Interface;
 public class ChangeForm extends ShapeShift {
 
 	private Monsters[] formList;
-	private Scanner keyboard;
 	
-	public ChangeForm (Scanner keyboard) {
+	public ChangeForm () {
 		name = "Change Form";
 		description = "A spell to transform into an eagle, salamander, or pangolin";
 		manaCost = 5; //might get rid
 		selfTar = true;
-		this.keyboard = keyboard;
 	}
 	
 	public void execute() {
@@ -55,7 +53,7 @@ public class ChangeForm extends ShapeShift {
 			for (int i = 0; i < tempList.length; i++)
 				formNames[i] = tempList[i].name;
 			
-			int formChoice = Interface.choiceInput(keyboard, true, formNames, changePrompt)-1;
+			int formChoice = Interface.choiceInput(true, formNames, changePrompt)-1;
 			System.out.println(attacker.name + " has transformed into " + tempList[formChoice].name);
 			transform(attacker, tempList[formChoice], 5);
 		} else {

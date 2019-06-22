@@ -16,7 +16,7 @@ public class Index {
 	public static Monsters[] monsterList;
 	public static Monsters[] shiftMonList;
 	
-	public Index(Scanner keyboard) {
+	public Index() {
 		Potions hpPotion = new Potions("hp");  //0, Potion indices
 		Potions mpPotion = new Potions("mp");  //1
 		Potions atPotion = new Potions("att"); //2
@@ -38,7 +38,7 @@ public class Index {
 		Ability polym = new Polymorph();
 		Ability reflt = new Reflect();
 		Ability sheep = new SheepAttacks();
-		Ability shift = new ChangeForm(keyboard);
+		Ability shift = new ChangeForm();
 		Ability[] attStore = {baseA, charg, disrt, spins, shock, drain, froze, polym, reflt, sheep, shift};
 		attackList = attStore;
 		
