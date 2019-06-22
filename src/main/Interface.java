@@ -7,7 +7,7 @@ public class Interface {
 	
 	public static final String[] RESPONSEOPTIONS = {"Yes", "No"};
 	public static final String LINESPACE = "-----------------------------------------------";
-	public static final Scanner KEYBOARD = new Scanner(System.in);
+	private static final Scanner KEYBOARD = new Scanner(System.in);
 	public static boolean heroAction = false;
 	public static Hero hero;
 	
@@ -15,14 +15,14 @@ public class Interface {
 		Index stuff = new Index();
 		stuff.use(); //dummy method to get rid of yellow line
 		
-		ArrayList<Monsters> fighters = new ArrayList<>();
-		System.out.println("Welcome hero!");
-		System.out.print("Step forth and state your name: ");
+		ArrayList<Monster> fighters = new ArrayList<>();
+		Interface.writeOut("Welcome hero!");
+		Interface.prompt("Step forth and state your name: ");
 		String name = KEYBOARD.nextLine();
 		
 		String[] availClass = {"Warrior", "Mage", "Shifter"};
 		String classPrompt = "Which class you would like to be?\nThis will affect your stats, potions, and abilities";
-		int classChoice = choiceInput(false,availClass, classPrompt);
+		int classChoice = choiceInput(false, availClass, classPrompt);
 		//int classChoice = 1;
 		Hero player1 = new Hero(name, classChoice);
 		
@@ -30,17 +30,17 @@ public class Interface {
 		case 1: //warrior
 			Inventory.addItems(Index.potionsList[2], 1);
 			Inventory.addItems(Index.potionsList[3], 1);
-			System.out.println("You are a warrior");
+			Interface.writeOut("You are a warrior");
 			break;
 		case 2: //mage
 			Inventory.addItems(Index.potionsList[4], 1);
 			Inventory.addItems(Index.potionsList[5], 1);
-			System.out.println("You are a mage");
+			Interface.writeOut("You are a mage");
 			break;
 		case 3: //shifter
 			Inventory.addItems(Index.potionsList[4], 1);
 			Inventory.addItems(Index.potionsList[5], 1);
-			System.out.println("You are a shifter");
+			Interface.writeOut("You are a shifter");
 			break;
 		}
 		
@@ -57,38 +57,51 @@ public class Interface {
 			player1.moveListNames[i] = player1.moveList[i].getName() + " - " + (int)player1.moveList[i].getCost() + " mana";
 
 		for (int i = 0; i <= 2; i++) {
-			fighters.add(new Monsters(Index.monsterList[i]));
+			fighters.add(new Monster(Index.monsterList[i]));
 		}
 		Fight.fighting(fighters);
 		
 		KEYBOARD.close();
 	}
+
+	public static void writeOut(String... printing) { //wrapper for system.out.print; can be other output
+		System.out.println(printing);
+	}
+	public static void prompt(String prompt) { //print to same line
+		System.out.print(prompt);
+	}
 	
 	public static int choiceInput (boolean back, String[] options, String prompt) { //Returns user input from choices
-		int choice = 0;
-		System.out.println(LINESPACE);
+		int choice = -1;
+		StringBuilder lstOptions = new StringBuilder();
+
+		lstOptions.append(LINESPACE);
 		if (back) //option for "back"
-			System.out.println("0. Back");
-		for (int i = 0; i <= options.length-1; i++) { //Print out choices from an array
-			System.out.println(i+1 + ". " + options[i]);
-		}
-		System.out.println(LINESPACE);
+			lstOptions.append("0. Back");
+		for (int i = 0; i < options.length; i++)
+			lstOptions.append(i+1 + ". " + options[i]);
+		lstOptions.append(LINESPACE);
+		Interface.writeOut(lstOptions.toString());
+
 		do {
 			try {
-				System.out.print(prompt + "\n\nSelect which number you want: ");
+				Interface.prompt(prompt + "\n\nSelect which number you want: ");
 				choice = Integer.parseInt(KEYBOARD.nextLine());
-			} catch (Exception e) {} //might want to restructure somehow, right now, just preventing from crashing
+			} catch (NumberFormatException e) {} //might want to restructure somehow, right now, just preventing from crashing
 			
-			if ((choice <= options.length && choice > 0) || (back && choice == 0)) //Checks if input is valid
+			if ((choice < options.length && choice > 0) || (back && choice == 0)) //Checks if input is valid
 				heroAction = true;
 			else
-				System.out.println("\nInvalid choice, please try again\n");
+				Interface.writeOut("\nInvalid choice, please try again\n");
 		} while (!heroAction);
 		
 		heroAction = false;
-		System.out.println();
+		Interface.writeOut();
 		
 		return choice;
 	}
-	
+
+	public static void confirm() {
+		KEYBOARD.nextLine();
+	}
 }

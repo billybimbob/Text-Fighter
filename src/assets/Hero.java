@@ -3,7 +3,7 @@ package assets;
 import combat.*;
 import main.Index;
 
-public class Hero extends Monsters {
+public class Hero extends Monster {
 
 	public String[] moveListNames;
 	
@@ -14,8 +14,8 @@ public class Hero extends Monsters {
 			switch(classes) {
 			case 1: //warrior
 				Ability[] moveStore1 = {
-						(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[1].clone(),
-						(Ability)Index.attackList[2].clone(), (Ability)Index.attackList[3].clone()};
+						Index.attackList[0].clone(this), Index.attackList[1].clone(this),
+						Index.attackList[2].clone(this), Index.attackList[3].clone(this)};
 				moveList = moveStore1;
 				attType = true;
 				setStat("maxHp", 40.0f); //try iterating later
@@ -26,9 +26,9 @@ public class Hero extends Monsters {
 				break;
 			case 2: //mage
 				Ability[] moveStore2 = {
-						(Ability)Index.attackList[0].clone(), (Ability)Index.attackList[4].clone(),
-						(Ability)Index.attackList[5].clone(), (Ability)Index.attackList[6].clone(),
-						(Ability)Index.attackList[7].clone(), (Ability)Index.attackList[8].clone()};
+						Index.attackList[0].clone(this), Index.attackList[4].clone(this),
+						Index.attackList[5].clone(this), Index.attackList[6].clone(this),
+						Index.attackList[7].clone(this), Index.attackList[8].clone(this)};
 				moveList = moveStore2;
 				attType = false;
 				setStat("mag", 7.0f);
@@ -38,7 +38,7 @@ public class Hero extends Monsters {
 				setStat("mag", 7.0f);
 				break;
 			case 3: //shifter
-				Ability[] moveStore3 = {(Ability)Index.attackList[10].clone()};
+				Ability[] moveStore3 = {Index.attackList[10].clone(this)};
 				moveList = moveStore3;
 				attType = false;
 				setStat("hp", 10.0f);
@@ -52,9 +52,6 @@ public class Hero extends Monsters {
 				break;
 			}
 			
-			for (int i = 0; i <= moveList.length-1; i++) {
-				moveList[i].setAttacker(this);
-			}
 		} catch (CloneNotSupportedException c) {}
 	}
 }

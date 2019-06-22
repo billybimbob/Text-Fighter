@@ -1,19 +1,20 @@
 package combat;
 
-import assets.Monsters;
+import main.Interface;
+import assets.Monster;
 
 public class BasicAttack extends Ability {
 
-	public BasicAttack () {
+	public BasicAttack (Monster attacker) {
+		super(attacker);
 		name = "Basic Attack";
 		description = "A basic attack based off of the attack or magic skill of the attacker with a chance to crit";
-		targets = new Monsters[numTar];
 	}
 	
-	public void execute() { //might need to change how the target is handled
+	public void execute(Monster... targets) { //might need to change how the target is handled
 		//Attack based on RNG and modified by stats, need to consider magic attack
 		attType = attacker.attType; //might be temporary
-		if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
+		if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 			
 			baseDamage();
 			if (critCheck()) { //Checks for critical hit
@@ -23,14 +24,14 @@ public class BasicAttack extends Ability {
 				targetReduct(targets[0]);
 			}
 			
-			if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				System.out.println(attacker.name + "'s attack was blocked by " + targets[0].name);
+			if (damDealt()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+				Interface.writeOut(attacker.getName() + "'s attack was blocked by " + targets[0].getName());
 			} else {
-				System.out.println(attacker.name + " has hit " + targets[0].name + " for " + baseDam + " damage");
-				loseHp(targets[0], baseDam);
+				Interface.writeOut(attacker.getName() + " has hit " + targets[0].getName() + " for " + baseDam + " damage");
+				loseHp(attacker, targets[0], baseDam);
 			}
 		} else {
-			System.out.println(attacker.name + "'s attack missed");
+			Interface.writeOut(attacker.getName() + "'s attack missed");
 		}
 	}
 }

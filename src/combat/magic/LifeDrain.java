@@ -1,41 +1,44 @@
 package combat.magic;
 
-import assets.Monsters;
+import assets.Monster;
 import combat.*;
+import main.Interface;
 
 public class LifeDrain extends Ability {
 
-	public LifeDrain() {
+	public LifeDrain(Monster attacker) {
+		super(attacker);
 		name = "Life Drain";
 		description = "A magic attack that heals for for a portion of damage dealt";
 		attType = false;
-		targets = new Monsters[numTar];
 		manaCost = 3;
-		baseDamMod = 1.4;
+		baseDamMod = 1.4f;
 	}
 
-	public void execute() {
-		if (attacker.getStat("mp") >= manaCost) {
+	public void execute(Monster... targets) {
+
+		if (enoughMana()) {
 			attacker.modStat("mp", -manaCost);
-			if (attackCheck(targets[0], 0.01)) { //Check if attack will be successful
+			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 				baseDamage();
 				targetReduct(targets[0]);
 				float selfHeal = (int)(baseDam*0.5);
-				if (baseDam <= 0) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-					System.out.println(attacker.name + "'s drain was resisted by " + targets[0].name);
+				
+				if (damDealt()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+					Interface.writeOut(attacker.getName() + "'s drain was resisted by " + targets[0].getName());
 				} else {
-					System.out.println(attacker.name + " drains " + targets[0].name + " for " + baseDam + " damage");
-					loseHp(targets[0], baseDam);
+					Interface.writeOut(attacker.getName() + " drains " + targets[0].getName() + " for " + baseDam + " damage");
+					loseHp(attacker, targets[0], baseDam);
 					if (selfHeal > 0 && attacker.getStat("hp") < attacker.getStat("maxHp")) {
 						attacker.modStat("hp", selfHeal);
-						System.out.println(attacker.name + " absorbs " + selfHeal + " health");
+						Interface.writeOut(attacker.getName() + " absorbs " + selfHeal + " health");
 					}
 				}
 			} else {
-				System.out.println(attacker.name + "'s attack missed");
+				Interface.writeOut(attacker.getName() + "'s attack missed");
 			}
 		} else {
-			System.out.println(attacker.name + " tries to use " + name + ", but has insufficient mana");
+			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
 		}
 	}
 }

@@ -13,8 +13,8 @@ public class Index {
 
 	public static Ability[] attackList, passiveList;
 	public static Potions[] potionsList;
-	public static Monsters[] monsterList;
-	public static Monsters[] shiftMonList;
+	public static Monster[] monsterList;
+	public static Monster[] shiftMonList;
 	
 	public Index() {
 		Potions hpPotion = new Potions("hp");  //0, Potion indices
@@ -48,15 +48,15 @@ public class Index {
 		passiveList = passStore;
 		
 		// hp, mp, atk, def, magic, mres, speed, crit, special attack
-		Monsters mon1 = new Monsters("Bandit", false, true, new float[]{15, 15, 3, 3, 3, 3, 6, 6}, 1);
-		Monsters mon2 = new Monsters("Spider", false, false, new float[]{10, 15, 6, 2, 3, 3, 4, 4}, 5);
-		Monsters mon3 = new Monsters("Slime", false, true, new float[]{20, 10, 3, 5, 3, 3, 1, 1}, 6);
-		Monsters mon4 = new Monsters("Eagle", true, true, new float[]{15, 15, 8, 2, 2, 2, 18, 5}, 2); //temporary, should add shapeshifter constructor
-		Monsters mon5 = new Monsters("Pangolin", true, true, new float[]{30, 15, 2, 10, 1, 10, 3, 5}, 1);
-		Monsters mon6 = new Monsters("Salamander", true, false, new float[]{25, 15, 1, 5, 5, 6, 5, 5}, 5);
-		Monsters mon7 = new Monsters("Sheep", false, true, new float[]{5, 5, 1, 1, 1, 1, 1, 1}, 9);
-		Monsters[] monStore = {mon1, mon2, mon3, mon4, mon5, mon6};
-		Monsters[] shapeStore = {mon4, mon5, mon6, mon7};
+		Monster mon1 = new Monster("Bandit", false, true, new float[]{15, 15, 3, 3, 3, 3, 6, 6}, 1);
+		Monster mon2 = new Monster("Spider", false, false, new float[]{10, 15, 6, 2, 3, 3, 4, 4}, 5);
+		Monster mon3 = new Monster("Slime", false, true, new float[]{20, 10, 3, 5, 3, 3, 1, 1}, 6);
+		Monster mon4 = new Monster("Eagle", true, true, new float[]{15, 15, 8, 2, 2, 2, 18, 5}, 2); //temporary, should add shapeshifter constructor
+		Monster mon5 = new Monster("Pangolin", true, true, new float[]{30, 15, 2, 10, 1, 10, 3, 5}, 1);
+		Monster mon6 = new Monster("Salamander", true, false, new float[]{25, 15, 1, 5, 5, 6, 5, 5}, 5);
+		Monster mon7 = new Monster("Sheep", false, true, new float[]{5, 5, 1, 1, 1, 1, 1, 1}, 9);
+		Monster[] monStore = {mon1, mon2, mon3, mon4, mon5, mon6};
+		Monster[] shapeStore = {mon4, mon5, mon6, mon7};
 		
 		monsterList = monStore;
 		shiftMonList = shapeStore;

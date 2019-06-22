@@ -18,6 +18,6 @@ public abstract class Items {
 				break;
 		}
 	}
-	public abstract void useItem (Monsters user);
+	public abstract void useItem (Monster user);
 
 }

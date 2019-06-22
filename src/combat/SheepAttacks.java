@@ -1,34 +1,35 @@
 package combat;
 
-import assets.Monsters;
+import assets.Monster;
+import main.Interface;
 
 public class SheepAttacks extends Ability{
 
-	public SheepAttacks() {
+	public SheepAttacks(Monster attacker) {
+		super(attacker);
 		name = "Sheep Attacks";
 		description = "the most OP attack in the game";
-		targets = new Monsters[numTar];
 	}
 	
-	public void execute() {
+	public void execute(Monster... targets) {
 		int dialogue = (int)(Math.random()*4);
 		switch(dialogue) {
 			case 0:
-				System.out.println(attacker.name + " readies its... hoof to strike");
+				Interface.writeOut(attacker.getName() + " readies its... hoof to strike");
 				break;
 			case 1:
-				System.out.println(attacker.name + " wonders around, looking for some grass to eat");
+				Interface.writeOut(attacker.getName() + " wonders around, looking for some grass to eat");
 				break;
 			case 2:
-				System.out.println("Baaa");
+				Interface.writeOut("Baaa");
 				break;
 			case 3:
 				if(Math.random()>0.99) {
 					float secretDam = (int)(Math.random()*(targets[0].getStat("hp")))*2;
-					System.out.println("Woah! " + attacker.name + " is angry, and bites on " + targets[0].name + " for " + secretDam + " damage!");
-					loseHp(targets[0], secretDam);
+					Interface.writeOut("Woah! " + attacker.getName() + " is angry, and bites on " + targets[0].getName() + " for " + secretDam + " damage!");
+					loseHp(attacker, targets[0], secretDam);
 				} else {
-					System.out.println("Just a little old goat");
+					Interface.writeOut("Just a little old goat");
 				}
 				break;
 		}
