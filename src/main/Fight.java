@@ -8,8 +8,11 @@ import combat.magic.shapeshift.*;
 
 public class Fight {
 	
-	private static final String[] FIGHTCHOICES = {"Fight", "Dodge", "Inventory"};
 	private static Items pick; //temporary
+	private static int choice;
+	private static boolean skipTurn;
+	
+	public static final String[] FIGHTCHOICES = {"Fight", "Dodge", "Inventory"};
 	public static int turnCount;
 	public static List<Monster> fighters;
 
@@ -20,24 +23,18 @@ public class Fight {
 		turnCount = 0;
 		pick = null;
 		List<Monster> monFighters = new ArrayList<>();
-		String[] monFightersName;
 		
 		Interface.writeOut("Press enter when you are ready to fight");
 		Interface.confirm();
 
 		while (fightControl) {
 			monFighters.clear(); //not sure, might be ineffcient
-			monFightersName = null;
 			turnCount++; //turn counter
 			
 			attackOrder(fighters); //Orders the fighters by speed
 			determineEnemies(monFighters);
 
-			monFightersName = new String[monFighters.size()];
-			for (int i = 0; i < monFighters.size(); i++)
-				monFightersName[i] = monFighters.get(i).getName();
-
-			heroChoice(monFightersName);
+			Interface.HERO.fightChoice(monFighters);
 
 			//decides the turns of the Monster
 			for (Monster mon: monFighters) {
@@ -48,7 +45,6 @@ public class Fight {
 			priorities();
 			
 			//Goes through the move of each fighter, if attacking, target set here
-			Monster attacker;
 			for (int i = 0; i < fighters.size(); i++) {
 				
 				runTurn(fighters.get(i), monFighters);
@@ -69,7 +65,7 @@ public class Fight {
 			if (monFighters.size() == 0) { //Check if all Monster are killed
 				Interface.writeOut("All of the Monster have been killed, you win!");
 				fightControl = false;
-			} else if (target.getStat("hp") <= 0) { //Check if hero hp is zero
+			} else if (Interface.HERO.getStat("hp") <= 0) { //Check if hero hp is zero
 				Interface.writeOut("You have received a fatal blow, and have died");
 				fightControl = false;
 			/*} else if (flee) {
@@ -96,6 +92,7 @@ public class Fight {
 			}
 		}
 	}
+
 	public static void determineEnemies(List<Monster> monFighters) {
 		StringBuilder lstFighters = new StringBuilder();
 		lstFighters.append(Interface.LINESPACE);
@@ -108,7 +105,8 @@ public class Fight {
 				monFighters.add(fighter);
 			}
 		}
-		Interface.writeOut(lstFighters.toString());}
+		Interface.writeOut(lstFighters.toString());
+	}
 
 	public static void priorities() {
 		//check for priority, need to check what happens if speed is same with 2 priorities
@@ -128,8 +126,8 @@ public class Fight {
 		}
 	}
 
-	public static void runTurn(Monster attacker, List<Monster> enemies) {
-		boolean skipTurn = false;
+	public static void runTurn(Monster attacker, List<Monster> enemies) throws InterruptedException {
+		skipTurn = false;
 		if (attacker.getStat("hp") <= 0) //got rid of flee, maybe temporary
 			return;
 		
@@ -139,12 +137,10 @@ public class Fight {
 		statusCheck(attacker, "stun");
 		
 		
-		if (!skipTurn && !attacker.getAggro()) { //Monster attacks
+		if (!skipTurn) { //Monster attacks
 			//might be wrong attack since priority order different
 			attacker.executeTurn(); //doesn't account for multiple targets, maybe do rng to select other targets?
-
-		} else if (!skipTurn && attacker.getAggro()){ //Hero action, attacks target set here or then targets somehow get overridden
-			heroTurn(choice, enemies.toArray(new Monster[enemies.size()]));
+			//includes heroTurn, overriden
 		}
 
 		attacker.clearTurn();
@@ -160,103 +156,9 @@ public class Fight {
 
 		Interface.writeOut();
 		TimeUnit.SECONDS.sleep(2);
-
 	}
 
-	public static void heroChoice(List<Monster> targets) {
-		//Hero user input/determine hero actions
-		String[] monNames = new String[targets.size()];
-		for (int i = 0; i<targets.size(); i++)
-			monNames[i] = targets.get(i).getName();
 
-		while (!Interface.heroAction) {
-			
-			String fightPrompt = "Which action would you like to do?";
-			int choice = Interface.choiceInput(false, FIGHTCHOICES, fightPrompt);
-			selection:
-			switch (choice) {
-			case 1: //Attack a prompted target
-				do { //probably change, flow is really bad and confusing
-					String attPrompt = "Which attack do you want to use?";
-					int attNum = Interface.choiceInput(true, Interface.hero.getMoveNames(), attPrompt); //Temporary
-					if (attNum == 0)
-						break selection;
-					
-					Interface.hero.setTurn(attNum);
-					//determine the targets of hero move
-					int numTar = Interface.hero.getNumTar();
-					Interface.heroAction = true;
-					for (int j = 0; j < numTar; j++) { //gets targets if needed
-						String tarPrompt = "Which monster would you want to target?";
-						int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
-						if (tarNum == 0) {//have to change how to implement
-							Interface.heroAction = false;
-							break;
-						}
-						Interface.hero.addTarget(targets.get(tarNum));
-					}
-
-				} while (!Interface.heroAction);
-
-				break;
-			case 2: //temporarily raises evasion, and costs 2 mana
-				Interface.heroAction = true;
-				break;
-			case 3: //Check inventory
-				String[] inventNames = Inventory.access();
-				if (Inventory.empty) {
-					Interface.writeOut("You have no items in your inventory\n");
-				} else {
-					String itemPrompt = "Which item do you want to use?";
-					int pickNum = Interface.choiceInput(true, inventNames, itemPrompt);
-					if (pickNum == 0)
-						break selection;
-					else if (Interface.hero.getStatus("potion").getStart()!=0 && Potions.timeLength >= (turnCount-Potions.turnStart)) { //will trigger debuff
-						String usePrompt = "Another buff is still active, and will be canceled by this potion\nAre you sure you want to do this?";
-						int confirmUse = Interface.choiceInput(false, Interface.RESPONSEOPTIONS, usePrompt);
-						if (confirmUse == 1) {
-							Potions.turnStart = turnCount+Potions.timeLength;
-						} else
-							break selection;
-					}
-					Interface.heroAction = true;
-				}
-			}
-		}
-		Interface.writeOut(Interface.LINESPACE);
-	}
-
-	public static void heroTurn(int choice, Monster[] targets) {
-		Monster attacker = Interface.hero;
-		Interface.heroAction = false; //sets default value, will by default ask for user input
-		if (flee)
-			attacker.modStat("spe", -7);
-		switch (choice) {
-		case 1: //attacks inputed target
-			attacker.executeTurn();
-			break;
-		case 2: //Try to flee
-			//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
-			Interface.hero.modStat("mp", -3);
-			Interface.hero.modStat("spe", 7);
-			Interface.writeOut("You try dodge all incoming attacks, increasing evasion by 7");
-			flee = true;
-			/*if (escapeCheck > 1)
-				flee = true;
-			else
-				Interface.writeOut("You fail to escape");*/
-			break;
-		case 3: //use inputed item
-			int inventIndex = 0; //this part is here in order to account for potion overrides
-			for (int j = 0; j < pickNum-1; j++) //Not great, searching for index multiple times
-				inventIndex += Inventory.inventoryList[inventIndex].numAmount;
-			
-			pick = Inventory.inventoryList[inventIndex];
-			attacker.setStatus("potion", true);
-			pick.useItem(attacker);
-		}
-			
-	}
 		
 	public static void statusCheck (Monster checking, String statusName) { //each turn effects
 		Monster.StatusInfo data = checking.getStatus(statusName);

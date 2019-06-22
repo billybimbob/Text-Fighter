@@ -5,11 +5,12 @@ import assets.*;
 
 public class Interface {
 	
+	public static Hero HERO;
+	
 	public static final String[] RESPONSEOPTIONS = {"Yes", "No"};
 	public static final String LINESPACE = "-----------------------------------------------";
 	private static final Scanner KEYBOARD = new Scanner(System.in);
-	public static boolean heroAction = false;
-	public static Hero hero;
+	
 	
 	public static void main(String[] args) throws InterruptedException { //All this is probably temporary
 		Index stuff = new Index();
@@ -50,7 +51,7 @@ public class Interface {
 		Inventory.addItems(Index.potionsList[7], 1);
 		
 		fighters.add(player1);
-		hero = player1; //Temporary
+		HERO = player1; //Temporary
 		
 		for (int i = 0; i <= 2; i++) {
 			fighters.add(new Monster(Index.monsterList[i]));
@@ -79,6 +80,7 @@ public class Interface {
 		lstOptions.append(LINESPACE);
 		Interface.writeOut(lstOptions.toString());
 
+		boolean heroAction = false;
 		do {
 			try {
 				Interface.prompt(prompt + "\n\nSelect which number you want: ");
