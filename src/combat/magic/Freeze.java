@@ -15,7 +15,9 @@ public class Freeze extends Ability {
 		baseDamMod = 0.75f;
 	}
 	
-	public void execute(Monster... targets) {
+	public void execute() {
+		Monster[] targets = attacker.getTargets();
+
 		if (enoughMana()) {
 			//Attack based on RNG and modified by stats, need to consider magic attack
 			attacker.modStat("mp", -manaCost);

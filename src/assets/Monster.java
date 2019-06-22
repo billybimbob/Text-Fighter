@@ -5,26 +5,45 @@ import combat.*;
 import main.Index;
 
 public class Monster { //Temporary, probably make abstract later
+	
+	public static class StatusInfo {
+        private int start, duration;
+        private StatusInfo () {
+            this.start = 0;
+            this.duration = 0;
+        }
+        private StatusInfo (StatusInfo copy) {
+            this.start = copy.start;
+            this.duration = copy.duration;
+        }
+        public int getStart() { return start; }
+        public int getDuration() { return duration; }
 
+        private void setStart(int start) { this.start = start; }
+        private void setDuration(int duration) { this.duration = duration; }
+	}
+	
 	private String name;
-	private float damTurn = 0;
+	private float turnDam;
 	private Map<String, Float> stats;
-	private Map<String, Integer[]> status; //1st row is turn activated, 2nd is duration
+	private Ability passive, turnMove; //temporary?
+	private Map<String, StatusInfo> status;
+	private boolean aggro, priority; //attType true means physical attack
 	private Monster storedShifter;
+	private List<Monster> targets;
 	
-	protected int level = 1;
 	protected Ability[] moveList;
+	protected int level = 1;
+	protected boolean attType;
 
-	public boolean attType, aggro, priority; //attType true means physical attack
-	public Ability passive, turnMove, storeTurn; //temporary?
-	
+	public final static int levMult = 2;
 	public static final String[] STATNAMES = {"hp", "maxHp", "mp", "maxMp", "att", "def", "mag", "magR", "spe", "crit"}; //need to add edge cases for max health
 	public static final String[] STATUSNAMES = {"burn", "poison", "potion", "reflect", "shapeshift", "stun"};
-	public final static int levMult = 2;
+
 	
 	//constructor to have no ability
 	public Monster (String name, boolean aggro, boolean attType, float[] stats) {
-	//public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit) {
+		this.turnDam = 0;
 		this.name = name;
 		this.aggro = aggro;
 		this.attType = attType;
@@ -38,12 +57,13 @@ public class Monster { //Temporary, probably make abstract later
 				j++;
 		}
 
+		this.targets = new ArrayList<>();
 		initStatus();
+
 	}
 
 	//monster index constructor, basic attack and one special attack
 	public Monster (String name, boolean aggro, boolean attType, float[] stats, int special) {
-	//public Monsters (String name, boolean aggro, boolean attType, double hp, double mp, double att, double def, double mag, double magR, double spe, double crit, int special){
 		this(name, aggro, attType, stats);
 
 		try {
@@ -59,12 +79,13 @@ public class Monster { //Temporary, probably make abstract later
 		this.name = copy.name;
 		this.aggro = copy.aggro;
 		this.attType = copy.attType;
-		this.damTurn = copy.damTurn;
+		this.turnDam = copy.turnDam;
 
 		this.stats = new HashMap<>(); //deep copy
 		for (String statName: STATNAMES)
 			this.setStat(statName, copy.getStat(statName));
 		
+		this.targets = new ArrayList<>(copy.targets);
 		initStatus();
 
 		try {		
@@ -80,9 +101,8 @@ public class Monster { //Temporary, probably make abstract later
 
 	private void initStatus() {
 		status = new HashMap<>();
-		Integer[] startStatus = {0, 0};
 		for (String statusName: STATUSNAMES)
-			status.put(statusName, startStatus.clone());
+			status.put(statusName, new StatusInfo());
 	}
 
 
@@ -91,38 +111,97 @@ public class Monster { //Temporary, probably make abstract later
 		return name;
 	}
 	public float getStat (String stat) { //most likely where nulls arise
-		float ret = 0;
-		//try {
-			//System.out.println(this.name);
-			ret = this.stats.get(stat);
-		//} catch (Exception e) {
-		//	System.out.println(e);
-		//}
-
-		return ret;
+		return this.stats.get(stat);
 	}
-	public int[] getStatus (String status) { //convert to int[]
-		Integer[] val = this.status.get(status);
-		int[] ret = {val[0], val[1]};
-		return ret;
+	public StatusInfo getStatus (String status) { //immutable
+		StatusInfo val = this.status.get(status);
+		return new StatusInfo(val);
 	}
-	public Monster getShifter() {
+	public double getTurnDam() {
+		return this.turnDam;
+	}
+	public boolean getAggro() {
+		return aggro;
+	}
+	public boolean getPriority() {
+		return priority;
+	}
+	public boolean getAttType() {
+		return this.attType;
+	}
+	public Monster getShifter() { //shift mutable
 		return storedShifter;
 	}
-	public double getDamTurn() {
-		return this.damTurn;
+	public String[] getMoveNames() {
+		String[] ret = new String[moveList.length];
+		for (int i = 0; i < moveList.length; i++)
+			ret[i] = moveList[i].getName() + " - " + (int)moveList[i].getCost() + " mana";
+		return ret;
+	}
+	public Monster[] getTargets() {
+		return targets.toArray(new Monster[targets.size()]);
+	}
+	public int getNumTar() {
+		return turnMove.getNumTar();
+	}
+
+	private Ability getMove(int idx) {
+		return this.moveList[idx];
+	}
+	private Ability getMove() {
+		return moveList[(int)(Math.random()*moveList.length)];
+	}
+	private void updateTurnVals(Ability move) {
+		if (turnMove != null) {
+			turnMove = move;
+			priority = move.getPriority();
+		}
 	}
 
 
 	//mutators
-	public void addAttack(Ability adding) {
-		Ability[] moveStore = new Ability[moveList.length+1];
-		for (int i = 0; i <= moveList.length-1; i++) {
-			moveStore[i] = moveList[i];
+	public void setTurn() {
+		updateTurnVals(getMove());
+	}
+	public void setTurn(int idx) {
+		updateTurnVals(getMove(idx));
+	}
+	public void clearTurn() {
+		if (turnMove.resolved()) {
+			turnMove = null;		
+			clearTargets();
 		}
-		moveStore[moveList.length] = adding;
-		moveList = null;
-		moveList = moveStore;
+	}
+	public void executeTurn() { //wrapper for turnMove
+		turnMove.execute();
+	}
+	public void usePassive(Monster... targets) {
+		if (passive != null) {
+			List<Monster> sto = this.targets; //store previous targets
+			this.targets = new ArrayList<>(Arrays.asList(targets));
+			passive.execute();
+
+			this.clearTargets();
+			this.targets = sto;
+		}
+	}
+
+	public void addTarget(Monster add) {
+		this.targets.add(add);
+	}
+	public void addTarget(List<Monster> adds) {
+		for(Monster add: adds)
+			addTarget(add);
+	}
+	private void clearTargets() {
+		this.targets.clear();
+	}
+
+	public void addAttack(Ability adding) { //not sure if better
+		List<Ability> moveStore = Arrays.asList(moveList);
+		moveStore.add(adding);
+		moveList = new Ability[moveStore.size()];
+		moveList = moveStore.toArray(moveList);
 	}
 
 	public void setPassive(Ability passive) {
@@ -132,6 +211,7 @@ public class Monster { //Temporary, probably make abstract later
 			System.out.println("Not a valid ability");
 	}
 
+
 	public void setStat (String stat, float val) {
 		//System.out.println("setting " + this.name + "\'s " + stat);
 		stats.put(stat, val);
@@ -140,20 +220,25 @@ public class Monster { //Temporary, probably make abstract later
 		float newVal = stats.get(stat)+val;	
 		setStat(stat, newVal);
 	}
+
 	public void setStatus(String stat, int startTurn, int duration) {
-		status.get(stat)[0] = startTurn;
-		status.get(stat)[1] = duration;
+		StatusInfo info = status.get(stat);
+		info.setStart(startTurn);
+		info.setDuration(duration);
 	}
 	public void setStatus(String stat, boolean toggle) {
-		status.get(stat)[1] = 0; //does not matter
-		status.get(stat)[0] = toggle?1:0;
+		StatusInfo info = status.get(stat);
+		info.setStart(0); //does not matter
+		info.setDuration(toggle ? 1 : 0);
 	}
+
 	public void resetDamage() {
-		this.damTurn = 0;
+		this.turnDam = 0;
 	}
 	public void addDamTurn(double damage) {
-		this.damTurn += damage;
+		this.turnDam += damage;
 	}
+
 	public void setShifter(Monster storing) {
 		this.storedShifter = storing;
 	}

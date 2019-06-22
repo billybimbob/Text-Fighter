@@ -13,7 +13,7 @@ public class ChangeForm extends ShapeShift {
 		name = "Change Form";
 		description = "A spell to transform into an eagle, salamander, or pangolin";
 		manaCost = 5; //might get rid
-		selfTar = true;
+		numTar = 0;
 		
 		Monster[] formListStore = {new Monster(Index.shiftMonList[0]), new Monster(Index.shiftMonList[1]), new Monster(Index.shiftMonList[2])};
 		formList = formListStore;
@@ -26,7 +26,7 @@ public class ChangeForm extends ShapeShift {
 		}
 	}
 	
-	public void execute(Monster... targets) {
+	public void execute() {
 		//this.shifter = (Hero)attacker;
 		
 		if (attacker.getStat("mp") >= manaCost) {

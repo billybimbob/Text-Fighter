@@ -9,11 +9,12 @@ public class BasicAttack extends Ability {
 		super(attacker);
 		name = "Basic Attack";
 		description = "A basic attack based off of the attack or magic skill of the attacker with a chance to crit";
+		attType = attacker.getAttType();
 	}
 	
-	public void execute(Monster... targets) { //might need to change how the target is handled
+	public void execute() { //might need to change how the target is handled
 		//Attack based on RNG and modified by stats, need to consider magic attack
-		attType = attacker.attType; //might be temporary
+		Monster[] targets = attacker.getTargets();
 		if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 			
 			baseDamage();

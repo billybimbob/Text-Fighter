@@ -15,7 +15,8 @@ public class LifeDrain extends Ability {
 		baseDamMod = 1.4f;
 	}
 
-	public void execute(Monster... targets) {
+	public void execute() {
+		Monster[] targets = attacker.getTargets();
 
 		if (enoughMana()) {
 			attacker.modStat("mp", -manaCost);

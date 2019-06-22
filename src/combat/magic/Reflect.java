@@ -12,11 +12,11 @@ public class Reflect extends Ability { //not sure if should be priority or not
 		name = "Reflect";
 		description = "A spell that reflects some damage back at the attacker for 5 turns";
 		attType = false;
-		aoe = true;
 		manaCost = 6;
+		numTar = 0;
 	}
 
-	public void execute(Monster... targets) {
+	public void execute() {
 		if (enoughMana()) { //Checks if sufficient mana
 			attacker.modStat("mp", -manaCost);
 			attacker.setStatus("reflect", Fight.turnCount, 5);

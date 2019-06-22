@@ -13,11 +13,12 @@ public class SpinAttack extends Ability {
 		description = "A spinning melee attack that damages all enemies for less damage than a basic attack";
 		attType = true; //melee attack; might make it based on the attacker
 		numTar = -1;
-		aoe = true;
 		manaCost = 5;
 	}
 	
-	public void execute(Monster... targets) { //current bug with null pointer
+	public void execute() { //current bug with null pointer
+		Monster[] targets = attacker.getTargets();
+
 		if (enoughMana()) {
 			attacker.modStat("mp", -manaCost);
 			

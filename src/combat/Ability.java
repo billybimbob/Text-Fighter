@@ -8,14 +8,14 @@ public abstract class Ability implements Cloneable {
 	protected String name, description;
 	protected float manaCost, baseDam, baseDamMod;
 	protected Monster attacker;
-	protected int numTar; //no limit is -1
-	protected boolean attType, aoe, priority, selfTar, passive; //aoe attacks can't work with Monster
+	protected int numTar, duration; //no limit is -1, 0 is self
+	protected boolean attType, priority, passive; //aoe attacks can't work with Monster
 	
 	public Ability(Monster attacker) {
-		this.aoe = false;
 		this.priority = false;
-		this.passive = true;
+		this.passive = false;
 		this.numTar = 1;
+		this.duration = 1;
 		this.attacker = attacker;
 	}
 
@@ -30,36 +30,9 @@ public abstract class Ability implements Cloneable {
 		return newAbility;
 	}
 
-	//getters
-	public String getName() {
-		return name;
-	}
-	public double getCost() {
-		return manaCost;
-	}
-	public boolean getAoe() {
-		return aoe;
-	}
-	public boolean getPriority() {
-		return priority;
-	}
-	public boolean getSelfTar() {
-		return selfTar;
-	}
-	public boolean getPassive() {
-		return passive;
-	}
-	
-
-	//static methods
-	public static void loseHp (Monster attacker, Monster target, float damage) {
-		target.modStat("hp", -damage);
-		target.addDamTurn(damage);
-		Fight.statusCheck(attacker, target, "reflect", damage);
-	}
 
 
-	//combat calculations
+	//combat calculations, helper functions
 	protected boolean enoughMana() {
 		return attacker.getStat("mp") >= manaCost;
 	}
@@ -80,6 +53,10 @@ public abstract class Ability implements Cloneable {
 		return baseDam < 0;
 	}
 
+	public boolean resolved() { //check if multi turn, see if ability finished
+		return duration == 1;
+	}
+
 	protected void baseDamage() { //determines the damage if either a melee or magic attack
 		String hitStat = attType ? "att" : "mag";
 		baseDam = (int)(Math.random()*(attacker.getStat(hitStat)*baseDamMod)+1);
@@ -95,12 +72,37 @@ public abstract class Ability implements Cloneable {
 	}
 
 
+	//getters
+	public String getName() {
+		return name;
+	}
+	public double getCost() {
+		return manaCost;
+	}
+	public int getNumTar() {
+		return numTar;
+	}
+	public boolean getPriority() {
+		return priority;
+	}
+	public boolean getPassive() {
+		return passive;
+	}
+	public boolean targeted() {
+		return numTar > 0;
+	}
+
+	public static void loseHp (Monster attacker, Monster target, float damage) {
+		target.modStat("hp", -damage);
+		target.addDamTurn(damage);
+		Fight.statusCheck(attacker, target, "reflect", damage);
+	}
 
 	@Override
 	public String toString() {
 		return name + " - " + manaCost + " mana\n\t" + description;
 	}
 
-	public abstract void execute(Monster... targets);
+	public abstract void execute();
 
 }

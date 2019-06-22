@@ -11,7 +11,9 @@ public class SheepAttacks extends Ability{
 		description = "the most OP attack in the game";
 	}
 	
-	public void execute(Monster... targets) {
+	public void execute() {
+
+		Monster[] targets = attacker.getTargets();
 		int dialogue = (int)(Math.random()*4);
 		switch(dialogue) {
 			case 0:

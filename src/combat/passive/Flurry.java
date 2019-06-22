@@ -11,8 +11,9 @@ public class Flurry extends Ability {
 		name = "Flurry";
 		description = "A passive that increases attack stat each turn";
 		passive = true;
+		numTar = -1;
 	}
-	public void execute(Monster... targets) {
+	public void execute() {
 		Interface.writeOut(attacker.getName() + " gains attack boost");
 		attacker.modStat("att", 1);
 	}

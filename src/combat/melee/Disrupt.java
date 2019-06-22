@@ -15,7 +15,8 @@ public class Disrupt extends Ability {
 		manaCost = 5;
 	}
 	
-	public void execute(Monster... targets) {
+	public void execute() {
+		Monster[] targets = attacker.getTargets();
 		if (enoughMana()) {
 			//Attack based on RNG and modified by stats, need to consider magic attack
 			attacker.modStat("mp", -manaCost);
@@ -45,7 +46,6 @@ public class Disrupt extends Ability {
 		} else {
 			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
 		}
-		attacker.priority = false;
 	}
 
 }

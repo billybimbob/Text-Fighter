@@ -16,7 +16,9 @@ public class Shock extends Ability {
 		baseDamMod = 1.5f;
 	}
 	
-	public void execute(Monster... targets) {
+	public void execute() {
+		Monster[] targets = attacker.getTargets();
+		
 		if (enoughMana()) {
 			attacker.modStat("mp", -manaCost);
 			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful

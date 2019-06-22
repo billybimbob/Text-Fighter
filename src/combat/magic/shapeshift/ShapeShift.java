@@ -21,13 +21,15 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 		target.setStatus("shapeshift", Fight.turnCount, duration);
 	}
 
-	public static void revert (Monster target) {
-		float hpRatio = target.getStat("hp")/target.getStat("maxHp");
+	public static void revert (Monster target) { //can't ref by movelist
+		if (target.getShifter() != null) {
+			float hpRatio = target.getStat("hp")/target.getStat("maxHp");
 
-		target = new Monster(target.getShifter());
+			target = new Monster(target.getShifter());
 
-		target.setStat("hp", target.getStat("hp")*hpRatio);
-		target.setShifter(null);
+			target.setStat("hp", target.getStat("hp")*hpRatio);
+			target.setShifter(null);
+		}
 	}
 
 }

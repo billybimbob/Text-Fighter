@@ -11,14 +11,15 @@ public class Intimidate extends Ability {
 		name = "Intimidate";
 		description = "A passive that decrease speed of all enemies";
 		passive = true;
-		aoe = true;
+		numTar = -1;
 	}
-	public void execute(Monster... targets) {
+
+	public void execute() {
+		Monster[] targets = attacker.getTargets();
 		Interface.writeOut(attacker.getName() + " intimidates all enemies, and decreases all of their speed");
-		for (int i = 0; i <= targets.length-1; i++) {
-			if (targets[i].getStat("spe") > 0)
-				targets[i].modStat(("spe"), -1);
-		}
+		for (Monster target: targets)
+			if (target.getStat("spe") > 0)
+				target.modStat(("spe"), -1);
 	}
 
 }

@@ -13,7 +13,8 @@ public class Polymorph extends ShapeShift { //doesn't account for if the moveLis
 		manaCost = 15;
 	}
 	
-	public void execute(Monster... targets) {
+	public void execute() {
+		Monster[] targets = attacker.getTargets();
 		if (enoughMana()) {
 			attacker.modStat("mp", -manaCost);
 			if (attackHit(targets[0], 0.05)) { //Check if attack will be successful
