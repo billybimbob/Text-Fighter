@@ -64,15 +64,13 @@ public class Monster { //Temporary, probably make abstract later
 	}
 
 	//monster index constructor, basic attack and one special attack
-	public Monster (String name, boolean aggro, boolean attType, float[] stats, int special) {
+	public Monster (String name, boolean aggro, boolean attType, float[] stats, String special) {
 		this(name, aggro, attType, stats);
 
-		try {
-			Ability[] moveStore = {(Ability)Index.attackList[0].clone(this), 
-									(Ability)Index.attackList[special].clone(this)};
-			moveList = moveStore;
-			
-		} catch (CloneNotSupportedException c) {}
+		Ability[] moveStore = {Index.attackList.get("basic").apply(this), 
+								Index.attackList.get(special).apply(this)};
+		moveList = moveStore;
+		
 	}
 
 	//copies to a new instance

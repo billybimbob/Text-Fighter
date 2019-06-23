@@ -5,8 +5,8 @@ import main.Interface;
 
 public class SheepAttacks extends Ability{
 
-	public SheepAttacks(Monster attacker) {
-		super(attacker);
+	public SheepAttacks(Monster user) {
+		super(user);
 		name = "Sheep Attacks";
 		description = "the most OP attack in the game";
 	}

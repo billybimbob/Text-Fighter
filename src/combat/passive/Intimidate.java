@@ -6,8 +6,8 @@ import main.Interface;
 
 public class Intimidate extends Ability {
 
-	public Intimidate(Monster attacker) {
-		super(attacker);
+	public Intimidate(Monster user) {
+		super(user);
 		name = "Intimidate";
 		description = "A passive that decrease speed of all enemies";
 		passive = true;

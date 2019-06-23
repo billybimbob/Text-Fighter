@@ -7,8 +7,8 @@ import main.Interface;
 public class SpinAttack extends Ability {
 
 	
-	public SpinAttack (Monster attacker) { //might change to get rid of enemies parameter; max amount of targets is 5
-		super(attacker);
+	public SpinAttack (Monster user) { //might change to get rid of enemies parameter; max amount of targets is 5
+		super(user);
 		name = "Spin Attack";
 		description = "A spinning melee attack that damages all enemies for less damage than a basic attack";
 		attType = true; //melee attack; might make it based on the attacker

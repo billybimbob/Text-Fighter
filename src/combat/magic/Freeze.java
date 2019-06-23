@@ -6,8 +6,8 @@ import main.Interface;
 
 public class Freeze extends Ability {
 	
-	public Freeze (Monster attacker) {
-		super(attacker);
+	public Freeze (Monster user) {
+		super(user);
 		name = "Freeze";
 		description = "A a magic attack with the less damage, but lowers target's speed and evasion";
 		attType = false;

@@ -15,15 +15,14 @@ public class ChangeForm extends ShapeShift {
 		manaCost = 5; //might get rid
 		numTar = 0;
 		
-		Monster[] formListStore = {new Monster(Index.shiftMonList[0]), new Monster(Index.shiftMonList[1]), new Monster(Index.shiftMonList[2])};
-		formList = formListStore;
-		for (int i = 0; i <= formList.length-1; i++) {
-			try {
-				formList[i].addAttack(Index.attackList[10].clone(attacker));
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
+		formList = new Monster[]{
+				new Monster(Index.shiftMonList[0]), 
+				new Monster(Index.shiftMonList[1]), 
+				new Monster(Index.shiftMonList[2])};
+				
+		for(Monster shift: formList)
+			shift.addAttack(Index.attackList.get("shft").apply(user));
+		
 	}
 	
 	public void execute() {

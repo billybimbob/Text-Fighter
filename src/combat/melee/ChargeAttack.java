@@ -8,8 +8,8 @@ public class ChargeAttack extends Ability {
 	
 	private int turnCount = 0;
 	
-	public ChargeAttack (Monster attacker) {
-		super(attacker);
+	public ChargeAttack (Monster user) {
+		super(user);
 		name = "Charged Strike";
 		description = "A melee attack able to hit with twice accuarcy and damage, ignores armor, but requires a turn to charge, and more vulnerable";
 		attType = true;

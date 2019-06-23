@@ -6,8 +6,8 @@ import main.Interface;
 
 public class Polymorph extends ShapeShift { //doesn't account for if the moveLists are different length
 
-	public Polymorph(Monster attacker) {
-		super(attacker);
+	public Polymorph(Monster user) {
+		super(user);
 		name = "Polymorph";
 		description = "A spell that transforms an enemy into a sheep for 5 turns";
 		manaCost = 15;

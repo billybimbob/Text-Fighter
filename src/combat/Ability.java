@@ -11,12 +11,12 @@ public abstract class Ability implements Cloneable {
 	protected int numTar, duration; //no limit is -1, 0 is self
 	protected boolean attType, priority, passive; //aoe attacks can't work with Monster
 	
-	public Ability(Monster attacker) {
+	public Ability(Monster user) {
 		this.priority = false;
 		this.passive = false;
 		this.numTar = 1;
 		this.duration = 1;
-		this.attacker = attacker;
+		this.attacker = user;
 	}
 
 	@Override

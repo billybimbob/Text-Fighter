@@ -20,7 +20,7 @@ public class Inventory implements Iterable<Items> {
 		}
 	}
 	private static int inventSpace = 25, slotsUsed = 0;
-	private static Map<String, ItemInfo> inventoryList; //Inventory space limit of 25, can increase with cloning
+	private static Map<String, ItemInfo> inventoryList; //Inventory space limit of 25, can increase with cloning, might want to make sorted
 	
 	public Inventory() {
 		inventSpace = 25;

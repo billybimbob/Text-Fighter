@@ -6,8 +6,8 @@ import main.Interface;
 
 public class Disrupt extends Ability {
 
-	public Disrupt(Monster attacker) {
-		super(attacker);
+	public Disrupt(Monster user) {
+		super(user);
 		name = "Disrupt";
 		description = "A quick bash disrupting a target while injuring yourself";
 		attType = true;

@@ -7,8 +7,8 @@ import main.Interface;
 
 public class Reflect extends Ability { //not sure if should be priority or not
 
-	public Reflect (Monster attacker) {
-		super(attacker);
+	public Reflect (Monster user) {
+		super(user);
 		name = "Reflect";
 		description = "A spell that reflects some damage back at the attacker for 5 turns";
 		attType = false;

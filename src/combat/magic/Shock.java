@@ -6,8 +6,8 @@ import main.Interface;
 
 public class Shock extends Ability {
 
-	public Shock (Monster attacker) {
-		super(attacker);
+	public Shock (Monster user) {
+		super(user);
 		name = "Shock";
 		description = "A a magic attack with the same damage as a basic, but has chance to stun and ignores some armor";
 		attType = false;

@@ -13,8 +13,7 @@ public class Interface {
 	
 	
 	public static void main(String[] args) throws InterruptedException { //All this is probably temporary
-		Index stuff = new Index();
-		stuff.use(); //dummy method to get rid of yellow line
+		Index.createVals();
 		
 		ArrayList<Monster> fighters = new ArrayList<>();
 		Interface.writeOut("Welcome hero!");
@@ -62,8 +61,10 @@ public class Interface {
 		KEYBOARD.close();
 	}
 
-	public static void writeOut(String... printing) { //wrapper for system.out.print; can be other output
-		System.out.println(printing);
+
+	public static void writeOut(String... printings) { //wrapper for system.out.print; can be other output
+		for (String printing: printings)
+			System.out.println(printing);
 	}
 	public static void prompt(String prompt) { //print to same line
 		System.out.print(prompt);

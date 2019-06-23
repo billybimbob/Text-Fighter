@@ -6,8 +6,8 @@ import main.Interface;
 
 public class LifeDrain extends Ability {
 
-	public LifeDrain(Monster attacker) {
-		super(attacker);
+	public LifeDrain(Monster user) {
+		super(user);
 		name = "Life Drain";
 		description = "A magic attack that heals for for a portion of damage dealt";
 		attType = false;

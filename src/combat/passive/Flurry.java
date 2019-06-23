@@ -1,13 +1,13 @@
 package combat.passive;
 
-import combat.Ability;
 import assets.Monster;
+import combat.Ability;
 import main.Interface;
 
 public class Flurry extends Ability {
 	
-	public Flurry(Monster attacker) {
-		super(attacker);
+	public Flurry(Monster user) {
+		super(user);
 		name = "Flurry";
 		description = "A passive that increases attack stat each turn";
 		passive = true;

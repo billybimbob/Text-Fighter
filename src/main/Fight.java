@@ -13,6 +13,7 @@ public class Fight {
 	public static int turnCount;
 	public static List<Monster> fighters;
 
+	
 	public static void fighting (List<Monster> fightersIn) throws InterruptedException {
 		fighters = fightersIn;
 		Monster target = null;
