@@ -6,6 +6,7 @@ import assets.*;
 public class Interface {
 	
 	public static Hero HERO;
+	public static Fight FIGHT;
 	
 	public static final String[] RESPONSEOPTIONS = {"Yes", "No"};
 	public static final String LINESPACE = "-----------------------------------------------";
@@ -15,7 +16,7 @@ public class Interface {
 	public static void main(String[] args) throws InterruptedException { //All this is probably temporary
 		Index.createVals();
 		
-		ArrayList<Monster> fighters = new ArrayList<>();
+		List<Monster> fighters = new ArrayList<>();
 		Interface.writeOut("Welcome hero!");
 		Interface.prompt("Step forth and state your name: ");
 		String name = KEYBOARD.nextLine();
@@ -56,7 +57,11 @@ public class Interface {
 			fighters.add(new Monster(Index.monsterList[i]));
 		}
 
-		Fight.fighting(fighters);
+		Fight FIGHT = new Fight(fighters);
+		Interface.writeOut("Press enter when you are ready to fight");
+		Interface.confirm();
+		FIGHT.start();
+
 		
 		KEYBOARD.close();
 	}

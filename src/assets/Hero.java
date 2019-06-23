@@ -58,9 +58,7 @@ public class Hero extends Monster {
 		
 	}
 
-	public Items getPick() {
-		return pick;
-	}
+	public Items getPick() { return pick; }
 	
 	public void setTurn(List<Monster> targets) { //look at respone idx
 		//Hero user input/determine hero actions
@@ -107,15 +105,17 @@ public class Hero extends Monster {
 					Interface.writeOut("You have no items in your inventory\n");
 				
 				else {
+					int turnNum = Interface.FIGHT.getTurnNum(); //bad
 					String itemPrompt = "Which item do you want to use?";
 					int pickNum = Interface.choiceInput(true, inventNames, itemPrompt);
+					
 					if (pickNum == 0)
 						break selection;
-					else if (this.getStatus("potion").getStart()!=0 && Potions.timeLength >= (Fight.turnNum()-Potions.turnStart)) { //will trigger debuff
+					else if (this.checkStatus("potion", turnNum) > 0) { //will trigger debuff
 						String usePrompt = "Another buff is still active, and will be canceled by this potion\nAre you sure you want to do this?";
 						int confirmUse = Interface.choiceInput(false, Interface.RESPONSEOPTIONS, usePrompt);
 						if (confirmUse == 1) {
-							Potions.turnStart = Fight.turnNum()+Potions.timeLength;
+							Potions.turnStart = turnNum + Potions.timeLength;
 						} else
 							break selection;
 					}

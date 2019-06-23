@@ -49,7 +49,7 @@ public class Potions extends Items {
 	public void useItem (Monster user) {
 		user.modStat(this.statMod, this.modVal);
 
-		turnStart = Fight.turnNum();
+		turnStart = Interface.FIGHT.getTurnNum();
 		if (!(statMod.equals("hp") || statMod.equals("mp")))
 			System.out.println(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod);
 		else
@@ -81,7 +81,7 @@ public class Potions extends Items {
 			}
 			System.out.println("You gain " + used.modVal + " " + used.statMod + " from the " + used.name);
 			used.modVal = used.baseModVal;
-		} else if (Potions.timeLength <= Math.abs(Fight.turnNum()-Potions.turnStart)) {
+		} else if (Potions.timeLength <= Math.abs(Interface.FIGHT.getTurnNum()-Potions.turnStart)) {
 			user.modStat(used.statMod, -used.modVal);
 			System.out.println(used.name + " has worn off");
 			user.setStatus("potion", false);

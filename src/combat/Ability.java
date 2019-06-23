@@ -31,8 +31,10 @@ public abstract class Ability implements Cloneable {
 	}
 
 
+	/* 
+	 * combat calculations, helper functions
+	 */
 
-	//combat calculations, helper functions
 	protected boolean enoughMana() {
 		return attacker.getStat("mp") >= manaCost;
 	}
@@ -72,7 +74,10 @@ public abstract class Ability implements Cloneable {
 	}
 
 
-	//getters
+	/*
+	 * getters
+	 */
+
 	public String getName() {
 		return name;
 	}
@@ -92,15 +97,16 @@ public abstract class Ability implements Cloneable {
 		return numTar > 0;
 	}
 
+	@Override
+	public String toString() {
+		return name + " - " + manaCost + " mana\n\t" + description;
+	}
+
+	
 	public static void loseHp (Monster attacker, Monster target, float damage) {
 		target.modStat("hp", -damage);
 		target.addDamTurn(damage);
 		Fight.statusCheck(attacker, target, "reflect", damage);
-	}
-
-	@Override
-	public String toString() {
-		return name + " - " + manaCost + " mana\n\t" + description;
 	}
 
 	public abstract void execute();

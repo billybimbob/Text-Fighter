@@ -25,7 +25,7 @@ public class Inventory implements Iterable<Items> {
 	public Inventory() {
 		inventSpace = 25;
 		slotsUsed = 0;
-		inventoryList = new HashMap<>();
+		inventoryList = new TreeMap<>();
 	}
 	public Inventory(int space) {
 		this();

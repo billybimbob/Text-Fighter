@@ -6,22 +6,22 @@ import main.Index;
 
 public class Monster { //Temporary, probably make abstract later
 	
-	public static class StatusInfo {
-        private int start, duration;
+	private static class StatusInfo {
+        int start, duration;
 		
-		private StatusInfo () {
-            this.start = 0;
-            this.duration = 0;
+		StatusInfo () {
+            this.start = -1;
+            this.duration = -1;
         }
-        private StatusInfo (StatusInfo copy) {
+        StatusInfo (StatusInfo copy) {
             this.start = copy.start;
             this.duration = copy.duration;
         }
-        public int getStart() { return start; }
-        public int getDuration() { return duration; }
+        int getStart() { return start; }
+        int getDuration() { return duration; }
 
-        private void setStart(int start) { this.start = start; }
-        private void setDuration(int duration) { this.duration = duration; }
+        void setStart(int start) { this.start = start; }
+        void setDuration(int duration) { this.duration = duration; }
 	}
 	
 	private String name;
@@ -176,6 +176,20 @@ public class Monster { //Temporary, probably make abstract later
 		return minDam>0 ? minDam : 0;
 	}
 
+	//-1 not active, 0 finished, >0 amount of time active
+	public int checkStatus(String status, int turnNum) { //checks if status needs updating, keep eye on
+		StatusInfo info = getStatus(status);
+		int start = info.getStart(), duration = info.getDuration();
+
+		int ret = -1;
+		if (start > -1 && duration > -1)
+			ret = turnNum-start; //time active
+		if (turnNum-start >= duration)
+			ret = 0; //finished
+
+		return ret;
+	}
+
 	@Override
 	public String toString () {
 		return name + " - " + getStat("hp") + " hp" + " - " + getStat("mp") + " mp" + " - " + getStat("spe") + " speed";
@@ -237,20 +251,30 @@ public class Monster { //Temporary, probably make abstract later
 		//System.out.println("setting " + this.name + "\'s " + stat);
 		stats.put(stat, val);
 	}
-	public void modStat (String stat, float val) { //changes stat by val add max mod cases
+	public void modStat (String stat, float val) { //changes stat by val; add max mod cases
 		float newVal = stats.get(stat)+val;	
 		setStat(stat, newVal);
 	}
 
 	public void setStatus(String stat, int startTurn, int duration) {
 		StatusInfo info = status.get(stat);
-		info.setStart(startTurn);
-		info.setDuration(duration);
+		if (startTurn < 0 || duration < 0) {
+			info.setStart(-1);
+			info.setDuration(-1);
+		} else {
+			info.setStart(startTurn);
+			info.setDuration(duration);
+		}
 	}
 	public void setStatus(String stat, boolean toggle) {
 		StatusInfo info = status.get(stat);
-		info.setStart(0); //does not matter
-		info.setDuration(toggle ? 1 : 0);
+		if (toggle) {
+			info.setStart(0);
+			info.setDuration(1);
+		} else {
+			info.setStart(-1);
+			info.setDuration(-1);
+		}
 	}
 
 	public void addDamTurn(double damage) {

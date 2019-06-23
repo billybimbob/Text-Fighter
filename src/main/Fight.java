@@ -7,30 +7,32 @@ import combat.magic.shapeshift.*;
 
 public class Fight {
 	
-	private static boolean skipTurn;
-	
 	public static final String[] FIGHTCHOICES = {"Fight", "Dodge", "Inventory"};
-	private static int turnCount;
-	private static List<Monster> fighters;
 
+	private int turnCount;
+	private List<Monster> fighters;
+	private boolean skipTurn;
 
-	public static void fighting (List<Monster> fightersIn) throws InterruptedException {
-		fighters = fightersIn;
-		boolean fightControl = true; //could add flee back
+	public Fight(List<Monster> fighters) {
 		turnCount = 0;
+		this.fighters = fighters;
+	}
+	
+	public int getTurnNum() { return turnCount; }
+
+	public void start() {
+		boolean fightControl = true; //could add flee back
 		List<Monster> monFighters = new ArrayList<>();
-		
-		Interface.writeOut("Press enter when you are ready to fight");
-		Interface.confirm();
 
 		while (fightControl) {
 			turnCount++; //turn counter
 				
 			Interface.writeOut(Interface.LINESPACE);
+
 			attackOrder(fighters); //Orders the fighters by speed
 			determineEnemies(monFighters);
+			Interface.HERO.setTurn(monFighters);
 
-			Interface.HERO.setTurn(monFighters);	
 			Interface.writeOut(Interface.LINESPACE);
 
 			//decides the turns of the Monster
@@ -44,7 +46,7 @@ public class Fight {
 			//Goes through the move of each fighter, if attacking, target set here
 			for (int i = 0; i < fighters.size(); i++) {
 				
-				runTurn(fighters.get(i), monFighters);
+				runTurn(fighters.get(i), monFighters); //not sure
 
 				for (int j = 0; j < monFighters.size(); j++) { //check if any monster died, immediately after hero's turn
 					//System.out.print(monFighters.get(j).getName() + j + " " + monFighters.size());
@@ -72,10 +74,6 @@ public class Fight {
 		}
 	}
 
-	public static int turnNum() {
-		return turnCount;
-	}
-	
 	public static void attackOrder (List<Monster> list) { //orders the combatants from highest speed to lowest
 		int count = 0;
 		while (count < list.size()-1) {
@@ -94,7 +92,7 @@ public class Fight {
 		}
 	}
 
-	public static void determineEnemies(List<Monster> monFighters) {
+	private void determineEnemies(List<Monster> monFighters) {
 		monFighters.clear(); //not sure, might be ineffcient
 		StringBuilder lstFighters = new StringBuilder();
 		
@@ -110,7 +108,7 @@ public class Fight {
 		Interface.writeOut(lstFighters.toString());
 	}
 
-	public static void priorities() {
+	private void priorities() {
 		//check for priority, need to check what happens if speed is same with 2 priorities
 		for (int src = 0; src < fighters.size(); src++) {
 			Monster priAttacker = fighters.get(src);
@@ -128,7 +126,7 @@ public class Fight {
 		}
 	}
 
-	public static void runTurn(Monster attacker, List<Monster> enemies) throws InterruptedException {
+	private void runTurn(Monster attacker, List<Monster> enemies) {
 		skipTurn = false;
 		if (attacker.getStat("hp") <= 0) //got rid of flee, maybe temporary
 			return;
@@ -154,80 +152,14 @@ public class Fight {
 		if (attacker.getStat("mp") < attacker.getStat("maxMp")) //passive mp gain, could change the val
 			attacker.modStat("mp", 1);
 
-		Interface.writeOut();
-		TimeUnit.SECONDS.sleep(2);
-	}
-
-
+		try {
+			TimeUnit.SECONDS.sleep(2);
+		} catch (InterruptedException e) {}
 		
-	public static void statusCheck (Monster checking, String statusName) { //each turn effects
-		Monster.StatusInfo data = checking.getStatus(statusName);
-		int startTurn = data.getStart(), duration = data.getStart(); //statTurn is turn activated
-		switch(statusName) {
-		case "burn":
-			if (startTurn != 0) {
-				int burnDam = (int)(checking.getStat("hp")*0.1);
-				checking.setStat("hp", -burnDam);
-				Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
-				if (turnCount-startTurn == duration) {
-					checking.setStatus("burn", false);
-					Interface.writeOut(checking.getName() + " is no longer burned");
-				}
-			}
-			break;
-		case "poison":
-			if (startTurn != 0) {
-				int poiDam = (int)(checking.getStat("hp")*0.01*((turnCount-startTurn)%10));
-				checking.setStat("hp", -poiDam);
-				Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
-			}
-			break;
-		case "potion":
-			if (startTurn != 0) { //triggered only by player
-				Hero user = (Hero)checking;
-				Potions.buffCheck (user);
-			}
-			break;
-		case "reflect":
-			if (startTurn != 0 && turnCount-startTurn >= duration) {
-				checking.setStatus("reflect", false);
-				Interface.writeOut(checking.getName() + "'s reflect has worn off");
-			}
-			break;
-		case "shapeshift":
-			if (startTurn != 0 && turnCount-startTurn >= duration) { //triggered by shapeshift
-				ShapeShift.revert(checking);
-				Interface.writeOut(checking.getName() + " reverted back");
-			}
-			break;
-		case "stun":
-			if (startTurn != 0) { //triggered by chargeatt, magblast, disrupt
-				Interface.writeOut(checking.getName() + " is stunned");
-				skipTurn = true;
-				checking.setStatus("stun", false);
-			}
-			break;
-		}
-	}
-	public static void statusCheck(Monster attacker, Monster target, String statusName, double damDeal) { //target based status checks, might move to Monster class
-		Monster.StatusInfo data = attacker.getStatus(statusName);
-		int startTurn = data.getStart(), duration = data.getStart(); //statTurn is turn activated
-		switch (statusName) {
-		case "reflect":
-			if (startTurn != 0) {
-				float refDam = (int)(damDeal*0.5); 
-				attacker.modStat("hp", -refDam);
-				Interface.writeOut(target.getName() + " reflects " + refDam + " damage to " + attacker.getName());
-			}
-			if (startTurn != 0 && turnCount-startTurn >= duration) {
-				target.setStatus(statusName, false);
-				Interface.writeOut(target.getName() + "'s reflect has worn off");
-			}
-			break;
-		}
-	}
-
-	public static Monster[] nonSelf (Monster user) { //not sure if should be all enemies or all non-user, inefficient
+		Interface.writeOut();
+	}	
+	
+	private Monster[] nonSelf (Monster user) { //not sure if should be all enemies or all non-user, inefficient
 		List<Monster> sto = new ArrayList<>();
 		for (Monster mon: fighters) {
 			if (mon != user)
@@ -235,5 +167,61 @@ public class Fight {
 		}
 		return sto.toArray(new Monster[sto.size()]);
 	}
+
+
+		
+	public void statusCheck (Monster checking, String statusName) { //each turn effects
+		
+		int check = checking.checkStatus(statusName, turnCount);
+		if (check > -1) {
+			switch(statusName) {
+			case "burn":
+				int burnDam = (int)(checking.getStat("hp")*0.1);
+				checking.modStat("hp", -burnDam);
+				Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
+				if (check == 0) {
+					checking.setStatus("burn", false);
+					Interface.writeOut(checking.getName() + " is no longer burned");
+				}
+				break;
+
+			case "poison":
+				int poiDam = (int)(checking.getStat("hp")*0.01*((turnCount-check)%10));
+				checking.modStat("hp", -poiDam);
+				Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
+				break;
+
+			case "potion":
+				Hero user = (Hero)checking;
+				Potions.buffCheck(user);
+				break;
+
+			case "reflect":
+				float refDam = (int)(damDeal*0.5); 
+				attacker.modStat("hp", -refDam);
+				Interface.writeOut(target.getName() + " reflects " + refDam + " damage to " + attacker.getName());
+				if (check == 0) { //finished
+					checking.setStatus("reflect", false);
+					Interface.writeOut(checking.getName() + "'s reflect has worn off");
+				}
+				break;
+
+			case "shapeshift":
+				if (check == 0) { //triggered by shapeshift
+					ShapeShift.revert(checking);
+					Interface.writeOut(checking.getName() + " reverted back");
+				}
+				break;
+
+			case "stun":
+				//triggered by chargeatt, magblast, disrupt
+				Interface.writeOut(checking.getName() + " is stunned");
+				skipTurn = true;
+				checking.setStatus("stun", false);
+				break;
+			}
+		}
+	}
+
 
 }
