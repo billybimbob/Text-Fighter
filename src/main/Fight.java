@@ -3,13 +3,10 @@ package main;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import assets.*;
-import combat.*;
 import combat.magic.shapeshift.*;
 
 public class Fight {
 	
-	private static Items pick; //temporary
-	private static int choice;
 	private static boolean skipTurn;
 	
 	public static final String[] FIGHTCHOICES = {"Fight", "Dodge", "Inventory"};
@@ -21,7 +18,6 @@ public class Fight {
 		Monster target = null;
 		boolean fightControl = true, flee = false;
 		turnCount = 0;
-		pick = null;
 		List<Monster> monFighters = new ArrayList<>();
 		
 		Interface.writeOut("Press enter when you are ready to fight");
@@ -34,7 +30,7 @@ public class Fight {
 			attackOrder(fighters); //Orders the fighters by speed
 			determineEnemies(monFighters);
 
-			Interface.HERO.fightChoice(monFighters);
+			Interface.HERO.setTurn(monFighters);
 
 			//decides the turns of the Monster
 			for (Monster mon: monFighters) {
@@ -131,26 +127,25 @@ public class Fight {
 		if (attacker.getStat("hp") <= 0) //got rid of flee, maybe temporary
 			return;
 		
-		passiveCheck(attacker);
+		attacker.usePassive(nonSelf(attacker));
 		statusCheck(attacker, "burn");
 		statusCheck(attacker, "potion"); //not sure if should be end of turn or beginning
 		statusCheck(attacker, "stun");
 		
 		
-		if (!skipTurn) { //Monster attacks
+		if (!skipTurn)
 			//might be wrong attack since priority order different
 			attacker.executeTurn(); //doesn't account for multiple targets, maybe do rng to select other targets?
 			//includes heroTurn, overriden
-		}
 
-		attacker.clearTurn();
 
 		//end of turn
 		statusCheck(attacker, "poison");
 		statusCheck(attacker, "reflect");
 		statusCheck(attacker, "shapeshift");
 		
-		attacker.resetDamage();
+		attacker.clearTurn();
+
 		if (attacker.getStat("mp") < attacker.getStat("maxMp")) //passive mp gain, could change the val
 			attacker.modStat("mp", 1);
 
@@ -184,7 +179,8 @@ public class Fight {
 			break;
 		case "potion":
 			if (startTurn != 0) { //triggered only by player
-				Potions.buffCheck (checking, pick);
+				Hero user = (Hero)checking;
+				Potions.buffCheck (user);
 			}
 			break;
 		case "reflect":
@@ -226,13 +222,13 @@ public class Fight {
 		}
 	}
 
-	public static void passiveCheck (Monster user) { //not sure if should be all enemies or all non-user, inefficient
-		List<Monster> nonSelf = new ArrayList<>();
+	public static Monster[] nonSelf (Monster user) { //not sure if should be all enemies or all non-user, inefficient
+		List<Monster> sto = new ArrayList<>();
 		for (Monster mon: fighters) {
 			if (mon != user)
-				nonSelf.add(mon);
+				sto.add(mon);
 		}
-		user.usePassive(nonSelf.toArray(new Monster[nonSelf.size()])); //have to pass as array, bad, execute will handle if self tar	
+		return sto.toArray(new Monster[sto.size()]);
 	}
 
 }

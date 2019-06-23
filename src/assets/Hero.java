@@ -6,13 +6,15 @@ import main.*;
 
 public class Hero extends Monster {
 
+	private Inventory inventory;
 	private int choice;
-	private int pickNum;
+	private Items pick;
 	private boolean action;
 	
 	public Hero (String name, int classes) { //if classes true, warrior
 		super(name, true, true, new float[]{25, 20, 5, 5, 5, 5, 5, 5});
 		level = 1;
+		inventory = new Inventory();
 		try { //redfine from starting vals
 			switch(classes) {
 			case 1: //warrior
@@ -58,8 +60,11 @@ public class Hero extends Monster {
 		} catch (CloneNotSupportedException c) {}
 	}
 
+	public Items getPick() {
+		return pick;
+	}
 	
-	public void fightChoice(List<Monster> targets) {
+	public void setTurn(List<Monster> targets) {
 		//Hero user input/determine hero actions
 		String[] monNames = new String[targets.size()];
 		for (int i = 0; i<targets.size(); i++)
@@ -78,7 +83,7 @@ public class Hero extends Monster {
 					if (attNum == 0)
 						break selection;
 					
-					this.setTurn(attNum);
+					super.setTurn(attNum);
 					//determine the targets of hero move
 					int numTar = this.getNumTar();
 					action = true;
@@ -99,12 +104,12 @@ public class Hero extends Monster {
 				action = true;
 				break;
 			case 3: //Check inventory
-				String[] inventNames = Inventory.access();
-				if (Inventory.empty) {
+				String[] inventNames = inventory.accessNames();
+				if (inventory.empty()) {
 					Interface.writeOut("You have no items in your inventory\n");
 				} else {
 					String itemPrompt = "Which item do you want to use?";
-					pickNum = Interface.choiceInput(true, inventNames, itemPrompt);
+					int pickNum = Interface.choiceInput(true, inventNames, itemPrompt);
 					if (pickNum == 0)
 						break selection;
 					else if (this.getStatus("potion").getStart()!=0 && Potions.timeLength >= (Fight.turnCount-Potions.turnStart)) { //will trigger debuff
@@ -115,6 +120,7 @@ public class Hero extends Monster {
 						} else
 							break selection;
 					}
+					pick = inventory.getItem(pickNum);
 					action = true;
 				}
 			}
@@ -128,7 +134,7 @@ public class Hero extends Monster {
 
 		switch (choice) {
 		case 1: //attacks inputed target
-			executeTurn();
+			super.executeTurn();
 			break;
 		case 2: //Try to flee
 			//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
@@ -137,13 +143,12 @@ public class Hero extends Monster {
 			Interface.writeOut("You try dodge all incoming attacks, increasing evasion by 7");
 			break;
 		case 3: //use inputed item
-			int inventIndex = 0; //this part is here in order to account for potion overrides
-			for (int j = 0; j < pickNum-1; j++) //Not great, searching for index multiple times
-				inventIndex += Inventory.inventoryList[inventIndex].numAmount;
-			
-			Items pick = Inventory.inventoryList[inventIndex];
 			setStatus("potion", true);
 			pick.useItem(this);
 		}
+	}
+
+	public void addItems (Items added, int amount) {
+		inventory.addItems(added, amount);
 	}
 }

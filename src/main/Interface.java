@@ -25,37 +25,38 @@ public class Interface {
 		String classPrompt = "Which class you would like to be?\nThis will affect your stats, potions, and abilities";
 		int classChoice = choiceInput(false, availClass, classPrompt);
 		//int classChoice = 1;
-		Hero player1 = new Hero(name, classChoice);
+		
+		HERO = new Hero(name, classChoice);
 		
 		switch (classChoice) {
 		case 1: //warrior
-			Inventory.addItems(Index.potionsList[2], 1);
-			Inventory.addItems(Index.potionsList[3], 1);
+			HERO.addItems(Index.potionsList[2], 1);
+			HERO.addItems(Index.potionsList[3], 1);
 			Interface.writeOut("You are a warrior");
 			break;
 		case 2: //mage
-			Inventory.addItems(Index.potionsList[4], 1);
-			Inventory.addItems(Index.potionsList[5], 1);
+			HERO.addItems(Index.potionsList[4], 1);
+			HERO.addItems(Index.potionsList[5], 1);
 			Interface.writeOut("You are a mage");
 			break;
 		case 3: //shifter
-			Inventory.addItems(Index.potionsList[4], 1);
-			Inventory.addItems(Index.potionsList[5], 1);
+			HERO.addItems(Index.potionsList[4], 1);
+			HERO.addItems(Index.potionsList[5], 1);
 			Interface.writeOut("You are a shifter");
 			break;
 		}
 		
-		Inventory.addItems(Index.potionsList[0], 3);
-		Inventory.addItems(Index.potionsList[1], 3);
-		Inventory.addItems(Index.potionsList[6], 1);
-		Inventory.addItems(Index.potionsList[7], 1);
+		HERO.addItems(Index.potionsList[0], 3);
+		HERO.addItems(Index.potionsList[1], 3);
+		HERO.addItems(Index.potionsList[6], 1);
+		HERO.addItems(Index.potionsList[7], 1);
 		
-		fighters.add(player1);
-		HERO = player1; //Temporary
+		fighters.add(HERO);
 		
 		for (int i = 0; i <= 2; i++) {
 			fighters.add(new Monster(Index.monsterList[i]));
 		}
+
 		Fight.fighting(fighters);
 		
 		KEYBOARD.close();

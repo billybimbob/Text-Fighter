@@ -8,7 +8,8 @@ public class Monster { //Temporary, probably make abstract later
 	
 	public static class StatusInfo {
         private int start, duration;
-        private StatusInfo () {
+		
+		private StatusInfo () {
             this.start = 0;
             this.duration = 0;
         }
@@ -28,7 +29,7 @@ public class Monster { //Temporary, probably make abstract later
 	private Map<String, Float> stats;
 	private Ability passive, turnMove; //temporary?
 	private Map<String, StatusInfo> status;
-	private boolean aggro, priority; //attType true means physical attack
+	private boolean aggro; //attType true means physical attack
 	private Monster storedShifter;
 	private List<Monster> targets;
 	
@@ -99,11 +100,31 @@ public class Monster { //Temporary, probably make abstract later
 		} catch (CloneNotSupportedException e) {}
 	}
 
+
+	//private helpers
 	private void initStatus() {
 		status = new HashMap<>();
 		for (String statusName: STATUSNAMES)
 			status.put(statusName, new StatusInfo());
 	}
+	private Ability getMove(int idx) {
+		return this.moveList[idx];
+	}
+	private Ability getMove() {
+		return moveList[(int)(Math.random()*moveList.length)];
+	}
+	private void updateTurnVals(Ability move) {
+		if (turnMove != null) {
+			turnMove = move;
+		}
+	}
+	private void clearTargets() {
+		this.targets.clear();
+	}
+	private void resetDamage() {
+		this.turnDam = 0;
+	}
+
 
 
 	//accessors
@@ -124,7 +145,7 @@ public class Monster { //Temporary, probably make abstract later
 		return aggro;
 	}
 	public boolean getPriority() {
-		return priority;
+		return turnMove.getPriority();
 	}
 	public boolean getAttType() {
 		return this.attType;
@@ -138,24 +159,23 @@ public class Monster { //Temporary, probably make abstract later
 			ret[i] = moveList[i].getName() + " - " + (int)moveList[i].getCost() + " mana";
 		return ret;
 	}
-	public Monster[] getTargets() {
-		return targets.toArray(new Monster[targets.size()]);
-	}
 	public int getNumTar() {
 		return turnMove.getNumTar();
 	}
+	public Monster[] getTargets() {
+		return targets.toArray(new Monster[targets.size()]);
+	}
+	public int minDam(Monster attacker, boolean attType) { //max value for now is 10 for def and magR
+		String hitStat = attType?"att":"mag", blockStat = attType?"def":"magR";
+		int minDam = (int)attacker.getStat(hitStat);
+		double stat = this.getStat(blockStat);
+		minDam -= ((int)stat/2);
+		return minDam>0 ? minDam : 0;
+	}
 
-	private Ability getMove(int idx) {
-		return this.moveList[idx];
-	}
-	private Ability getMove() {
-		return moveList[(int)(Math.random()*moveList.length)];
-	}
-	private void updateTurnVals(Ability move) {
-		if (turnMove != null) {
-			turnMove = move;
-			priority = move.getPriority();
-		}
+	@Override
+	public String toString () {
+		return name + " - " + getStat("hp") + " hp" + " - " + getStat("mp") + " mp" + " - " + getStat("spe") + " speed";
 	}
 
 
@@ -167,6 +187,7 @@ public class Monster { //Temporary, probably make abstract later
 		updateTurnVals(getMove(idx));
 	}
 	public void clearTurn() {
+		resetDamage();
 		if (turnMove.resolved()) {
 			turnMove = null;		
 			clearTargets();
@@ -192,9 +213,6 @@ public class Monster { //Temporary, probably make abstract later
 	public void addTarget(List<Monster> adds) {
 		for(Monster add: adds)
 			addTarget(add);
-	}
-	private void clearTargets() {
-		this.targets.clear();
 	}
 
 	public void addAttack(Ability adding) { //not sure if better
@@ -232,9 +250,6 @@ public class Monster { //Temporary, probably make abstract later
 		info.setDuration(toggle ? 1 : 0);
 	}
 
-	public void resetDamage() {
-		this.turnDam = 0;
-	}
 	public void addDamTurn(double damage) {
 		this.turnDam += damage;
 	}
@@ -256,18 +271,5 @@ public class Monster { //Temporary, probably make abstract later
 		setStat("mp", getStat("maxMp"));
 	}
 
-
-
-	public int minDam(Monster attacker, boolean attType) { //max value for now is 10 for def and magR
-		String hitStat = attType?"att":"mag", blockStat = attType?"def":"magR";
-		int minDam = (int)attacker.getStat(hitStat);
-		double stat = this.getStat(blockStat);
-		minDam -= ((int)stat/2);
-		return minDam>0 ? minDam : 0;
-	}
-
-	public String toString () {
-		return name + " - " + getStat("hp") + " hp" + " - " + getStat("mp") + " mp" + " - " + getStat("spe") + " speed";
-	}
 	
 }
