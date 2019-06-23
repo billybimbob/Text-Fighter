@@ -74,12 +74,14 @@ public class Interface {
 		int choice = -1;
 		StringBuilder lstOptions = new StringBuilder();
 
-		lstOptions.append(LINESPACE);
+		lstOptions.append(LINESPACE + "\n");
+
 		if (back) //option for "back"
-			lstOptions.append("0. Back");
+			lstOptions.append("0. Back\n");
 		for (int i = 0; i < options.length; i++)
-			lstOptions.append(i+1 + ". " + options[i]);
-		lstOptions.append(LINESPACE);
+			lstOptions.append(i+1 + ". " + options[i] + "\n");
+
+		lstOptions.append(LINESPACE + "\n");
 		Interface.writeOut(lstOptions.toString());
 
 		boolean heroAction = false;
@@ -89,7 +91,7 @@ public class Interface {
 				choice = Integer.parseInt(KEYBOARD.nextLine());
 			} catch (NumberFormatException e) {} //might want to restructure somehow, right now, just preventing from crashing
 			
-			if ((choice < options.length && choice > 0) || (back && choice == 0)) //Checks if input is valid
+			if ((choice <= options.length && choice > 0) || (back && choice == 0)) //Checks if input is valid
 				heroAction = true;
 			else
 				Interface.writeOut("\nInvalid choice, please try again\n");

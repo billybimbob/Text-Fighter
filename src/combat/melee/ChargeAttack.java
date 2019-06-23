@@ -6,7 +6,7 @@ import main.Interface;
 
 public class ChargeAttack extends Ability {
 	
-	private int turnCount = 0;
+	private int turnCount;
 	
 	public ChargeAttack (Monster user) {
 		super(user);
@@ -16,22 +16,24 @@ public class ChargeAttack extends Ability {
 		manaCost = 6;
 		baseDamMod = 3;
 		duration = 2;
+		turnCount = 0;
 	}
 
 	@Override
 	public boolean resolved() {
-		return turnCount == duration;
+		return turnCount == 0; //means reset count
 	}
 	
 	public void execute() { //Change, too messy, might put the print statements in the fight class
 		
 		Monster[] targets = attacker.getTargets();
-		if (enoughMana() && turnCount++ == 0) { //checks if sufficient mana, and starts charged turn
+		if (enoughMana() && turnCount == 0) { //checks if sufficient mana, and starts charged turn
 			attacker.modStat("mp", -manaCost);
 			Interface.writeOut(attacker.getName() + " readies their swing");
 			attacker.modStat("mp", -3);
-
-		} else if (turnCount++ == 1) { //checks if attack charged for 1 turn
+			turnCount++;
+		
+		} else if (turnCount == 1) { //checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
 			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 				

@@ -19,7 +19,7 @@ public class Reflect extends Ability { //not sure if should be priority or not
 	public void execute() {
 		if (enoughMana()) { //Checks if sufficient mana
 			attacker.modStat("mp", -manaCost);
-			attacker.setStatus("reflect", Fight.turnCount, 5);
+			attacker.setStatus("reflect", Fight.turnNum(), 5);
 			Interface.writeOut(attacker.getName() + " casts a reflecting shield for " + manaCost + " mana");
 			
 		} else

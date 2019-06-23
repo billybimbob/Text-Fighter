@@ -105,14 +105,14 @@ public class Monster { //Temporary, probably make abstract later
 		for (String statusName: STATUSNAMES)
 			status.put(statusName, new StatusInfo());
 	}
-	private Ability getMove(int idx) {
-		return this.moveList[idx];
-	}
 	private Ability getMove() {
 		return moveList[(int)(Math.random()*moveList.length)];
 	}
+	private Ability getMove(int idx) {
+		return this.moveList[idx];
+	}
 	private void updateTurnVals(Ability move) {
-		if (turnMove != null) {
+		if (turnMove == null) {
 			turnMove = move;
 		}
 	}
@@ -142,8 +142,8 @@ public class Monster { //Temporary, probably make abstract later
 	public boolean getAggro() {
 		return aggro;
 	}
-	public boolean getPriority() {
-		return turnMove.getPriority();
+	public boolean getPriority() { //temporary
+		return turnMove==null ? false : turnMove.getPriority();
 	}
 	public boolean getAttType() {
 		return this.attType;
@@ -186,7 +186,7 @@ public class Monster { //Temporary, probably make abstract later
 	}
 	public void clearTurn() {
 		resetDamage();
-		if (turnMove.resolved()) {
+		if (turnMove != null && turnMove.resolved()) {
 			turnMove = null;		
 			clearTargets();
 		}

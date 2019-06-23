@@ -10,10 +10,10 @@ public class Fight {
 	private static boolean skipTurn;
 	
 	public static final String[] FIGHTCHOICES = {"Fight", "Dodge", "Inventory"};
-	public static int turnCount;
-	public static List<Monster> fighters;
+	private static int turnCount;
+	private static List<Monster> fighters;
 
-	
+
 	public static void fighting (List<Monster> fightersIn) throws InterruptedException {
 		fighters = fightersIn;
 		Monster target = null;
@@ -25,18 +25,19 @@ public class Fight {
 		Interface.confirm();
 
 		while (fightControl) {
-			monFighters.clear(); //not sure, might be ineffcient
 			turnCount++; //turn counter
-			
+				
+			Interface.writeOut(Interface.LINESPACE);
 			attackOrder(fighters); //Orders the fighters by speed
 			determineEnemies(monFighters);
 
-			Interface.HERO.setTurn(monFighters);
+			Interface.HERO.setTurn(monFighters);	
+			Interface.writeOut(Interface.LINESPACE);
 
 			//decides the turns of the Monster
 			for (Monster mon: monFighters) {
 				mon.setTurn();
-				mon.addTarget(target);
+				mon.addTarget(Interface.HERO);
 			}
 			
 			priorities();
@@ -71,6 +72,10 @@ public class Fight {
 			}
 		}
 	}
+
+	public static int turnNum() {
+		return turnCount;
+	}
 	
 	public static void attackOrder (List<Monster> list) { //orders the combatants from highest speed to lowest
 		int count = 0;
@@ -91,10 +96,11 @@ public class Fight {
 	}
 
 	public static void determineEnemies(List<Monster> monFighters) {
+		monFighters.clear(); //not sure, might be ineffcient
 		StringBuilder lstFighters = new StringBuilder();
-		lstFighters.append(Interface.LINESPACE);
+		
 		for (Monster fighter: fighters) { //Determine which is the hero, may change later, also prints each fighter and stats
-			lstFighters.append(fighter);
+			lstFighters.append(fighter + "\n");
 			
 			if (fighter.getAggro()) {
 				//target = fighter;
@@ -132,7 +138,6 @@ public class Fight {
 		statusCheck(attacker, "burn");
 		statusCheck(attacker, "potion"); //not sure if should be end of turn or beginning
 		statusCheck(attacker, "stun");
-		
 		
 		if (!skipTurn)
 			//might be wrong attack since priority order different

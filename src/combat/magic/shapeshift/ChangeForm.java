@@ -28,7 +28,7 @@ public class ChangeForm extends ShapeShift {
 	public void execute() {
 		//this.shifter = (Hero)attacker;
 		
-		if (attacker.getStat("mp") >= manaCost) {
+		if (enoughMana()) {
 			attacker.modStat("mp", -manaCost);
 			String changePrompt = "Which form do you want to take?";
 			

@@ -19,8 +19,8 @@ public class Inventory implements Iterable<Items> {
 			this.amount += amount;
 		}
 	}
-	private static int inventSpace = 25, slotsUsed = 0;
-	private static Map<String, ItemInfo> inventoryList; //Inventory space limit of 25, can increase with cloning, might want to make sorted
+	private int inventSpace = 25, slotsUsed = 0;
+	private Map<String, ItemInfo> inventoryList; //Inventory space limit of 25, can increase with cloning, might want to make sorted
 	
 	public Inventory() {
 		inventSpace = 25;
@@ -47,9 +47,10 @@ public class Inventory implements Iterable<Items> {
 		int canAdd = remain >= amount ? amount : remain;
 
 		ItemInfo info = inventoryList.get(added.name);
-		if (info == null)
+		if (info == null) {
 			info = new ItemInfo(added, canAdd);
-		else
+			inventoryList.put(added.name, info);
+		} else
 			info.addAmount(canAdd);;
 		
 			slotsUsed += canAdd;

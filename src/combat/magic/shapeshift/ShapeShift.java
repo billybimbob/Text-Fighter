@@ -18,7 +18,7 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 		target.setShifter(store);
 		
 		target.setStat("hp", target.getStat("hp")*hpRatio);
-		target.setStatus("shapeshift", Fight.turnCount, duration);
+		target.setStatus("shapeshift", Fight.turnNum(), duration);
 	}
 
 	public static void revert (Monster target) { //can't ref by movelist
