@@ -65,11 +65,9 @@ public class Monster { //Temporary, probably make abstract later
 
 	//monster index constructor, basic attack and one special attack
 	public Monster (String name, boolean aggro, boolean attType, float[] stats, String special) {
+		
 		this(name, aggro, attType, stats);
-
-		Ability[] moveStore = {Index.attackList.get("basic").apply(this), 
-								Index.attackList.get(special).apply(this)};
-		moveList = moveStore;
+		moveList = new Ability[]{getAbility("basic"), getAbility(special)};
 		
 	}
 
@@ -121,6 +119,13 @@ public class Monster { //Temporary, probably make abstract later
 	}
 	private void resetDamage() {
 		this.turnDam = 0;
+	}
+
+	protected Ability getAbility(String name) {
+		return Index.createAbility(name, this);
+	}
+	protected Ability getPassive(String name) {
+		return Index.createPassive(name, this);
 	}
 
 

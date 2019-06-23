@@ -16,8 +16,7 @@ public class Fight {
 
 	public static void fighting (List<Monster> fightersIn) throws InterruptedException {
 		fighters = fightersIn;
-		Monster target = null;
-		boolean fightControl = true, flee = false;
+		boolean fightControl = true; //could add flee back
 		turnCount = 0;
 		List<Monster> monFighters = new ArrayList<>();
 		

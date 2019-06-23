@@ -12,8 +12,8 @@ import combat.passive.*;
 
 public class Index {
 
-	public static final Map<String, Function<Monster, Ability>> attackList = new HashMap<>();
-	public static final Map<String, Function<Monster, Ability>> passiveList = new HashMap<>();
+	private static final Map<String, Function<Monster, Ability>> attackList = new HashMap<>();
+	private static final Map<String, Function<Monster, Ability>> passiveList = new HashMap<>();
 	public static Potions[] potionsList;
 	public static Monster[] monsterList;
 	public static Monster[] shiftMonList;
@@ -31,18 +31,18 @@ public class Index {
 		
 
 		//could split different class abilities
-		attackList.put("basic", (Monster user) -> new BasicAttack(user));
-		attackList.put("charg", (Monster user) -> new ChargeAttack(user));
-		attackList.put("disrt", (Monster user) -> new Disrupt(user));
-		attackList.put("spins", (Monster user) -> new SpinAttack(user));
-		attackList.put("shock", (Monster user) -> new Shock(user));
-		attackList.put("drain", (Monster user) -> new LifeDrain(user));
-		attackList.put("froze", (Monster user) -> new Freeze(user));
-		attackList.put("polym", (Monster user) -> new Polymorph(user));
-		attackList.put("reflt", (Monster user) -> new Reflect(user));
-		attackList.put("sheep", (Monster user) -> new SheepAttacks(user));
-		attackList.put("shift", (Monster user) -> new ChangeForm(user));
-		attackList.put("sheep", (Monster user) -> new SheepAttacks(user));
+		attackList.put("basic", (user) -> new BasicAttack(user));
+		attackList.put("charg", (user) -> new ChargeAttack(user));
+		attackList.put("disrt", (user) -> new Disrupt(user));
+		attackList.put("spins", (user) -> new SpinAttack(user));
+		attackList.put("shock", (user) -> new Shock(user));
+		attackList.put("drain", (user) -> new LifeDrain(user));
+		attackList.put("froze", (user) -> new Freeze(user));
+		attackList.put("polym", (user) -> new Polymorph(user));
+		attackList.put("reflt", (user) -> new Reflect(user));
+		attackList.put("sheep", (user) -> new SheepAttacks(user));
+		attackList.put("shift", (user) -> new ChangeForm(user));
+		attackList.put("sheep", (user) -> new SheepAttacks(user));
 		
 		passiveList.put("flury", (Monster user) -> new Flurry(user));
 		passiveList.put("intim", (Monster user) -> new Intimidate(user));
@@ -57,7 +57,13 @@ public class Index {
 		Monster mon7 = new Monster("Sheep", false, true, new float[]{5, 5, 1, 1, 1, 1, 1, 1}, "sheep");
 		monsterList = new Monster[]{mon1, mon2, mon3, mon4, mon5, mon6};
 		shiftMonList = new Monster[]{mon4, mon5, mon6, mon7};
-		
 
+	}
+
+	public static Ability createAbility(String name, Monster user) { //wrapper for getting
+		return attackList.get(name).apply(user);
+	}
+	public static Ability createPassive(String name, Monster user) {
+		return passiveList.get(name).apply(user);
 	}
 }

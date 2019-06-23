@@ -18,10 +18,9 @@ public class Hero extends Monster {
 		
 		switch(classes) {
 		case 1: //warrior
-			Ability[] moveStore1 = {
-					Index.attackList.get("basic").apply(this), Index.attackList.get("charg").apply(this),
-					Index.attackList.get("disrt").apply(this), Index.attackList.get("spins").apply(this)};
-			moveList = moveStore1;
+			moveList = new Ability[] {	getAbility("basic"), getAbility("charg"), 
+										getAbility("disrt"), getAbility("spins") };
+
 			attType = true;
 			setStat("maxHp", 40.0f); //try iterating later
 			setStat("hp", getStat("maxHp"));
@@ -31,10 +30,10 @@ public class Hero extends Monster {
 			break;
 			
 		case 2: //mage
-			moveList = new Ability[]{
-					Index.attackList.get("basic").apply(this), Index.attackList.get("shock").apply(this),
-					Index.attackList.get("drain").apply(this), Index.attackList.get("froze").apply(this),
-					Index.attackList.get("polym").apply(this), Index.attackList.get("reflt").apply(this)};
+			moveList = new Ability[] {	getAbility("basic"), getAbility("shock"),
+										getAbility("drain"), getAbility("froze"),
+										getAbility("polym"), getAbility("reflt") };
+
 			attType = false;
 			setStat("mag", 7.0f);
 			setStat("att", 1.0f);
@@ -42,8 +41,9 @@ public class Hero extends Monster {
 			setStat("def", 4.0f);
 			setStat("mag", 7.0f);
 			break;
+
 		case 3: //shifter
-			moveList = new Ability[]{Index.attackList.get("shfit").apply(this),};
+			moveList = new Ability[] {getAbility("shift")};
 			attType = false;
 			setStat("hp", 10.0f);
 			setStat("maxHp", getStat("hp"));

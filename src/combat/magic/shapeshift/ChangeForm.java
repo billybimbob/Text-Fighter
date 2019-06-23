@@ -21,7 +21,7 @@ public class ChangeForm extends ShapeShift {
 				new Monster(Index.shiftMonList[2])};
 				
 		for(Monster shift: formList)
-			shift.addAttack(Index.attackList.get("shft").apply(user));
+			shift.addAttack(Index.createAbility("shift", user));
 		
 	}
 	
