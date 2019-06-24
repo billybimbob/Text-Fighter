@@ -3,6 +3,7 @@ package combat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import assets.*;
+import assets.Monster.Stat;
 import main.*;
 import combat.moves.magic.shapeshift.*;
 
@@ -55,7 +56,7 @@ public class Fight {
 
 				for (int j = 0; j < monFighters.size(); j++) { //check if any monster died, immediately after hero's turn
 					//System.out.print(monFighters.get(j).getName() + j + " " + monFighters.size());
-					if (monFighters.get(j).getStat("hp") <= 0) {
+					if (monFighters.get(j).getStat(Stat.HP) <= 0) {
 						if (j < i)
 							i--;
 						fighters.remove(monFighters.get(j));
@@ -69,7 +70,7 @@ public class Fight {
 			if (monFighters.size() == 0) { //Check if all Monster are killed
 				Interface.writeOut("All of the Monster have been killed, you win!");
 				fightControl = false;
-			} else if (Interface.HERO.getStat("hp") <= 0) { //Check if hero hp is zero
+			} else if (Interface.HERO.getStat(Stat.HP) <= 0) { //Check if hero hp is zero
 				Interface.writeOut("You have received a fatal blow, and have died");
 				fightControl = false;
 			/*} else if (flee) {
@@ -126,7 +127,7 @@ public class Fight {
 				// pastPriMon = 0; //dst is location of where to swap, pastPriorMon is the number of priority Monster past
 				for (int dst = 0; dst < src; dst++) { //finds where to switch, as highest speed priority is 1st
 					Monster priCheck = fighters.get(dst);
-					if (!priCheck.getPriority() || (priCheck.getPriority() && (priCheck.getStat("spe") < priAttacker.getStat("spe")))) {	
+					if (!priCheck.getPriority() || (priCheck.getPriority() && (priCheck.getStat(Stat.SPEED) < priAttacker.getStat(Stat.SPEED)))) {	
 						fighters.add(dst, fighters.remove(src)); //moves mon to dst, and scoots down rest
 						break;
 					}
@@ -137,7 +138,7 @@ public class Fight {
 
 	private void runTurn(Monster attacker, List<Monster> enemies) {
 		skipTurn = false;
-		if (attacker.getStat("hp") <= 0) //got rid of flee, maybe temporary
+		if (attacker.getStat(Stat.HP) <= 0) //got rid of flee, maybe temporary
 			return;
 		
 		attacker.usePassive(nonSelf(attacker));
@@ -158,8 +159,8 @@ public class Fight {
 		
 		attacker.clearTurn();
 
-		if (attacker.getStat("mp") < attacker.getStat("maxMp")) //passive mp gain, could change the val
-			attacker.modStat("mp", 1);
+		if (attacker.getStat(Stat.MP) < attacker.getStat(Stat.MAXMP)) //passive mp gain, could change the val
+			attacker.modStat(Stat.MP, 1);
 
 		try {
 			TimeUnit.SECONDS.sleep(2);
@@ -185,8 +186,8 @@ public class Fight {
 		if (check > -1) { //status active
 			switch(statusName) {
 			case "burn":
-				int burnDam = (int)(checking.getStat("hp")*0.1);
-				checking.modStat("hp", -burnDam);
+				int burnDam = (int)(checking.getStat(Stat.HP)*0.1);
+				checking.modStat(Stat.HP, -burnDam);
 				Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
 				if (check == 0) {
 					checking.setStatus("burn", false);
@@ -195,8 +196,8 @@ public class Fight {
 				break;
 
 			case "poison":
-				int poiDam = (int)(checking.getStat("hp")*0.01*((getTurnNum()-check)%10));
-				checking.modStat("hp", -poiDam);
+				int poiDam = (int)(checking.getStat(Stat.HP)*0.01*((getTurnNum()-check)%10));
+				checking.modStat(Stat.HP, -poiDam);
 				Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
 				break;
 
@@ -210,7 +211,7 @@ public class Fight {
 					Monster attacker = info.getAttacker();
 					double damDeal = info.getDamage();
 					float refDam = (int)(damDeal*0.5);
-					attacker.modStat("hp", -refDam);
+					attacker.modStat(Stat.HP, -refDam);
 					Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
 				}
 

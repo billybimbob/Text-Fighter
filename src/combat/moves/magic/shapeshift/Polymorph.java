@@ -1,6 +1,7 @@
 package combat.moves.magic.shapeshift;
 
 import assets.*;
+import assets.Monster.Stat;
 import main.Index;
 import main.Interface;
 
@@ -16,7 +17,7 @@ public class Polymorph extends ShapeShift { //doesn't account for if the moveLis
 	public void execute() {
 		Monster[] targets = attacker.getTargets();
 		if (enoughMana()) {
-			attacker.modStat("mp", -manaCost);
+			attacker.modStat(Stat.MP, -manaCost);
 			if (attackHit(targets[0], 0.05)) { //Check if attack will be successful
 				Interface.writeOut(attacker.getName() + " has transformed " + targets[0].getName() + " into a sheep");
 				transform(targets[0], Index.shiftMonList[3], 3); //last 3 turns

@@ -1,6 +1,7 @@
 package combat.moves.melee;
 
 import assets.Monster;
+import assets.Monster.Stat;
 import combat.*;
 import main.Interface;
 
@@ -20,7 +21,7 @@ public class SpinAttack extends Ability {
 		Monster[] targets = attacker.getTargets();
 
 		if (enoughMana()) {
-			attacker.modStat("mp", -manaCost);
+			attacker.modStat(Stat.MP, -manaCost);
 			
 			Interface.writeOut(attacker.getName() + " spins around, hitting");
 			baseDamage();

@@ -2,6 +2,7 @@ package combat.moves;
 
 import combat.Ability;
 import assets.Monster;
+import assets.Monster.Stat;
 import main.Interface;
 
 public class SheepAttacks extends Ability{
@@ -28,7 +29,7 @@ public class SheepAttacks extends Ability{
 				break;
 			case 3:
 				if(Math.random()>0.99) {
-					float secretDam = (int)(Math.random()*(targets[0].getStat("hp")))*2;
+					float secretDam = (int)(Math.random()*(targets[0].getStat(Stat.HP)))*2;
 					Interface.writeOut("Woah! " + attacker.getName() + " is angry, and bites on " + targets[0].getName() + " for " + secretDam + " damage!");
 					dealDam(attacker, targets[0], secretDam);
 				} else {

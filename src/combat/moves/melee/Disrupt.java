@@ -1,6 +1,7 @@
 package combat.moves.melee;
 
 import assets.Monster;
+import assets.Monster.Stat;
 import combat.Ability;
 import main.Interface;
 
@@ -19,7 +20,7 @@ public class Disrupt extends Ability {
 		Monster[] targets = attacker.getTargets();
 		if (enoughMana()) {
 			//Attack based on RNG and modified by stats, need to consider magic attack
-			attacker.modStat("mp", -manaCost);
+			attacker.modStat(Stat.MP, -manaCost);
 			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 				baseDamage();
 				targetReduct(targets[0]);
@@ -37,7 +38,7 @@ public class Disrupt extends Ability {
 				}
 				float selfDam = (int)(baseDam*.5);
 				if (selfDam > 0) {
-					attacker.modStat("hp", -selfDam); //might add to damage received in turn?
+					attacker.modStat(Stat.HP, -selfDam); //might add to damage received in turn?
 					Interface.writeOut(attacker.getName() + " deals " + selfDam + " damage to self from recoil");
 				}
 			} else {

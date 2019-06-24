@@ -1,6 +1,7 @@
 package combat;
 
 import assets.*;
+import assets.Monster.Stat;
 import main.Interface;
 
 public abstract class Ability implements Cloneable {
@@ -36,18 +37,19 @@ public abstract class Ability implements Cloneable {
 	 */
 
 	protected boolean enoughMana() {
-		return attacker.getStat("mp") >= manaCost;
+		return attacker.getStat(Stat.MP) >= manaCost;
 	}
 
 	protected boolean attackHit(Monster target, double checkMod) { //an attack damage check based on either the att or mag stat
-		String hitStat = attType?"att":"mag", blockStat = attType?"def":"magR";
-		double checkNum = Math.random()*attacker.getStat(hitStat) - Math.random()*target.getStat("spe")*.5;
+		Stat hitStat = Monster.getHitStat(attType);
+		Stat blockStat = Monster.getBlockStat(attType);
+		double checkNum = Math.random()*attacker.getStat(hitStat) - Math.random()*target.getStat(Stat.SPEED)*.5;
 		return checkNum > target.getStat(blockStat)*checkMod;
 	}
 
 	protected boolean critCheck() {
 		double check = Math.random();
-		boolean critHit = check < attacker.getStat("crit")*0.02;		
+		boolean critHit = check < attacker.getStat(Stat.CRIT)*0.02;		
 		return critHit;
 	}
 
@@ -60,12 +62,12 @@ public abstract class Ability implements Cloneable {
 	}
 
 	protected void baseDamage() { //determines the damage if either a melee or magic attack
-		String hitStat = attType ? "att" : "mag";
+		Stat hitStat = Monster.getHitStat(attType);
 		baseDam = (int)(Math.random()*(attacker.getStat(hitStat)*baseDamMod)+1);
 	}
 
 	protected void targetReduct(Monster target) {
-		String blockStat = attType ? "def" : "magR";
+		Stat blockStat = Monster.getBlockStat(attType);
 		baseDam -= (int)(Math.random()*(target.getStat(blockStat)*.65));
 		
 		int minDam = target.minDam(attacker, attType);
@@ -104,7 +106,7 @@ public abstract class Ability implements Cloneable {
 
 	
 	public static void dealDam (Monster attacker, Monster target, float damage) {
-		target.modStat("hp", -damage);
+		target.modStat(Stat.HP, -damage);
 		target.addDamTurn(damage);
 		Interface.FIGHT.addLog(attacker, target, damage);
 	}

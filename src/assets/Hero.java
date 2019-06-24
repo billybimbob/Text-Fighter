@@ -22,11 +22,11 @@ public class Hero extends Monster {
 										getAbility("disrt"), getAbility("spins") };
 
 			attType = true;
-			setStat("maxHp", 40.0f); //try iterating later
-			setStat("hp", getStat("maxHp"));
-			setStat("att", 7.0f);
-			setStat("mag", 1.0f);
-			setStat("def", 7.0f);
+			setStat(Stat.MAXHP, 40.0f); //try iterating later
+			setStat(Stat.HP, getStat(Stat.MAXHP));
+			setStat(Stat.ATT, 7.0f);
+			setStat(Stat.MAG, 1.0f);
+			setStat(Stat.DEF, 7.0f);
 			break;
 			
 		case 2: //mage
@@ -35,24 +35,24 @@ public class Hero extends Monster {
 										getAbility("polym"), getAbility("reflt") };
 
 			attType = false;
-			setStat("mag", 7.0f);
-			setStat("att", 1.0f);
-			setStat("magR", 7.0f);
-			setStat("def", 4.0f);
-			setStat("mag", 7.0f);
+			setStat(Stat.MAG, 7.0f);
+			setStat(Stat.ATT, 1.0f);
+			setStat(Stat.MAGR, 7.0f);
+			setStat(Stat.DEF, 4.0f);
+			setStat(Stat.MAG, 7.0f);
 			break;
 
 		case 3: //shifter
 			moveList = new Ability[] {getAbility("shift")};
 			attType = false;
-			setStat("hp", 10.0f);
-			setStat("maxHp", getStat("hp"));
-			setStat("att", 1.0f);
-			setStat("mag", 1.0f);
-			setStat("def", 1.0f);
-			setStat("magR", 1.0f);
-			setStat("spe", 7.0f);
-			setStat("crit", 1.0f);
+			setStat(Stat.HP, 10.0f);
+			setStat(Stat.MAXHP, getStat(Stat.HP));
+			setStat(Stat.ATT, 1.0f);
+			setStat(Stat.MAG, 1.0f);
+			setStat(Stat.DEF, 1.0f);
+			setStat(Stat.MAGR, 1.0f);
+			setStat(Stat.SPEED, 7.0f);
+			setStat(Stat.CRIT, 1.0f);
 			break;
 		}
 		
@@ -138,8 +138,8 @@ public class Hero extends Monster {
 
 		case 2: //Try to flee
 			//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
-			modStat("mp", -3);
-			modStat("spe", 7);
+			modStat(Stat.MP, -3);
+			modStat(Stat.SPEED, 7);
 			Interface.writeOut("You try dodge all incoming attacks, increasing evasion by 7");
 			break;
 

@@ -1,6 +1,7 @@
 package combat.moves.magic;
 
 import assets.Monster;
+import assets.Monster.Stat;
 import combat.*;
 import main.Interface;
 
@@ -19,7 +20,7 @@ public class LifeDrain extends Ability {
 		Monster[] targets = attacker.getTargets();
 
 		if (enoughMana()) {
-			attacker.modStat("mp", -manaCost);
+			attacker.modStat(Stat.MP, -manaCost);
 			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 				baseDamage();
 				targetReduct(targets[0]);
@@ -30,8 +31,8 @@ public class LifeDrain extends Ability {
 				} else {
 					Interface.writeOut(attacker.getName() + " drains " + targets[0].getName() + " for " + baseDam + " damage");
 					dealDam(attacker, targets[0], baseDam);
-					if (selfHeal > 0 && attacker.getStat("hp") < attacker.getStat("maxHp")) {
-						attacker.modStat("hp", selfHeal);
+					if (selfHeal > 0 && attacker.getStat(Stat.HP) < attacker.getStat(Stat.MAXHP)) {
+						attacker.modStat(Stat.HP, selfHeal);
 						Interface.writeOut(attacker.getName() + " absorbs " + selfHeal + " health");
 					}
 				}

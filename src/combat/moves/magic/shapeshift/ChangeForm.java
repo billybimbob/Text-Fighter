@@ -1,6 +1,7 @@
 package combat.moves.magic.shapeshift;
 
 import assets.*;
+import assets.Monster.Stat;
 import main.Index;
 import main.Interface;
 
@@ -30,7 +31,7 @@ public class ChangeForm extends ShapeShift {
 		//this.shifter = (Hero)attacker;
 		
 		if (enoughMana()) {
-			attacker.modStat("mp", -manaCost);
+			attacker.modStat(Stat.MP, -manaCost);
 			String changePrompt = "Which form do you want to take?";
 			int availChange = formList.length;
 			Monster[] tempList = new Monster[availChange];

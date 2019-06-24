@@ -23,10 +23,14 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
         void setStart(int start) { this.start = start; }
         void setDuration(int duration) { this.duration = duration; }
 	}
+
+	public enum Stat { HP, MAXHP, MP, MAXMP, ATT, DEF, MAG, MAGR, SPEED, CRIT; }
+	public final static int levMult = 2;
+	public static final String[] STATUSNAMES = {"burn", "poison", "potion", "reflect", "shapeshift", "stun"};
 	
 	private String name;
 	private float turnDam;
-	private Map<String, Float> stats;
+	private Map<Stat, Float> stats;
 	private Ability passive, turnMove; //temporary?
 	private Map<String, StatusInfo> status;
 	private boolean aggro; //attType true means physical attack
@@ -37,11 +41,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	protected int level = 1;
 	protected boolean attType;
 
-	public final static int levMult = 2;
-	public static final String[] STATNAMES = {"hp", "maxHp", "mp", "maxMp", "att", "def", "mag", "magR", "spe", "crit"}; //need to add edge cases for max health
-	public static final String[] STATUSNAMES = {"burn", "poison", "potion", "reflect", "shapeshift", "stun"};
 
-	
 	//constructor to have no ability
 	public Monster (String name, boolean aggro, boolean attType, float[] stats) {
 		this.turnDam = 0;
@@ -52,9 +52,9 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		this.stats = new HashMap<>();
 		//double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
 		int j = 0;
-		for (int i=0; i<STATNAMES.length; i++) {
-			setStat(STATNAMES[i], stats[j]);
-			if (STATNAMES[i] != "hp" && STATNAMES[i] != "mp")
+		for (int i=0; i<Stat.values().length; i++) {
+			setStat(Stat.values()[i], stats[j]);
+			if (Stat.values()[i] != Stat.HP && Stat.values()[i] != Stat.MP)
 				j++;
 		}
 
@@ -79,7 +79,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		this.turnDam = copy.turnDam;
 
 		this.stats = new HashMap<>(); //deep copy
-		for (String statName: STATNAMES)
+		for (Stat statName: Stat.values())
 			this.setStat(statName, copy.getStat(statName));
 		
 		this.targets = new ArrayList<>(copy.targets);
@@ -138,7 +138,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public String getName() {
 		return name;
 	}
-	public float getStat (String stat) { //most likely where nulls arise
+	public float getStat (Stat stat) { //most likely where nulls arise
 		return this.stats.get(stat);
 	}
 	public double getTurnDam() {
@@ -168,8 +168,9 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public Monster[] getTargets() {
 		return targets.toArray(new Monster[targets.size()]);
 	}
+
 	public int minDam(Monster attacker, boolean attType) { //max value for now is 10 for def and magR
-		String hitStat = attType?"att":"mag", blockStat = attType?"def":"magR";
+		Stat hitStat = getHitStat(attType), blockStat = getBlockStat(attType);
 		int minDam = (int)attacker.getStat(hitStat);
 		double stat = this.getStat(blockStat);
 		minDam -= ((int)stat/2);
@@ -245,11 +246,11 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	}
 
 
-	public void setStat (String stat, float val) {
+	public void setStat (Stat stat, float val) {
 		//System.out.println("setting " + this.name + "\'s " + stat);
 		stats.put(stat, val);
 	}
-	public void modStat (String stat, float val) { //changes stat by val; add max mod cases
+	public void modStat (Stat stat, float val) { //changes stat by val; add max mod cases
 		float newVal = stats.get(stat)+val;	
 		setStat(stat, newVal);
 	}
@@ -286,28 +287,27 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	//modifies stats based and restores health and mana
 	public void levelUp () {
 		level += 1;
-		for (int i=0; i<STATNAMES.length; i++) {
-			String stat = STATNAMES[i];
-			if (i != 0 && i != 2 ) { //for hp and mp
+		for (Stat stat: Stat.values()) {
+			if (stat != Stat.HP && stat != Stat.MP)
 				modStat(stat, level*levMult);
-			}
 		}
-		setStat("hp", getStat("maxHp"));
-		setStat("mp", getStat("maxMp"));
+		setStat(Stat.HP, getStat(Stat.MAXHP));
+		setStat(Stat.MP, getStat(Stat.MAXMP));
 	}
 
-
-	
 	@Override
 	public String toString () {
-		return name + " - " + getStat("hp") + " hp" + " - " + getStat("mp") + " mp" + " - " + getStat("spe") + " speed";
+		return name + " - " + getStat(Stat.HP) + " hp" + " - " + getStat(Stat.MP) + " mp" + " - " + getStat(Stat.SPEED) + " speed";
 	}
 
 	@Override
 	public int compareTo (Monster other) { //based off of speed
-		Float thisSpe = this.getStat("spe"), otherSpe = other.getStat("spe");
+		Float thisSpe = this.getStat(Stat.SPEED), otherSpe = other.getStat(Stat.SPEED);
 		return thisSpe.compareTo(otherSpe);
 	}
+
+	public static Stat getHitStat(boolean attType) { return attType ? Stat.ATT : Stat.MAG; }
+	public static Stat getBlockStat(boolean attType) { return attType ? Stat.DEF : Stat.MAGR; }
 
 	
 }

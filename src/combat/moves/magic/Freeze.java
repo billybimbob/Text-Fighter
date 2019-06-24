@@ -1,6 +1,7 @@
 package combat.moves.magic;
 
 import assets.Monster;
+import assets.Monster.Stat;
 import combat.Ability;
 import main.Interface;
 
@@ -20,7 +21,7 @@ public class Freeze extends Ability {
 
 		if (enoughMana()) {
 			//Attack based on RNG and modified by stats, need to consider magic attack
-			attacker.modStat("mp", -manaCost);
+			attacker.modStat(Stat.MP, -manaCost);
 			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 				baseDamage();
 				int statDam = 1;
@@ -31,8 +32,8 @@ public class Freeze extends Ability {
 				} else {
 					Interface.writeOut(attacker.getName() + " freezes " + targets[0].getName() + " for " + baseDam + " damage");
 					dealDam(attacker, targets[0], baseDam);
-					if (targets[0].getStat("spe") > 0) {
-						targets[0].modStat("spe", -statDam);
+					if (targets[0].getStat(Stat.SPEED) > 0) {
+						targets[0].modStat(Stat.SPEED, -statDam);
 						Interface.writeOut(targets[0].getName() + "'s speed was lowered by " + statDam);
 					}
 				}

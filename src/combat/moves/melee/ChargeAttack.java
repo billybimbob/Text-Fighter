@@ -1,6 +1,7 @@
 package combat.moves.melee;
 
 import assets.Monster;
+import assets.Monster.Stat;
 import combat.Ability;
 import main.Interface;
 
@@ -28,9 +29,8 @@ public class ChargeAttack extends Ability {
 		
 		Monster[] targets = attacker.getTargets();
 		if (enoughMana() && turnCount == 0) { //checks if sufficient mana, and starts charged turn
-			attacker.modStat("mp", -manaCost);
+			attacker.modStat(Stat.MP, -manaCost);
 			Interface.writeOut(attacker.getName() + " readies their swing");
-			attacker.modStat("mp", -3);
 			turnCount++;
 		
 		} else if (turnCount == 1) { //checks if attack charged for 1 turn
@@ -54,7 +54,7 @@ public class ChargeAttack extends Ability {
 			} else {
 				Interface.writeOut(attacker.getName() + "'s attack missed");
 			}
-			attacker.modStat("mp", 3); //might later set to a variable
+			
 			turnCount = 0;
 			
 		} else

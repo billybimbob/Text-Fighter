@@ -2,6 +2,7 @@ package combat.moves.passive;
 
 import combat.Ability;
 import assets.Monster;
+import assets.Monster.Stat;
 import main.Interface;
 
 public class Intimidate extends Ability {
@@ -18,8 +19,8 @@ public class Intimidate extends Ability {
 		Monster[] targets = attacker.getTargets();
 		Interface.writeOut(attacker.getName() + " intimidates all enemies, and decreases all of their speed");
 		for (Monster target: targets)
-			if (target.getStat("spe") > 0)
-				target.modStat(("spe"), -1);
+			if (target.getStat(Stat.SPEED) > 0)
+				target.modStat((Stat.SPEED), -1);
 	}
 
 }

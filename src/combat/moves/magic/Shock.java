@@ -1,6 +1,7 @@
 package combat.moves.magic;
 
 import assets.Monster;
+import assets.Monster.Stat;
 import combat.*;
 import main.Interface;
 
@@ -20,7 +21,7 @@ public class Shock extends Ability {
 		Monster[] targets = attacker.getTargets();
 		
 		if (enoughMana()) {
-			attacker.modStat("mp", -manaCost);
+			attacker.modStat(Stat.MP, -manaCost);
 			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 				
 				baseDamage();

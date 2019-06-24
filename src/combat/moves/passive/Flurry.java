@@ -1,6 +1,7 @@
 package combat.moves.passive;
 
 import assets.Monster;
+import assets.Monster.Stat;
 import combat.Ability;
 import main.Interface;
 
@@ -15,7 +16,7 @@ public class Flurry extends Ability {
 	}
 	public void execute() {
 		Interface.writeOut(attacker.getName() + " gains attack boost");
-		attacker.modStat("att", 1);
+		attacker.modStat(Stat.ATT, 1);
 	}
 
 }
