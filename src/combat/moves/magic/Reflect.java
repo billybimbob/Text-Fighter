@@ -1,7 +1,6 @@
 package combat.moves.magic;
 
-import assets.Monster;
-import assets.Monster.*;
+import assets.*;
 import combat.*;
 import main.Interface;
 

@@ -1,7 +1,6 @@
 package combat.moves.magic;
 
-import assets.Monster;
-import assets.Monster.Stat;
+import assets.*;
 import combat.Ability;
 import main.Interface;
 
@@ -13,7 +12,7 @@ public class Freeze extends Ability {
 		description = "A a magic attack with the less damage, but lowers target's speed and evasion";
 		attType = false;
 		manaCost = 2;
-		baseDamMod = 0.75f;
+		damageMod = 0.75f;
 	}
 	
 	public void execute() {
@@ -27,11 +26,11 @@ public class Freeze extends Ability {
 				int statDam = 1;
 				
 				targetReduct(targets[0]);
-				if (damDealt()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+				if (blocked()) //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 					Interface.writeOut(attacker.getName() + "'s freeze was resisted by " + targets[0].getName());
-				} else {
-					Interface.writeOut(attacker.getName() + " freezes " + targets[0].getName() + " for " + baseDam + " damage");
-					dealDam(attacker, targets[0], baseDam);
+				else {
+					Interface.writeOut(attacker.getName() + " freezes " + targets[0].getName() + " for " +damage + " damage");
+					dealDamage(attacker, targets[0], damage);
 					if (targets[0].getStat(Stat.SPEED) > 0) {
 						targets[0].modStat(Stat.SPEED, -statDam);
 						Interface.writeOut(targets[0].getName() + "'s speed was lowered by " + statDam);

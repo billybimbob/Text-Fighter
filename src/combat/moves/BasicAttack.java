@@ -19,19 +19,18 @@ public class BasicAttack extends Ability {
 		if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 			
 			baseDamage();
-			if (critCheck()) { //Checks for critical hit
-				baseDam *= 2;
-				System.out.print("Critical Hit! ");
-			} else {
+			if (critCheck()) //Checks for critical hit
+				Interface.prompt("Critical Hit! ");
+			else
 				targetReduct(targets[0]);
+			
+			if (blocked()) //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+				Interface.writeOut(attacker.getName() + "'s attack was blocked by " + targets[0].getName());
+			else {
+				Interface.writeOut(attacker.getName() + " has hit " + targets[0].getName() + " for " + damage + " damage");
+				dealDamage(attacker, targets[0], damage);
 			}
 			
-			if (damDealt()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				Interface.writeOut(attacker.getName() + "'s attack was blocked by " + targets[0].getName());
-			} else {
-				Interface.writeOut(attacker.getName() + " has hit " + targets[0].getName() + " for " + baseDam + " damage");
-				dealDam(attacker, targets[0], baseDam);
-			}
 		} else {
 			Interface.writeOut(attacker.getName() + "'s attack missed");
 		}

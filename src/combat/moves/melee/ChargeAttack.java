@@ -1,7 +1,6 @@
 package combat.moves.melee;
 
-import assets.Monster;
-import assets.Monster.*;
+import assets.*;
 import combat.Ability;
 import main.Interface;
 
@@ -15,7 +14,7 @@ public class ChargeAttack extends Ability {
 		description = "A melee attack able to hit with twice accuarcy and damage, ignores armor, but requires a turn to charge, and more vulnerable";
 		attType = true;
 		manaCost = 6;
-		baseDamMod = 3;
+		damageMod = 3;
 		duration = 2;
 		turnCount = 0;
 	}
@@ -38,22 +37,21 @@ public class ChargeAttack extends Ability {
 			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 				
 				baseDamage();
-				targetReduct(targets[0]);
-				if (critCheck()) { //Checks for critical hit
-					baseDam *= 2;
+				if (critCheck()) //Checks for critical hit
 					Interface.prompt("Critical Hit! ");
-				}
+				else
+					targetReduct(targets[0]);
 				
-				Interface.writeOut(attacker.getName() + " lands a powerful hit on " + targets[0].getName() + " for " + baseDam + " damage");
-				dealDam(attacker, targets[0], baseDam);
+				Interface.writeOut(attacker.getName() + " lands a powerful hit on " + targets[0].getName() + " for " + damage + " damage");
+				dealDamage(attacker, targets[0], damage);
 				
 				if (attackHit(targets[0], 0.1)) {
 					Interface.writeOut(attacker.getName() + "'s charged attack stuns " + targets[0].getName());
 					targets[0].setStatus(Status.STUN, true);
 				}
-			} else {
+
+			} else
 				Interface.writeOut(attacker.getName() + "'s attack missed");
-			}
 			
 			turnCount = 0;
 			

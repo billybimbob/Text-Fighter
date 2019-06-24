@@ -1,7 +1,6 @@
 package combat.moves.melee;
 
-import assets.Monster;
-import assets.Monster.Stat;
+import assets.*;
 import combat.*;
 import main.Interface;
 
@@ -23,28 +22,29 @@ public class SpinAttack extends Ability {
 		if (enoughMana()) {
 			attacker.modStat(Stat.MP, -manaCost);
 			
-			Interface.writeOut(attacker.getName() + " spins around, hitting");
+			Interface.writeOut(attacker.getName() + " spins around");
+
 			baseDamage();
+			float startDam = damage;
 			for (Monster target: targets) { //Checks if hits for each monster
-				try {
-					double damDealt = 0;
-					//Attack based on RNG and modified by stats
-					if (attackHit(target, 0.005)) { //Check if attack will be successful
-						/*if (critCheck()) { //Might add later, with hashmap?
-							baseDam *= 2;
-							Interface.writeOut("Critical Hit!");
-						}*/
-						//double storeDam = baseDam;
-						targetReduct(target);
-						dealDam(attacker, target, baseDam);
-						damDealt = baseDam;
-						//baseDam = storeDam;
+				//Attack based on RNG and modified by stats
+				
+				damage = startDam;
+				if (attackHit(target, 0.005)) { //Check if attack will be successful
+					/*if (critCheck()) { //Might add later, with hashmap?
+						baseDam *= 2;
+						Interface.writeOut("Critical Hit!");
+					}*/
+
+					targetReduct(target);
+					
+					if (blocked())
+						Interface.writeOut("but is blocked by " + target.getName());
+					else {	
+						dealDamage(attacker, target, damage);
+						Interface.writeOut(target.getName() + " for " + damage + " damage");
 					}
-					if (damDealt < 0)
-						 Interface.writeOut("but is blocked by " + target.getName());
-					else
-						Interface.writeOut(target.getName() + " for " + damDealt + " damage");
-				} catch (Exception e) {System.out.print(e);}
+				}
 			}
 		
 		} else

@@ -10,6 +10,9 @@ public class Shifter extends Monster {
         super(shifting);
         this.original = original;
     }
+    public Shifter(Shifter shifting) {
+        this(shifting, shifting.getOriginal()); //keep original
+    }
 
     public Monster getOriginal() {
         return original;

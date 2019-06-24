@@ -1,13 +1,12 @@
 package combat;
 
 import assets.*;
-import assets.Monster.Stat;
 import main.Interface;
 
 public abstract class Ability implements Cloneable {
 
 	protected String name, description;
-	protected float manaCost, baseDam, baseDamMod;
+	protected float manaCost, damage, damageMod;
 	protected Monster attacker;
 	protected int numTar, duration; //no limit is -1, 0 is self
 	protected boolean attType, priority, passive; //aoe attacks can't work with Monster
@@ -18,6 +17,8 @@ public abstract class Ability implements Cloneable {
 		this.numTar = 1;
 		this.duration = 1;
 		this.attacker = user;
+		this.damage = 0;
+		this.damageMod = 1;
 	}
 
 	@Override
@@ -28,6 +29,7 @@ public abstract class Ability implements Cloneable {
 	public Ability clone(Monster attacker) throws CloneNotSupportedException { //can't do copy constructor becuase of subclasses
 		Ability newAbility = (Ability)this.clone();
 		newAbility.attacker = attacker;
+		damage = 0;
 		return newAbility;
 	}
 
@@ -47,34 +49,34 @@ public abstract class Ability implements Cloneable {
 		return checkNum > target.getStat(blockStat)*checkMod;
 	}
 
+	protected void baseDamage() { //determines the damage if either a melee or magic attack
+		Stat hitStat = Monster.getHitStat(attType);
+		damage = (int)(Math.random()*(attacker.getStat(hitStat)*damageMod)+1);
+	}
+	
 	protected boolean critCheck() {
 		double check = Math.random();
-		boolean critHit = check < attacker.getStat(Stat.CRIT)*0.02;		
+		boolean critHit = check < attacker.getStat(Stat.CRIT)*0.02;
+		damage = critHit ? damage*2 : damage; //not sure if here or execute
 		return critHit;
 	}
 
-	protected boolean damDealt() {
-		return baseDam < 0;
+	protected void targetReduct(Monster target) {
+		Stat blockStat = Monster.getBlockStat(attType);
+		damage -= (int)(Math.random()*(target.getStat(blockStat)*.65));
+		
+		int minDam = target.minDam(attacker, attType);
+
+		damage = minDam > damage ? minDam : damage; //floor to minDam
+	}
+
+	protected boolean blocked() { //could change to minDam check
+		return damage <= 0;
 	}
 
 	public boolean resolved() { //check if multi turn, see if ability finished
 		return duration == 1;
 	}
-
-	protected void baseDamage() { //determines the damage if either a melee or magic attack
-		Stat hitStat = Monster.getHitStat(attType);
-		baseDam = (int)(Math.random()*(attacker.getStat(hitStat)*baseDamMod)+1);
-	}
-
-	protected void targetReduct(Monster target) {
-		Stat blockStat = Monster.getBlockStat(attType);
-		baseDam -= (int)(Math.random()*(target.getStat(blockStat)*.65));
-		
-		int minDam = target.minDam(attacker, attType);
-		if (baseDam < minDam)
-			baseDam = minDam;
-	}
-
 
 	/*
 	 * getters
@@ -105,7 +107,7 @@ public abstract class Ability implements Cloneable {
 	}
 
 	
-	public static void dealDam (Monster attacker, Monster target, float damage) {
+	public static void dealDamage (Monster attacker, Monster target, float damage) {
 		target.modStat(Stat.HP, -damage);
 		target.addDamTurn(damage);
 		Interface.FIGHT.addLog(attacker, target, damage);

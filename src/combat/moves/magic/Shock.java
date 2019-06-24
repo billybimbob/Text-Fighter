@@ -1,8 +1,6 @@
 package combat.moves.magic;
 
-import assets.Monster;
-import assets.Monster.Stat;
-import assets.Monster.Status;
+import assets.*;
 import combat.*;
 import main.Interface;
 
@@ -15,7 +13,7 @@ public class Shock extends Ability {
 		attType = false;
 		priority = true;
 		manaCost = 6;
-		baseDamMod = 1.5f;
+		damageMod = 1.5f;
 	}
 	
 	public void execute() {
@@ -28,11 +26,11 @@ public class Shock extends Ability {
 				baseDamage();
 				targetReduct(targets[0]);
 				
-				if (damDealt()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+				if (blocked()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 					Interface.writeOut(attacker.getName() + "'s magic blast was resisted by " + targets[0].getName());
 				} else {
-					Interface.writeOut(attacker.getName() + " blasts " + targets[0].getName() + " for " + baseDam + " damage");
-					dealDam(attacker, targets[0], baseDam);
+					Interface.writeOut(attacker.getName() + " blasts " + targets[0].getName() + " for " + damage + " damage");
+					dealDamage(attacker, targets[0], damage);
 					
 					if (attackHit(targets[0], 0.4)) {
 						Interface.writeOut(attacker.getName() + "'s blast stuns " + targets[0].getName());

@@ -1,7 +1,6 @@
 package assets;
 
 import main.*;
-import assets.Monster.*;
 
 public class Potions extends Items {
 	

@@ -1,6 +1,5 @@
 package assets;
 
-import assets.Monster.Stat;
 
 public abstract class Items {
 

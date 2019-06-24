@@ -1,7 +1,6 @@
 package combat.moves.magic.shapeshift;
 
 import assets.*;
-import assets.Monster.Stat;
 import main.Index;
 import main.Interface;
 

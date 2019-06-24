@@ -1,7 +1,6 @@
 package combat.moves.melee;
 
-import assets.Monster;
-import assets.Monster.*;
+import assets.*;
 import combat.Ability;
 import main.Interface;
 
@@ -26,17 +25,18 @@ public class Disrupt extends Ability {
 				targetReduct(targets[0]);
 				
 				Interface.prompt(attacker.getName() + " slams into " + targets[0].getName());
-				if (!damDealt()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+				if (blocked()) //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 					Interface.writeOut(" but was resisted");
-				} else {
-					dealDam(attacker, targets[0], baseDam);
-					Interface.writeOut(" for " + baseDam + " damage");
+				else {
+					dealDamage(attacker, targets[0], damage);
+					Interface.writeOut(" for " + damage + " damage");
 					if (attackHit(targets[0], 0.4)) {
 						Interface.writeOut(attacker.getName() + "'s blow also stuns " + targets[0].getName());
 						targets[0].setStatus(Status.STUN, true);
 					}
 				}
-				float selfDam = (int)(baseDam*.5);
+				
+				float selfDam = (int)(damage*.5);
 				if (selfDam > 0) {
 					attacker.modStat(Stat.HP, -selfDam); //might add to damage received in turn?
 					Interface.writeOut(attacker.getName() + " deals " + selfDam + " damage to self from recoil");

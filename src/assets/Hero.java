@@ -3,6 +3,7 @@ package assets;
 import java.util.List;
 import combat.*;
 import main.*;
+import main.Index.Move;;
 
 public class Hero extends Monster {
 
@@ -18,8 +19,8 @@ public class Hero extends Monster {
 		
 		switch(classes) {
 		case 1: //warrior
-			moveList = new Ability[] {	getAbility("basic"), getAbility("charg"), 
-										getAbility("disrt"), getAbility("spins") };
+			moveList = new Ability[] {	getAbility(Move.BASIC), getAbility(Move.CHARGE), 
+										getAbility(Move.DISRUPT), getAbility(Move.SPIN) };
 
 			attType = true;
 			setStat(Stat.MAXHP, 40.0f); //try iterating later
@@ -30,9 +31,9 @@ public class Hero extends Monster {
 			break;
 			
 		case 2: //mage
-			moveList = new Ability[] {	getAbility("basic"), getAbility("shock"),
-										getAbility("drain"), getAbility("froze"),
-										getAbility("polym"), getAbility("reflt") };
+			moveList = new Ability[] {	getAbility(Move.BASIC), getAbility(Move.SHOCK),
+										getAbility(Move.DRAIN), getAbility(Move.FREEZE),
+										getAbility(Move.POLY), getAbility(Move.REFLECT) };
 
 			attType = false;
 			setStat(Stat.MAG, 7.0f);
@@ -43,7 +44,7 @@ public class Hero extends Monster {
 			break;
 
 		case 3: //shifter
-			moveList = new Ability[] {getAbility("shift")};
+			moveList = new Ability[] {getAbility(Move.SHIFT)};
 			attType = false;
 			setStat(Stat.HP, 10.0f);
 			setStat(Stat.MAXHP, getStat(Stat.HP));

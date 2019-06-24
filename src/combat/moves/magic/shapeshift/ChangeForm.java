@@ -1,7 +1,6 @@
 package combat.moves.magic.shapeshift;
 
 import assets.*;
-import assets.Monster.Stat;
 import main.Index;
 import main.Interface;
 
@@ -53,8 +52,11 @@ public class ChangeForm extends ShapeShift {
 				formNames[i] = tempList[i].getName();
 			
 			int formChoice = Interface.choiceInput(false, formNames, changePrompt)-1;
-			transform(attacker, tempList[formChoice], 5);
-			Interface.writeOut(attacker.getName() + " has transformed into " + tempList[formChoice].getName());
+
+			String beforeName = attacker.getName();
+
+			transform(attacker, tempList[formChoice], 5);			
+			Interface.writeOut(beforeName + " has transformed into " + attacker.getName());
 			
 		} else {
 			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");

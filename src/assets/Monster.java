@@ -3,13 +3,14 @@ package assets;
 import java.util.*;
 import combat.*;
 import main.Index;
+import main.Index.Move;
 
 public class Monster implements Comparable<Monster> { //Temporary, probably make abstract later
 
-	static class StatusInfo {
+	private static class StatusInfo {
 		private int start, duration;
 
-		protected StatusInfo () {
+		StatusInfo () {
 			this.start = -1;
 			this.duration = -1;
 		}
@@ -21,8 +22,6 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		void setDuration(int duration) { this.duration = duration; }
 	}
 
-	public enum Stat { HP, MAXHP, MP, MAXMP, ATT, DEF, MAG, MAGR, SPEED, CRIT; }
-	public enum Status { BURN, POISON, POTION, REFLECT, SHIFT, STUN; }
 	public final static int levMult = 2;
 	
 	private String name;
@@ -60,10 +59,10 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	}
 
 	//monster index constructor, basic attack and one special attack
-	public Monster (String name, boolean aggro, boolean attType, float[] stats, String special) {
+	public Monster (String name, boolean aggro, boolean attType, float[] stats, Move special) {
 		
 		this(name, aggro, attType, stats);
-		moveList = new Ability[]{getAbility("basic"), getAbility(special)};
+		moveList = new Ability[]{getAbility(Move.BASIC), getAbility(special)};
 		
 	}
 
@@ -119,10 +118,10 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		this.turnDam = 0;
 	}
 
-	protected Ability getAbility(String name) {
+	protected Ability getAbility(Move name) {
 		return Index.createAbility(name, this);
 	}
-	protected Ability getPassive(String name) {
+	protected Ability getPassive(Move name) {
 		return Index.createPassive(name, this);
 	}
 	protected StatusInfo getStatus (Status status) {
@@ -169,7 +168,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		int minDam = (int)attacker.getStat(hitStat);
 		double stat = this.getStat(blockStat);
 		minDam -= ((int)stat/2);
-		return minDam>0 ? minDam : 0;
+		return minDam > 0 ? minDam : 0;
 	}
 
 	//-1 not active, 0 finished, >0 amount of time active
