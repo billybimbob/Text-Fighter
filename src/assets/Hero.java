@@ -111,7 +111,7 @@ public class Hero extends Monster {
 					
 					if (pickNum == 0)
 						break selection;
-					else if (this.checkStatus("potion", turnNum) > 0) { //will trigger debuff
+					else if (this.checkStatus(Status.POTION, turnNum) > 0) { //will trigger debuff
 						String usePrompt = "Another buff is still active, and will be canceled by this potion\nAre you sure you want to do this?";
 						int confirmUse = Interface.choiceInput(false, Interface.RESPONSEOPTIONS, usePrompt);
 						if (confirmUse == 1) {
@@ -144,7 +144,7 @@ public class Hero extends Monster {
 			break;
 
 		case 3: //use inputed item
-			setStatus("potion", true);
+			setStatus(Status.POTION, true);
 			pick.useItem(this);
 		}
 	}

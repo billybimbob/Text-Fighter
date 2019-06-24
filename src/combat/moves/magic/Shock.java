@@ -2,6 +2,7 @@ package combat.moves.magic;
 
 import assets.Monster;
 import assets.Monster.Stat;
+import assets.Monster.Status;
 import combat.*;
 import main.Interface;
 
@@ -35,7 +36,7 @@ public class Shock extends Ability {
 					
 					if (attackHit(targets[0], 0.4)) {
 						Interface.writeOut(attacker.getName() + "'s blast stuns " + targets[0].getName());
-						targets[0].setStatus("stun", true);
+						targets[0].setStatus(Status.STUN, true);
 					}
 				}
 			} else {

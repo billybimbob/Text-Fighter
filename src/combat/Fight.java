@@ -3,7 +3,7 @@ package combat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import assets.*;
-import assets.Monster.Stat;
+import assets.Monster.*;
 import main.*;
 import combat.moves.magic.shapeshift.*;
 
@@ -142,9 +142,9 @@ public class Fight {
 			return;
 		
 		attacker.usePassive(nonSelf(attacker));
-		statusCheck(attacker, "burn");
-		statusCheck(attacker, "potion"); //not sure if should be end of turn or beginning
-		statusCheck(attacker, "stun");
+		statusCheck(attacker, Status.BURN);
+		statusCheck(attacker, Status.POTION); //not sure if should be end of turn or beginning
+		statusCheck(attacker, Status.STUN);
 		
 		if (!skipTurn) 
 			//might be wrong attack since priority order different
@@ -153,9 +153,9 @@ public class Fight {
 
 
 		//end of turn
-		statusCheck(attacker, "poison");
-		statusCheck(attacker, "reflect");
-		statusCheck(attacker, "shapeshift");
+		statusCheck(attacker, Status.POISON);
+		statusCheck(attacker, Status.REFLECT);
+		statusCheck(attacker, Status.SHIFT);
 		
 		attacker.clearTurn();
 
@@ -180,33 +180,33 @@ public class Fight {
 
 
 		
-	public void statusCheck (Monster checking, String statusName) { //each turn effects
-		int check = checking.checkStatus(statusName, getTurnNum());
+	public void statusCheck (Monster checking, Status status) { //each turn effects
+		int check = checking.checkStatus(status, getTurnNum());
 
 		if (check > -1) { //status active
-			switch(statusName) {
-			case "burn":
+			switch(status) {
+			case BURN:
 				int burnDam = (int)(checking.getStat(Stat.HP)*0.1);
 				checking.modStat(Stat.HP, -burnDam);
 				Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
 				if (check == 0) {
-					checking.setStatus("burn", false);
+					checking.setStatus(status, false);
 					Interface.writeOut(checking.getName() + " is no longer burned");
 				}
 				break;
 
-			case "poison":
+			case POISON:
 				int poiDam = (int)(checking.getStat(Stat.HP)*0.01*((getTurnNum()-check)%10));
 				checking.modStat(Stat.HP, -poiDam);
 				Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
 				break;
 
-			case "potion":
+			case POTION:
 				Hero user = (Hero)checking;
 				Potions.buffCheck(user);
 				break;
 
-			case "reflect": //try to go from turn to turn
+			case REFLECT: //try to go from turn to turn
 				for (FightLog.LogInfo info: log.getInfo(getTurnNum()-1, checking)) { //checking all damage recieved from last round
 					Monster attacker = info.getAttacker();
 					double damDeal = info.getDamage();
@@ -216,23 +216,23 @@ public class Fight {
 				}
 
 				if (check == 0) { //finished
-					checking.setStatus("reflect", false);
+					checking.setStatus(status, false);
 					Interface.writeOut(checking.getName() + "'s reflect has worn off");
 				}
 				break;
 
-			case "shapeshift":
+			case SHIFT:
 				if (check == 0) { //triggered by shapeshift
 					ShapeShift.revert(checking);
 					Interface.writeOut(checking.getName() + " reverted back");
 				}
 				break;
 
-			case "stun":
+			case STUN:
 				//triggered by chargeatt, magblast, disrupt
 				Interface.writeOut(checking.getName() + " is stunned");
 				skipTurn = true;
-				checking.setStatus("stun", false);
+				checking.setStatus(status, false);
 				break;
 			}
 		}

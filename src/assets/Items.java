@@ -1,10 +1,14 @@
 package assets;
 
+import assets.Monster.Stat;
+
 public abstract class Items {
-	public String name, statMod, tier;
+
+	protected Stat statMod;
+	public String name, tier;
 	public int numAmount, modVal, baseModVal;
 	
-	public void qualityTier (String tier) {
+	protected void qualityTier (String tier) {
 		this.tier = tier;
 		switch (tier) {
 			case "basic":

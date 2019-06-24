@@ -1,7 +1,7 @@
 package combat.moves.melee;
 
 import assets.Monster;
-import assets.Monster.Stat;
+import assets.Monster.*;
 import combat.Ability;
 import main.Interface;
 
@@ -49,7 +49,7 @@ public class ChargeAttack extends Ability {
 				
 				if (attackHit(targets[0], 0.1)) {
 					Interface.writeOut(attacker.getName() + "'s charged attack stuns " + targets[0].getName());
-					targets[0].setStatus("stun", true);
+					targets[0].setStatus(Status.STUN, true);
 				}
 			} else {
 				Interface.writeOut(attacker.getName() + "'s attack missed");

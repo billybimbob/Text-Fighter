@@ -1,7 +1,7 @@
 package combat.moves.melee;
 
 import assets.Monster;
-import assets.Monster.Stat;
+import assets.Monster.*;
 import combat.Ability;
 import main.Interface;
 
@@ -33,7 +33,7 @@ public class Disrupt extends Ability {
 					Interface.writeOut(" for " + baseDam + " damage");
 					if (attackHit(targets[0], 0.4)) {
 						Interface.writeOut(attacker.getName() + "'s blow also stuns " + targets[0].getName());
-						targets[0].setStatus("stun", true);
+						targets[0].setStatus(Status.STUN, true);
 					}
 				}
 				float selfDam = (int)(baseDam*.5);

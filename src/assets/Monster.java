@@ -6,40 +6,36 @@ import main.Index;
 
 public class Monster implements Comparable<Monster> { //Temporary, probably make abstract later
 
-	private static class StatusInfo {
-        int start, duration;
-		
-		StatusInfo () {
-            this.start = -1;
-            this.duration = -1;
-        }
-        /*StatusInfo (StatusInfo copy) {
-            this.start = copy.start;
-            this.duration = copy.duration;
-        }*/
-        int getStart() { return start; }
-        int getDuration() { return duration; }
+	static class StatusInfo {
+		private int start, duration;
 
-        void setStart(int start) { this.start = start; }
-        void setDuration(int duration) { this.duration = duration; }
+		protected StatusInfo () {
+			this.start = -1;
+			this.duration = -1;
+		}
+
+		int getStart() { return start; }
+		int getDuration() { return duration; }
+
+		void setStart(int start) { this.start = start; }
+		void setDuration(int duration) { this.duration = duration; }
 	}
 
 	public enum Stat { HP, MAXHP, MP, MAXMP, ATT, DEF, MAG, MAGR, SPEED, CRIT; }
+	public enum Status { BURN, POISON, POTION, REFLECT, SHIFT, STUN; }
 	public final static int levMult = 2;
-	public static final String[] STATUSNAMES = {"burn", "poison", "potion", "reflect", "shapeshift", "stun"};
 	
 	private String name;
 	private float turnDam;
 	private Map<Stat, Float> stats;
-	private Ability passive, turnMove; //temporary?
-	private Map<String, StatusInfo> status;
+	private Ability passive, turnMove;
 	private boolean aggro; //attType true means physical attack
-	private Monster storedShifter;
 	private List<Monster> targets;
 	
 	protected Ability[] moveList;
 	protected int level = 1;
 	protected boolean attType;
+	protected Map<Status, StatusInfo> status;
 
 
 	//constructor to have no ability
@@ -51,11 +47,11 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 
 		this.stats = new HashMap<>();
 		//double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
-		int j = 0;
-		for (int i=0; i<Stat.values().length; i++) {
-			setStat(Stat.values()[i], stats[j]);
-			if (Stat.values()[i] != Stat.HP && Stat.values()[i] != Stat.MP)
-				j++;
+		int idx = 0;
+		for (Stat statName: Stat.values()) {
+			setStat(statName, stats[idx]);
+			if (statName != Stat.HP && statName != Stat.MP)
+				idx++;
 		}
 
 		this.targets = new ArrayList<>();
@@ -100,17 +96,15 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	//private helpers
 	private void initStatus() {
 		status = new HashMap<>();
-		for (String statusName: STATUSNAMES)
+		for (Status statusName: Status.values())
 			status.put(statusName, new StatusInfo());
 	}
+
 	private Ability getMove() {
 		return moveList[(int)(Math.random()*moveList.length)];
 	}
 	private Ability getMove(int idx) {
 		return this.moveList[idx];
-	}
-	private StatusInfo getStatus (String status) { //immutable
-		return this.status.get(status);
 	}
 
 	private void updateTurnVals(Ability move) {
@@ -130,6 +124,9 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	}
 	protected Ability getPassive(String name) {
 		return Index.createPassive(name, this);
+	}
+	protected StatusInfo getStatus (Status status) {
+		return this.status.get(status);
 	}
 
 
@@ -153,9 +150,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public boolean getAttType() {
 		return this.attType;
 	}
-	public Monster getShifter() { //shift mutable
-		return storedShifter;
-	}
+
 	public String[] getMoveNames() {
 		String[] ret = new String[moveList.length];
 		for (int i = 0; i < moveList.length; i++)
@@ -178,7 +173,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	}
 
 	//-1 not active, 0 finished, >0 amount of time active
-	public int checkStatus(String status, int turnNum) { //checks if status needs updating, keep eye on
+	public int checkStatus(Status status, int turnNum) { //checks if status needs updating, keep eye on
 		StatusInfo info = getStatus(status);
 		int start = info.getStart(), duration = info.getDuration();
 
@@ -255,7 +250,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		setStat(stat, newVal);
 	}
 
-	public void setStatus(String stat, int startTurn, int duration) {
+	public void setStatus(Status stat, int startTurn, int duration) {
 		StatusInfo info = status.get(stat);
 		if (startTurn < 0 || duration < 0) {
 			info.setStart(-1);
@@ -265,7 +260,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 			info.setDuration(duration);
 		}
 	}
-	public void setStatus(String stat, boolean toggle) {
+	public void setStatus(Status stat, boolean toggle) {
 		StatusInfo info = status.get(stat);
 		if (toggle) {
 			info.setStart(0);
@@ -278,10 +273,6 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 
 	public void addDamTurn(double damage) {
 		this.turnDam += damage;
-	}
-
-	public void setShifter(Monster storing) {
-		this.storedShifter = storing;
 	}
 
 	//modifies stats based and restores health and mana
