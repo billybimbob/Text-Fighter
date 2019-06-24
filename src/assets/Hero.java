@@ -78,7 +78,7 @@ public class Hero extends Monster {
 					if (attNum == 0)
 						break selection;
 					
-					super.setTurn(attNum);
+					super.setTurn(attNum-1); //start at 0th idx
 					//determine the targets of hero move
 					int numTar = this.getNumTar();
 					action = true;
@@ -119,7 +119,7 @@ public class Hero extends Monster {
 						} else
 							break selection;
 					}
-					pick = inventory.getItem(pickNum);
+					pick = inventory.getItem(pickNum-1);
 					action = true;
 				}
 			}

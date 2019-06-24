@@ -58,7 +58,7 @@ public class Interface {
 			fighters.add(new Monster(Index.monsterList[i]));
 		}
 
-		Fight FIGHT = new Fight(fighters);
+		FIGHT = new Fight(fighters);
 		Interface.writeOut("Press enter when you are ready to fight");
 		Interface.confirm();
 		FIGHT.start();

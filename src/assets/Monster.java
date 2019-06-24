@@ -4,8 +4,8 @@ import java.util.*;
 import combat.*;
 import main.Index;
 
-public class Monster { //Temporary, probably make abstract later
-	
+public class Monster implements Comparable<Monster> { //Temporary, probably make abstract later
+
 	private static class StatusInfo {
         int start, duration;
 		
@@ -60,7 +60,7 @@ public class Monster { //Temporary, probably make abstract later
 
 		this.targets = new ArrayList<>();
 		initStatus();
-
+		
 	}
 
 	//monster index constructor, basic attack and one special attack
@@ -182,17 +182,12 @@ public class Monster { //Temporary, probably make abstract later
 		int start = info.getStart(), duration = info.getDuration();
 
 		int ret = -1;
-		if (start > -1 && duration > -1)
-			ret = turnNum-start; //time active
-		if (turnNum-start >= duration)
-			ret = 0; //finished
+		if (start > -1 && duration > -1) {
+			int timeActive = turnNum-start;
+			ret = timeActive >= duration ? 0 : timeActive;
+		}
 
 		return ret;
-	}
-
-	@Override
-	public String toString () {
-		return name + " - " + getStat("hp") + " hp" + " - " + getStat("mp") + " mp" + " - " + getStat("spe") + " speed";
 	}
 
 
@@ -233,7 +228,10 @@ public class Monster { //Temporary, probably make abstract later
 	}
 
 	public void addAttack(Ability adding) { //not sure if better
-		List<Ability> moveStore = Arrays.asList(moveList);
+		List<Ability> moveStore = new ArrayList<>();
+		for (Ability move: moveList)
+			moveStore.add(move);
+
 		moveStore.add(adding);
 		moveList = new Ability[moveStore.size()];
 		moveList = moveStore.toArray(moveList);
@@ -296,6 +294,19 @@ public class Monster { //Temporary, probably make abstract later
 		}
 		setStat("hp", getStat("maxHp"));
 		setStat("mp", getStat("maxMp"));
+	}
+
+
+	
+	@Override
+	public String toString () {
+		return name + " - " + getStat("hp") + " hp" + " - " + getStat("mp") + " mp" + " - " + getStat("spe") + " speed";
+	}
+
+	@Override
+	public int compareTo (Monster other) { //based off of speed
+		Float thisSpe = this.getStat("spe"), otherSpe = other.getStat("spe");
+		return thisSpe.compareTo(otherSpe);
 	}
 
 	

@@ -15,13 +15,14 @@ public class ChangeForm extends ShapeShift {
 		manaCost = 5; //might get rid
 		numTar = 0;
 		
-		formList = new Monster[]{
+		formList = new Monster[]{ //see if I can parameterize
 				new Monster(Index.shiftMonList[0]), 
 				new Monster(Index.shiftMonList[1]), 
 				new Monster(Index.shiftMonList[2])};
 				
+		
 		for(Monster shift: formList)
-			shift.addAttack(Index.createAbility("shift", user));
+			shift.addAttack(this);
 		
 	}
 	
@@ -31,15 +32,14 @@ public class ChangeForm extends ShapeShift {
 		if (enoughMana()) {
 			attacker.modStat("mp", -manaCost);
 			String changePrompt = "Which form do you want to take?";
-			
 			int availChange = formList.length;
 			Monster[] tempList = new Monster[availChange];
+
 			for (int i = 0; i < formList.length; i++) { //determine available transformations, removes caster from list
 				if (attacker.getName() != formList[i].getName()) {
 					tempList[i-(formList.length-availChange)] = formList[i];
 				} else {
-					availChange--;
-					Monster[] tempStore = new Monster[availChange];
+					Monster[] tempStore = new Monster[--availChange];
 					for(int j = 0; j < tempStore.length; j++) {
 						tempStore[j] = tempList[j];
 					}
@@ -51,9 +51,9 @@ public class ChangeForm extends ShapeShift {
 			for (int i = 0; i < tempList.length; i++)
 				formNames[i] = tempList[i].getName();
 			
-			int formChoice = Interface.choiceInput(true, formNames, changePrompt)-1;
-			Interface.writeOut(attacker.getName() + " has transformed into " + tempList[formChoice].getName());
+			int formChoice = Interface.choiceInput(false, formNames, changePrompt)-1;
 			transform(attacker, tempList[formChoice], 5);
+			Interface.writeOut(attacker.getName() + " has transformed into " + tempList[formChoice].getName());
 			
 		} else {
 			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");

@@ -21,7 +21,7 @@ class FightLog {
     private List< Map<Monster,List<LogInfo>> > log; //keys to map are the receiver
 
     public FightLog() {
-        log = new ArrayList<>();
+        this.log = new ArrayList<>();
     }
 
     private Map<Monster, List<LogInfo>> newestRound() {

@@ -77,9 +77,13 @@ public class Fight {
 				fightControl = false;*/
 			}
 		}
+		Interface.writeOut("Exiting fight");
+		log.clear();
 	}
 
 	public static void attackOrder (List<Monster> list) { //orders the combatants from highest speed to lowest
+		Collections.sort(list);
+		/*
 		int count = 0;
 		while (count < list.size()-1) {
 			if (list.get(count).getStat("spe") < list.get(count+1).getStat("spe")) {
@@ -94,7 +98,7 @@ public class Fight {
 			} else {
 				count += 1;
 			}
-		}
+		}*/
 	}
 
 	private void determineEnemies(List<Monster> monFighters) {
@@ -141,7 +145,7 @@ public class Fight {
 		statusCheck(attacker, "potion"); //not sure if should be end of turn or beginning
 		statusCheck(attacker, "stun");
 		
-		if (!skipTurn)
+		if (!skipTurn) 
 			//might be wrong attack since priority order different
 			attacker.executeTurn(); //doesn't account for multiple targets, maybe do rng to select other targets?
 			//includes heroTurn, overriden
