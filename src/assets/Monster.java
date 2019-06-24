@@ -13,10 +13,10 @@ public class Monster { //Temporary, probably make abstract later
             this.start = -1;
             this.duration = -1;
         }
-        StatusInfo (StatusInfo copy) {
+        /*StatusInfo (StatusInfo copy) {
             this.start = copy.start;
             this.duration = copy.duration;
-        }
+        }*/
         int getStart() { return start; }
         int getDuration() { return duration; }
 
@@ -109,6 +109,10 @@ public class Monster { //Temporary, probably make abstract later
 	private Ability getMove(int idx) {
 		return this.moveList[idx];
 	}
+	private StatusInfo getStatus (String status) { //immutable
+		return this.status.get(status);
+	}
+
 	private void updateTurnVals(Ability move) {
 		if (turnMove == null) {
 			turnMove = move;
@@ -136,10 +140,6 @@ public class Monster { //Temporary, probably make abstract later
 	}
 	public float getStat (String stat) { //most likely where nulls arise
 		return this.stats.get(stat);
-	}
-	public StatusInfo getStatus (String status) { //immutable
-		StatusInfo val = this.status.get(status);
-		return new StatusInfo(val);
 	}
 	public double getTurnDam() {
 		return this.turnDam;

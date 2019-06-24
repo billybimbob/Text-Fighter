@@ -1,4 +1,4 @@
-package combat.melee;
+package combat.moves.melee;
 
 import assets.Monster;
 import combat.*;

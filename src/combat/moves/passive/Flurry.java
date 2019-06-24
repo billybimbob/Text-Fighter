@@ -1,4 +1,4 @@
-package combat.passive;
+package combat.moves.passive;
 
 import assets.Monster;
 import combat.Ability;

@@ -1,6 +1,7 @@
-package combat;
+package combat.moves;
 
 import main.Interface;
+import combat.Ability;
 import assets.Monster;
 
 public class BasicAttack extends Ability {

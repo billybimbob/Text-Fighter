@@ -1,4 +1,4 @@
-package combat.magic;
+package combat.moves.magic;
 
 import assets.Monster;
 import combat.Ability;

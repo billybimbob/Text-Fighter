@@ -2,6 +2,7 @@ package main;
 
 import java.util.*;
 import assets.*;
+import combat.Fight;
 
 public class Interface {
 	

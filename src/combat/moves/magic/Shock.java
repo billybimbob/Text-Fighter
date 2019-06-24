@@ -1,38 +1,40 @@
-package combat.magic;
+package combat.moves.magic;
 
 import assets.Monster;
 import combat.*;
 import main.Interface;
 
-public class LifeDrain extends Ability {
+public class Shock extends Ability {
 
-	public LifeDrain(Monster user) {
+	public Shock (Monster user) {
 		super(user);
-		name = "Life Drain";
-		description = "A magic attack that heals for for a portion of damage dealt";
+		name = "Shock";
+		description = "A a magic attack with the same damage as a basic, but has chance to stun and ignores some armor";
 		attType = false;
-		manaCost = 3;
-		baseDamMod = 1.4f;
+		priority = true;
+		manaCost = 6;
+		baseDamMod = 1.5f;
 	}
-
+	
 	public void execute() {
 		Monster[] targets = attacker.getTargets();
-
+		
 		if (enoughMana()) {
 			attacker.modStat("mp", -manaCost);
 			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
+				
 				baseDamage();
 				targetReduct(targets[0]);
-				float selfHeal = (int)(baseDam*0.5);
 				
 				if (damDealt()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-					Interface.writeOut(attacker.getName() + "'s drain was resisted by " + targets[0].getName());
+					Interface.writeOut(attacker.getName() + "'s magic blast was resisted by " + targets[0].getName());
 				} else {
-					Interface.writeOut(attacker.getName() + " drains " + targets[0].getName() + " for " + baseDam + " damage");
+					Interface.writeOut(attacker.getName() + " blasts " + targets[0].getName() + " for " + baseDam + " damage");
 					loseHp(attacker, targets[0], baseDam);
-					if (selfHeal > 0 && attacker.getStat("hp") < attacker.getStat("maxHp")) {
-						attacker.modStat("hp", selfHeal);
-						Interface.writeOut(attacker.getName() + " absorbs " + selfHeal + " health");
+					
+					if (attackHit(targets[0], 0.4)) {
+						Interface.writeOut(attacker.getName() + "'s blast stuns " + targets[0].getName());
+						targets[0].setStatus("stun", true);
 					}
 				}
 			} else {

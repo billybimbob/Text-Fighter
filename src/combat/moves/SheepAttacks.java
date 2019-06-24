@@ -1,5 +1,6 @@
-package combat;
+package combat.moves;
 
+import combat.Ability;
 import assets.Monster;
 import main.Interface;
 

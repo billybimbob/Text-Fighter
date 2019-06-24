@@ -1,7 +1,7 @@
 package combat;
 
 import assets.*;
-import main.Fight;
+import combat.Fight;
 
 public abstract class Ability implements Cloneable {
 

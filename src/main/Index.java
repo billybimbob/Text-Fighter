@@ -4,11 +4,12 @@ import java.util.*;
 import java.util.function.Function;
 
 import assets.*;
-import combat.*;
-import combat.magic.*;
-import combat.magic.shapeshift.*;
-import combat.melee.*;
-import combat.passive.*;
+import combat.Ability;
+import combat.moves.*;
+import combat.moves.magic.*;
+import combat.moves.magic.shapeshift.*;
+import combat.moves.melee.*;
+import combat.moves.passive.*;
 
 public class Index {
 

@@ -1,9 +1,10 @@
-package main;
+package combat;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import assets.*;
-import combat.magic.shapeshift.*;
+import main.*;
+import combat.moves.magic.shapeshift.*;
 
 public class Fight {
 	
