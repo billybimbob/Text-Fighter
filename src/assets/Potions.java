@@ -1,5 +1,6 @@
 package assets;
 
+import combat.Status;
 import main.*;
 
 public class Potions extends Items {

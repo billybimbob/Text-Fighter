@@ -28,13 +28,13 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	private float turnDam;
 	private Map<Stat, Float> stats;
 	private Ability passive, turnMove;
+	private Map<Status, StatusInfo> status;
 	private boolean aggro; //attType true means physical attack
 	private List<Monster> targets;
 	
 	protected Ability[] moveList;
 	protected int level = 1;
 	protected boolean attType;
-	protected Map<Status, StatusInfo> status;
 
 
 	//constructor to have no ability
@@ -55,12 +55,10 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 
 		this.targets = new ArrayList<>();
 		initStatus();
-		
 	}
 
 	//monster index constructor, basic attack and one special attack
 	public Monster (String name, boolean aggro, boolean attType, float[] stats, Move special) {
-		
 		this(name, aggro, attType, stats);
 		moveList = new Ability[]{getAbility(Move.BASIC), getAbility(special)};
 		
@@ -117,6 +115,9 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	private void resetDamage() {
 		this.turnDam = 0;
 	}
+	private StatusInfo getStatus (Status status) {
+		return this.status.get(status);
+	}
 
 	protected Ability getAbility(Move name) {
 		return Index.createAbility(name, this);
@@ -124,10 +125,6 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	protected Ability getPassive(Move name) {
 		return Index.createPassive(name, this);
 	}
-	protected StatusInfo getStatus (Status status) {
-		return this.status.get(status);
-	}
-
 
 
 	//accessors
@@ -143,7 +140,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public boolean getAggro() {
 		return aggro;
 	}
-	public boolean getPriority() { //temporary
+	public boolean getPriority() {
 		return turnMove==null ? false : turnMove.getPriority();
 	}
 	public boolean getAttType() {
@@ -241,7 +238,6 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 
 
 	public void setStat (Stat stat, float val) {
-		//System.out.println("setting " + this.name + "\'s " + stat);
 		stats.put(stat, val);
 	}
 	public void modStat (Stat stat, float val) { //changes stat by val; add max mod cases
@@ -296,8 +292,12 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		return thisSpe.compareTo(otherSpe);
 	}
 
-	public static Stat getHitStat(boolean attType) { return attType ? Stat.ATT : Stat.MAG; }
-	public static Stat getBlockStat(boolean attType) { return attType ? Stat.DEF : Stat.MAGR; }
+	public static Stat getHitStat(boolean attType) {
+		return attType ? Stat.ATT : Stat.MAG;
+	}
+	public static Stat getBlockStat(boolean attType) {
+		return attType ? Stat.DEF : Stat.MAGR;
+	}
 
 	
 }
