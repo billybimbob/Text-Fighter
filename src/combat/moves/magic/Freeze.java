@@ -30,7 +30,7 @@ public class Freeze extends Ability {
 					Interface.writeOut(attacker.getName() + "'s freeze was resisted by " + targets[0].getName());
 				} else {
 					Interface.writeOut(attacker.getName() + " freezes " + targets[0].getName() + " for " + baseDam + " damage");
-					loseHp(attacker, targets[0], baseDam);
+					dealDam(attacker, targets[0], baseDam);
 					if (targets[0].getStat("spe") > 0) {
 						targets[0].modStat("spe", -statDam);
 						Interface.writeOut(targets[0].getName() + "'s speed was lowered by " + statDam);

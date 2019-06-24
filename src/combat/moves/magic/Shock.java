@@ -30,7 +30,7 @@ public class Shock extends Ability {
 					Interface.writeOut(attacker.getName() + "'s magic blast was resisted by " + targets[0].getName());
 				} else {
 					Interface.writeOut(attacker.getName() + " blasts " + targets[0].getName() + " for " + baseDam + " damage");
-					loseHp(attacker, targets[0], baseDam);
+					dealDam(attacker, targets[0], baseDam);
 					
 					if (attackHit(targets[0], 0.4)) {
 						Interface.writeOut(attacker.getName() + "'s blast stuns " + targets[0].getName());

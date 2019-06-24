@@ -45,7 +45,7 @@ public class ChargeAttack extends Ability {
 				}
 				
 				Interface.writeOut(attacker.getName() + " lands a powerful hit on " + targets[0].getName() + " for " + baseDam + " damage");
-				loseHp(attacker, targets[0], baseDam);
+				dealDam(attacker, targets[0], baseDam);
 				
 				if (attackHit(targets[0], 0.1)) {
 					Interface.writeOut(attacker.getName() + "'s charged attack stuns " + targets[0].getName());

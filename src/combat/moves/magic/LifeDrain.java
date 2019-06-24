@@ -29,7 +29,7 @@ public class LifeDrain extends Ability {
 					Interface.writeOut(attacker.getName() + "'s drain was resisted by " + targets[0].getName());
 				} else {
 					Interface.writeOut(attacker.getName() + " drains " + targets[0].getName() + " for " + baseDam + " damage");
-					loseHp(attacker, targets[0], baseDam);
+					dealDam(attacker, targets[0], baseDam);
 					if (selfHeal > 0 && attacker.getStat("hp") < attacker.getStat("maxHp")) {
 						attacker.modStat("hp", selfHeal);
 						Interface.writeOut(attacker.getName() + " absorbs " + selfHeal + " health");

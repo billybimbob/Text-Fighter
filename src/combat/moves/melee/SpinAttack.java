@@ -35,7 +35,7 @@ public class SpinAttack extends Ability {
 						}*/
 						//double storeDam = baseDam;
 						targetReduct(target);
-						loseHp(attacker, target, baseDam);
+						dealDam(attacker, target, baseDam);
 						damDealt = baseDam;
 						//baseDam = storeDam;
 					}

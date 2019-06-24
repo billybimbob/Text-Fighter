@@ -30,7 +30,7 @@ public class BasicAttack extends Ability {
 				Interface.writeOut(attacker.getName() + "'s attack was blocked by " + targets[0].getName());
 			} else {
 				Interface.writeOut(attacker.getName() + " has hit " + targets[0].getName() + " for " + baseDam + " damage");
-				loseHp(attacker, targets[0], baseDam);
+				dealDam(attacker, targets[0], baseDam);
 			}
 		} else {
 			Interface.writeOut(attacker.getName() + "'s attack missed");

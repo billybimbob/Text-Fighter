@@ -10,23 +10,27 @@ public class Fight {
 	
 	public static final String[] FIGHTCHOICES = {"Fight", "Dodge", "Inventory"};
 
-	private int turnCount;
+	private FightLog log;
 	private List<Monster> fighters;
 	private boolean skipTurn;
 
 	public Fight(List<Monster> fighters) {
-		turnCount = 0;
+		this.log = new FightLog();
 		this.fighters = fighters;
 	}
 	
-	public int getTurnNum() { return turnCount; }
+	public int getTurnNum() { return log.roundCount(); }
+
+	void addLog(Monster attacker, Monster target, double damage) {
+		log.addLog(attacker, target, damage);
+	}
 
 	public void start() {
 		boolean fightControl = true; //could add flee back
 		List<Monster> monFighters = new ArrayList<>();
 
 		while (fightControl) {
-			turnCount++; //turn counter
+			log.newRound();
 				
 			Interface.writeOut(Interface.LINESPACE);
 
@@ -172,9 +176,9 @@ public class Fight {
 
 		
 	public void statusCheck (Monster checking, String statusName) { //each turn effects
-		
-		int check = checking.checkStatus(statusName, turnCount);
-		if (check > -1) {
+		int check = checking.checkStatus(statusName, getTurnNum());
+
+		if (check > -1) { //status active
 			switch(statusName) {
 			case "burn":
 				int burnDam = (int)(checking.getStat("hp")*0.1);
@@ -187,7 +191,7 @@ public class Fight {
 				break;
 
 			case "poison":
-				int poiDam = (int)(checking.getStat("hp")*0.01*((turnCount-check)%10));
+				int poiDam = (int)(checking.getStat("hp")*0.01*((getTurnNum()-check)%10));
 				checking.modStat("hp", -poiDam);
 				Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
 				break;
@@ -197,10 +201,15 @@ public class Fight {
 				Potions.buffCheck(user);
 				break;
 
-			case "reflect":
-				float refDam = (int)(damDeal*0.5); 
-				attacker.modStat("hp", -refDam);
-				Interface.writeOut(target.getName() + " reflects " + refDam + " damage to " + attacker.getName());
+			case "reflect": //try to go from turn to turn
+				for (FightLog.LogInfo info: log.getInfo(getTurnNum()-1, checking)) { //checking all damage recieved from last round
+					Monster attacker = info.getAttacker();
+					double damDeal = info.getDamage();
+					float refDam = (int)(damDeal*0.5);
+					attacker.modStat("hp", -refDam);
+					Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
+				}
+
 				if (check == 0) { //finished
 					checking.setStatus("reflect", false);
 					Interface.writeOut(checking.getName() + "'s reflect has worn off");

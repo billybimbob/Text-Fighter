@@ -28,7 +28,7 @@ public class Disrupt extends Ability {
 				if (!damDealt()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 					Interface.writeOut(" but was resisted");
 				} else {
-					loseHp(attacker, targets[0], baseDam);
+					dealDam(attacker, targets[0], baseDam);
 					Interface.writeOut(" for " + baseDam + " damage");
 					if (attackHit(targets[0], 0.4)) {
 						Interface.writeOut(attacker.getName() + "'s blow also stuns " + targets[0].getName());

@@ -32,18 +32,18 @@ public class Index {
 		
 
 		//could split different class abilities
-		attackList.put("basic", (user) -> new BasicAttack(user));
-		attackList.put("charg", (user) -> new ChargeAttack(user));
-		attackList.put("disrt", (user) -> new Disrupt(user));
-		attackList.put("spins", (user) -> new SpinAttack(user));
-		attackList.put("shock", (user) -> new Shock(user));
-		attackList.put("drain", (user) -> new LifeDrain(user));
-		attackList.put("froze", (user) -> new Freeze(user));
-		attackList.put("polym", (user) -> new Polymorph(user));
-		attackList.put("reflt", (user) -> new Reflect(user));
-		attackList.put("sheep", (user) -> new SheepAttacks(user));
-		attackList.put("shift", (user) -> new ChangeForm(user));
-		attackList.put("sheep", (user) -> new SheepAttacks(user));
+		attackList.put("basic", (Monster user) -> new BasicAttack(user));
+		attackList.put("charg", (Monster user) -> new ChargeAttack(user));
+		attackList.put("disrt", (Monster user) -> new Disrupt(user));
+		attackList.put("spins", (Monster user) -> new SpinAttack(user));
+		attackList.put("shock", (Monster user) -> new Shock(user));
+		attackList.put("drain", (Monster user) -> new LifeDrain(user));
+		attackList.put("froze", (Monster user) -> new Freeze(user));
+		attackList.put("polym", (Monster user) -> new Polymorph(user));
+		attackList.put("reflt", (Monster user) -> new Reflect(user));
+		attackList.put("sheep", (Monster user) -> new SheepAttacks(user));
+		attackList.put("shift", (Monster user) -> new ChangeForm(user));
+		attackList.put("sheep", (Monster user) -> new SheepAttacks(user));
 		
 		passiveList.put("flury", (Monster user) -> new Flurry(user));
 		passiveList.put("intim", (Monster user) -> new Intimidate(user));

@@ -1,7 +1,7 @@
 package combat;
 
 import assets.*;
-import combat.Fight;
+import main.Interface;
 
 public abstract class Ability implements Cloneable {
 
@@ -103,10 +103,10 @@ public abstract class Ability implements Cloneable {
 	}
 
 	
-	public static void loseHp (Monster attacker, Monster target, float damage) {
+	public static void dealDam (Monster attacker, Monster target, float damage) {
 		target.modStat("hp", -damage);
 		target.addDamTurn(damage);
-		Fight.statusCheck(attacker, target, "reflect", damage);
+		Interface.FIGHT.addLog(attacker, target, damage);
 	}
 
 	public abstract void execute();
