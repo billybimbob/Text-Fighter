@@ -67,7 +67,7 @@ public class Hero extends Monster {
 		for (int i = 0; i<targets.size(); i++)
 			monNames[i] = targets.get(i).getName();
 
-		do { //probably change, flow is really bad and confusing
+		do { //probably okay?
 			String attPrompt = "Which attack do you want to use?";
 			int attNum = Interface.choiceInput(true, this.getMoveNames(), attPrompt);
 			if (attNum == 0)
@@ -80,12 +80,12 @@ public class Hero extends Monster {
 			action = true;
 			for (int i = 0; i < numTar; i++) { //gets targets if needed
 				String tarPrompt = "Which monster would you want to target?";
-				int tarNum = Interface.choiceInput(true, monNames, tarPrompt)-1;
+				int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
 				if (tarNum == 0) {//have to change how to implement
 					action = false;
 					break;
 				}
-				this.addTarget(targets.get(tarNum));
+				this.addTarget(targets.get(tarNum-1));
 			}
 
 		} while (!action);

@@ -63,11 +63,15 @@ public class Index {
 	}
 
 	private static void readMonsters() {
+
 		try (BufferedReader reading = new BufferedReader(new FileReader("monster.txt"));) {
+			final boolean defltAggro = false;
 			String line;
 			while((line = reading.readLine()) != null) {
 				String[] tok = line.split(", ");
-				if (tok.length <= 1) //skip line
+				final int parseLen = tok.length;
+
+				if (parseLen < 3) //skip line
 					continue;
 
 				String name = tok[0];
@@ -77,11 +81,20 @@ public class Index {
 				for (String numTok: tok[2].split(","))
 					stats.add(Integer.parseInt(numTok));
 
-				List<Move> moves = new ArrayList<>();
-				for (String moveTok: tok[3].split(","))
-					moves.add(Move.valueOf(moveTok.toUpperCase()));
+				if (parseLen >= 4) { //has special moves
+					List<Move> moves = new ArrayList<>();
+					for (String moveTok: tok[3].split(","))
+						moves.add(Move.valueOf(moveTok.toUpperCase()));
 
-				monsterList.add(new Monster(name, false, attType, stats, moves));
+					if (parseLen >= 5) { //has passive
+						Move passive = Move.valueOf(tok[4].toUpperCase());
+						monsterList.add(new Monster(name, defltAggro, attType, stats, moves, passive));
+					} else
+						monsterList.add(new Monster(name, defltAggro, attType, stats, moves));
+
+				} else
+					monsterList.add(new Monster(name, defltAggro, attType, stats));
+
 				monIds.put(name, monsterList.size()-1); //should be the list idx
 			} 
 		} catch (IOException e) {

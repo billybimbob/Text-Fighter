@@ -8,9 +8,9 @@ public class Interface {
 	
 	public static Hero HERO;
 	public static Fight FIGHT;
-	
 	public static final String[] RESPONSEOPTIONS = {"Yes", "No"};
 	public static final String LINESPACE = "-----------------------------------------------";
+	
 	private static final Scanner KEYBOARD = new Scanner(System.in);
 	
 	
@@ -25,7 +25,7 @@ public class Interface {
 		String[] availClass = {"Warrior", "Mage", "Shifter"};
 		String classPrompt = "Which class you would like to be?\nThis will affect your stats, potions, and abilities";
 		int classChoice = choiceInput(false, availClass, classPrompt);
-		//classChoice = 1;
+		
 		
 		HERO = new Hero(name, classChoice);
 		
@@ -76,7 +76,6 @@ public class Interface {
 	}
 	
 	public static int choiceInput (boolean back, String[] options, String prompt) { //Returns user input from choices
-		int choice = -1;
 		StringBuilder lstOptions = new StringBuilder();
 
 		lstOptions.append(LINESPACE + "\n");
@@ -89,6 +88,7 @@ public class Interface {
 		lstOptions.append(LINESPACE + "\n");
 		Interface.writeOut(lstOptions.toString());
 
+		int choice = -1;
 		boolean heroAction = false;
 		do {
 			try {

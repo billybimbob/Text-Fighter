@@ -34,7 +34,7 @@ public class Fight {
 				
 			Interface.writeOut(Interface.LINESPACE);
 
-			attackOrder(fighters); //Orders the fighters by speed
+			attackOrder(); //Orders the fighters by speed
 			determineEnemies(monFighters);
 			Interface.HERO.setTurn(monFighters);
 
@@ -81,8 +81,14 @@ public class Fight {
 		log.clear();
 	}
 
-	public static void attackOrder (List<Monster> list) { //orders the combatants from highest speed to lowest
-		Collections.sort(list);
+	private void attackOrder () { //orders the combatants from highest speed to lowest
+		Collections.sort(fighters, new Comparator<Monster>() {
+			@Override
+			public int compare(Monster a, Monster b) {	//highest speed first
+				Float aSpeed = a.getStat(Stat.SPEED), bSpeed = b.getStat(Stat.SPEED);
+				return bSpeed.compareTo(aSpeed);
+			}
+		});
 		/*
 		int count = 0;
 		while (count < list.size()-1) {
@@ -140,16 +146,19 @@ public class Fight {
 		if (attacker.getStat(Stat.HP) <= 0) //got rid of flee, maybe temporary
 			return;
 		
-		attacker.usePassive(nonSelf(attacker));
+		attacker.usePassive(nonSelf(attacker, fighters));
 		statusCheck(attacker, Status.BURN);
 		statusCheck(attacker, Status.POTION); //not sure if should be end of turn or beginning
 		statusCheck(attacker, Status.REFLECT);
 		statusCheck(attacker, Status.STUN);
 		
 		if (!skipTurn) 
-			//might be wrong attack since priority order different
-			attacker.executeTurn(); //doesn't account for multiple targets, maybe do rng to select other targets?
-			//includes heroTurn, overriden
+			/**
+			 * might be wrong attack since priority order different
+			 * doesn't account for multiple targets, maybe do rng to select other targets?
+			 * includes heroTurn, overriden
+			 */
+			attacker.executeTurn();
 
 
 		//end of turn
@@ -168,17 +177,6 @@ public class Fight {
 		
 		Interface.writeOut();
 	}	
-	
-	private Monster[] nonSelf (Monster user) { //not sure if should be all enemies or all non-user, inefficient
-		List<Monster> sto = new ArrayList<>();
-		for (Monster mon: fighters) {
-			if (mon != user)
-				sto.add(mon);
-		}
-		return sto.toArray(new Monster[sto.size()]);
-	}
-
-
 		
 	private void statusCheck (Monster checking, Status status) { //each turn effects
 		int check = checking.checkStatus(status);
@@ -247,5 +245,14 @@ public class Fight {
 		}
 	}
 
+	 //not sure if should be all enemies or all non-user, inefficient
+	public static List<Monster> nonSelf (Monster user, List<Monster> allFighters) {
+		List<Monster> sto = new ArrayList<>();
+		for (Monster mon: allFighters) {
+			if (mon != user)
+				sto.add(mon);
+		}
+		return sto;
+	}
 
 }

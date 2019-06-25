@@ -31,14 +31,19 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	private Ability passive, turnMove;
 	private Map<Status, StatusInfo> status;
 	private boolean aggro;
-	private List<Monster> targets;
+	private List<Monster> targets; //look at how set and used
 	
 	protected String name;
 	protected int level = 1;
 	protected boolean attType; //attType true means physical attack
 
 
-	//constructor to have no ability
+	/**
+	 * constructor to have no extra attacks but basic
+	 * @param attType true for melee, false for magic
+	 * @param stats order should follow Stat.java and not include MAXHP or MAXMP
+	 * @see Stat
+	 */
 	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats) {
 		this.name = name;
 		this.aggro = aggro;
@@ -46,7 +51,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		this.turnDam = 0;
 
 		this.stats = new HashMap<>();
-		//double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
+		//hp, hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as enum
 		int idx = 0;
 		for (Stat statName: Stat.values()) {
 			setStat(statName, stats.get(idx));
@@ -56,21 +61,38 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 
 		this.targets = new ArrayList<>();
 		initStatus();
+		moveList = new Ability[] {createAbility(Move.BASIC)};
 	}
 
-	//monster index constructor, basic attack and one special attack
+	/**
+	 * monster constructor, basic attack and list of specials
+	 * @see {@link} {@link Monster#Monster(String, boolean, boolean, List)}
+	 */
 	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats, List<Move> specials) {
 		this(name, aggro, attType, stats);
+		
 		List<Ability> moveSto = new ArrayList<>();
-		moveSto.add(getAbility(Move.BASIC));
+		for (Ability prevMove: moveList) //abilities from default constructor
+			moveSto.add(prevMove);
 		for (Move special: specials)
-			moveSto.add(getAbility(special));
+			moveSto.add(createAbility(special));
 
 		moveList = moveSto.toArray(new Ability[moveSto.size()]);
-		
 	}
 
-	//copies to a new instance
+	/**
+	 * contructor with specials and a passive
+	 * @param passive must be a passive ability
+	 */
+	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats, List<Move> specials, Move passive) {
+		this(name, aggro, attType, stats, specials);
+		this.setPassive(createPassive(passive));
+	}
+
+	/**
+	 * copy constructor
+	 * @param copy creates new Monster instance based off of values from copy
+	 */
 	public Monster (Monster copy) { //not sure if deep or shallow
 		this.name = copy.name;
 		this.aggro = copy.aggro;
@@ -115,6 +137,10 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 			turnMove = move;
 		}
 	}
+
+	/**
+	 * wrapper for list clear method
+	 */
 	private void clearTargets() {
 		this.targets.clear();
 	}
@@ -124,14 +150,14 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	private StatusInfo getStatus (Status status) {
 		return this.status.get(status);
 	}
-
-	//protected helpers
-	protected Ability getAbility(Move name) {
+	private Ability createAbility(Move name) {
 		return Index.createAbility(name, this);
 	}
-	protected Ability getPassive(Move name) {
+	private Ability createPassive(Move name) {
 		return Index.createPassive(name, this);
 	}
+
+	//protected helpers
 	protected int currentTurn() {
 		return Interface.FIGHT.getTurnNum();
 	}
@@ -155,7 +181,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		return aggro;
 	}
 	public boolean getPriority() {
-		return turnMove==null ? false : turnMove.getPriority();
+		return turnMove == null ? false : turnMove.getPriority();
 	}
 	public boolean getAttType() {
 		return this.attType;
@@ -167,9 +193,14 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 			ret[i] = moveList[i].getName() + " - " + (int)moveList[i].getCost() + " mana";
 		return ret;
 	}
+
+	/**
+	 * @return -1 is no limit, 0 is self, >0 max number of targets
+	 */
 	public int getNumTar() {
 		return turnMove.getNumTar();
 	}
+
 	public Monster[] getTargets() {
 		return targets.toArray(new Monster[targets.size()]);
 	}
@@ -229,11 +260,12 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public void executeTurn() { //wrapper for turnMove
 		turnMove.execute();
 	}
-	public void usePassive(Monster... targets) {
+	public void usePassive(List<Monster> possTargets) { //look at; assume all fighters passed in
 		if (passive != null) {
 			List<Monster> sto = this.targets; //store previous targets
-			this.targets = new ArrayList<>(Arrays.asList(targets));
-			passive.execute();
+
+			this.targets = new ArrayList<>(possTargets);
+			passive.execute(); //execute will handle targeting
 
 			this.clearTargets();
 			this.targets = sto;
@@ -258,6 +290,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		moveList = moveStore.toArray(moveList);
 	}
 
+	@Deprecated
 	public void setPassive(Ability passive) {
 		if (passive.isPassive()) 
 			this.passive = passive;
@@ -296,7 +329,11 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 			info.setDuration(-1);
 		}
 	}
-	public void setStatus(Status stat, boolean toggle) { //default to one turn
+
+	/**
+	 * turns on/off the inputted stat; defaults to one turn
+	 */
+	public void setStatus(Status stat, boolean toggle) {
 		StatusInfo info = status.get(stat);
 		if (toggle) {
 			info.setStart(0);
@@ -311,7 +348,9 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		this.turnDam += damage;
 	}
 
-	//modifies stats based and restores health and mana
+	/**
+	 * modifies stats based and restores health and mana
+	 */
 	public void levelUp () {
 		level += 1;
 		for (Stat stat: Stat.values()) {
@@ -328,12 +367,12 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	}
 
 	/**
-	 * based off of speed; want highest first
+	 * based off of name, alphbetically
 	 */
 	@Override
 	public int compareTo (Monster other) {
-		Float thisSpe = this.getStat(Stat.SPEED), otherSpe = other.getStat(Stat.SPEED);
-		return otherSpe.compareTo(thisSpe);
+		String thisName = this.name, otherName = other.name;
+		return thisName.compareTo(otherName);
 	}
 
 

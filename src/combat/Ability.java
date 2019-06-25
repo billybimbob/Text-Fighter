@@ -8,10 +8,13 @@ public abstract class Ability implements Cloneable {
 	protected String name, description;
 	protected float manaCost, damage, damageMod;
 	protected Monster attacker;
-	protected int numTar, duration; //no limit is -1, 0 is self
+	protected int numTar, duration;
 	protected boolean attType, priority, passive; //aoe attacks can't work with Monster
 	
-	public Ability(Monster user) {
+	/**
+	 * set default values for an abiltiy
+	 */
+	protected Ability(Monster user) {
 		this.priority = false;
 		this.passive = false;
 		this.numTar = 1;
@@ -64,7 +67,6 @@ public abstract class Ability implements Cloneable {
 	protected void targetReduct(Monster target) {
 		Stat blockStat = Monster.getBlockStat(attType);
 		damage -= (int)(Math.random()*(target.getStat(blockStat)*.65));
-		
 		int minDam = target.minDam(attacker, attType);
 
 		damage = minDam > damage ? minDam : damage; //floor to minDam
@@ -74,9 +76,6 @@ public abstract class Ability implements Cloneable {
 		return damage <= 0;
 	}
 
-	public boolean resolved() { //check if multi turn, see if ability finished
-		return duration == 1;
-	}
 
 	/*
 	 * getters
@@ -100,13 +99,18 @@ public abstract class Ability implements Cloneable {
 	public boolean targeted() {
 		return numTar > 0;
 	}
+	public boolean resolved() { //check if multi turn, see if ability finished
+		return duration == 1;
+	}
 
 	@Override
 	public String toString() {
 		return name + " - " + manaCost + " mana\n\t" + description;
 	}
 
-	
+	/**
+	 * attacker deals damage to target, and the damage is logged
+	 */
 	public static void dealDamage (Monster attacker, Monster target, float damage) {
 		target.modStat(Stat.HP, -damage);
 		target.addDamTurn(damage);
