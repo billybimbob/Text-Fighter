@@ -98,14 +98,14 @@ public class Hero extends Monster {
 		}
 
 		String[] inventNames = inventory.accessNames();
-		int turnNum = Interface.FIGHT.getTurnNum(); //bad
+		int turnNum = currentTurn(); //keep eye on
 		String itemPrompt = "Which item do you want to use?";
 		int pickNum = Interface.choiceInput(true, inventNames, itemPrompt);
 		
 		if (pickNum == 0)
 			return;
 
-		if (this.checkStatus(Status.POTION, turnNum) > 0) { //potin still active
+		if (this.checkStatus(Status.POTION) > 0) { //potin still active
 			String usePrompt = "Another buff is still active, "
 				+ "and will be canceled by this potion"
 				+ "\nAre you sure you want to do this?";
@@ -132,8 +132,7 @@ public class Hero extends Monster {
 
 		case 2: //Try to flee
 			//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
-			modStat(Stat.SPEED, 7);
-			setStatus(Status.DODGE, true);
+			setStatus(Status.DODGE, 2);
 			Interface.writeOut("You try dodge all incoming attacks, increasing evasion by 7");
 			break;
 

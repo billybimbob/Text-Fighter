@@ -3,7 +3,6 @@ package combat.moves.magic.shapeshift;
 import assets.*;
 import assets.Shifter;
 import combat.*;
-import main.Interface;
 
 public abstract class ShapeShift extends Ability { //abstract so doesn't have to implement execute
 	
@@ -25,7 +24,7 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 		target = newShift;
 
 		target.setStat(Stat.HP, target.getStat(Stat.HP)*hpRatio);
-		target.setStatus(Status.SHIFT, Interface.FIGHT.getTurnNum(), duration);
+		target.setStatus(Status.SHIFT, duration);
 	}
 
 	public static void revert (Monster target) { //can't ref by movelist; update status

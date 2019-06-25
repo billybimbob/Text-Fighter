@@ -31,7 +31,6 @@ public class ChangeForm extends ShapeShift {
 		
 		if (enoughMana()) {
 			attacker.modStat(Stat.MP, -manaCost);
-			String changePrompt = "Which form do you want to take?";
 			int availChange = formList.length;
 			Monster[] tempList = new Monster[availChange];
 
@@ -51,7 +50,12 @@ public class ChangeForm extends ShapeShift {
 			for (int i = 0; i < tempList.length; i++)
 				formNames[i] = tempList[i].getName();
 			
-			int formChoice = Interface.choiceInput(false, formNames, changePrompt)-1;
+			int formChoice = 0;
+			if (attacker.getClass() == Hero.class) {
+				String changePrompt = "Which form do you want to take?";
+				formChoice = Interface.choiceInput(false, formNames, changePrompt)-1;
+			} else
+				formChoice = (int)(Math.random()*tempList.length);
 
 			String beforeName = attacker.getName();
 

@@ -132,6 +132,9 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	protected Ability getPassive(Move name) {
 		return Index.createPassive(name, this);
 	}
+	protected int currentTurn() {
+		return Interface.FIGHT.getTurnNum();
+	}
 
 
 	/*
@@ -179,7 +182,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		return minDam > 0 ? minDam : 0;
 	}
 
-	//-1 not active, 0 finished, >0 amount of time active
+	@Deprecated
 	public int checkStatus(Status status, int turnNum) { //checks if status needs updating, keep eye on
 		StatusInfo info = getStatus(status);
 		int start = info.getStart(), duration = info.getDuration();
@@ -188,6 +191,22 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		if (start > -1 && duration > -1) {
 			int timeActive = turnNum-start;
 			ret = timeActive >= duration ? 0 : timeActive;
+		}
+		return ret;
+	}
+
+	/**
+	 * @return -1 not active, 0 finished, >0 amount of time remaining; toggle always returns 0
+	 */
+	public int checkStatus(Status status) { //checks if status needs updating, keep eye on
+		StatusInfo info = getStatus(status);
+		int start = info.getStart(), duration = info.getDuration();
+		int turnNum = currentTurn();
+
+		int ret = -1;
+		if (start > -1 && duration > -1) {
+			int timeActive = turnNum-start;
+			ret = timeActive >= duration ? 0 : duration-timeActive;
 		}
 		return ret;
 	}
@@ -269,7 +288,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public void setStatus(Status stat, int duration) { //not sure
 		StatusInfo info = status.get(stat);
 		if (duration > 0) {
-			int start = Interface.FIGHT.getTurnNum();
+			int start = currentTurn();
 			info.setStart(start);
 			info.setDuration(duration);
 		} else {
@@ -308,10 +327,13 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		return name + " - " + getStat(Stat.HP) + " hp" + " - " + getStat(Stat.MP) + " mp" + " - " + getStat(Stat.SPEED) + " speed";
 	}
 
+	/**
+	 * based off of speed; want highest first
+	 */
 	@Override
-	public int compareTo (Monster other) { //based off of speed
+	public int compareTo (Monster other) {
 		Float thisSpe = this.getStat(Stat.SPEED), otherSpe = other.getStat(Stat.SPEED);
-		return thisSpe.compareTo(otherSpe);
+		return otherSpe.compareTo(thisSpe);
 	}
 
 

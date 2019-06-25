@@ -143,6 +143,7 @@ public class Fight {
 		attacker.usePassive(nonSelf(attacker));
 		statusCheck(attacker, Status.BURN);
 		statusCheck(attacker, Status.POTION); //not sure if should be end of turn or beginning
+		statusCheck(attacker, Status.REFLECT);
 		statusCheck(attacker, Status.STUN);
 		
 		if (!skipTurn) 
@@ -152,8 +153,8 @@ public class Fight {
 
 
 		//end of turn
+		statusCheck(attacker, Status.DODGE);
 		statusCheck(attacker, Status.POISON);
-		statusCheck(attacker, Status.REFLECT);
 		statusCheck(attacker, Status.SHIFT);
 		
 		attacker.clearTurn();
@@ -180,7 +181,7 @@ public class Fight {
 
 		
 	private void statusCheck (Monster checking, Status status) { //each turn effects
-		int check = checking.checkStatus(status, getTurnNum());
+		int check = checking.checkStatus(status);
 
 		if (check > -1) { //status active
 			switch(status) {
@@ -195,12 +196,15 @@ public class Fight {
 				break;
 
 			case DODGE:
-				checking.modStat(Stat.SPEED, -7);
-				checking.setStatus(status, false);
+				if (check == 0) { //done
+					checking.modStat(Stat.SPEED, -7);
+					checking.setStatus(status, false);
+				} else 
+					checking.modStat(Stat.SPEED, 7);
 				break;
 
 			case POISON:
-				int poiDam = (int)(checking.getStat(Stat.HP)*0.01*((getTurnNum()-check)%10));
+				int poiDam = (int)(checking.getStat(Stat.HP)*0.01*(getTurnNum()%10));
 				checking.modStat(Stat.HP, -poiDam);
 				Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
 				break;
@@ -236,7 +240,8 @@ public class Fight {
 				//triggered by chargeatt, magblast, disrupt
 				Interface.writeOut(checking.getName() + " is stunned");
 				skipTurn = true;
-				checking.setStatus(status, false);
+				if (check == 0)
+					checking.setStatus(status, false);
 				break;
 			}
 		}

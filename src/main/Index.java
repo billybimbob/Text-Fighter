@@ -46,20 +46,20 @@ public class Index {
 	private static void mapMoves() {
 
 		//could split different class abilities
-		attackList.put(Move.BASIC, (Monster user) -> new BasicAttack(user));
-		attackList.put(Move.CHARGE, (Monster user) -> new ChargeAttack(user));
-		attackList.put(Move.DISRUPT, (Monster user) -> new Disrupt(user));
-		attackList.put(Move.SPIN, (Monster user) -> new SpinAttack(user));
-		attackList.put(Move.SHOCK, (Monster user) -> new Shock(user));
-		attackList.put(Move.DRAIN, (Monster user) -> new LifeDrain(user));
-		attackList.put(Move.FREEZE, (Monster user) -> new Freeze(user));
-		attackList.put(Move.POLY, (Monster user) -> new Polymorph(user));
-		attackList.put(Move.REFLECT, (Monster user) -> new Reflect(user));
-		attackList.put(Move.SHEEP, (Monster user) -> new SheepAttacks(user));
-		attackList.put(Move.SHIFT, (Monster user) -> new ChangeForm(user));
+		attackList.put(Move.BASIC, BasicAttack::new);
+		attackList.put(Move.CHARGE, ChargeAttack::new);
+		attackList.put(Move.DISRUPT, Disrupt::new);
+		attackList.put(Move.SPIN, SpinAttack::new);
+		attackList.put(Move.SHOCK, Shock::new);
+		attackList.put(Move.DRAIN, LifeDrain::new);
+		attackList.put(Move.FREEZE, Freeze::new);
+		attackList.put(Move.POLY, Polymorph::new);
+		attackList.put(Move.REFLECT, Reflect::new);
+		attackList.put(Move.SHEEP, SheepAttacks::new);
+		attackList.put(Move.SHIFT, ChangeForm::new);
 		
-		passiveList.put(Move.FLURRY, (Monster user) -> new Flurry(user));
-		passiveList.put(Move.INTIM, (Monster user) -> new Intimidate(user));
+		passiveList.put(Move.FLURRY, Flurry::new);
+		passiveList.put(Move.INTIM, Intimidate::new);
 	}
 
 	private static void readMonsters() {

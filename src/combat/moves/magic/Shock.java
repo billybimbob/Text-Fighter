@@ -34,7 +34,7 @@ public class Shock extends Ability {
 					
 					if (attackHit(targets[0], 0.4)) {
 						Interface.writeOut(attacker.getName() + "'s blast stuns " + targets[0].getName());
-						targets[0].setStatus(Status.STUN, true);
+						targets[0].setStatus(Status.STUN, 2);
 					}
 				}
 			} else {
