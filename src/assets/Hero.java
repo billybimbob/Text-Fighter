@@ -18,18 +18,18 @@ public class Hero extends Monster {
 		
 	}
 
-	private static Monster getFightClass(int option) {
+	public static Monster getFightClass(int option) {
 		Monster fightClass = null;
 		
 		switch(option) {
 			case 1: //warrior
-				Index.getMonBase("Warrior");
+				fightClass = Index.getMonBase("Warrior");
 				break;
 			case 2: //mage
-				Index.getMonBase("Mage");
+				fightClass = Index.getMonBase("Mage");
 				break;
 			case 3: //shifter
-				Index.getMonBase("Shifter");
+				fightClass = Index.getMonBase("Shifter");
 				break;
 		}
 

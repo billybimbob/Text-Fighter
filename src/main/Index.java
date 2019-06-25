@@ -87,6 +87,7 @@ public class Index {
 		} catch (IOException e) {
 			System.err.println("Issue reading file");
 		}
+
 	}
 
 	public static Ability createAbility(Move name, Monster user) { //wrapper for getting and apply
@@ -96,7 +97,7 @@ public class Index {
 		return passiveList.get(name).apply(user);
 	}
 
-	
+
 	public static Monster getMonBase(int id) {
 		return monsterList.get(id);
 	}

@@ -25,7 +25,7 @@ public class Interface {
 		String[] availClass = {"Warrior", "Mage", "Shifter"};
 		String classPrompt = "Which class you would like to be?\nThis will affect your stats, potions, and abilities";
 		int classChoice = choiceInput(false, availClass, classPrompt);
-		//int classChoice = 1;
+		//classChoice = 1;
 		
 		HERO = new Hero(name, classChoice);
 		
