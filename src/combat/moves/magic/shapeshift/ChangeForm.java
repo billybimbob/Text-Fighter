@@ -18,7 +18,7 @@ public class ChangeForm extends ShapeShift {
 		formList = new Monster[] { //see if I can parameterize
 			Index.createMonster("Eagle"), 
 			Index.createMonster("Pangolin"), 
-			Index.createMonster("Salamander")
+			Index.createMonster("Salamander") //circular dependency; bad
 		};		
 		
 		for(Monster shift: formList)

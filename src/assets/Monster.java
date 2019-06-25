@@ -3,6 +3,7 @@ package assets;
 import java.util.*;
 import combat.*;
 import main.Index;
+import main.Interface;
 import main.Index.Move;
 
 public class Monster implements Comparable<Monster> { //Temporary, probably make abstract later
@@ -254,6 +255,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		setStat(stat, newVal);
 	}
 
+	@Deprecated
 	public void setStatus(Status stat, int startTurn, int duration) {
 		StatusInfo info = status.get(stat);
 		if (startTurn < 0 || duration < 0) {
@@ -264,7 +266,18 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 			info.setDuration(duration);
 		}
 	}
-	public void setStatus(Status stat, boolean toggle) {
+	public void setStatus(Status stat, int duration) { //not sure
+		StatusInfo info = status.get(stat);
+		if (duration > 0) {
+			int start = Interface.FIGHT.getTurnNum();
+			info.setStart(start);
+			info.setDuration(duration);
+		} else {
+			info.setStart(-1);
+			info.setDuration(-1);
+		}
+	}
+	public void setStatus(Status stat, boolean toggle) { //default to one turn
 		StatusInfo info = status.get(stat);
 		if (toggle) {
 			info.setStart(0);

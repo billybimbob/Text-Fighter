@@ -179,7 +179,7 @@ public class Fight {
 
 
 		
-	public void statusCheck (Monster checking, Status status) { //each turn effects
+	private void statusCheck (Monster checking, Status status) { //each turn effects
 		int check = checking.checkStatus(status, getTurnNum());
 
 		if (check > -1) { //status active
@@ -192,6 +192,11 @@ public class Fight {
 					checking.setStatus(status, false);
 					Interface.writeOut(checking.getName() + " is no longer burned");
 				}
+				break;
+
+			case DODGE:
+				checking.modStat(Stat.SPEED, -7);
+				checking.setStatus(status, false);
 				break;
 
 			case POISON:

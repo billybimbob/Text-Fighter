@@ -1,5 +1,5 @@
 package combat;
 
 public enum Status {
-    BURN, POISON, POTION, REFLECT, SHIFT, STUN;
+    BURN, DODGE, POISON, POTION, REFLECT, SHIFT, STUN;
 }
