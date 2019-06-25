@@ -3,7 +3,6 @@ package assets;
 import java.util.List;
 import combat.*;
 import main.*;
-import main.Index.Move;;
 
 public class Hero extends Monster {
 
@@ -12,51 +11,29 @@ public class Hero extends Monster {
 	private Items pick;
 	private boolean action;
 	
-	public Hero (String name, int classes) { //if classes true, warrior
-		super(name, true, true, new float[]{25, 20, 5, 5, 5, 5, 5, 5});
-		level = 1;
+	public Hero (String name, int choice) { //if classes true, warrior
+		super(getFightClass(choice));
+		this.name = name;
 		inventory = new Inventory();
 		
-		switch(classes) {
-		case 1: //warrior
-			moveList = new Ability[] {	getAbility(Move.BASIC), getAbility(Move.CHARGE), 
-										getAbility(Move.DISRUPT), getAbility(Move.SPIN) };
+	}
 
-			attType = true;
-			setStat(Stat.MAXHP, 40.0f); //try iterating later
-			setStat(Stat.HP, getStat(Stat.MAXHP));
-			setStat(Stat.ATT, 7.0f);
-			setStat(Stat.MAG, 1.0f);
-			setStat(Stat.DEF, 7.0f);
-			break;
-			
-		case 2: //mage
-			moveList = new Ability[] {	getAbility(Move.BASIC), getAbility(Move.SHOCK),
-										getAbility(Move.DRAIN), getAbility(Move.FREEZE),
-										getAbility(Move.POLY), getAbility(Move.REFLECT) };
-
-			attType = false;
-			setStat(Stat.MAG, 7.0f);
-			setStat(Stat.ATT, 1.0f);
-			setStat(Stat.MAGR, 7.0f);
-			setStat(Stat.DEF, 4.0f);
-			setStat(Stat.MAG, 7.0f);
-			break;
-
-		case 3: //shifter
-			moveList = new Ability[] {getAbility(Move.SHIFT)};
-			attType = false;
-			setStat(Stat.HP, 10.0f);
-			setStat(Stat.MAXHP, getStat(Stat.HP));
-			setStat(Stat.ATT, 1.0f);
-			setStat(Stat.MAG, 1.0f);
-			setStat(Stat.DEF, 1.0f);
-			setStat(Stat.MAGR, 1.0f);
-			setStat(Stat.SPEED, 7.0f);
-			setStat(Stat.CRIT, 1.0f);
-			break;
-		}
+	private static Monster getFightClass(int option) {
+		Monster fightClass = null;
 		
+		switch(option) {
+			case 1: //warrior
+				Index.getMonster("Warrior");
+				break;
+			case 2: //mage
+				Index.getMonster("Mage");
+				break;
+			case 3: //shifter
+				Index.getMonster("Shifter");
+				break;
+		}
+
+		return fightClass;
 	}
 
 	public Items getPick() { return pick; }

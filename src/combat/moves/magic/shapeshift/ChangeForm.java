@@ -16,9 +16,9 @@ public class ChangeForm extends ShapeShift {
 		numTar = 0;
 		
 		formList = new Monster[]{ //see if I can parameterize
-				new Monster(Index.shiftMonList[0]), 
-				new Monster(Index.shiftMonList[1]), 
-				new Monster(Index.shiftMonList[2])};
+				new Monster(Index.getMonster("Eagle")), 
+				new Monster(Index.getMonster("Pangolin")), 
+				new Monster(Index.getMonster("Salamander"))};
 				
 		
 		for(Monster shift: formList)

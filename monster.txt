@@ -1,0 +1,12 @@
+Classes:
+Mage, false, 25,20,1,4,7,7,5,5, drain,freeze,poly,reflect,shock
+Shifter, false, 10,5,1,1,1,1,7,1, shift
+Warrior, true, 40,20,7,7,1,5,5,5, charge,disrupt,spin
+Monsters:
+Bandit, true, 15,15,3,3,3,3,6,6, charge
+Eagle, true, 15,15,8,2,2,2,18,5, disrupt
+Pangolin, true, 30,15,2,10,1,10,3,5, charge
+Salamander, false, 25,15,1,5,5,6,5,5, drain
+Sheep, true, 5,5,1,1,1,1,1,1, sheep
+Slime, true, 20,10,3,5,3,3,1,1, freeze
+Spider, false, 10,15,6,2,3,3,4,4, drain

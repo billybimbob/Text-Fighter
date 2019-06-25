@@ -24,31 +24,31 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 
 	public final static int levMult = 2;
 	
-	private String name;
 	private float turnDam;
 	private Map<Stat, Float> stats;
+	private Ability[] moveList;
 	private Ability passive, turnMove;
 	private Map<Status, StatusInfo> status;
-	private boolean aggro; //attType true means physical attack
+	private boolean aggro;
 	private List<Monster> targets;
 	
-	protected Ability[] moveList;
+	protected String name;
 	protected int level = 1;
-	protected boolean attType;
+	protected boolean attType; //attType true means physical attack
 
 
 	//constructor to have no ability
-	public Monster (String name, boolean aggro, boolean attType, float[] stats) {
-		this.turnDam = 0;
+	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats) {
 		this.name = name;
 		this.aggro = aggro;
 		this.attType = attType;
+		this.turnDam = 0;
 
 		this.stats = new HashMap<>();
 		//double [] statVals = {hp,hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as statsName
 		int idx = 0;
 		for (Stat statName: Stat.values()) {
-			setStat(statName, stats[idx]);
+			setStat(statName, stats.get(idx));
 			if (statName != Stat.HP && statName != Stat.MP)
 				idx++;
 		}
@@ -58,9 +58,14 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	}
 
 	//monster index constructor, basic attack and one special attack
-	public Monster (String name, boolean aggro, boolean attType, float[] stats, Move special) {
+	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats, List<Move> specials) {
 		this(name, aggro, attType, stats);
-		moveList = new Ability[]{getAbility(Move.BASIC), getAbility(special)};
+		List<Ability> moveSto = new ArrayList<>();
+		moveSto.add(getAbility(Move.BASIC));
+		for (Move special: specials)
+			moveSto.add(getAbility(special));
+
+		moveList = moveSto.toArray(new Ability[moveSto.size()]);
 		
 	}
 
@@ -119,6 +124,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		return this.status.get(status);
 	}
 
+	//protected helpers
 	protected Ability getAbility(Move name) {
 		return Index.createAbility(name, this);
 	}
@@ -126,6 +132,10 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		return Index.createPassive(name, this);
 	}
 
+
+	/*
+	 * public methods
+	 */
 
 	//accessors
 	public String getName() {
@@ -292,6 +302,8 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		return thisSpe.compareTo(otherSpe);
 	}
 
+
+	//static methods
 	public static Stat getHitStat(boolean attType) {
 		return attType ? Stat.ATT : Stat.MAG;
 	}
