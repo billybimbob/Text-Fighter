@@ -11,8 +11,8 @@ public class Hero extends Monster {
 	private Items pick;
 	private boolean action;
 	
-	public Hero (String name, int choice) { //if classes true, warrior
-		super(getFightClass(choice));
+	public Hero (String name, int classChoice) { //if classes true, warrior
+		super(getFightClass(classChoice));
 		this.name = name;
 		inventory = new Inventory();
 		
@@ -23,13 +23,13 @@ public class Hero extends Monster {
 		
 		switch(option) {
 			case 1: //warrior
-				Index.getMonster("Warrior");
+				Index.getMonBase("Warrior");
 				break;
 			case 2: //mage
-				Index.getMonster("Mage");
+				Index.getMonBase("Mage");
 				break;
 			case 3: //shifter
-				Index.getMonster("Shifter");
+				Index.getMonBase("Shifter");
 				break;
 		}
 

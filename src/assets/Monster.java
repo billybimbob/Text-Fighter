@@ -188,7 +188,6 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 			int timeActive = turnNum-start;
 			ret = timeActive >= duration ? 0 : timeActive;
 		}
-
 		return ret;
 	}
 
@@ -240,7 +239,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	}
 
 	public void setPassive(Ability passive) {
-		if (passive.getPassive()) 
+		if (passive.isPassive()) 
 			this.passive = passive;
 		else
 			System.out.println("Not a valid ability");

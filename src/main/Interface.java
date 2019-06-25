@@ -54,9 +54,8 @@ public class Interface {
 		
 		fighters.add(HERO);
 		
-		for (int i = 0; i <= 2; i++) {
-			fighters.add(new Monster(Index.monsterList[i]));
-		}
+		for (int i = 0; i < 3; i++)
+			fighters.add(Index.randomMonster());
 
 		FIGHT = new Fight(fighters);
 		Interface.writeOut("Press enter when you are ready to fight");

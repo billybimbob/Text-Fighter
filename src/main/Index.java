@@ -31,7 +31,7 @@ public class Index {
 		mapMoves();
 
 		// hp, mp, atk, def, magic, mres, speed, crit, special attack
-		createMonsters();
+		readMonsters();
 	}
 
 	private static void createPotions() {
@@ -62,11 +62,13 @@ public class Index {
 		passiveList.put(Move.INTIM, (Monster user) -> new Intimidate(user));
 	}
 
-	private static void createMonsters() {
+	private static void readMonsters() {
 		try (BufferedReader reading = new BufferedReader(new FileReader("monster.txt"));) {
 			String line;
 			while((line = reading.readLine()) != null) {
 				String[] tok = line.split(", ");
+				if (tok.length <= 1) //skip line
+					continue;
 
 				String name = tok[0];
 				boolean attType = Boolean.parseBoolean(tok[1]);
@@ -94,10 +96,23 @@ public class Index {
 		return passiveList.get(name).apply(user);
 	}
 
-	public static Monster getMonster(int id) {
+	
+	public static Monster getMonBase(int id) {
 		return monsterList.get(id);
 	}
-	public static Monster getMonster(String name) {
+	public static Monster getMonBase(String name) {
 		return monsterList.get( monIds.get(name) );
+	}
+
+	public static Monster createMonster(int id) {
+		return new Monster( getMonBase(id) );
+	}
+	public static Monster createMonster(String name) {
+		return new Monster( getMonBase(name) );
+	}
+
+	public static Monster randomMonster() {
+		int id = (int)(Math.random()*monsterList.size());
+		return createMonster(id);
 	}
 }

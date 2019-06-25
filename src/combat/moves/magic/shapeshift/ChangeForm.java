@@ -15,11 +15,11 @@ public class ChangeForm extends ShapeShift {
 		manaCost = 5; //might get rid
 		numTar = 0;
 		
-		formList = new Monster[]{ //see if I can parameterize
-				new Monster(Index.getMonster("Eagle")), 
-				new Monster(Index.getMonster("Pangolin")), 
-				new Monster(Index.getMonster("Salamander"))};
-				
+		formList = new Monster[] { //see if I can parameterize
+			Index.createMonster("Eagle"), 
+			Index.createMonster("Pangolin"), 
+			Index.createMonster("Salamander")
+		};		
 		
 		for(Monster shift: formList)
 			shift.addAttack(this);

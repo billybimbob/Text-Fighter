@@ -94,7 +94,7 @@ public abstract class Ability implements Cloneable {
 	public boolean getPriority() {
 		return priority;
 	}
-	public boolean getPassive() {
+	public boolean isPassive() {
 		return passive;
 	}
 	public boolean targeted() {
