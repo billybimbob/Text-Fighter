@@ -1,10 +1,13 @@
 package assets;
 
+
 public abstract class Items {
-	public String name, statMod, tier;
+
+	protected Stat statMod;
+	public String name, tier;
 	public int numAmount, modVal, baseModVal;
 	
-	public void qualityTier (String tier) {
+	protected void qualityTier (String tier) {
 		this.tier = tier;
 		switch (tier) {
 			case "basic":
@@ -18,6 +21,6 @@ public abstract class Items {
 				break;
 		}
 	}
-	public abstract void useItem (Monsters user);
+	public abstract void useItem (Monster user);
 
 }

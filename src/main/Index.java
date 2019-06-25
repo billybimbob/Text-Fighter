@@ -1,75 +1,132 @@
 package main;
 
-import java.util.Scanner;
+import java.util.*;
+import java.util.function.Function;
+import java.io.*;
 
 import assets.*;
-import combat.*;
-import combat.magic.*;
-import combat.magic.shapeshift.*;
-import combat.melee.*;
-import combat.passive.*;
+import combat.Ability;
+import combat.moves.*;
+import combat.moves.magic.*;
+import combat.moves.magic.shapeshift.*;
+import combat.moves.melee.*;
+import combat.moves.passive.*;
 
 public class Index {
 
-	public static Ability[] attackList, passiveList;
-	public static Potions[] potionsList;
-	public static Monsters[] monsterList;
-	public static Monsters[] shiftMonList;
-	
-	public Index(Scanner keyboard) {
-		Potions hpPotion = new Potions("hp");  //0, Potion indices
-		Potions mpPotion = new Potions("mp");  //1
-		Potions atPotion = new Potions("att"); //2
-		Potions dfPotion = new Potions("def"); //3
-		Potions mgPotion = new Potions("mag"); //4
-		Potions mrPotion = new Potions("magR");//5
-		Potions spPotion = new Potions("spe"); //6
-		Potions crPotion = new Potions("crit");//7
-		Potions[] potStore = {hpPotion, mpPotion, atPotion, dfPotion, mgPotion, mrPotion, spPotion, crPotion};
-		potionsList = potStore;
-		
-		Ability baseA = new BasicAttack();
-		Ability charg = new ChargeAttack(); //start of melee abilites, 1
-		Ability disrt = new Disrupt();
-		Ability spins = new SpinAttack();
-		Ability shock = new Shock();   //start of magic abilites, 4
-		Ability drain = new LifeDrain();
-		Ability froze = new Freeze();
-		Ability polym = new Polymorph();
-		Ability reflt = new Reflect();
-		Ability sheep = new SheepAttacks();
-		Ability shift = new ChangeForm(keyboard);
-		Ability[] attStore = {baseA, charg, disrt, spins, shock, drain, froze, polym, reflt, sheep, shift};
-		attackList = attStore;
-		
-		Ability flury = new Flurry();
-		Ability intim = new Intimidate();
-		Ability[] passStore = {flury, intim};
-		passiveList = passStore;
-		
-		// hp, mp, atk, def, magic, mres, speed, crit, special attack
-		Monsters mon1 = new Monsters("Bandit", false, true, 15, 15, 3, 3, 3, 3, 6, 6, 1);
-		Monsters mon2 = new Monsters("Spider", false, false, 10, 15, 6, 2, 3, 3, 4, 4, 5);
-		Monsters mon3 = new Monsters("Slime", false, true, 20, 10, 3, 5, 3, 3, 1, 1, 6);
-		Monsters mon4 = new Monsters("Eagle", true, true, 15, 15, 8, 2, 2, 2, 18, 5, 2); //temporary, should add shapeshifter constructor
-		Monsters mon5 = new Monsters("Pangolin", true, true, 30, 15, 2, 10, 1, 10, 3, 5, 1);
-		Monsters mon6 = new Monsters("Salamander", true, false, 25, 15, 1, 5, 5, 6, 5, 5, 5);
-		Monsters mon7 = new Monsters("Sheep", false, true, 5, 5, 1, 1, 1, 1, 1, 1, 9);
-		Monsters[] monStore = {mon1, mon2, mon3, mon4, mon5, mon6};
-		Monsters[] shapeStore = {mon4, mon5, mon6, mon7};
-		
-		monsterList = monStore;
-		shiftMonList = shapeStore;
-		
-		for (int i = 0; i <= passiveList.length-1; i++) {//temporary
-			try {
-				shiftMonList[i].setPassive((Ability)passiveList[i].clone());
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
+	public static enum Move { 
+		BASIC, CHARGE, DISRUPT, SPIN, SHOCK, DRAIN, FREEZE, POLY, REFLECT, SHIFT, SHEEP, //attacks
+		FLURRY, INTIM; //pasives
 	}
-	public void use () { //dummy method
+
+	private static final Map<Move, Function<Monster, Ability>> attackList = new HashMap<>();
+	private static final Map<Move, Function<Monster, Ability>> passiveList = new HashMap<>();
+	public static Potions[] potionsList;
+	private static final List<Monster> monsterList = new ArrayList<>(); //all monsters
+	private static final Map<String, Integer> monIds = new HashMap<>(); //name to list idx
+	
+	public static void createVals() {
 		
+		createPotions();
+		mapMoves();
+
+		// hp, mp, atk, def, magic, mres, speed, crit, special attack
+		readMonsters();
+	}
+
+	private static void createPotions() {
+		List<Potions> potionsSto = new ArrayList<>();
+		for (Stat stat: Stat.values())
+			if (stat != Stat.MAXHP && stat != Stat.MAXMP)
+				potionsSto.add(new Potions(stat));
+
+		potionsList = potionsSto.toArray(new Potions[potionsSto.size()]);
+	}
+
+	private static void mapMoves() {
+
+		//could split different class abilities
+		attackList.put(Move.BASIC, BasicAttack::new);
+		attackList.put(Move.CHARGE, ChargeAttack::new);
+		attackList.put(Move.DISRUPT, Disrupt::new);
+		attackList.put(Move.SPIN, SpinAttack::new);
+		attackList.put(Move.SHOCK, Shock::new);
+		attackList.put(Move.DRAIN, LifeDrain::new);
+		attackList.put(Move.FREEZE, Freeze::new);
+		attackList.put(Move.POLY, Polymorph::new);
+		attackList.put(Move.REFLECT, Reflect::new);
+		attackList.put(Move.SHEEP, SheepAttacks::new);
+		attackList.put(Move.SHIFT, ChangeForm::new);
+		
+		passiveList.put(Move.FLURRY, Flurry::new);
+		passiveList.put(Move.INTIM, Intimidate::new);
+	}
+
+	private static void readMonsters() {
+
+		try (BufferedReader reading = new BufferedReader(new FileReader("monster.txt"));) {
+			final boolean defltAggro = false;
+			String line;
+			while((line = reading.readLine()) != null) {
+				String[] tok = line.split(", ");
+				final int parseLen = tok.length;
+
+				if (parseLen < 3) //skip line
+					continue;
+
+				String name = tok[0];
+				boolean attType = Boolean.parseBoolean(tok[1]);
+				
+				List<Integer> stats = new ArrayList<>();
+				for (String numTok: tok[2].split(","))
+					stats.add(Integer.parseInt(numTok));
+
+				if (parseLen >= 4) { //has special moves
+					List<Move> moves = new ArrayList<>();
+					for (String moveTok: tok[3].split(","))
+						moves.add(Move.valueOf(moveTok.toUpperCase()));
+
+					if (parseLen >= 5) { //has passive
+						Move passive = Move.valueOf(tok[4].toUpperCase());
+						monsterList.add(new Monster(name, defltAggro, attType, stats, moves, passive));
+					} else
+						monsterList.add(new Monster(name, defltAggro, attType, stats, moves));
+
+				} else
+					monsterList.add(new Monster(name, defltAggro, attType, stats));
+
+				monIds.put(name, monsterList.size()-1); //should be the list idx
+			} 
+		} catch (IOException e) {
+			System.err.println("Issue reading file");
+		}
+
+	}
+
+	public static Ability createAbility(Move name, Monster user) { //wrapper for getting and apply
+		return attackList.get(name).apply(user);
+	}
+	public static Ability createPassive(Move name, Monster user) {
+		return passiveList.get(name).apply(user);
+	}
+
+
+	public static Monster getMonBase(int id) {
+		return monsterList.get(id);
+	}
+	public static Monster getMonBase(String name) {
+		return monsterList.get( monIds.get(name) );
+	}
+
+	public static Monster createMonster(int id) {
+		return new Monster( getMonBase(id) );
+	}
+	public static Monster createMonster(String name) {
+		return new Monster( getMonBase(name) );
+	}
+
+	public static Monster randomMonster() {
+		int id = (int)(Math.random()*monsterList.size());
+		return createMonster(id);
 	}
 }
