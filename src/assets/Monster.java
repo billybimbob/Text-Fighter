@@ -191,12 +191,6 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public String getName() {
 		return name;
 	}
-	public float getStat (Stat stat) {
-		return this.stats.get(stat).getTemp();
-	}
-	public float getStatMax (Stat stat) {
-		return this.stats.get(stat).getBase();
-	}
 	public double getTurnDam() {
 		return this.turnDam;
 	}
@@ -231,19 +225,18 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public float getStatRatio(Stat stat) {
 		return this.getStat(stat)/this.getStatMax(stat);
 	}
-
-	public int minDam(Monster attacker, boolean attType) { //max value for now is 10 for def and magR
-		Stat hitStat = getHitStat(attType), blockStat = getBlockStat(attType);
-		int minDam = (int)attacker.getStat(hitStat);
-		double stat = this.getStat(blockStat);
-		minDam -= ((int)stat/2);
-		return minDam > 0 ? minDam : 0;
+	
+	public float getStat (Stat stat) {
+		return this.stats.get(stat).getTemp();
+	}
+	public float getStatMax (Stat stat) {
+		return this.stats.get(stat).getBase();
 	}
 
 	/**
 	 * @return -1 not active, 0 finished, >0 amount of time remaining; toggle always returns 0
 	 */
-	public int checkStatus(Status status) { //checks if status needs updating, keep eye on
+	public int getStatus(Status status) { //checks if status needs updating, keep eye on
 		StatusInfo info = this.status.get(status);
 		int start = info.getStart(), duration = info.getDuration();
 		int turnNum = currentTurn();

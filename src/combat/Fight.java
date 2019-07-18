@@ -178,7 +178,7 @@ public class Fight {
 	}	
 		
 	private void statusCheck (Monster checking, Status status) { //each turn effects
-		int check = checking.checkStatus(status);
+		int check = checking.getStatus(status);
 
 		if (check > -1) { //status active
 			switch(status) {

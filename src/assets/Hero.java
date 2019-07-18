@@ -105,7 +105,7 @@ public class Hero extends Monster {
 		if (pickNum == 0)
 			return;
 
-		if (this.checkStatus(Status.POTION) > 0) { //potin still active
+		if (this.getStatus(Status.POTION) > 0) { //potin still active
 			String usePrompt = "Another buff is still active, "
 				+ "and will be canceled by this potion"
 				+ "\nAre you sure you want to do this?";

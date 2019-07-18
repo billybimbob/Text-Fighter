@@ -64,10 +64,13 @@ public abstract class Ability implements Cloneable {
 		return critHit;
 	}
 
-	protected void targetReduct(Monster target) {
-		Stat blockStat = Monster.getBlockStat(attType);
+	protected void targetReduct(Monster target) { //maybe look over
+		Stat hitStat = Monster.getHitStat(attType), blockStat = Monster.getBlockStat(attType);
 		damage -= (int)(Math.random()*(target.getStat(blockStat)*.65));
-		int minDam = target.minDam(attacker, attType);
+		
+		int minDam = (int)attacker.getStat(hitStat);
+		float stat = target.getStat(blockStat);
+		minDam -= ((int)stat/2);
 
 		damage = minDam > damage ? minDam : damage; //floor to minDam
 	}
