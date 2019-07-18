@@ -18,7 +18,7 @@ public class Hero extends Monster {
 		
 	}
 
-	private static Monster getFightClass(int option) {
+	private static Monster getFightClass(int option) { //used only for copy constructor
 		Monster fightClass = null;
 		
 		switch(option) {

@@ -15,7 +15,7 @@ public class ChangeForm extends ShapeShift {
 		manaCost = 5; //might get rid
 		numTar = 0;
 		
-		formList = new Monster[] { //see if I can parameterize
+		formList = new Monster[] { //see if I can parameterize; clone doesn't work here
 			Index.createMonster("Eagle"), 
 			Index.createMonster("Pangolin"), 
 			Index.createMonster("Salamander") //circular dependency; bad
@@ -30,7 +30,6 @@ public class ChangeForm extends ShapeShift {
 		//this.shifter = (Hero)attacker;
 		
 		if (enoughMana()) {
-			attacker.modStat(Stat.MP, -manaCost);
 			int availChange = formList.length;
 			Monster[] tempList = new Monster[availChange];
 

@@ -168,7 +168,7 @@ public class Fight {
 		
 		attacker.clearTurn();
 
-		attacker.modStat(Stat.MP, 1); //passive mp gain, could change the val
+		attacker.modStat(Stat.MP, true, 1); //passive mp gain, could change the val
 
 		try {
 			TimeUnit.SECONDS.sleep(2);
@@ -184,7 +184,7 @@ public class Fight {
 			switch(status) {
 			case BURN:
 				int burnDam = (int)(checking.getStat(Stat.HP)*0.1);
-				checking.modStat(Stat.HP, -burnDam);
+				checking.modStat(Stat.HP, false, -burnDam);
 				Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
 				if (check == 0) {
 					checking.setStatus(status, false);

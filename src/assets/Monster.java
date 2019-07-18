@@ -19,7 +19,15 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		float getBase() { return base; } //max val
 		float getTemp() { return temp; } //current val
 
-		float setTemp(float newVal) { //floor to 0; celings to base; returns amount over basecap
+
+		void setBase(float base) { 
+			this.base = base<0 ? 0 : base;
+			this.temp = temp>base ? base : temp; //if new base is less than temp
+		}
+		void setTemp(float newVal) {
+			this.temp = newVal<0 ? 0 : newVal;
+		}
+		float setTempCapped(float newVal) { //floor to 0; celings to base; returns amount over basecap
 			float capOver = 0;
 			
 			if (this.base < newVal) {
@@ -29,10 +37,6 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 				this.temp = newVal;
 
 			return capOver;
-		}
-		void setBase(float base) { 
-			this.base = base<0 ? 0 : base;
-			this.temp = temp>base ? base : temp; //if new base is less than temp
 		}
 	}
 	private static class StatusInfo {
@@ -316,16 +320,23 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	 * modifies current stat value to newVal, caps at base
 	 */
 	public void setStat (Stat stat, float newVal) {
-		stats.get(stat).setTemp(newVal);
+		stats.get(stat).setTempCapped(newVal);
 	}
 
 	/**
 	 * changes the stat by mod, caps new value to base
+	 * @param capped if bounded by max value; or just temporary buff
 	 * @return the amount that went over the base cap
 	 */
-	public float modStat (Stat stat, float mod) { //changes stat by val
+	public float modStat (Stat stat, boolean capped, float mod) { //changes stat by val
 		StatInfo info = stats.get(stat);
-		return info.setTemp(info.getTemp()+mod);
+		float capOver = 0, newVal = info.getTemp()+mod;
+		if (capped) //keep eye on
+			capOver = info.setTempCapped(newVal);
+		else
+			info.setTemp(newVal);
+
+		return capOver;
 	}
 
 	/**

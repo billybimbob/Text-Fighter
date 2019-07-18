@@ -42,19 +42,28 @@ public abstract class Ability implements Cloneable {
 	 */
 
 	protected boolean enoughMana() {
-		return attacker.getStat(Stat.MP) >= manaCost;
+		boolean check = attacker.getStat(Stat.MP) >= manaCost;
+		if (check) //not sure if I want to pair; immediately revmoves cost if able
+			attacker.modStat(Stat.MP, true, -manaCost);
+		return check;
 	}
 
 	protected boolean attackHit(Monster target, double checkMod) { //an attack damage check based on either the att or mag stat
 		Stat hitStat = Monster.getHitStat(attType);
 		Stat blockStat = Monster.getBlockStat(attType);
 		double checkNum = Math.random()*attacker.getStat(hitStat) - Math.random()*target.getStat(Stat.SPEED)*.5;
-		return checkNum > target.getStat(blockStat)*checkMod;
+		boolean check = checkNum > target.getStat(blockStat)*checkMod;
+		
+		if (check) //determines damage if successful
+			damage = (int)(Math.random()*(attacker.getStat(hitStat)*damageMod)+1);
+
+		return check;
 	}
 
-	protected void baseDamage() { //determines the damage if either a melee or magic attack
+	@Deprecated
+	protected double baseDamage() {
 		Stat hitStat = Monster.getHitStat(attType);
-		damage = (int)(Math.random()*(attacker.getStat(hitStat)*damageMod)+1);
+		return (int)(Math.random()*(attacker.getStat(hitStat)*damageMod)+1);
 	}
 	
 	protected boolean critCheck() {
@@ -115,7 +124,7 @@ public abstract class Ability implements Cloneable {
 	 * attacker deals damage to target, and the damage is logged
 	 */
 	public static void dealDamage (Monster attacker, Monster target, float damage) {
-		target.modStat(Stat.HP, -damage);
+		target.modStat(Stat.HP, true, -damage);
 		target.addDamTurn(damage);
 		Interface.FIGHT.addLog(attacker, target, damage);
 	}

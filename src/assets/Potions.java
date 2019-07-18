@@ -50,13 +50,15 @@ public class Potions extends Items {
 		}
 	}
 	public void useItem (Monster user) {
-		user.modStat(this.statMod, this.modVal);
 
 		turnStart = Interface.FIGHT.getTurnNum();
-		if (!(statMod.equals("hp") || statMod.equals("mp")))
-			System.out.println(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod);
-		else
+		if (statMod.equals("hp") || statMod.equals("mp")) {
+			user.modStat(this.statMod, true, this.modVal);
 			System.out.println(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod +" \nand will also gain " + statMod + " over time");
+		} else {
+			System.out.println(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod);	
+			user.modStat(this.statMod, false, this.modVal);
+		}
 	}
 
 	public static void buffCheck (Hero user) { //Checks if buff wears off/ updates healing over time only for hero
@@ -67,7 +69,7 @@ public class Potions extends Items {
 		switch (used.statMod) { //could make switch over something else
 		case HP:	
 		case MP: //regen pots
-			float capOver = user.modStat(used.statMod, used.modVal);
+			float capOver = user.modStat(used.statMod, true, used.modVal);
 			//find out how to print past max val
 			System.out.println("You gain " + (used.modVal-capOver) + " " + used.statMod + " from the " + used.name);
 			used.modVal = used.baseModVal;
@@ -75,7 +77,7 @@ public class Potions extends Items {
 
 		default:
 			if (Potions.timeLength <= Math.abs(Interface.FIGHT.getTurnNum()-Potions.turnStart)) {
-				user.modStat(used.statMod, -used.modVal);
+				user.modStat(used.statMod, false, -used.modVal);
 				System.out.println(used.name + " has worn off");
 				user.setStatus(Status.POTION, false);
 			}

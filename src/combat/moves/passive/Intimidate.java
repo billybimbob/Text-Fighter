@@ -19,7 +19,7 @@ public class Intimidate extends Ability {
 		Interface.writeOut(attacker.getName() + " intimidates all enemies, and decreases all of their speed");
 		for (Monster target: targets)
 			if (target.getStat(Stat.SPEED) > 0)
-				target.modStat((Stat.SPEED), -1);
+				target.modStat((Stat.SPEED), true, -1);
 	}
 
 }

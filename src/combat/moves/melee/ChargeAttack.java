@@ -28,7 +28,6 @@ public class ChargeAttack extends Ability {
 		
 		Monster[] targets = attacker.getTargets();
 		if (enoughMana() && turnCount == 0) { //checks if sufficient mana, and starts charged turn
-			attacker.modStat(Stat.MP, -manaCost);
 			Interface.writeOut(attacker.getName() + " readies their swing");
 			turnCount++;
 		
@@ -36,7 +35,6 @@ public class ChargeAttack extends Ability {
 			//Attack based on RNG and modified by stats
 			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 				
-				baseDamage();
 				if (critCheck()) //Checks for critical hit
 					Interface.prompt("Critical Hit! ");
 				else

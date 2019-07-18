@@ -20,24 +20,18 @@ public class SpinAttack extends Ability {
 		Monster[] targets = attacker.getTargets();
 
 		if (enoughMana()) {
-			attacker.modStat(Stat.MP, -manaCost);
-			
 			Interface.writeOut(attacker.getName() + " spins around");
-
-			baseDamage();
-			float startDam = damage;
+			
 			for (Monster target: targets) { //Checks if hits for each monster
 				//Attack based on RNG and modified by stats
 				
-				damage = startDam;
 				if (attackHit(target, 0.005)) { //Check if attack will be successful
-					/*if (critCheck()) { //Might add later, with hashmap?
+					/*if (critCheck()) { //Might add later
 						baseDam *= 2;
 						Interface.writeOut("Critical Hit!");
 					}*/
 
 					targetReduct(target);
-					
 					if (blocked())
 						Interface.writeOut("but is blocked by " + target.getName());
 					else {	

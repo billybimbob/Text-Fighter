@@ -17,8 +17,7 @@ public class BasicAttack extends Ability {
 		attType = attacker.getAttType();
 		Monster[] targets = attacker.getTargets();
 		if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
-			
-			baseDamage();
+
 			if (critCheck()) //Checks for critical hit
 				Interface.prompt("Critical Hit! ");
 			else

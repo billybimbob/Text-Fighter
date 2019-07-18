@@ -18,28 +18,26 @@ public class Shock extends Ability {
 	
 	public void execute() {
 		Monster[] targets = attacker.getTargets();
+		boolean manaUsed;
 		
-		if (enoughMana()) {
-			attacker.modStat(Stat.MP, -manaCost);
-			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
-				
-				baseDamage();
-				targetReduct(targets[0]);
-				
-				if (blocked()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-					Interface.writeOut(attacker.getName() + "'s magic blast was resisted by " + targets[0].getName());
-				} else {
-					Interface.writeOut(attacker.getName() + " blasts " + targets[0].getName() + " for " + damage + " damage");
-					dealDamage(attacker, targets[0], damage);
-					
-					if (attackHit(targets[0], 0.4)) {
-						Interface.writeOut(attacker.getName() + "'s blast stuns " + targets[0].getName());
-						targets[0].setStatus(Status.STUN, 2);
-					}
-				}
+		if ((manaUsed = enoughMana()) && attackHit(targets[0], 0.01)) {
+			targetReduct(targets[0]);
+			
+			if (blocked()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+				Interface.writeOut(attacker.getName() + "'s magic blast was resisted by " + targets[0].getName());
 			} else {
-				Interface.writeOut(attacker.getName() + "'s attack missed");
+				Interface.writeOut(attacker.getName() + " blasts " + targets[0].getName() + " for " + damage + " damage");
+				dealDamage(attacker, targets[0], damage);
+				
+				if (attackHit(targets[0], 0.4)) {
+					Interface.writeOut(attacker.getName() + "'s blast stuns " + targets[0].getName());
+					targets[0].setStatus(Status.STUN, 2);
+				}
 			}
+
+		} else if (manaUsed) {
+			Interface.writeOut(attacker.getName() + "'s attack missed");
+
 		} else {
 			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
 		}
