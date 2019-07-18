@@ -194,15 +194,15 @@ public class Fight {
 
 			case DODGE:
 				if (check == 0) { //done
-					checking.modStat(Stat.SPEED, -7);
+					checking.modStat(Stat.SPEED, false, -7);
 					checking.setStatus(status, false);
 				} else 
-					checking.modStat(Stat.SPEED, 7);
+					checking.modStat(Stat.SPEED, false, 7);
 				break;
 
 			case POISON:
 				int poiDam = (int)(checking.getStat(Stat.HP)*0.01*(getTurnNum()%10));
-				checking.modStat(Stat.HP, -poiDam);
+				checking.modStat(Stat.HP, false, -poiDam);
 				Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
 				break;
 
@@ -216,7 +216,7 @@ public class Fight {
 					Monster attacker = info.getAttacker();
 					double damDeal = info.getDamage();
 					float refDam = (int)(damDeal*0.5);
-					attacker.modStat(Stat.HP, -refDam);
+					attacker.modStat(Stat.HP, false, -refDam);
 					Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
 				}
 

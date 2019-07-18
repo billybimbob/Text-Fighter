@@ -128,7 +128,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 
 		this.stats = new HashMap<>(); //deep copy
 		for (Stat statName: Stat.values())
-			this.setStat(statName, copy.getStat(statName)); //same ref; need to change
+			this.stats.put(statName, new StatInfo(copy.getStatMax(statName)));
 		
 		this.targets = new ArrayList<>(copy.targets);
 		initStatus();
