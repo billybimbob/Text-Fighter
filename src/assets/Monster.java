@@ -63,6 +63,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	private Map<Status, StatusInfo> status;
 	private boolean aggro;
 	private List<Monster> targets; //look at how set and used
+	private Monster original;
 	
 	protected String name;
 	protected int level = 1;
@@ -144,6 +145,30 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		} catch (CloneNotSupportedException e) {}
 	}
 
+	public void copyVals (Monster copy) { //used for transforming; so don't have to make many setters
+		try {
+			if (original != null)
+				this.original = (Monster)this.clone(); //keep original if already shifted
+
+		} catch (CloneNotSupportedException e) {}
+
+		this.name = copy.name;
+		this.aggro = copy.aggro;
+		this.attType = copy.attType;
+		this.turnDam = copy.turnDam;
+		this.passive = copy.passive;
+		this.moveList = copy.moveList;
+		this.stats = copy.stats;
+		this.status = copy.status;
+		this.targets = copy.targets;
+		this.turnDam = copy.turnDam;
+		this.turnMove = copy.turnMove;
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
 
 	//private helpers
 	private void initStatus() {
@@ -207,6 +232,9 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public boolean getAttType() {
 		return this.attType;
 	}
+	public Monster getOriginal() {
+		return original;
+	}
 
 	public String[] getMoveNames() {
 		String[] ret = new String[moveList.length];
@@ -261,6 +289,10 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public void setTurn(int idx) {
 		updateTurnVals(getMove(idx));
 	}
+	public void setOriginal(Monster original) {
+		this.original = original;
+	}
+
 	public void clearTurn() {
 		resetDamage();
 		if (turnMove != null && turnMove.resolved()) {

@@ -15,10 +15,7 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 		float hpRatio = target.getStatRatio(Stat.HP);
 		float mpRatio = target.getStatRatio(Stat.MP);
 
-		Shifter newShift = target.getClass() == Shifter.class //keep original if already shifted
-							? new Shifter( (Shifter)target )
-							: new Shifter(shiftedMon, target); //keep eye on
-		target = newShift;
+		target.copyVals(shiftedMon);
 
 		target.setStat(Stat.HP, target.getStat(Stat.HP)*hpRatio);
 		target.setStat(Stat.MP, target.getStat(Stat.MP)*mpRatio);
@@ -27,16 +24,15 @@ public abstract class ShapeShift extends Ability { //abstract so doesn't have to
 
 	public static void revert (Monster target) { //can't ref by movelist; update status
 		
-		if (target.getClass() == Shifter.class) {
-			Shifter shift = (Shifter)target;
+		if (target.getOriginal() != null) {
 			float hpRatio = target.getStatRatio(Stat.HP);
 			float mpRatio = target.getStatRatio(Stat.MP);
 
-			target = shift.getOriginal();
+			target.copyVals(target.getOriginal());
 
 			target.setStat(Stat.HP, target.getStat(Stat.HP)*hpRatio);
 			target.setStat(Stat.MP, target.getStat(Stat.MP)*mpRatio);
-			shift = null;
+			target.setOriginal(null);
 		}
 	}
 
