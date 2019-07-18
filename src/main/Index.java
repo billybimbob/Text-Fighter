@@ -37,8 +37,7 @@ public class Index {
 	private static void createPotions() {
 		List<Potions> potionsSto = new ArrayList<>();
 		for (Stat stat: Stat.values())
-			if (stat != Stat.MAXHP && stat != Stat.MAXMP)
-				potionsSto.add(new Potions(stat));
+			potionsSto.add(new Potions(stat));
 
 		potionsList = potionsSto.toArray(new Potions[potionsSto.size()]);
 	}

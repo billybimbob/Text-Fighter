@@ -64,26 +64,12 @@ public class Potions extends Items {
 		
 		//Gain over time, could be better, scattered between here and useItem method
 
-		float max;
-		switch (used.statMod) {
+		switch (used.statMod) { //could make switch over something else
 		case HP:	
-			user.modStat(used.statMod, used.modVal);
-			max = user.getStat(Stat.MAXHP);
-			if (user.getStat(used.statMod) > max) {
-				user.setStat(used.statMod, max);
-				System.out.println("You cannot be healed past max health");
-			}
-			System.out.println("You gain " + used.modVal + " " + used.statMod + " from the " + used.name);
-			used.modVal = used.baseModVal;
-			break;
-		case MP:
-			user.modStat(used.statMod, used.modVal);
-			max = user.getStat(Stat.MAXMP);
-			if (user.getStat(used.statMod) > max) {
-				user.setStat(used.statMod, max);
-				System.out.println("You cannot gain past max mana");
-			}
-			System.out.println("You gain " + used.modVal + " " + used.statMod + " from the " + used.name);
+		case MP: //regen pots
+			float capOver = user.modStat(used.statMod, used.modVal);
+			//find out how to print past max val
+			System.out.println("You gain " + (used.modVal-capOver) + " " + used.statMod + " from the " + used.name);
 			used.modVal = used.baseModVal;
 			break;
 

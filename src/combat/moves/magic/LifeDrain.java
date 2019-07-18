@@ -24,17 +24,16 @@ public class LifeDrain extends Ability {
 			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 				baseDamage();
 				targetReduct(targets[0]);
-				float selfHeal = (int)(damage*0.5);
+				float selfHeal = (int)(damage*0.5), capOver;
 				
 				if (blocked()) {//Check if the defense reduction value is greater than the attack, therefore blocking the attack
 					Interface.writeOut(attacker.getName() + "'s drain was resisted by " + targets[0].getName());
 				} else {
 					Interface.writeOut(attacker.getName() + " drains " + targets[0].getName() + " for " + damage + " damage");
 					dealDamage(attacker, targets[0], damage);
-					if (selfHeal > 0 && attacker.getStat(Stat.HP) < attacker.getStat(Stat.MAXHP)) {
-						attacker.modStat(Stat.HP, selfHeal);
-						Interface.writeOut(attacker.getName() + " absorbs " + selfHeal + " health");
-					}
+
+					if (selfHeal > 0 && (capOver = attacker.modStat(Stat.HP, selfHeal)) > 0)
+						Interface.writeOut(attacker.getName() + " absorbs " + (selfHeal-capOver) + " health");
 				}
 			} else
 				Interface.writeOut(attacker.getName() + "'s attack missed");

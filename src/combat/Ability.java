@@ -25,14 +25,14 @@ public abstract class Ability implements Cloneable {
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException {
+	protected Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
 
-	public Ability clone(Monster attacker) throws CloneNotSupportedException { //can't do copy constructor becuase of subclasses
+	public Object clone(Monster attacker) throws CloneNotSupportedException { //can't do copy constructor becuase of subclasses
 		Ability newAbility = (Ability)this.clone();
 		newAbility.attacker = attacker;
-		damage = 0;
+		newAbility.damage = 0;
 		return newAbility;
 	}
 

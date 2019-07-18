@@ -168,8 +168,7 @@ public class Fight {
 		
 		attacker.clearTurn();
 
-		if (attacker.getStat(Stat.MP) < attacker.getStat(Stat.MAXMP)) //passive mp gain, could change the val
-			attacker.modStat(Stat.MP, 1);
+		attacker.modStat(Stat.MP, 1); //passive mp gain, could change the val
 
 		try {
 			TimeUnit.SECONDS.sleep(2);

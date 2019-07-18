@@ -8,6 +8,33 @@ import main.Index.Move;
 
 public class Monster implements Comparable<Monster> { //Temporary, probably make abstract later
 
+	private static class StatInfo {
+		private float base, temp;
+
+		StatInfo(float start) {
+			this.base = start;
+			this.temp = start;
+		}
+
+		float getBase() { return base; } //max val
+		float getTemp() { return temp; } //current val
+
+		float setTemp(float newVal) { //floor to 0; celings to base; returns amount over basecap
+			float capOver = 0;
+			
+			if (this.base < newVal) {
+				capOver = newVal-this.base;
+				this.temp = this.base;
+			} else
+				this.temp = newVal;
+
+			return capOver;
+		}
+		void setBase(float base) { 
+			this.base = base<0 ? 0 : base;
+			this.temp = temp>base ? base : temp; //if new base is less than temp
+		}
+	}
 	private static class StatusInfo {
 		private int start, duration;
 
@@ -26,7 +53,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public final static int levMult = 2;
 	
 	private float turnDam;
-	private Map<Stat, Float> stats;
+	private Map<Stat, StatInfo> stats;
 	private Ability[] moveList;
 	private Ability passive, turnMove;
 	private Map<Status, StatusInfo> status;
@@ -44,20 +71,16 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	 * @param stats order should follow Stat.java and not include MAXHP or MAXMP
 	 * @see Stat
 	 */
-	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats) {
+	public Monster (String name, boolean aggro, boolean attType, List<Integer> statsIn) {
 		this.name = name;
 		this.aggro = aggro;
 		this.attType = attType;
 		this.turnDam = 0;
 
 		this.stats = new HashMap<>();
-		//hp, hp, mp, mp, att, def, mag, magR, spe, crit}; //order must be same as enum
-		int idx = 0;
-		for (Stat statName: Stat.values()) {
-			setStat(statName, stats.get(idx));
-			if (statName != Stat.HP && statName != Stat.MP)
-				idx++;
-		}
+		//hp, mp, att, def, mag, magR, spe, crit}; //order must be same as enum
+		for (int i = 0; i < statsIn.size(); i++)
+			this.stats.put(Stat.values()[i], new StatInfo(statsIn.get(i)));
 
 		this.targets = new ArrayList<>();
 		initStatus();
@@ -101,18 +124,18 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 
 		this.stats = new HashMap<>(); //deep copy
 		for (Stat statName: Stat.values())
-			this.setStat(statName, copy.getStat(statName));
+			this.setStat(statName, copy.getStat(statName)); //same ref; need to change
 		
 		this.targets = new ArrayList<>(copy.targets);
 		initStatus();
 
 		try {		
 			if (copy.passive != null)
-				this.setPassive(copy.passive.clone(this));
+				this.setPassive((Ability)copy.passive.clone(this));
 
 			this.moveList = new Ability[copy.moveList.length];
 			for (int i = 0; i < moveList.length; i++)
-				this.moveList[i] = copy.moveList[i].clone(this);
+				this.moveList[i] = (Ability)copy.moveList[i].clone(this);
 
 		} catch (CloneNotSupportedException e) {}
 	}
@@ -147,9 +170,6 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	private void resetDamage() {
 		this.turnDam = 0;
 	}
-	private StatusInfo getStatus (Status status) {
-		return this.status.get(status);
-	}
 	private Ability createAbility(Move name) {
 		return Index.createAbility(name, this);
 	}
@@ -171,8 +191,11 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	public String getName() {
 		return name;
 	}
-	public float getStat (Stat stat) { //most likely where nulls arise
-		return this.stats.get(stat);
+	public float getStat (Stat stat) {
+		return this.stats.get(stat).getTemp();
+	}
+	public float getStatMax (Stat stat) {
+		return this.stats.get(stat).getBase();
 	}
 	public double getTurnDam() {
 		return this.turnDam;
@@ -205,6 +228,10 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		return targets.toArray(new Monster[targets.size()]);
 	}
 
+	public float getStatRatio(Stat stat) {
+		return this.getStat(stat)/this.getStatMax(stat);
+	}
+
 	public int minDam(Monster attacker, boolean attType) { //max value for now is 10 for def and magR
 		Stat hitStat = getHitStat(attType), blockStat = getBlockStat(attType);
 		int minDam = (int)attacker.getStat(hitStat);
@@ -213,24 +240,11 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		return minDam > 0 ? minDam : 0;
 	}
 
-	@Deprecated
-	public int checkStatus(Status status, int turnNum) { //checks if status needs updating, keep eye on
-		StatusInfo info = getStatus(status);
-		int start = info.getStart(), duration = info.getDuration();
-
-		int ret = -1;
-		if (start > -1 && duration > -1) {
-			int timeActive = turnNum-start;
-			ret = timeActive >= duration ? 0 : timeActive;
-		}
-		return ret;
-	}
-
 	/**
 	 * @return -1 not active, 0 finished, >0 amount of time remaining; toggle always returns 0
 	 */
 	public int checkStatus(Status status) { //checks if status needs updating, keep eye on
-		StatusInfo info = getStatus(status);
+		StatusInfo info = this.status.get(status);
 		int start = info.getStart(), duration = info.getDuration();
 		int turnNum = currentTurn();
 
@@ -298,28 +312,35 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 			System.out.println("Not a valid ability");
 	}
 
-
-	public void setStat (Stat stat, float val) {
-		stats.put(stat, val);
-	}
-	public void modStat (Stat stat, float val) { //changes stat by val; add max mod cases
-		float newVal = stats.get(stat)+val;	
-		setStat(stat, newVal);
+	/**
+	 * modifies max stat value to newVal
+	 */
+	public void setStatMax (Stat stat, float newVal) {
+		stats.get(stat).setBase(newVal);
 	}
 
-	@Deprecated
-	public void setStatus(Status stat, int startTurn, int duration) {
-		StatusInfo info = status.get(stat);
-		if (startTurn < 0 || duration < 0) {
-			info.setStart(-1);
-			info.setDuration(-1);
-		} else {
-			info.setStart(startTurn);
-			info.setDuration(duration);
-		}
+	/**
+	 * modifies current stat value to newVal, caps at base
+	 */
+	public void setStat (Stat stat, float newVal) {
+		stats.get(stat).setTemp(newVal);
 	}
-	public void setStatus(Status stat, int duration) { //not sure
-		StatusInfo info = status.get(stat);
+
+	/**
+	 * changes the stat by mod, caps new value to base
+	 * @return the amount that went over the base cap
+	 */
+	public float modStat (Stat stat, float mod) { //changes stat by val
+		StatInfo info = stats.get(stat);
+		return info.setTemp(info.getTemp()+mod);
+	}
+
+	/**
+	 * turns on/off the inputted status
+	 * @param duration positive value turns on for that duration, negative turns off
+	 */
+	public void setStatus(Status status, int duration) { //not sure
+		StatusInfo info = this.status.get(status);
 		if (duration > 0) {
 			int start = currentTurn();
 			info.setStart(start);
@@ -331,10 +352,10 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	}
 
 	/**
-	 * turns on/off the inputted stat; defaults to one turn
+	 * turns on/off the inputted status; defaults to one turn
 	 */
-	public void setStatus(Status stat, boolean toggle) {
-		StatusInfo info = status.get(stat);
+	public void setStatus(Status status, boolean toggle) {
+		StatusInfo info = this.status.get(status);
 		if (toggle) {
 			info.setStart(0);
 			info.setDuration(1);
@@ -351,14 +372,14 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	/**
 	 * modifies stats based and restores health and mana
 	 */
-	public void levelUp () {
+	public void levelUp () { //clears current temp right now
 		level += 1;
+		StatInfo info;
 		for (Stat stat: Stat.values()) {
-			if (stat != Stat.HP && stat != Stat.MP)
-				modStat(stat, level*levMult);
+			info = stats.get(stat);
+			info.setBase(info.getBase() + levMult);
+			info.setTemp(info.getBase());
 		}
-		setStat(Stat.HP, getStat(Stat.MAXHP));
-		setStat(Stat.MP, getStat(Stat.MAXMP));
 	}
 
 	@Override
