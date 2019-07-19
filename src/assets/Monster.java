@@ -202,8 +202,12 @@ public class Monster implements Comparable<Monster> {
 		return Index.createPassive(name, this);
 	}
 	
-	private boolean specialStatus(Status status) {
-		return status.equals(Status.SHIFT);
+	private void onChecks(StatusInfo info, int start, int duration) { //could maybe make switch with a flag
+		if (info.getClass() != ShiftInfo.class
+		   || info.getClass() == ShiftInfo.class && ((ShiftInfo)info).getOriginal() != null) {
+			info.setStart(start);
+			info.setDuration(duration);
+		}
 	}
 	private void offChecks(StatusInfo info) {
 		info.setStart(-1);
@@ -212,10 +216,10 @@ public class Monster implements Comparable<Monster> {
 		if (info.getClass() == ShiftInfo.class) { //clear and revert if shift status
 			ShiftInfo shift = (ShiftInfo)info;
 			Monster original;
-			if ((original = shift.getOriginal()) != null)
+			if ((original = shift.getOriginal()) != null) {
 				this.copyVals(original);
-
-			shift.setOriginal(null);
+				shift.setOriginal(null);
+			}
 		}
 	}
 
@@ -364,7 +368,7 @@ public class Monster implements Comparable<Monster> {
 
 	/**
 	 * changes the stat by mod, caps new value to base
-	 * @param capped if bounded by max value; or just temporary buff
+	 * @param capped true if bounded by max value; or false if just temporary buff
 	 * @return the amount that went over the base cap
 	 */
 	public float modStat (Stat stat, boolean capped, float mod) { //changes stat by val
@@ -384,13 +388,12 @@ public class Monster implements Comparable<Monster> {
 	 * turns on/off the inputted status
 	 * @param duration positive value turns on for that duration, negative turns off
 	 */
-	public void setStatus(Status status, int duration) { //not sure
+	public void setStatus(Status status, int duration) { //could set special status
 		StatusInfo info = this.status.get(status);
-		if (duration > 0 && !specialStatus(status)) {
+		if (duration > 0) {
 			int start = currentTurn();
-			info.setStart(start);
-			info.setDuration(duration);
-		} else if (duration <= 0)
+			onChecks(info, start, duration);
+		} else
 			offChecks(info);
 	}
 
@@ -399,10 +402,10 @@ public class Monster implements Comparable<Monster> {
 	 */
 	public void setStatus(Status status, boolean toggle) {
 		StatusInfo info = this.status.get(status);
-		if (toggle && !specialStatus(status)) {
-			info.setStart(0);
-			info.setDuration(1);
-		} else if (!toggle)
+		if (toggle) {
+			int start = 0, duration = 0;
+			onChecks(info, start, duration);
+		} else
 			offChecks(info);
 	}
 
