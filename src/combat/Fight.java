@@ -187,7 +187,8 @@ public class Fight {
 
 			case POTION:
 				Hero user = (Hero)checking;
-				Potions.buffCheck(user);
+				boolean finished = check == 0;
+				Potions.buffCheck(user, finished);
 				break;
 
 			case REFLECT: //try to go from turn to turn

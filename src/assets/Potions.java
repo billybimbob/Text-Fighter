@@ -52,16 +52,16 @@ public class Potions extends Items {
 	public void useItem (Monster user) {
 
 		turnStart = Interface.FIGHT.getTurnNum();
-		if (statMod.equals("hp") || statMod.equals("mp")) {
+		if (statMod.equals(Stat.HP) || statMod.equals(Stat.MP)) {
 			user.modStat(this.statMod, true, this.modVal);
-			System.out.println(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod +" \nand will also gain " + statMod + " over time");
+			Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod +" \nand will also gain " + statMod + " over time");
 		} else {
-			System.out.println(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod);	
+			Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod);	
 			user.modStat(this.statMod, false, this.modVal);
 		}
 	}
 
-	public static void buffCheck (Hero user) { //Checks if buff wears off/ updates healing over time only for hero
+	public static void buffCheck (Hero user, boolean finished) { //Checks if buff wears off/ updates healing over time only for hero
 		Items used = user.getPick();
 		
 		//Gain over time, could be better, scattered between here and useItem method
@@ -71,19 +71,21 @@ public class Potions extends Items {
 		case MP: //regen pots
 			float capOver = user.modStat(used.statMod, true, used.modVal);
 			//find out how to print past max val
-			System.out.println("You gain " + (used.modVal-capOver) + " " + used.statMod + " from the " + used.name);
+			Interface.writeOut("You gain " + (used.modVal-capOver) + " " + used.statMod + " from the " + used.name);
 			used.modVal = used.baseModVal;
 			break;
 
 		default:
-			if (Potions.timeLength <= Math.abs(Interface.FIGHT.getTurnNum()-Potions.turnStart)) {
+			if (finished)
 				user.modStat(used.statMod, false, -used.modVal);
-				System.out.println(used.name + " has worn off");
-				user.setStatus(Status.POTION, false);
-			}
+			
 			break;
 		}
 
+		if (finished) {
+			Interface.writeOut(used.name + " has worn off");
+			user.setStatus(Status.POTION, false);
+		}
 		
 	}
 }
