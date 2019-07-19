@@ -45,19 +45,21 @@ public class ChangeForm extends ShapeShift {
 					tempList = tempStore;
 				}
 			}
-			String[] formNames = new String[tempList.length]; //sets list of names of available transformations
-			for (int i = 0; i < tempList.length; i++)
-				formNames[i] = tempList[i].getName();
-			
-			int formChoice = 0;
+
+			int formChoice = -1;
 			if (attacker.getClass() == Hero.class) {
+				String[] formNames = new String[tempList.length]; //sets list of names of available transformations
+				for (int i = 0; i < tempList.length; i++)
+					formNames[i] = tempList[i].getName();
 				String changePrompt = "Which form do you want to take?";
+				
 				formChoice = Interface.choiceInput(false, formNames, changePrompt)-1;
+
 			} else
 				formChoice = (int)(Math.random()*tempList.length);
 
-			String beforeName = attacker.getName();
 
+			String beforeName = attacker.getName();
 			transform(attacker, tempList[formChoice], 5);			
 			Interface.writeOut(beforeName + " has transformed into " + attacker.getName());
 			

@@ -14,7 +14,8 @@ public class Hero extends Monster {
 	public Hero (String name, int classChoice) { //if classes true, warrior
 		super(getFightClass(classChoice));
 		this.name = name;
-		inventory = new Inventory();
+		this.aggro = true;
+		this.inventory = new Inventory();
 		
 	}
 
@@ -38,6 +39,7 @@ public class Hero extends Monster {
 
 	public Items getPick() { return pick; }
 	
+	@Override
 	public void setTurn(List<Monster> targets) { //look at respone idx
 		//Hero user input/determine hero actions
 		action = false;
@@ -73,7 +75,7 @@ public class Hero extends Monster {
 			if (attNum == 0)
 				return;
 			
-			super.setTurn(attNum-1); //start at 0th idx
+			super.setMove(attNum-1); //start at 0th idx
 			
 			//determine the targets of hero move
 			int numTar = this.getNumTar();
@@ -87,6 +89,9 @@ public class Hero extends Monster {
 				}
 				this.addTarget(targets.get(tarNum-1));
 			}
+
+			if (numTar == -1)
+				this.addTargets(targets);
 
 		} while (!action);
 	}

@@ -19,41 +19,32 @@ public class Fight {
 		this.fighters = fighters;
 	}
 	
-	public int getTurnNum() { return log.roundCount(); }
-
 	void addLog(Monster attacker, Monster target, double damage) {
 		log.addLog(attacker, target, damage);
 	}
+
+	public int getTurnNum() { return log.roundCount(); }
+
 
 	public void start() {
 		boolean fightControl = true; //could add flee back
 		
 		while (fightControl) {
-			log.newRound();
-				
-			Interface.writeOut(Interface.LINESPACE);
+			List<Monster> monFighters = newRound();
 
-			attackOrder(); //Orders the fighters by speed
-			List<Monster> monFighters = determineEnemies();
-			Interface.HERO.setTurn(monFighters);
-
-			Interface.writeOut(Interface.LINESPACE);
-
-			//decides the turns of the Monster
-			for (Monster mon: monFighters) {
-				mon.setTurn();
-				mon.addTarget(Interface.HERO);
+			//decides the turns
+			for (Monster fighter: fighters) {
+				fighter.setTurn(nonSelf(fighter, fighters)); //could determine nonSelf in setTurn
 			}
 			
 			priorities();
 			
-			//Goes through the move of each fighter, if attacking, target set here
+			//Goes through the move of each fighter
 			for (int i = 0; i < fighters.size(); i++) {
 				
 				runTurn(fighters.get(i), monFighters); //not sure
 
 				for (int j = 0; j < monFighters.size(); j++) { //check if any monster died, immediately after hero's turn
-					//System.out.print(monFighters.get(j).getName() + j + " " + monFighters.size());
 					if (monFighters.get(j).getStat(Stat.HP) <= 0) {
 						if (j < i)
 							i--;
@@ -76,10 +67,23 @@ public class Fight {
 				fightControl = false;*/
 			}
 		}
+
 		Interface.writeOut("Exiting fight");
 		log.clear();
 	}
 
+
+	private List<Monster> newRound () {
+		log.newRound();
+				
+		Interface.writeOut(Interface.LINESPACE);
+
+		attackOrder(); //Orders the fighters by speed
+		List<Monster> monFighters = determineEnemies();
+
+		Interface.writeOut(Interface.LINESPACE);
+		return monFighters;
+	}
 	
 	private void attackOrder () { //orders the combatants from highest speed to lowest
 		Collections.sort(fighters, new Comparator<Monster>() {
@@ -93,7 +97,6 @@ public class Fight {
 
 	private List<Monster> determineEnemies() {
 		StringBuilder lstFighters = new StringBuilder();
-
 		for (Monster fighter: fighters) //Determine which is the hero, may change later, also prints each fighter and stats
 			lstFighters.append(fighter + "\n");
 		
@@ -153,7 +156,7 @@ public class Fight {
 			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {}
 		
-		Interface.writeOut();
+		Interface.writeOut("\n");
 	}	
 		
 	private void statusCheck (Monster checking, Status status) { //each turn effects

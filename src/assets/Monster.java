@@ -74,14 +74,14 @@ public class Monster implements Comparable<Monster> {
 	private float turnDam;
 	private Map<Stat, StatInfo> stats;
 	private Ability[] moveList;
+	private boolean attType;
 	private Ability passive, turnMove;
 	private Map<Status, StatusInfo> status;
-	private boolean aggro;
 	private List<Monster> targets; //look at how set and used
 	
 	protected String name;
+	protected boolean aggro; //attType true means physical attack
 	protected int level = 1;
-	protected boolean attType; //attType true means physical attack
 
 
 	/**
@@ -231,10 +231,39 @@ public class Monster implements Comparable<Monster> {
 		this.stats = copy.stats;
 		this.status = copy.status;
 	}
+	private void setTargets(List<Monster> possTargets) {
+		int numTar = this.getNumTar();
+
+		for (int i = 0; i<possTargets.size() 
+		   && this.targets.size()<numTar; i++) { //gets targets if needed
+			
+			Monster possTarget = possTargets.get(i);
+			if (possTarget.getAggro() != this.getAggro())
+				this.addTarget(possTarget);
+		}
+
+		if (numTar == -1) { //no limit, aoe
+			this.addTargets(possTargets);
+		}
+	}
 
 	//protected helpers
 	protected int currentTurn() {
 		return Interface.FIGHT.getTurnNum();
+	}
+	
+	protected void setMove() {
+		updateTurnVals(getMove());
+	}
+	protected void setMove(int idx) {
+		updateTurnVals(getMove(idx));
+	}
+	
+	protected void addTarget(Monster add) {
+		this.targets.add(add);
+	}
+	protected void addTargets(List<Monster> adds) {
+		this.targets.addAll(adds);
 	}
 
 
@@ -305,11 +334,17 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	//mutators
-	public void setTurn() {
-		updateTurnVals(getMove());
+	public void setAggro() { //flips
+		this.aggro = !this.aggro;
 	}
-	public void setTurn(int idx) {
-		updateTurnVals(getMove(idx));
+	public void setTurn(List<Monster> targets) {
+		setMove();
+		setTargets(targets);
+	}
+
+	public void setTurn(List<Monster> targets, int idx) {
+		setMove(idx);
+		setTargets(targets);
 	}
 
 	public void clearTurn() {
@@ -322,6 +357,7 @@ public class Monster implements Comparable<Monster> {
 	public void executeTurn() { //wrapper for turnMove
 		turnMove.execute();
 	}
+
 	public void usePassive(List<Monster> possTargets) { //look at; assume all fighters passed in
 		if (passive != null) {
 			List<Monster> sto = this.targets; //store previous targets
@@ -332,14 +368,6 @@ public class Monster implements Comparable<Monster> {
 			this.clearTargets();
 			this.targets = sto;
 		}
-	}
-
-	public void addTarget(Monster add) {
-		this.targets.add(add);
-	}
-	public void addTarget(List<Monster> adds) {
-		for(Monster add: adds)
-			addTarget(add);
 	}
 
 	public void addAttack(Ability adding) { //not sure if better
