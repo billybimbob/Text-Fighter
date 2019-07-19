@@ -18,7 +18,7 @@ class FightLog {
         public double getDamage() { return damage; }
     }
 
-    private List< Map<Monster,List<LogInfo>> > log; //keys to map are the receiver
+    private List<Map<Monster, List<LogInfo>>> log; //keys to map are the receiver
 
     public FightLog() {
         this.log = new ArrayList<>();

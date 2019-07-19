@@ -27,15 +27,14 @@ public class Fight {
 
 	public void start() {
 		boolean fightControl = true; //could add flee back
-		List<Monster> monFighters = new ArrayList<>();
-
+		
 		while (fightControl) {
 			log.newRound();
 				
 			Interface.writeOut(Interface.LINESPACE);
 
 			attackOrder(); //Orders the fighters by speed
-			determineEnemies(monFighters);
+			List<Monster> monFighters = determineEnemies();
 			Interface.HERO.setTurn(monFighters);
 
 			Interface.writeOut(Interface.LINESPACE);
@@ -81,6 +80,7 @@ public class Fight {
 		log.clear();
 	}
 
+	
 	private void attackOrder () { //orders the combatants from highest speed to lowest
 		Collections.sort(fighters, new Comparator<Monster>() {
 			@Override
@@ -89,38 +89,17 @@ public class Fight {
 				return bSpeed.compareTo(aSpeed);
 			}
 		});
-		/*
-		int count = 0;
-		while (count < list.size()-1) {
-			if (list.get(count).getStat("spe") < list.get(count+1).getStat("spe")) {
-				
-				for (int i = list.size()-1; i >= 0; i--) {
-					if (list.get(count).getStat("spe") < list.get(i).getStat("spe")) {
-						list.add(i, list.remove(count));
-						count = 0;
-						break;
-					}
-				}
-			} else {
-				count += 1;
-			}
-		}*/
 	}
 
-	private void determineEnemies(List<Monster> monFighters) {
-		monFighters.clear(); //not sure, might be ineffcient
+	private List<Monster> determineEnemies() {
 		StringBuilder lstFighters = new StringBuilder();
-		
-		for (Monster fighter: fighters) { //Determine which is the hero, may change later, also prints each fighter and stats
+
+		for (Monster fighter: fighters) //Determine which is the hero, may change later, also prints each fighter and stats
 			lstFighters.append(fighter + "\n");
-			
-			if (fighter.getAggro()) {
-				//target = fighter;
-			} else {
-				monFighters.add(fighter);
-			}
-		}
+		
 		Interface.writeOut(lstFighters.toString());
+
+		return nonSelf(Interface.HERO, fighters);
 	}
 
 	private void priorities() {
@@ -212,13 +191,15 @@ public class Fight {
 				break;
 
 			case REFLECT: //try to go from turn to turn
-				for (FightLog.LogInfo info: log.getInfo(getTurnNum()-1, checking)) { //checking all damage recieved from last round
-					Monster attacker = info.getAttacker();
-					double damDeal = info.getDamage();
-					float refDam = (int)(damDeal*0.5);
-					attacker.modStat(Stat.HP, false, -refDam);
-					Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
-				}
+				List<FightLog.LogInfo> prevLogs = log.getInfo(getTurnNum()-1, checking);
+				if (prevLogs != null) //could be no logs
+					for (FightLog.LogInfo info: prevLogs) { //checking all damage recieved from last round
+						Monster attacker = info.getAttacker();
+						double damDeal = info.getDamage();
+						float refDam = (int)(damDeal*0.5);
+						attacker.modStat(Stat.HP, false, -refDam);
+						Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
+					}
 
 				if (check == 0) { //finished
 					checking.setStatus(status, false);

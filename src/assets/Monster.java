@@ -6,10 +6,14 @@ import main.Index;
 import main.Interface;
 import main.Index.Move;
 
-public class Monster implements Comparable<Monster> { //Temporary, probably make abstract later
+public class Monster implements Comparable<Monster> {
+
+	/**
+	 * nested classes
+	 */
 
 	private static class StatInfo {
-		private float base, temp;
+		float base, temp;
 
 		StatInfo(float start) {
 			this.base = start;
@@ -32,13 +36,14 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 			
 			if (this.base < newVal) {
 				capOver = newVal-this.base;
-				this.temp = this.base;
+				this.setTemp(this.base);
 			} else
-				this.temp = newVal;
+				this.setTemp(newVal);
 
 			return capOver;
 		}
 	}
+
 	private static class StatusInfo {
 		private int start, duration;
 
@@ -54,6 +59,16 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		void setDuration(int duration) { this.duration = duration; }
 	}
 
+	private static class ShiftInfo extends StatusInfo {
+		private Monster original;
+	
+		Monster getOriginal() { return original; }
+		void setOriginal(Monster original) { this.original = original; }
+	}
+
+
+	/**variables */
+
 	public final static int levMult = 2;
 	
 	private float turnDam;
@@ -63,7 +78,6 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	private Map<Status, StatusInfo> status;
 	private boolean aggro;
 	private List<Monster> targets; //look at how set and used
-	private Monster original;
 	
 	protected String name;
 	protected int level = 1;
@@ -145,36 +159,18 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		} catch (CloneNotSupportedException e) {}
 	}
 
-	public void copyVals (Monster copy) { //used for transforming; so don't have to make many setters
-		try {
-			if (original != null)
-				this.original = (Monster)this.clone(); //keep original if already shifted
-
-		} catch (CloneNotSupportedException e) {}
-
-		this.name = copy.name;
-		this.aggro = copy.aggro;
-		this.attType = copy.attType;
-		this.turnDam = copy.turnDam;
-		this.passive = copy.passive;
-		this.moveList = copy.moveList;
-		this.stats = copy.stats;
-		this.status = copy.status;
-		this.targets = copy.targets;
-		this.turnDam = copy.turnDam;
-		this.turnMove = copy.turnMove;
-	}
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
 	//private helpers
+	private void setPassive(Ability passive) {
+		if (passive.isPassive()) 
+			this.passive = passive;
+	}
 	private void initStatus() {
 		status = new HashMap<>();
 		for (Status statusName: Status.values())
-			status.put(statusName, new StatusInfo());
+			if (statusName.equals(Status.SHIFT))
+				status.put(statusName, new ShiftInfo());
+			else
+				status.put(statusName, new StatusInfo());
 	}
 
 	private Ability getMove() {
@@ -205,6 +201,32 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	private Ability createPassive(Move name) {
 		return Index.createPassive(name, this);
 	}
+	
+	private boolean specialStatus(Status status) {
+		return status.equals(Status.SHIFT);
+	}
+	private void offChecks(StatusInfo info) {
+		info.setStart(-1);
+		info.setDuration(-1);
+
+		if (info.getClass() == ShiftInfo.class) { //clear and revert if shift status
+			ShiftInfo shift = (ShiftInfo)info;
+			Monster original;
+			if ((original = shift.getOriginal()) != null)
+				this.copyVals(original);
+
+			shift.setOriginal(null);
+		}
+	}
+
+	private void copyVals (Monster copy) { //used for transforming; so don't have to make many setters
+		this.name = copy.name;
+		this.attType = copy.attType;
+		this.passive = copy.passive;
+		this.moveList = copy.moveList;
+		this.stats = copy.stats;
+		this.status = copy.status;
+	}
 
 	//protected helpers
 	protected int currentTurn() {
@@ -231,9 +253,6 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	}
 	public boolean getAttType() {
 		return this.attType;
-	}
-	public Monster getOriginal() {
-		return original;
 	}
 
 	public String[] getMoveNames() {
@@ -266,7 +285,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	}
 
 	/**
-	 * @return -1 not active, 0 finished, >0 amount of time remaining; toggle always returns 0
+	 * @return -1 not active, 0 finished, >0 amount of time remaining
 	 */
 	public int getStatus(Status status) { //checks if status needs updating, keep eye on
 		StatusInfo info = this.status.get(status);
@@ -281,16 +300,12 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		return ret;
 	}
 
-
 	//mutators
 	public void setTurn() {
 		updateTurnVals(getMove());
 	}
 	public void setTurn(int idx) {
 		updateTurnVals(getMove(idx));
-	}
-	public void setOriginal(Monster original) {
-		this.original = original;
 	}
 
 	public void clearTurn() {
@@ -307,7 +322,7 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		if (passive != null) {
 			List<Monster> sto = this.targets; //store previous targets
 
-			this.targets = new ArrayList<>(possTargets);
+			this.targets = possTargets;
 			passive.execute(); //execute will handle targeting
 
 			this.clearTargets();
@@ -333,14 +348,6 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 		moveList = moveStore.toArray(moveList);
 	}
 
-	@Deprecated
-	public void setPassive(Ability passive) {
-		if (passive.isPassive()) 
-			this.passive = passive;
-		else
-			System.out.println("Not a valid ability");
-	}
-
 	/**
 	 * modifies max stat value to newVal
 	 */
@@ -362,7 +369,9 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	 */
 	public float modStat (Stat stat, boolean capped, float mod) { //changes stat by val
 		StatInfo info = stats.get(stat);
-		float capOver = 0, newVal = info.getTemp()+mod;
+		float capOver = 0;
+		float newVal = info.getTemp()+mod;
+
 		if (capped) //keep eye on
 			capOver = info.setTempCapped(newVal);
 		else
@@ -377,14 +386,12 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	 */
 	public void setStatus(Status status, int duration) { //not sure
 		StatusInfo info = this.status.get(status);
-		if (duration > 0) {
+		if (duration > 0 && !specialStatus(status)) {
 			int start = currentTurn();
 			info.setStart(start);
 			info.setDuration(duration);
-		} else {
-			info.setStart(-1);
-			info.setDuration(-1);
-		}
+		} else if (duration <= 0)
+			offChecks(info);
 	}
 
 	/**
@@ -392,13 +399,30 @@ public class Monster implements Comparable<Monster> { //Temporary, probably make
 	 */
 	public void setStatus(Status status, boolean toggle) {
 		StatusInfo info = this.status.get(status);
-		if (toggle) {
+		if (toggle && !specialStatus(status)) {
 			info.setStart(0);
 			info.setDuration(1);
-		} else {
-			info.setStart(-1);
-			info.setDuration(-1);
+		} else if (!toggle)
+			offChecks(info);
+	}
+
+	/**
+	 * used for changing to another monster
+	 * @param status for now expected to be SHIFT status, all else will act as basic setStatus
+	 * @param duration any positive number to transform, 0 and negative will turn off status
+	 * @param shifting the monster to transform into
+	 */
+	public void setStatus(Status status, int duration, Monster shifting) {
+		if (status.equals(Status.SHIFT) && duration > 0) {
+			ShiftInfo info = (ShiftInfo)this.status.get(status);
+			if (info.getOriginal() != null) {
+				try { info.setOriginal((Monster)this.clone()); } catch (CloneNotSupportedException e) {};
+			}
+
+			this.copyVals(shifting);
 		}
+			
+		setStatus(status, duration);
 	}
 
 	public void addDamTurn(double damage) {
