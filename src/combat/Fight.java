@@ -227,8 +227,8 @@ public class Fight {
 
 				case STUN:
 					//triggered by chargeatt, magblast, disrupt
-					Interface.writeOut(checking.getName() + " is stunned");
 					skipTurn = true;
+					Interface.writeOut(checking.getName() + " is stunned"); //multiTurn attack still carries on
 					if (check == 0)
 						checking.setStatus(status, false);
 					break;

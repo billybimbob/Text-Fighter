@@ -45,7 +45,7 @@ public class Hero extends Monster {
 	@Override
 	public void setTurn(List<Monster> targets) { //look at respone idx
 		//Hero user input/determine hero actions
-		action = false;
+		action = turnMove!=null && !turnMove.resolved();
 
 		while (!action) {
 			String fightPrompt = "Which action would you like to do?";
@@ -75,7 +75,7 @@ public class Hero extends Monster {
 			if (attNum == 0)
 				return;
 			
-			super.setMove(attNum-1); //start at 0th idx
+			this.turnMove = getMove(attNum-1); //start at 0th idx
 			
 			//determine the targets of hero move
 			int numTar = this.getNumTar();

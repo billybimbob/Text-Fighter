@@ -38,6 +38,7 @@ public class Monster implements Comparable<Monster> {
 				capOver = newVal-this.base;
 				if (this.temp < this.base) //keep old temp or ceiling to base
 					this.setTemp(this.base);
+
 			} else
 				this.setTemp(newVal);
 
@@ -76,12 +77,13 @@ public class Monster implements Comparable<Monster> {
 	private Map<Stat, StatInfo> stats;
 	private Ability[] moveList;
 	private boolean attType;
-	private Ability passive, turnMove;
+	private Ability passive;
 	private Map<Status, StatusInfo> status;
 	private List<Monster> targets; //look at how set and used
 	
 	protected String name;
 	protected boolean aggro; //attType true means physical attack
+	protected Ability turnMove;
 	protected int level = 1;
 
 
@@ -172,13 +174,6 @@ public class Monster implements Comparable<Monster> {
 				status.put(statusName, new ShiftInfo());
 			else
 				status.put(statusName, new StatusInfo());
-	}
-
-	private Ability getMove() {
-		return moveList[(int)(Math.random()*moveList.length)];
-	}
-	private Ability getMove(int idx) {
-		return this.moveList[idx];
 	}
 
 	private void updateTurnVals(Ability move) {
@@ -283,6 +278,13 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	//protected helpers
+	protected Ability getMove() {
+		return moveList[(int)(Math.random()*moveList.length)];
+	}
+	protected Ability getMove(int idx) {
+		return this.moveList[idx];
+	}
+
 	protected int currentTurn() {
 		return Interface.FIGHT.getTurnNum();
 	}
@@ -382,13 +384,6 @@ public class Monster implements Comparable<Monster> {
 		setTargets(targets);
 	}
 
-	public void clearTurn() {
-		resetDamage();
-		if (turnMove != null && turnMove.resolved()) {
-			turnMove = null;		
-			clearTargets();
-		}
-	}
 	public void executeTurn() { //wrapper for turnMove
 		if (targets.size() > 0)
 			turnMove.execute();
@@ -396,6 +391,14 @@ public class Monster implements Comparable<Monster> {
 			System.err.println("no targets found, aggro: " + this.aggro);
 	}
 
+	public void clearTurn() {
+		resetDamage();
+		if (turnMove != null && turnMove.resolved()) {
+			turnMove = null;		
+			clearTargets();
+		}
+	}
+	
 	public void usePassive(List<Monster> possTargets) { //look at; assume all fighters passed in
 		if (passive != null) {
 			List<Monster> sto = this.targets; //store previous targets
@@ -438,9 +441,6 @@ public class Monster implements Comparable<Monster> {
 	 * @return the amount that went over the base cap
 	 */
 	public float modStat (Stat stat, boolean capped, float mod) { //changes stat by val
-		if (stat.equals(Stat.SPEED)) {
-			System.err.println("modifying speed");
-		}
 		StatInfo info = stats.get(stat);
 		float capOver = 0;
 		float newVal = info.getTemp()+mod;

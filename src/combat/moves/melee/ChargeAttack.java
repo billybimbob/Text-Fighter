@@ -21,6 +21,7 @@ public class ChargeAttack extends Ability {
 	@Override
 	public boolean resolved() {
 		return turnCount == 0; //means reset count
+		//return Interface.FIGHT.getTurnNum()-start > duration;
 	}
 	
 	public void execute() { //Change, too messy, might put the print statements in the fight class

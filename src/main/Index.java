@@ -43,38 +43,25 @@ public class Index {
 	}
 
 	private static void mapMoves() {
-
-		Function<Monster, Ability> construct = null;
-
-		for (Move move: Move.values()) {
-			boolean passive = false;
-
-			switch(move) {
-				case BASIC:   construct = BasicAttack::new;	 break;
-				case CHARGE:  construct = ChargeAttack::new; break;
-				case DISRUPT: construct = Disrupt::new;      break;
-				case DRAIN:   construct = LifeDrain::new;    break;
-				case FREEZE:  construct = Freeze::new;       break;
-				case POLY:    construct = Polymorph::new;    break;
-				case POSSESS: construct = Possess::new;      break;
-				case REFLECT: construct = Reflect::new;      break;
-				case REVENGE: construct = Revenge::new;      break;
-				case SHEEP:   construct = SheepAttacks::new; break;
-				case SHIFT:   construct = ChangeForm::new;   break;
-				case SHOCK:   construct = Shock::new;        break;
-				case SPIN:    construct = SpinAttack::new;   break;
-				
-				case FLURRY: construct = Flurry::new;     passive=true; break;
-				case INTIM:  construct = Intimidate::new; passive=true; break;
-			}
-
-			if (passive)
-				passiveList.put(move, construct);
-			else
-				attackList.put(move, construct);
-		}
-		//could split different class abilities
 		
+		//could split different class abilities
+		attackList.put(Move.BASIC,   BasicAttack::new);
+		attackList.put(Move.CHARGE,  ChargeAttack::new);
+		attackList.put(Move.DISRUPT, Disrupt::new);
+		attackList.put(Move.DRAIN,   LifeDrain::new);
+		attackList.put(Move.FREEZE,  Freeze::new);
+		attackList.put(Move.POLY,    Polymorph::new);
+		attackList.put(Move.POSSESS, Possess::new);
+		attackList.put(Move.REFLECT, Reflect::new);
+		attackList.put(Move.REVENGE, Revenge::new);
+		attackList.put(Move.SHEEP,   SheepAttacks::new);
+		attackList.put(Move.SHIFT,   ChangeForm::new);
+		attackList.put(Move.SHOCK,   Shock::new);
+		attackList.put(Move.SPIN,    SpinAttack::new);
+
+		passiveList.put(Move.FLURRY, Flurry::new);
+		passiveList.put(Move.INTIM, Intimidate::new);
+
 	}
 
 	private static void readMonsters() {
