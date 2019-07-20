@@ -14,6 +14,7 @@ public class ChangeForm extends ShapeShift {
 		description = "A spell to transform into an eagle, salamander, or pangolin";
 		manaCost = 5; //might get rid
 		numTar = 0;
+		priority = true;
 		
 		formList = new Monster[] { //see if I can parameterize; clone doesn't work here
 			Index.createMonster("Eagle"), 

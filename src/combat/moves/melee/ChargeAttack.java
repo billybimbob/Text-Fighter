@@ -29,14 +29,15 @@ public class ChargeAttack extends Ability {
 		
 		if (turnCount == 1) { //checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
-			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
+			if (attackHit(targets[0], 0.005)) { //Check if attack will be successful
 				
 				if (critCheck()) //Checks for critical hit
 					Interface.prompt("Critical Hit! ");
 				else
 					targetReduct(targets[0]);
 				
-				Interface.writeOut(attacker.getName() + " lands a powerful hit on " + targets[0].getName() + " for " + damage + " damage");
+				Interface.writeOut(attacker.getName() + " lands a powerful hit on " 
+					+ targets[0].getName() + " for " + damage + " damage");
 				dealDamage(attacker, targets[0], damage);
 				
 				if (attackHit(targets[0], 0.1)) {
@@ -52,7 +53,6 @@ public class ChargeAttack extends Ability {
 		} else if (enoughMana() && turnCount == 0) { //checks if sufficient mana, and starts charged turn
 			Interface.writeOut(attacker.getName() + " readies their swing");
 			turnCount++;
-		
 		}
 	}
 }

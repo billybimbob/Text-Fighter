@@ -30,7 +30,7 @@ public class Shock extends Ability {
 				Interface.writeOut(attacker.getName() + " blasts " + targets[0].getName() + " for " + damage + " damage");
 				
 				attacker.setStatus(Status.DODGE, 3); //keep eye on
-				Interface.writeOut(attacker.getName() + " gains a speed buff for 3 turns");
+				Interface.writeOut(attacker.getName() + " gains increased evasiveness for 3 turns");
 			}
 
 		} else if (manaUsed) {

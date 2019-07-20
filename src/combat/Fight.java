@@ -187,6 +187,17 @@ public class Fight {
 				case DODGE:
 					if (check == 0) //done
 						checking.setStatus(status, false);
+					else
+						Interface.writeOut(checking.getName() + " has increased evasiveness");
+					break;
+
+				case FRENZY:
+					if (check == 0)
+						checking.setStatus(status, false);
+					else {
+						checking.setRandomTargets(nonSelf(checking, fighters)); //nonself might be slow
+						Interface.writeOut(checking.getName() + " is frenzied, targets are random");
+					}	
 					break;
 
 				case POISON:

@@ -24,7 +24,7 @@ public abstract class Ability implements Cloneable {
 	}
 
 	@Override
-	protected Object clone() throws CloneNotSupportedException {
+	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
 
@@ -60,12 +60,6 @@ public abstract class Ability implements Cloneable {
 			damage = (int)(Math.random()*(attacker.getStat(hitStat)*damageMod)+1);
 
 		return check;
-	}
-
-	@Deprecated
-	protected double baseDamage() {
-		Stat hitStat = Monster.getHitStat(attType);
-		return (int)(Math.random()*(attacker.getStat(hitStat)*damageMod)+1);
 	}
 	
 	protected boolean critCheck() {

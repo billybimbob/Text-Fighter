@@ -261,6 +261,7 @@ public class Monster implements Comparable<Monster> {
 		this.stats = copy.stats;
 		this.status = copy.status;
 	}
+	
 	private void setTargets(List<Monster> possTargets) {
 		int numTar = this.getNumTar();
 
@@ -274,6 +275,16 @@ public class Monster implements Comparable<Monster> {
 
 		if (numTar == -1) { //no limit, aoe
 			this.addTargets(possTargets);
+		}
+	}
+
+	public void setRandomTargets(List<Monster> possTargets) {
+		this.clearTargets();
+		int numTar = this.getNumTar();
+		int amountTars = numTar>possTargets.size() ? numTar : possTargets.size();
+		for (int i = 0; i<amountTars; i++) {
+			int randIdx = (int)(Math.random()*(possTargets.size()+1));
+			this.addTarget(possTargets.remove(randIdx));
 		}
 	}
 

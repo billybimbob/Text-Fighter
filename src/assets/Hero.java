@@ -68,7 +68,6 @@ public class Hero extends Monster {
 	}
 
 	private void selectAttack(List<Monster> targets) { //array generate every time
-
 		do { //probably okay?
 			String attPrompt = "Which attack do you want to use?";
 			int attNum = Interface.choiceInput(true, this.getMoveNames(), attPrompt);
@@ -144,7 +143,7 @@ public class Hero extends Monster {
 		case 2: //Try to flee
 			//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
 			setStatus(Status.DODGE, 2);
-			Interface.writeOut("You try dodge all incoming attacks, increasing evasion by 7");
+			Interface.writeOut("You try dodge all incoming attacks, increasing evasiveness");
 			break;
 
 		case 3: //use inputed item
