@@ -26,10 +26,11 @@ public class Shock extends Ability {
 			if (blocked()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 				Interface.writeOut(attacker.getName() + "'s magic blast was resisted by " + targets[0].getName());
 			} else {
-				Interface.writeOut(attacker.getName() + " blasts " + targets[0].getName() + " for " + damage + " damage");
 				dealDamage(attacker, targets[0], damage);
+				Interface.writeOut(attacker.getName() + " blasts " + targets[0].getName() + " for " + damage + " damage");
 				
 				attacker.setStatus(Status.DODGE, 3); //keep eye on
+				Interface.writeOut(attacker.getName() + " gains a speed buff for 3 turns");
 			}
 
 		} else if (manaUsed) {

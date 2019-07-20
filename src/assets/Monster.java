@@ -36,7 +36,8 @@ public class Monster implements Comparable<Monster> {
 			
 			if (this.base < newVal) {
 				capOver = newVal-this.base;
-				this.setTemp( this.temp>this.base ? this.temp : this.base); //keep old temp or ceiling to base
+				if (this.temp < this.base) //keep old temp or ceiling to base
+					this.setTemp(this.base);
 			} else
 				this.setTemp(newVal);
 
@@ -186,9 +187,7 @@ public class Monster implements Comparable<Monster> {
 		}
 	}
 
-	/**
-	 * wrapper for list clear method
-	 */
+	/**wrapper for list clear method*/
 	private void clearTargets() {
 		this.targets.clear();
 	}
@@ -202,20 +201,23 @@ public class Monster implements Comparable<Monster> {
 		return Index.createPassive(name, this);
 	}
 	
-	private void onChecks(Status status, int start, int duration) { //could maybe make switch with a flag
+	/** extra values to check/modify while turning on status;
+	 *  status will only update if new values will extend duration */
+	private void onChecks(Status status, int start, int duration) {
 		StatusInfo info = this.status.get(status);
 		
-		boolean flag = true;
+		int oldStart = info.getStart(), oldDur = info.getDuration();
+		boolean flag = start+duration > oldStart+oldDur; //only update if will extend duration
 		switch(status) {
 			case CONTROL:
 				this.setAggro();
 				break;
 			case DODGE:
-				if (info.getStart() == -1 && info.getDuration() == -1)
-					this.modStat(Stat.SPEED, false, 7);
+				if (oldStart == -1 && oldDur == -1)
+					this.modStat(Stat.SPEED, false, this.getStatMax(Stat.SPEED)); //doubles speed
 				break;
 			case SHIFT:
-				flag = ((ShiftInfo)info).getOriginal() != null;
+				flag = flag && ((ShiftInfo)info).getOriginal() != null;
 				break;
 			default:
 				break;
@@ -226,6 +228,8 @@ public class Monster implements Comparable<Monster> {
 			info.setDuration(duration);
 		}
 	}
+
+	/** extra vales to check/modify while turning off a status */
 	private void offChecks(Status status) {
 		StatusInfo info = this.status.get(status);
 
@@ -235,7 +239,7 @@ public class Monster implements Comparable<Monster> {
 				break;
 			case DODGE:
 				if (info.getStart() >= 0 || info.getDuration() >= 0)
-					this.modStat(Stat.SPEED, false, -7);
+					this.modStat(Stat.SPEED, false, -this.getStatMax(Stat.SPEED));
 				break;
 			case SHIFT:
 				ShiftInfo shift = (ShiftInfo)info;
@@ -253,7 +257,8 @@ public class Monster implements Comparable<Monster> {
 		info.setDuration(-1);
 	}
 
-	private void copyVals (Monster copy) { //used for transforming; so don't have to make many setters
+	/** used for transforming; so don't have to make many setters */
+	private void copyVals (Monster copy) {
 		this.name = copy.name;
 		this.attType = copy.attType;
 		this.passive = copy.passive;
@@ -326,7 +331,7 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	/**
-	 * @return -1 is no limit, 0 is self, >0 max number of targets
+	 * @return -1 is no limit, 0 is self, >0 max number of targets 
 	 */
 	public int getNumTar() {
 		return turnMove.getNumTar();
@@ -416,7 +421,7 @@ public class Monster implements Comparable<Monster> {
 	/**
 	 * modifies max stat value to newVal
 	 */
-	public void setStatMax (Stat stat, float newVal) {
+	protected void setStatMax (Stat stat, float newVal) {
 		stats.get(stat).setBase(newVal);
 	}
 
@@ -428,7 +433,7 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	/**
-	 * changes the stat by mod, caps new value to base
+	 * changes the stat by mod, caps new value to base based on flag
 	 * @param capped true if bounded by max value; or false if just temporary buff
 	 * @return the amount that went over the base cap
 	 */

@@ -159,7 +159,10 @@ public class Fight {
 		Interface.writeOut(" ");
 	}	
 		
-	private void statusCheck (Monster checking, Status status) { //each turn effects, while status is active
+	/**
+	 * each turn effects, while status is active
+	 */
+	private void statusCheck (Monster checking, Status status) {
 		int check = checking.getStatus(status);
 
 		if (check > -1) { //status active
