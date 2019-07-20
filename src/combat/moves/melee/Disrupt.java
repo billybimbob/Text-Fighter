@@ -20,6 +20,7 @@ public class Disrupt extends Ability {
 		boolean manaUsed;
 
 		if ((manaUsed = enoughMana()) && attackHit(targets[0], 0.01)) { //Check if attack will be successful
+			
 			targetReduct(targets[0]);
 			Interface.prompt(attacker.getName() + " slams into " + targets[0].getName());
 			if (blocked()) //Check if the defense reduction value is greater than the attack, therefore blocking the attack
@@ -39,11 +40,8 @@ public class Disrupt extends Ability {
 				Interface.writeOut(attacker.getName() + " deals " + selfDam + " damage to self from recoil");
 			}
 			
-		} else if (manaUsed) {
+		} else if (manaUsed)
 			Interface.writeOut(attacker.getName() + "'s attack missed");
-		} else {
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
-		}
 	}
 
 }

@@ -63,8 +63,6 @@ public class ChangeForm extends ShapeShift {
 			transform(attacker, tempList[formChoice], 5);			
 			Interface.writeOut(beforeName + " has transformed into " + attacker.getName());
 			
-		} else {
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
 		}
 	}
 }

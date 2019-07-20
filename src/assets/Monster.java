@@ -36,7 +36,7 @@ public class Monster implements Comparable<Monster> {
 			
 			if (this.base < newVal) {
 				capOver = newVal-this.base;
-				this.setTemp(this.base);
+				this.setTemp( this.temp>this.base ? this.temp : this.base); //keep old temp or ceiling to base
 			} else
 				this.setTemp(newVal);
 
@@ -202,25 +202,55 @@ public class Monster implements Comparable<Monster> {
 		return Index.createPassive(name, this);
 	}
 	
-	private void onChecks(StatusInfo info, int start, int duration) { //could maybe make switch with a flag
-		if (info.getClass() != ShiftInfo.class
-		   || info.getClass() == ShiftInfo.class && ((ShiftInfo)info).getOriginal() != null) {
+	private void onChecks(Status status, int start, int duration) { //could maybe make switch with a flag
+		StatusInfo info = this.status.get(status);
+		
+		boolean flag = true;
+		switch(status) {
+			case CONTROL:
+				this.setAggro();
+				break;
+			case DODGE:
+				if (info.getStart() == -1 && info.getDuration() == -1)
+					this.modStat(Stat.SPEED, false, 7);
+				break;
+			case SHIFT:
+				flag = ((ShiftInfo)info).getOriginal() != null;
+				break;
+			default:
+				break;
+		}
+
+		if (flag) {
 			info.setStart(start);
 			info.setDuration(duration);
 		}
 	}
-	private void offChecks(StatusInfo info) {
+	private void offChecks(Status status) {
+		StatusInfo info = this.status.get(status);
+
+		switch(status) {
+			case CONTROL:
+				this.setAggro();
+				break;
+			case DODGE:
+				if (info.getStart() >= 0 || info.getDuration() >= 0)
+					this.modStat(Stat.SPEED, false, -7);
+				break;
+			case SHIFT:
+				ShiftInfo shift = (ShiftInfo)info;
+				Monster original;
+				if ((original = shift.getOriginal()) != null) {
+					this.copyVals(original);
+					shift.setOriginal(null);
+				}
+				break;
+			default:
+				break;
+		}
+		
 		info.setStart(-1);
 		info.setDuration(-1);
-
-		if (info.getClass() == ShiftInfo.class) { //clear and revert if shift status
-			ShiftInfo shift = (ShiftInfo)info;
-			Monster original;
-			if ((original = shift.getOriginal()) != null) {
-				this.copyVals(original);
-				shift.setOriginal(null);
-			}
-		}
 	}
 
 	private void copyVals (Monster copy) { //used for transforming; so don't have to make many setters
@@ -355,7 +385,10 @@ public class Monster implements Comparable<Monster> {
 		}
 	}
 	public void executeTurn() { //wrapper for turnMove
-		turnMove.execute();
+		if (targets.size() > 0)
+			turnMove.execute();
+		else
+			System.err.println("no targets found, aggro: " + this.aggro);
 	}
 
 	public void usePassive(List<Monster> possTargets) { //look at; assume all fighters passed in
@@ -400,6 +433,9 @@ public class Monster implements Comparable<Monster> {
 	 * @return the amount that went over the base cap
 	 */
 	public float modStat (Stat stat, boolean capped, float mod) { //changes stat by val
+		if (stat.equals(Stat.SPEED)) {
+			System.err.println("modifying speed");
+		}
 		StatInfo info = stats.get(stat);
 		float capOver = 0;
 		float newVal = info.getTemp()+mod;
@@ -417,24 +453,22 @@ public class Monster implements Comparable<Monster> {
 	 * @param duration positive value turns on for that duration, negative turns off
 	 */
 	public void setStatus(Status status, int duration) { //could set special status
-		StatusInfo info = this.status.get(status);
 		if (duration > 0) {
 			int start = currentTurn();
-			onChecks(info, start, duration);
+			onChecks(status, start, duration);
 		} else
-			offChecks(info);
+			offChecks(status);
 	}
 
 	/**
 	 * turns on/off the inputted status; defaults to one turn
 	 */
 	public void setStatus(Status status, boolean toggle) {
-		StatusInfo info = this.status.get(status);
 		if (toggle) {
-			int start = 0, duration = 0;
-			onChecks(info, start, duration);
+			int start = 0, duration = 1;
+			onChecks(status, start, duration);
 		} else
-			offChecks(info);
+			offChecks(status);
 	}
 
 	/**

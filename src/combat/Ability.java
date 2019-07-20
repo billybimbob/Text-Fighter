@@ -8,7 +8,7 @@ public abstract class Ability implements Cloneable {
 	protected String name, description;
 	protected float manaCost, damage, damageMod;
 	protected Monster attacker;
-	protected int numTar, duration;
+	protected int numTar;
 	protected boolean attType, priority, passive; //aoe attacks can't work with Monster
 	
 	/**
@@ -18,7 +18,6 @@ public abstract class Ability implements Cloneable {
 		this.priority = false;
 		this.passive = false;
 		this.numTar = 1;
-		this.duration = 1;
 		this.attacker = user;
 		this.damage = 0;
 		this.damageMod = 1;
@@ -45,6 +44,9 @@ public abstract class Ability implements Cloneable {
 		boolean check = attacker.getStat(Stat.MP) >= manaCost;
 		if (check) //not sure if I want to pair; immediately revmoves cost if able
 			attacker.modStat(Stat.MP, true, -manaCost);
+		else
+			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
+			
 		return check;
 	}
 
@@ -112,7 +114,7 @@ public abstract class Ability implements Cloneable {
 		return numTar > 0;
 	}
 	public boolean resolved() { //check if multi turn, see if ability finished
-		return duration == 1;
+		return true;
 	}
 
 	@Override

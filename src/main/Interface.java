@@ -22,7 +22,7 @@ public class Interface {
 		Interface.prompt("Step forth and state your name: ");
 		String name = KEYBOARD.nextLine();
 		
-		String[] availClass = {"Warrior", "Mage", "Shifter"};
+		String[] availClass = {"Warrior", "Mage", "Cleric", "Shifter"};
 		String classPrompt = "Which class you would like to be?\nThis will affect your stats, potions, and abilities";
 		int classChoice = choiceInput(false, availClass, classPrompt);
 		
@@ -40,7 +40,12 @@ public class Interface {
 			HERO.addItems(Index.potionsList[5], 1);
 			Interface.writeOut("You are a mage");
 			break;
-		case 3: //shifter
+		case 3:
+			HERO.addItems(Index.potionsList[4], 1);
+			HERO.addItems(Index.potionsList[5], 1);
+			Interface.writeOut("You are a cleric");
+			break;
+		case 4: //shifter
 			HERO.addItems(Index.potionsList[4], 1);
 			HERO.addItems(Index.potionsList[5], 1);
 			Interface.writeOut("You are a shifter");

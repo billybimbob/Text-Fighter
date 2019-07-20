@@ -24,9 +24,6 @@ public class Polymorph extends ShapeShift { //doesn't account for if the moveLis
 		
 		} else if (manaUsed) {
 			Interface.writeOut(attacker.getName() + " 's spell failed");
-		
-		} else {
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
 		}
 	}
 

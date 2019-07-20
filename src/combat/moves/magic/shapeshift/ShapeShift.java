@@ -5,7 +5,7 @@ import combat.*;
 
 public abstract class ShapeShift extends Ability { //abstract so doesn't have to implement execute
 	
-	public ShapeShift(Monster user) {
+	protected ShapeShift(Monster user) {
 		super(user);
 	}
 

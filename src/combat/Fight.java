@@ -156,75 +156,79 @@ public class Fight {
 			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {}
 		
-		Interface.writeOut("\n");
+		Interface.writeOut(" ");
 	}	
 		
-	private void statusCheck (Monster checking, Status status) { //each turn effects
+	private void statusCheck (Monster checking, Status status) { //each turn effects, while status is active
 		int check = checking.getStatus(status);
 
 		if (check > -1) { //status active
 			switch(status) {
-			case BURN:
-				int burnDam = (int)(checking.getStat(Stat.HP)*0.1);
-				checking.modStat(Stat.HP, false, -burnDam);
-				Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
-				if (check == 0) {
-					checking.setStatus(status, false);
-					Interface.writeOut(checking.getName() + " is no longer burned");
-				}
-				break;
-
-			case DODGE:
-				if (check == 0) { //done
-					checking.modStat(Stat.SPEED, false, -7);
-					checking.setStatus(status, false);
-				} else 
-					checking.modStat(Stat.SPEED, false, 7);
-				break;
-
-			case POISON:
-				int poiDam = (int)(checking.getStat(Stat.HP)*0.01*(getTurnNum()%10));
-				checking.modStat(Stat.HP, false, -poiDam);
-				Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
-				break;
-
-			case POTION:
-				Hero user = (Hero)checking;
-				boolean finished = check == 0;
-				Potions.buffCheck(user, finished);
-				break;
-
-			case REFLECT: //try to go from turn to turn
-				List<FightLog.LogInfo> prevLogs = log.getInfo(getTurnNum()-1, checking);
-				if (prevLogs != null) //could be no logs
-					for (FightLog.LogInfo info: prevLogs) { //checking all damage recieved from last round
-						Monster attacker = info.getAttacker();
-						double damDeal = info.getDamage();
-						float refDam = (int)(damDeal*0.5);
-						attacker.modStat(Stat.HP, false, -refDam);
-						Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
+				case BURN:
+					int burnDam = (int)(checking.getStat(Stat.HP)*0.1);
+					checking.modStat(Stat.HP, false, -burnDam);
+					Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
+					if (check == 0) {
+						checking.setStatus(status, false);
+						Interface.writeOut(checking.getName() + " is no longer burned");
 					}
+					break;
 
-				if (check == 0) { //finished
-					checking.setStatus(status, false);
-					Interface.writeOut(checking.getName() + "'s reflect has worn off");
-				}
-				break;
+				case CONTROL:
+					if (check == 0) {
+						checking.setStatus(status, false);
+						Interface.writeOut(checking.getName() + " is no longer controlled");
+					}
+					break;
 
-			case SHIFT:
-				if (check == 0) { //triggered by shapeshift
-					ShapeShift.revert(checking);
-					Interface.writeOut(checking.getName() + " reverted back");
-				}
-				break;
+				case DODGE:
+					if (check == 0) //done
+						checking.setStatus(status, false);
+					break;
 
-			case STUN:
-				//triggered by chargeatt, magblast, disrupt
-				Interface.writeOut(checking.getName() + " is stunned");
-				skipTurn = true;
-				if (check == 0)
-					checking.setStatus(status, false);
-				break;
+				case POISON:
+					int poiDam = (int)(checking.getStat(Stat.HP)*0.01*(getTurnNum()%10));
+					checking.modStat(Stat.HP, false, -poiDam);
+					Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
+					break;
+
+				case POTION:
+					Hero user = (Hero)checking;
+					boolean finished = check == 0;
+					Potions.buffCheck(user, finished);
+					break;
+
+				case REFLECT: //try to go from turn to turn
+					List<FightLog.LogInfo> prevLogs = log.getInfo(getTurnNum()-1, checking);
+					if (prevLogs != null) //could be no logs
+						for (FightLog.LogInfo info: prevLogs) { //checking all damage recieved from last round
+							Monster attacker = info.getAttacker();
+							double damDeal = info.getDamage();
+							float refDam = (int)(damDeal*0.5);
+							attacker.modStat(Stat.HP, false, -refDam);
+							Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
+						}
+
+					if (check == 0) { //finished
+						checking.setStatus(status, false);
+						Interface.writeOut(checking.getName() + "'s reflect has worn off");
+					}
+					break;
+
+				case SHIFT:
+					if (check == 0) { //triggered by shapeshift
+						ShapeShift.revert(checking);
+						Interface.writeOut(checking.getName() + " reverted back");
+					}
+					break;
+
+				case STUN:
+					//triggered by chargeatt, magblast, disrupt
+					Interface.writeOut(checking.getName() + " is stunned");
+					skipTurn = true;
+					if (check == 0)
+						checking.setStatus(status, false);
+					break;
 			}
 		}
 	}

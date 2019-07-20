@@ -15,7 +15,6 @@ public class ChargeAttack extends Ability {
 		attType = true;
 		manaCost = 6;
 		damageMod = 3;
-		duration = 2;
 		turnCount = 0;
 	}
 
@@ -25,13 +24,9 @@ public class ChargeAttack extends Ability {
 	}
 	
 	public void execute() { //Change, too messy, might put the print statements in the fight class
-		
 		Monster[] targets = attacker.getTargets();
-		if (enoughMana() && turnCount == 0) { //checks if sufficient mana, and starts charged turn
-			Interface.writeOut(attacker.getName() + " readies their swing");
-			turnCount++;
 		
-		} else if (turnCount == 1) { //checks if attack charged for 1 turn
+		if (turnCount == 1) { //checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
 			if (attackHit(targets[0], 0.01)) { //Check if attack will be successful
 				
@@ -53,7 +48,10 @@ public class ChargeAttack extends Ability {
 			
 			turnCount = 0;
 			
-		} else
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
+		} else if (enoughMana() && turnCount == 0) { //checks if sufficient mana, and starts charged turn
+			Interface.writeOut(attacker.getName() + " readies their swing");
+			turnCount++;
+		
+		}
 	}
 }

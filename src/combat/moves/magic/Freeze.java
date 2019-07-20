@@ -29,15 +29,14 @@ public class Freeze extends Ability {
 				Interface.writeOut(attacker.getName() + " freezes " + targets[0].getName() + " for " +damage + " damage");
 				dealDamage(attacker, targets[0], damage);
 				if (targets[0].getStat(Stat.SPEED) > 0) {
-					int statDam = 1;
+					int statDam = (int)(damage*0.5);
 					targets[0].modStat(Stat.SPEED, true, -statDam);
 					Interface.writeOut(targets[0].getName() + "'s speed was lowered by " + statDam);
 				}
 			}
+
 		} else if (manaUsed) { //attackHit failed
 			Interface.writeOut(attacker.getName() + "'s attack missed");
-		} else {
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
 		}
 	}
 	

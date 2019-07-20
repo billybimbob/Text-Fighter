@@ -29,7 +29,10 @@ public class Hero extends Monster {
 			case 2: //mage
 				fightClass = Index.getMonBase("Mage");
 				break;
-			case 3: //shifter
+			case 3: //cleric
+				fightClass = Index.getMonBase("Cleric");
+				break;
+			case 4: //shifter
 				fightClass = Index.getMonBase("Shifter");
 				break;
 		}
@@ -65,9 +68,6 @@ public class Hero extends Monster {
 	}
 
 	private void selectAttack(List<Monster> targets) { //array generate every time
-		String[] monNames = new String[targets.size()];
-		for (int i = 0; i<targets.size(); i++)
-			monNames[i] = targets.get(i).getName();
 
 		do { //probably okay?
 			String attPrompt = "Which attack do you want to use?";
@@ -80,7 +80,12 @@ public class Hero extends Monster {
 			//determine the targets of hero move
 			int numTar = this.getNumTar();
 			action = true;
-			for (int i = 0; i < numTar; i++) { //gets targets if needed
+			for (int i = 0; i < numTar && targets.size() > 0; i++) { //gets targets if needed
+
+				String[] monNames = new String[targets.size()];
+				for (int j = 0; j<targets.size(); j++)
+					monNames[j] = targets.get(j).getName();
+				
 				String tarPrompt = "Which monster would you want to target?";
 				int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
 				if (tarNum == 0) {//have to change how to implement
@@ -88,6 +93,7 @@ public class Hero extends Monster {
 					break;
 				}
 				this.addTarget(targets.get(tarNum-1));
+				targets.remove(tarNum-1);
 			}
 
 			if (numTar == -1)

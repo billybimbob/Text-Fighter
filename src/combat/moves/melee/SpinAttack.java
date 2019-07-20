@@ -36,12 +36,13 @@ public class SpinAttack extends Ability {
 						Interface.writeOut("but is blocked by " + target.getName());
 					else {	
 						dealDamage(attacker, target, damage);
-						Interface.writeOut(target.getName() + " for " + damage + " damage");
+						Interface.writeOut(target.getName() + " gets hit for " + damage + " damage");
 					}
+				} else {
+					Interface.writeOut(target.getName() + " dodges the attack");
 				}
 			}
 		
-		} else
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
+		}
 	}
 }

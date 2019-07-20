@@ -37,9 +37,6 @@ public class LifeDrain extends Ability {
 		
 		} else if (manaUsed)
 			Interface.writeOut(attacker.getName() + "'s attack missed");
-	
-		else
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
 		
 	}
 }

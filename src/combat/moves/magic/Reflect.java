@@ -21,8 +21,6 @@ public class Reflect extends Ability { //not sure if should be priority or not
 			attacker.setStatus(Status.REFLECT, 5);
 			Interface.writeOut(attacker.getName() + " casts a reflecting shield for " + manaCost + " mana");
 			
-		} else
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
-
+		}
 	}
 }
