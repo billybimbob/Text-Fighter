@@ -7,15 +7,15 @@ class FightLog {
 
     public static class LogInfo {
         private Monster attacker;
-        private double damage;
+        private float damage;
 
-        private LogInfo(Monster attacker, double damage) {
+        private LogInfo(Monster attacker, float damage) {
             this.attacker = attacker;
             this.damage = damage;
         }
 
         public Monster getAttacker() { return attacker; }
-        public double getDamage() { return damage; }
+        public float getDamage() { return damage; }
     }
 
     private List<Map<Monster, List<LogInfo>>> log; //keys to map are the receiver
@@ -36,7 +36,41 @@ class FightLog {
         return log.size(); 
     }
     public List<LogInfo> getInfo (int round, Monster target) {
-        return log.get(round).get(target);
+        List<LogInfo> info = null;
+        try {
+            info = log.get(round).get(target);
+        } catch (IndexOutOfBoundsException e) { } //handle case if on first round
+        
+        if (info == null) //blank array, might keep eye on
+            info = new ArrayList<>();
+        return info;
+    }
+
+
+    /*
+     * mutators
+     */
+    public void newRound() {
+        log.add(new HashMap<>());
+    }
+
+    public void addLog(Monster attacker, Monster target, float damage) {
+        Map<Monster, List<LogInfo>> round = newestRound();
+        LogInfo newInfo = new LogInfo(attacker, damage);
+        
+        List<LogInfo> targLog = round.get(target);
+
+        if (targLog == null) {
+            targLog = new ArrayList<>();
+            targLog.add(newInfo);
+            round.put(target, targLog);
+        } else {
+            targLog.add(newInfo);
+        }
+    }
+
+    public void clear() {
+        log.clear();
     }
 
     @Override
@@ -55,33 +89,6 @@ class FightLog {
             }
 
         return accum.toString();
-    }
-
-
-    /*
-     * mutators
-     */
-    public void newRound() {
-        log.add(new HashMap<>());
-    }
-
-    public void addLog(Monster attacker, Monster target, double damage) {
-        Map<Monster, List<LogInfo>> round = newestRound();
-        LogInfo newInfo = new LogInfo(attacker, damage);
-        
-        List<LogInfo> targLog = round.get(target);
-
-        if (targLog == null) {
-            targLog = new ArrayList<>();
-            targLog.add(newInfo);
-            round.put(target, targLog);
-        } else {
-            targLog.add(newInfo);
-        }
-    }
-
-    public void clear() {
-        log.clear();
     }
 
 }

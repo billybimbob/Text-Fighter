@@ -81,7 +81,7 @@ public class Hero extends Monster {
 			int numTar = this.getNumTar();
 			action = true;
 
-			if (numTar == -1 || numTar > possTargets.size())
+			if (numTar == -1 || numTar >= possTargets.size())
 				this.addTargets(possTargets);
 			else {
 				int numOptions = possTargets.size();

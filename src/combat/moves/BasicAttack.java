@@ -21,9 +21,7 @@ public class BasicAttack extends Ability {
 		if (attackHit(targets[0], missPrompt)) { //check if attack will be successful
 
 			boolean blocked = false;
-			if (critCheck()) //Checks for critical hit
-				Interface.prompt("Critical Hit! ");
-			else {
+			if (!critCheck()) { //reduce damage on failure
 				String blockedPrompt = attacker.getName() + "'s attack was blocked by " + targets[0].getName();
 				blocked = targetReduct(targets[0], blockedPrompt);
 			}

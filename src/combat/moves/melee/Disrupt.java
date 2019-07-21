@@ -23,13 +23,15 @@ public class Disrupt extends Ability {
 		if (enoughMana() && attackHit(targets[0], missPrompt)) { //Check if attack will be successful
 			
 			Interface.prompt(attacker.getName() + " slams into " + targets[0].getName());
+			
 			String blockedPrompt = "but was resisted";
 			if (!targetReduct(targets[0], blockedPrompt)) { //check if the defense reduction value is greater than the attack, therefore blocking the attack
+				
 				dealDamage(attacker, targets[0], damage);
 				Interface.writeOut(" for " + damage + " damage");
 
 				float sto = setAttMod(0.4f);
-				if (attackHit(targets[0], null)) {
+				if (attackHit(targets[0], null)) { //null not working
 					Interface.writeOut(attacker.getName() + "'s blow also stuns " + targets[0].getName());
 					targets[0].setStatus(Status.STUN, true);
 				}

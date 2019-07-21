@@ -60,7 +60,7 @@ public abstract class Ability implements Cloneable {
 	 * checks whether attacks lands on target; damage calculated on success;
 	 * attack damage check based on either the att or mag stat
 	 * @param target Monster used to determine hit
-	 * @param failPrompt prints prompt if attack misses
+	 * @param failPrompt prints prompt if attack misses; null prints nothing on miss
 	 * @return true if attack hits, false if attack misses
 	 */
 	protected boolean attackHit(Monster target, String failPrompt) {
@@ -162,7 +162,6 @@ public abstract class Ability implements Cloneable {
 	 */
 	public static void dealDamage (Monster attacker, Monster target, float damage) {
 		target.modStat(Stat.HP, true, -damage);
-		target.addDamTurn(damage);
 		Interface.FIGHT.addLog(attacker, target, damage);
 	}
 

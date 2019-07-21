@@ -8,9 +8,7 @@ import main.Index.Move;
 
 public class Monster implements Comparable<Monster> {
 
-	/**
-	 * nested classes
-	 */
+	/** nested classes */
 
 	private static class StatInfo {
 		float base, temp;
@@ -73,15 +71,16 @@ public class Monster implements Comparable<Monster> {
 
 	public final static int levMult = 2;
 	
-	private float turnDam;
+	private static int idCount = 0;
+	private int id;
 	private Map<Stat, StatInfo> stats;
 	private Ability[] moveList;
-	private boolean attType;
+	private boolean attType; //attType true means physical attack
 	private Ability passive;
 	private Map<Status, StatusInfo> status;
 	
 	protected String name;
-	protected boolean aggro; //attType true means physical attack
+	protected boolean aggro;
 	protected Ability turnMove;
 	protected List<Monster> targets; //look at how set and used
 	protected int level = 1;
@@ -94,10 +93,10 @@ public class Monster implements Comparable<Monster> {
 	 * @see Stat
 	 */
 	public Monster (String name, boolean aggro, boolean attType, List<Integer> statsIn) {
+		this.setId();
 		this.name = name;
 		this.aggro = aggro;
 		this.attType = attType;
-		this.turnDam = 0;
 
 		this.stats = new HashMap<>();
 		//hp, mp, att, def, mag, magR, spe, crit}; //order must be same as enum
@@ -139,10 +138,10 @@ public class Monster implements Comparable<Monster> {
 	 * @param copy creates new Monster instance based off of values from copy
 	 */
 	public Monster (Monster copy) { //not sure if deep or shallow
+		this.setId();
 		this.name = copy.name;
 		this.aggro = copy.aggro;
 		this.attType = copy.attType;
-		this.turnDam = copy.turnDam;
 
 		this.stats = new HashMap<>(); //deep copy
 		for (Stat statName: Stat.values())
@@ -163,6 +162,8 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	//private helpers
+	private void setId() { this.id = idCount++; }
+
 	private void setPassive(Ability passive) {
 		if (passive.isPassive()) 
 			this.passive = passive;
@@ -183,9 +184,6 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	/**wrapper for list clear method*/
-	private void resetDamage() {
-		this.turnDam = 0;
-	}
 	private Ability createAbility(Move name) {
 		return Index.createAbility(name, this);
 	}
@@ -323,9 +321,6 @@ public class Monster implements Comparable<Monster> {
 	public String getName() {
 		return name;
 	}
-	public double getTurnDam() {
-		return this.turnDam;
-	}
 	public boolean getAggro() {
 		return aggro;
 	}
@@ -403,7 +398,6 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	public void clearTurn() {
-		resetDamage();
 		if (turnMove != null && turnMove.resolved()) {
 			turnMove = null;		
 			clearTargets();
@@ -506,10 +500,6 @@ public class Monster implements Comparable<Monster> {
 		setStatus(status, duration);
 	}
 
-	public void addDamTurn(double damage) {
-		this.turnDam += damage;
-	}
-
 	/**
 	 * modifies stats based and restores health and mana
 	 */
@@ -526,6 +516,20 @@ public class Monster implements Comparable<Monster> {
 	@Override
 	public String toString () {
 		return name + " - " + getStat(Stat.HP) + " hp" + " - " + getStat(Stat.MP) + " mp" + " - " + getStat(Stat.SPEED) + " speed";
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other == null || !(other instanceof Monster))
+			return false;
+		else
+			return this.id == ((Monster)other).id;
+	}
+
+	@Override
+	public int hashCode() { //hash by id
+		Integer idVal = Integer.valueOf(this.id);
+		return idVal.hashCode();
 	}
 
 	/**

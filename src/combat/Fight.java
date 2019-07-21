@@ -19,12 +19,19 @@ public class Fight {
 		this.fighters = fighters;
 	}
 	
-	void addLog(Monster attacker, Monster target, double damage) {
+	void addLog(Monster attacker, Monster target, float damage) {
 		log.addLog(attacker, target, damage);
 	}
 
 	public int getTurnNum() { return log.roundCount(); }
 
+	public float getTurnDamage(int round, Monster target) {
+		float totalDam = 0;
+		for(FightLog.LogInfo info: log.getInfo(round, target)) {
+			totalDam += info.getDamage();
+		}
+		return totalDam;
+	}
 
 	public void start() {
 		boolean fightControl = true; //could add flee back
@@ -214,15 +221,13 @@ public class Fight {
 					break;
 
 				case REFLECT: //try to go from turn to turn
-					List<FightLog.LogInfo> prevLogs = log.getInfo(getTurnNum()-1, checking);
-					if (prevLogs != null) //could be no logs
-						for (FightLog.LogInfo info: prevLogs) { //checking all damage recieved from last round
-							Monster attacker = info.getAttacker();
-							double damDeal = info.getDamage();
-							float refDam = (int)(damDeal*0.5);
-							attacker.modStat(Stat.HP, false, -refDam);
-							Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
-						}
+					for (FightLog.LogInfo info: log.getInfo(getTurnNum()-1, checking)) { //checking all damage recieved from last round
+						Monster attacker = info.getAttacker();
+						double damDeal = info.getDamage();
+						float refDam = (int)(damDeal*0.5);
+						attacker.modStat(Stat.HP, false, -refDam);
+						Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
+					}
 
 					if (check == 0) { //finished
 						checking.setStatus(status, false);
