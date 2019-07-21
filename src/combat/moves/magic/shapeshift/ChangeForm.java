@@ -12,7 +12,7 @@ public class ChangeForm extends ShapeShift {
 		super(user);
 		name = "Change Form";
 		description = "A spell to transform into an eagle, salamander, or pangolin";
-		manaCost = 5; //might get rid
+		manaCost = 1; //might get rid
 		numTar = 0;
 		priority = true;
 		

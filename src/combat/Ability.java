@@ -23,11 +23,12 @@ public abstract class Ability implements Cloneable {
 		this.damageMod = 1;
 		this.attacker = user;
 	}
-
+	
+	/*
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
-	}
+	}*/
 
 	public Object clone(Monster attacker) throws CloneNotSupportedException { //can't do copy constructor becuase of subclasses
 		Ability newAbility = (Ability)this.clone();

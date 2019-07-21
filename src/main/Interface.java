@@ -73,8 +73,9 @@ public class Interface {
 
 
 	public static void writeOut(String... printings) { //wrapper for system.out.print; can be other output
-		for (String printing: printings)
-			System.out.println(printing);
+		if (printings != null)
+			for (String printing: printings)
+				System.out.println(printing);
 	}
 	public static void prompt(String prompt) { //print to same line
 		System.out.print(prompt);

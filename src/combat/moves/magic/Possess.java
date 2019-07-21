@@ -21,7 +21,7 @@ public class Possess extends Ability {
 		String failPrompt = attacker.getName() + "'s spell failed";
         if (enoughMana() && attackHit(targets[0], failPrompt)) {
             targets[0].setStatus(Status.CONTROL, 3);
-            Interface.writeOut(attacker.getName() + " takes contorl of " + targets[0].getName());
+            Interface.writeOut(attacker.getName() + " takes control of " + targets[0].getName());
         }
     }
 }
