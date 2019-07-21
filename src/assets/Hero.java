@@ -75,28 +75,32 @@ public class Hero extends Monster {
 				return;
 			
 			this.turnMove = getMove(attNum-1); //start at 0th idx
+			Interface.writeOut("Move selected: " + this.turnMove.getName());
 			
 			//determine the targets of hero move
 			int numTar = this.getNumTar();
+			int numOptions = targets.size();
 			action = true;
-			for (int i = 0; i < numTar && targets.size() > 0; i++) { //gets targets if needed
 
-				String[] monNames = new String[targets.size()];
-				for (int j = 0; j<targets.size(); j++)
-					monNames[j] = targets.get(j).getName();
-				
-				String tarPrompt = "Which monster would you want to target?";
-				int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
-				if (tarNum == 0) {//have to change how to implement
-					action = false;
-					break;
-				}
-				this.addTarget(targets.get(tarNum-1));
-				targets.remove(tarNum-1);
-			}
-
-			if (numTar == -1)
+			if (numTar == -1 || numTar > targets.size())
 				this.addTargets(targets);
+			else {
+				while (numOptions-targets.size() < numTar) { //loop until amount selected enough
+
+					String[] monNames = new String[targets.size()];
+					for (int j = 0; j<targets.size(); j++)
+						monNames[j] = targets.get(j).getName();
+					
+					String tarPrompt = "Which monster would you want to target?";
+					int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
+					if (tarNum == 0) {//have to change how to implement
+						action = false;
+						clearTargets();
+						break;
+					}
+					this.addTarget(targets.remove(tarNum-1));
+				}
+			}
 
 		} while (!action);
 	}

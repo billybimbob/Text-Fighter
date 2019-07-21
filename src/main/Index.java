@@ -15,8 +15,10 @@ import combat.moves.passive.*;
 public class Index {
 
 	public static enum Move { 
-		BASIC, CHARGE, DISRUPT, DRAIN, FREEZE, POLY, POSSESS, REFLECT, REVENGE, SHEEP, SHIFT, SHOCK, SPIN, //attacks
-		FLURRY, INTIM; //pasives
+		BASIC, SHEEP, //atcks
+		BURST, DRAIN, FREEZE, FRENZY, POLY, POSSESS, REFLECT, SHIFT, SHOCK, //magic
+		CHARGE, DISRUPT, REVENGE, SPIN, //melee
+		INTIM, RAGE; //passives
 	}
 
 	private static final Map<Move, Function<Monster, Ability>> attackList = new HashMap<>();
@@ -46,10 +48,12 @@ public class Index {
 		
 		//could split different class abilities
 		attackList.put(Move.BASIC,   BasicAttack::new);
+		attackList.put(Move.BURST,   FlameBurst::new);
 		attackList.put(Move.CHARGE,  ChargeAttack::new);
 		attackList.put(Move.DISRUPT, Disrupt::new);
 		attackList.put(Move.DRAIN,   LifeDrain::new);
 		attackList.put(Move.FREEZE,  Freeze::new);
+		attackList.put(Move.FRENZY,  Frenzy::new);
 		attackList.put(Move.POLY,    Polymorph::new);
 		attackList.put(Move.POSSESS, Possess::new);
 		attackList.put(Move.REFLECT, Reflect::new);
@@ -59,8 +63,8 @@ public class Index {
 		attackList.put(Move.SHOCK,   Shock::new);
 		attackList.put(Move.SPIN,    SpinAttack::new);
 
-		passiveList.put(Move.FLURRY, Flurry::new);
-		passiveList.put(Move.INTIM, Intimidate::new);
+		passiveList.put(Move.INTIM,  Intimidate::new);
+		passiveList.put(Move.RAGE,   Rage::new);
 
 	}
 

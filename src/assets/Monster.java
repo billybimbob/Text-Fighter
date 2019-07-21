@@ -183,9 +183,6 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	/**wrapper for list clear method*/
-	private void clearTargets() {
-		this.targets.clear();
-	}
 	private void resetDamage() {
 		this.turnDam = 0;
 	}
@@ -261,7 +258,7 @@ public class Monster implements Comparable<Monster> {
 		this.stats = copy.stats;
 		this.status = copy.status;
 	}
-	
+
 	private void setTargets(List<Monster> possTargets) {
 		int numTar = this.getNumTar();
 
@@ -289,6 +286,9 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	//protected helpers
+	protected void clearTargets() {
+		this.targets.clear();
+	}
 	protected Ability getMove() {
 		return moveList[(int)(Math.random()*moveList.length)];
 	}
