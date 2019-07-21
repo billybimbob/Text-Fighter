@@ -30,26 +30,26 @@ public class Interface {
 		HERO = new Hero(name, classChoice);
 		
 		switch (classChoice) {
-		case 1: //warrior
-			HERO.addItems(Index.potionsList[2], 1);
-			HERO.addItems(Index.potionsList[3], 1);
-			Interface.writeOut("You are a warrior");
-			break;
-		case 2: //mage
-			HERO.addItems(Index.potionsList[4], 1);
-			HERO.addItems(Index.potionsList[5], 1);
-			Interface.writeOut("You are a mage");
-			break;
-		case 3:
-			HERO.addItems(Index.potionsList[4], 1);
-			HERO.addItems(Index.potionsList[5], 1);
-			Interface.writeOut("You are a cleric");
-			break;
-		case 4: //shifter
-			HERO.addItems(Index.potionsList[4], 1);
-			HERO.addItems(Index.potionsList[5], 1);
-			Interface.writeOut("You are a shifter");
-			break;
+			case 1: //warrior
+				HERO.addItems(Index.potionsList[2], 1);
+				HERO.addItems(Index.potionsList[3], 1);
+				Interface.writeOut("You are a warrior");
+				break;
+			case 2: //mage
+				HERO.addItems(Index.potionsList[4], 1);
+				HERO.addItems(Index.potionsList[5], 1);
+				Interface.writeOut("You are a mage");
+				break;
+			case 3:
+				HERO.addItems(Index.potionsList[4], 1);
+				HERO.addItems(Index.potionsList[5], 1);
+				Interface.writeOut("You are a cleric");
+				break;
+			case 4: //shifter
+				HERO.addItems(Index.potionsList[4], 1);
+				HERO.addItems(Index.potionsList[5], 1);
+				Interface.writeOut("You are a shifter");
+				break;
 		}
 		
 		HERO.addItems(Index.potionsList[0], 3);

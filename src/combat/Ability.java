@@ -42,6 +42,10 @@ public abstract class Ability implements Cloneable {
 	 * combat calculations, helper functions
 	 */
 
+	/**
+	 * checks if attacker has enough mana cost for ability; uses mana on success and prints prompt on failure
+	 * @return true if attacker has enough mana, false if not
+	 */
 	protected boolean enoughMana() {
 		boolean check = attacker.getStat(Stat.MP) >= manaCost;
 		if (check) //not sure if I want to pair; immediately revmoves cost if able
@@ -52,7 +56,14 @@ public abstract class Ability implements Cloneable {
 		return check;
 	}
 
-	protected boolean attackHit(Monster target, String failPrompt) { //an attack damage check based on either the att or mag stat
+	/**
+	 * checks whether attacks lands on target; damage calculated on success;
+	 * attack damage check based on either the att or mag stat
+	 * @param target Monster used to determine hit
+	 * @param failPrompt prints prompt if attack misses
+	 * @return true if attack hits, false if attack misses
+	 */
+	protected boolean attackHit(Monster target, String failPrompt) {
 		Stat hitStat = Monster.getHitStat(attType);
 		Stat blockStat = Monster.getBlockStat(attType);
 		double checkNum = Math.random()*attacker.getStat(hitStat) - Math.random()*target.getStat(Stat.SPEED)*0.5;
@@ -66,16 +77,30 @@ public abstract class Ability implements Cloneable {
 		return check;
 	}
 	
+	/**
+	 * checks if attack is a critical hit; prints prompt on success
+	 * @return true if critical check was successful, false if not
+	 */
 	protected boolean critCheck() {
 		double check = Math.random();
 		boolean critHit = check < attacker.getStat(Stat.CRIT)*0.02;
-		damage = critHit ? damage*2 : damage; //not sure if here or execute
+		if (critHit) {
+			damage *= 2;
+			Interface.prompt("Critical Hit! ");
+		}
+
 		return critHit;
 	}
 
+	/**
+	 * modfies(lowers) damage value based on target's defense stat
+	 * @param target Monster be dealt damage
+	 * @param blockedPrompt prints out blockedPrompt if return value is true
+	 * @return true if modified damage value is less than 0
+	 */
 	protected boolean targetReduct(Monster target, String blockedPrompt) { //maybe look over
 		Stat hitStat = Monster.getHitStat(attType), blockStat = Monster.getBlockStat(attType);
-		damage -= (int)(Math.random()*(target.getStat(blockStat)*.65));
+		damage -= (int)(Math.random()*(target.getStat(blockStat)));
 		
 		int minDam = (int)attacker.getStat(hitStat);
 		float stat = target.getStat(blockStat);
@@ -89,6 +114,11 @@ public abstract class Ability implements Cloneable {
 		return blocked;
 	}
 
+	/**
+	 * modifies attMod value
+	 * @param tempVal new value to change attMod to
+	 * @return old value of attMod
+	 * */
 	protected float setAttMod(float tempVal) {
 		float ret = attMod;
 		attMod = tempVal;

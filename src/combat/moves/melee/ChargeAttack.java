@@ -32,12 +32,10 @@ public class ChargeAttack extends Ability {
 			//Attack based on RNG and modified by stats
 
 			String missPrompt = attacker.getName() + "'s attack missed";
-			if (attackHit(targets[0], missPrompt)) { //check if attack will be successful
+			if (attackHit(targets[0], missPrompt)) {
 				
 				boolean blocked = false;
-				if (critCheck()) //Checks for critical hit
-					Interface.prompt("Critical Hit! ");
-				else {
+				if (!critCheck()) { //reduce damage on failure
 					String blockedPrompt = targets[0].getName() + " resisted the attack";
 					blocked = targetReduct(targets[0], blockedPrompt);
 				}

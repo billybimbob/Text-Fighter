@@ -19,7 +19,7 @@ public class Revenge extends Ability {
         Monster[] targets = attacker.getTargets();
 
         if (enoughMana()) {
-            damage = (float)attacker.getTurnDam();
+            damage = (float)attacker.getTurnDam(); //maybe go through fight log
             for (Monster target: targets) {
                 Ability.dealDamage(attacker, target, damage);
                 Interface.writeOut(attacker.getName() + " enacts revenge on " + target.getName() 
