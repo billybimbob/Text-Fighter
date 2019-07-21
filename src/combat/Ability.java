@@ -6,7 +6,7 @@ import main.Interface;
 public abstract class Ability implements Cloneable {
 
 	protected String name, description;
-	protected float manaCost, damage, damageMod;
+	protected float manaCost, attMod, damage, damageMod;
 	protected Monster attacker;
 	protected int numTar;
 	protected boolean attType, priority, passive; //aoe attacks can't work with Monster
@@ -18,9 +18,10 @@ public abstract class Ability implements Cloneable {
 		this.priority = false;
 		this.passive = false;
 		this.numTar = 1;
-		this.attacker = user;
 		this.damage = 0;
+		this.attMod = 0.01f;
 		this.damageMod = 1;
+		this.attacker = user;
 	}
 
 	@Override
@@ -50,14 +51,16 @@ public abstract class Ability implements Cloneable {
 		return check;
 	}
 
-	protected boolean attackHit(Monster target, double checkMod) { //an attack damage check based on either the att or mag stat
+	protected boolean attackHit(Monster target, String failPrompt) { //an attack damage check based on either the att or mag stat
 		Stat hitStat = Monster.getHitStat(attType);
 		Stat blockStat = Monster.getBlockStat(attType);
-		double checkNum = Math.random()*attacker.getStat(hitStat) - Math.random()*target.getStat(Stat.SPEED)*.5;
-		boolean check = checkNum > target.getStat(blockStat)*checkMod;
+		double checkNum = Math.random()*attacker.getStat(hitStat) - Math.random()*target.getStat(Stat.SPEED)*0.5;
+		boolean check = checkNum > target.getStat(blockStat)*attMod;
 		
 		if (check) //determines damage if successful
 			damage = (int)(Math.random()*(attacker.getStat(hitStat)*damageMod)+1);
+		else
+			Interface.writeOut(failPrompt);
 
 		return check;
 	}
@@ -69,7 +72,7 @@ public abstract class Ability implements Cloneable {
 		return critHit;
 	}
 
-	protected void targetReduct(Monster target) { //maybe look over
+	protected boolean targetReduct(Monster target, String blockedPrompt) { //maybe look over
 		Stat hitStat = Monster.getHitStat(attType), blockStat = Monster.getBlockStat(attType);
 		damage -= (int)(Math.random()*(target.getStat(blockStat)*.65));
 		
@@ -78,10 +81,17 @@ public abstract class Ability implements Cloneable {
 		minDam -= ((int)stat/2);
 
 		damage = minDam > damage ? minDam : damage; //floor to minDam
+		boolean blocked = damage <= 0;
+		if (blocked)
+			Interface.writeOut(blockedPrompt);
+
+		return blocked;
 	}
 
-	protected boolean blocked() { //could change to minDam check
-		return damage <= 0;
+	protected float setAttMod(float tempVal) {
+		float ret = attMod;
+		attMod = tempVal;
+		return ret;
 	}
 
 

@@ -79,11 +79,11 @@ public class Monster implements Comparable<Monster> {
 	private boolean attType;
 	private Ability passive;
 	private Map<Status, StatusInfo> status;
-	private List<Monster> targets; //look at how set and used
 	
 	protected String name;
 	protected boolean aggro; //attType true means physical attack
 	protected Ability turnMove;
+	protected List<Monster> targets; //look at how set and used
 	protected int level = 1;
 
 

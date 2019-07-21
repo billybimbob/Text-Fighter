@@ -17,12 +17,11 @@ public class Possess extends Ability {
 
     public void execute() {
         Monster[] targets = attacker.getTargets();
-        boolean manaUsed;
-        if ((manaUsed = enoughMana()) && attackHit(targets[0], 0.1)) {
+
+		String failPrompt = attacker.getName() + "'s spell failed";
+        if (enoughMana() && attackHit(targets[0], failPrompt)) {
             targets[0].setStatus(Status.CONTROL, 3);
             Interface.writeOut(attacker.getName() + " takes contorl of " + targets[0].getName());
-        } else if (manaUsed) {
-            Interface.writeOut(attacker.getName() + "'s spell failed");
         }
     }
 }

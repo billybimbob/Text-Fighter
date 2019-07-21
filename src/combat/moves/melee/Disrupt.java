@@ -12,26 +12,28 @@ public class Disrupt extends Ability {
 		description = "A quick bash disrupting a target while injuring yourself";
 		attType = true;
 		priority = true;
+		attMod = 0.02f;
 		manaCost = 5;
 	}
 	
 	public void execute() {
 		Monster[] targets = attacker.getTargets();
-		boolean manaUsed;
 
-		if ((manaUsed = enoughMana()) && attackHit(targets[0], 0.01)) { //Check if attack will be successful
+		String missPrompt = attacker.getName() + "'s attack missed";
+		if (enoughMana() && attackHit(targets[0], missPrompt)) { //Check if attack will be successful
 			
-			targetReduct(targets[0]);
 			Interface.prompt(attacker.getName() + " slams into " + targets[0].getName());
-			if (blocked()) //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				Interface.writeOut(" but was resisted");
-			else {
+			String blockedPrompt = "but was resisted";
+			if (!targetReduct(targets[0], blockedPrompt)) { //check if the defense reduction value is greater than the attack, therefore blocking the attack
 				dealDamage(attacker, targets[0], damage);
 				Interface.writeOut(" for " + damage + " damage");
-				if (attackHit(targets[0], 0.4)) {
+
+				float sto = setAttMod(0.4f);
+				if (attackHit(targets[0], null)) {
 					Interface.writeOut(attacker.getName() + "'s blow also stuns " + targets[0].getName());
 					targets[0].setStatus(Status.STUN, true);
 				}
+				setAttMod(sto);
 			}
 			
 			float selfDam = (int)(damage*.5);
@@ -40,8 +42,7 @@ public class Disrupt extends Ability {
 				Interface.writeOut(attacker.getName() + " deals " + selfDam + " damage to self from recoil");
 			}
 			
-		} else if (manaUsed)
-			Interface.writeOut(attacker.getName() + "'s attack missed");
+		}
 	}
 
 }

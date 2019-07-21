@@ -22,27 +22,23 @@ public class SpinAttack extends Ability {
 		if (enoughMana()) {
 			Interface.writeOut(attacker.getName() + " spins around");
 			
-			for (Monster target: targets) { //Checks if hits for each monster
-				//Attack based on RNG and modified by stats
+			for (Monster target: targets) { //Checks if hits for each monster; Attack based on RNG and modified by stats
 				
-				if (attackHit(target, 0.005)) { //Check if attack will be successful
+				String missPrompt = target.getName() + " dodges the attack";
+				if (attackHit(target, missPrompt)) { //Check if attack will be successful
 					/*if (critCheck()) { //Might add later
 						baseDam *= 2;
 						Interface.writeOut("Critical Hit!");
 					}*/
-
-					targetReduct(target);
-					if (blocked())
-						Interface.writeOut("but is blocked by " + target.getName());
-					else {	
+					String blockedPrompt = "but is blocked by " + target.getName();
+					if (!targetReduct(target, blockedPrompt)) {	
 						dealDamage(attacker, target, damage);
 						Interface.writeOut(target.getName() + " gets hit for " + damage + " damage");
 					}
-				} else {
-					Interface.writeOut(target.getName() + " dodges the attack");
 				}
 			}
 		
 		}
 	}
+
 }

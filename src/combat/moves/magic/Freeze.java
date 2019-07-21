@@ -17,15 +17,14 @@ public class Freeze extends Ability {
 	
 	public void execute() {
 		Monster[] targets = attacker.getTargets();
-		boolean manaUsed;
 
-		if ((manaUsed = enoughMana()) && attackHit(targets[0], 0.01)) {
+		String failPrompt = attacker.getName() + "'s spell failed";
+		if (enoughMana() && attackHit(targets[0], failPrompt)) {
 			//Attack based on RNG and modified by stats, need to consider magic attack
 
-			targetReduct(targets[0]);
-			if (blocked()) //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				Interface.writeOut(attacker.getName() + "'s freeze was resisted by " + targets[0].getName());
-			else {
+			String blockedPrompt = attacker.getName() + "'s freeze was resisted by " + targets[0].getName();
+			if (!targetReduct(targets[0], blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+				
 				Interface.writeOut(attacker.getName() + " freezes " + targets[0].getName() + " for " +damage + " damage");
 				dealDamage(attacker, targets[0], damage);
 				if (targets[0].getStat(Stat.SPEED) > 0) {
@@ -35,8 +34,6 @@ public class Freeze extends Ability {
 				}
 			}
 
-		} else if (manaUsed) { //attackHit failed
-			Interface.writeOut(attacker.getName() + "'s attack missed");
 		}
 	}
 	

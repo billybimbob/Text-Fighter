@@ -20,14 +20,16 @@ public class FlameBurst extends Ability {
     public void execute() {
         Monster[] targets = attacker.getTargets();
         if (enoughMana()) {
+            Interface.writeOut(attacker.getName() + "Creates a burst of flame surrounding self");
+
             for (Monster target: targets) {
-                if (attackHit(target, 0.01)) {
+                String failPrompt = target.getName() + " resists the flames";
+                if (attackHit(target, failPrompt)) {
                     dealDamage(attacker, target, damage);
                     Interface.writeOut(attacker.getName() + "'s fire deals " + damage + " damage");
                     target.setStatus(Status.BURN, 3);
                     Interface.writeOut(target.getName() + " gets burned");
-                } else
-                    Interface.writeOut(target.getName() + " resists the flames");
+                }
             }
         }
     }

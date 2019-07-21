@@ -111,10 +111,11 @@ public class Fight {
 			Monster priAttacker = fighters.get(src);
 
 			if (priAttacker.getPriority() && src != 0) { //if priority and first, no need to move
-				// pastPriMon = 0; //dst is location of where to swap, pastPriorMon is the number of priority Monster past
-				for (int dst = 0; dst < src; dst++) { //finds where to switch, as highest speed priority is 1st
+				for (int dst = 0; dst < src; dst++) { //finds where to switch, as highest speed priority is dst
 					Monster priCheck = fighters.get(dst);
-					if (!priCheck.getPriority() || (priCheck.getPriority() && (priCheck.getStat(Stat.SPEED) < priAttacker.getStat(Stat.SPEED)))) {	
+					if (!priCheck.getPriority() || (priCheck.getPriority() 
+						&& (priCheck.getStat(Stat.SPEED) < priAttacker.getStat(Stat.SPEED)))) {	
+						
 						fighters.add(dst, fighters.remove(src)); //moves mon to dst, and scoots down rest
 						break;
 					}

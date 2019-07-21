@@ -17,26 +17,25 @@ public class LifeDrain extends Ability {
 
 	public void execute() {
 		Monster[] targets = attacker.getTargets();
-		boolean manaUsed;
 
-		if ((manaUsed = enoughMana()) && attackHit(targets[0], 0.01)) { //Check if attack will be successful
-			targetReduct(targets[0]);
-			float selfHeal = (int)(damage*0.5);
+		String failPrompt = attacker.getName() + "'s spell failed";
+		if (enoughMana() && attackHit(targets[0], failPrompt)) { //Check if attack will be successful
 			
-			if (blocked()) {//Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				Interface.writeOut(attacker.getName() + "'s drain was resisted by " + targets[0].getName());
-			} else {
-				Interface.writeOut(attacker.getName() + " drains " + targets[0].getName() + " for " + damage + " damage");
+			String blockedPrompt = attacker.getName() + "'s drain was resisted by " + targets[0].getName();
+			if (!targetReduct(targets[0], blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+				
 				dealDamage(attacker, targets[0], damage);
+				Interface.writeOut(attacker.getName() + " drains " + targets[0].getName() + " for " + damage + " damage");
 
-				if (selfHeal > 0) {
-					float capOver = attacker.modStat(Stat.HP, true, selfHeal);
-					Interface.writeOut(attacker.getName() + " absorbs " + (selfHeal-capOver) + " health");
-				}
+				float baseHeal = (int)(damage*0.5);
+				float capOver = attacker.modStat(Stat.HP, true, baseHeal);
+				float selfHeal = baseHeal-capOver;
+				if (selfHeal > 0)
+					Interface.writeOut(attacker.getName() + " absorbs " + selfHeal + " health");
+				
 			}
 		
-		} else if (manaUsed)
-			Interface.writeOut(attacker.getName() + "'s attack missed");
+		}
 		
 	}
 }

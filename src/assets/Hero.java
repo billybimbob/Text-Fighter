@@ -67,7 +67,7 @@ public class Hero extends Monster {
 		}
 	}
 
-	private void selectAttack(List<Monster> targets) { //array generate every time
+	private void selectAttack(List<Monster> possTargets) { //array generate every time
 		do { //probably okay?
 			String attPrompt = "Which attack do you want to use?";
 			int attNum = Interface.choiceInput(true, this.getMoveNames(), attPrompt);
@@ -79,26 +79,27 @@ public class Hero extends Monster {
 			
 			//determine the targets of hero move
 			int numTar = this.getNumTar();
-			int numOptions = targets.size();
 			action = true;
 
-			if (numTar == -1 || numTar > targets.size())
-				this.addTargets(targets);
+			if (numTar == -1 || numTar > possTargets.size())
+				this.addTargets(possTargets);
 			else {
-				while (numOptions-targets.size() < numTar) { //loop until amount selected enough
+				int numOptions = possTargets.size();
+				while (numOptions-possTargets.size() < numTar) { //loop until amount selected enough
 
-					String[] monNames = new String[targets.size()];
-					for (int j = 0; j<targets.size(); j++)
-						monNames[j] = targets.get(j).getName();
+					String[] monNames = new String[possTargets.size()];
+					for (int j = 0; j<possTargets.size(); j++)
+						monNames[j] = possTargets.get(j).getName();
 					
 					String tarPrompt = "Which monster would you want to target?";
 					int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
 					if (tarNum == 0) {//have to change how to implement
 						action = false;
+						possTargets.addAll(this.targets);
 						clearTargets();
 						break;
 					}
-					this.addTarget(targets.remove(tarNum-1));
+					this.addTarget(possTargets.remove(tarNum-1));
 				}
 			}
 

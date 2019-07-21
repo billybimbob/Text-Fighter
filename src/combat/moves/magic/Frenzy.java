@@ -17,15 +17,16 @@ public class Frenzy extends Ability {
 
     public void execute() {
         Monster[] targets = attacker.getTargets();
+
         if(enoughMana()) {
             Interface.writeOut(attacker.getName() + " causes mass panic");
+            
             for (Monster target: targets) {
-
-                if (attackHit(target, 0.01)) {
+                String failPrompt = target.getName() + " resists being frenzied";
+                if (attackHit(target, failPrompt)) {
                     target.setStatus(Status.FRENZY, 2);
                     Interface.writeOut(target.getName() + " becomes frenzied");
-                } else
-                    Interface.writeOut(target.getName() + " resists being frenzied");
+                }
             }
         }
     }

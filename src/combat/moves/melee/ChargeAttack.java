@@ -14,6 +14,7 @@ public class ChargeAttack extends Ability {
 		description = "A melee attack able to hit with twice accuarcy and damage, ignores armor, but requires a turn to charge, and more vulnerable";
 		attType = true;
 		manaCost = 6;
+		attMod = 0.005f;
 		damageMod = 3;
 		turnCount = 0;
 	}
@@ -29,24 +30,31 @@ public class ChargeAttack extends Ability {
 		
 		if (turnCount == 1) { //checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
-			if (attackHit(targets[0], 0.005)) { //Check if attack will be successful
+
+			String missPrompt = attacker.getName() + "'s attack missed";
+			if (attackHit(targets[0], missPrompt)) { //check if attack will be successful
 				
+				boolean blocked = false;
 				if (critCheck()) //Checks for critical hit
 					Interface.prompt("Critical Hit! ");
-				else
-					targetReduct(targets[0]);
-				
-				Interface.writeOut(attacker.getName() + " lands a powerful hit on " 
-					+ targets[0].getName() + " for " + damage + " damage");
-				dealDamage(attacker, targets[0], damage);
-				
-				if (attackHit(targets[0], 0.1)) {
+				else {
+					String blockedPrompt = targets[0].getName() + " resisted the attack";
+					blocked = targetReduct(targets[0], blockedPrompt);
+				}
+			
+				if (!blocked) {
+					dealDamage(attacker, targets[0], damage);
+					Interface.writeOut(attacker.getName() + " lands a powerful hit on " 
+						+ targets[0].getName() + " for " + damage + " damage");
+				}
+						
+				float sto = setAttMod(0.1f);
+				if (attackHit(targets[0], null)) {
 					Interface.writeOut(attacker.getName() + "'s charged attack stuns " + targets[0].getName());
 					targets[0].setStatus(Status.STUN, true);
 				}
-
-			} else
-				Interface.writeOut(attacker.getName() + "'s attack missed");
+				setAttMod(sto);
+			}
 			
 			turnCount = 0;
 			

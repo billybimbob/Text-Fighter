@@ -18,14 +18,13 @@ public class Shock extends Ability {
 	
 	public void execute() {
 		Monster[] targets = attacker.getTargets();
-		boolean manaUsed;
 		
-		if ((manaUsed = enoughMana()) && attackHit(targets[0], 0.01)) {
-			targetReduct(targets[0]);
+		String failPrompt = attacker.getName() + "'s spell failed";
+		if (enoughMana() && attackHit(targets[0], failPrompt)) {
 			
-			if (blocked()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				Interface.writeOut(attacker.getName() + "'s magic blast was resisted by " + targets[0].getName());
-			} else {
+			String blockedPrompt = attacker.getName() + "'s shock was resisted by " + targets[0].getName();
+			if (!targetReduct(targets[0], blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+				
 				dealDamage(attacker, targets[0], damage);
 				Interface.writeOut(attacker.getName() + " blasts " + targets[0].getName() + " for " + damage + " damage");
 				
@@ -33,8 +32,6 @@ public class Shock extends Ability {
 				Interface.writeOut(attacker.getName() + " gains increased evasiveness for 3 turns");
 			}
 
-		} else if (manaUsed) {
-			Interface.writeOut(attacker.getName() + "'s attack missed");
 		}
 	}
 }
