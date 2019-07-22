@@ -57,7 +57,8 @@ public abstract class Ability implements Cloneable {
 	}
 
 	/**
-	 * checks whether attacks lands on target; damage calculated on success;
+	 * checks whether attacks lands on target; based on att/mag, attMod, and speed
+	 * damage calculated on success;
 	 * attack damage check based on either the att or mag stat
 	 * @param target Monster used to determine hit
 	 * @param failPrompt prints prompt if attack misses; null prints nothing on miss
@@ -71,10 +72,18 @@ public abstract class Ability implements Cloneable {
 		
 		if (check) //determines damage if successful
 			damage = (int)(Math.random()*(attacker.getStat(hitStat)*damageMod)+1);
-		else
+		else if (failPrompt != null)
 			Interface.writeOut(failPrompt);
 
 		return check;
+	}
+
+	/**
+	 * checks whether attacks lands on target; damage calculated on success; nothing done on fail
+	 * @see {@link Ability#attackHit(Monster, String)}
+	 */
+	protected boolean attackHit(Monster target) {
+		return attackHit(target, null);
 	}
 	
 	/**

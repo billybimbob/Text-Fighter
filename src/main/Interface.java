@@ -73,12 +73,16 @@ public class Interface {
 
 
 	public static void writeOut(String... printings) { //wrapper for system.out.print; can be other output
-		if (printings != null)
-			for (String printing: printings)
-				System.out.println(printing);
+		StringBuilder combined = new StringBuilder();
+		for (String printing: printings)
+			combined.append(printing);
+		System.out.println(combined.toString());
 	}
 	public static void prompt(String prompt) { //print to same line
 		System.out.print(prompt);
+	}
+	public static void confirm() {
+		KEYBOARD.nextLine();
 	}
 	
 	public static int choiceInput (boolean back, String[] options, String prompt) { //Returns user input from choices
@@ -114,7 +118,4 @@ public class Interface {
 		return choice;
 	}
 
-	public static void confirm() {
-		KEYBOARD.nextLine();
-	}
 }

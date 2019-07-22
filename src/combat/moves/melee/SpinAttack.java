@@ -14,6 +14,7 @@ public class SpinAttack extends Ability {
 		attType = true; //melee attack; might make it based on the attacker
 		numTar = -1;
 		manaCost = 5;
+		damageMod = 1.25f;
 	}
 	
 	public void execute() { //current bug with null pointer

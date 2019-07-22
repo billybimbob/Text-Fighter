@@ -22,10 +22,10 @@ public class Revenge extends Ability {
             int prevRound = Interface.FIGHT.getTurnNum()-1;
             damage = Interface.FIGHT.getTurnDamage(prevRound, attacker); //keep eye on
 
+            Interface.writeOut(attacker.getName() + " enacts revenge");
             for (Monster target: targets) {
-                Ability.dealDamage(attacker, target, damage);
-                Interface.writeOut(attacker.getName() + " enacts revenge on " + target.getName() 
-                    + " dealing " + damage + " damage");
+                dealDamage(attacker, target, damage);
+                Interface.writeOut(target.getName() + "is dealt " + damage + " damage");
             }
         }
 

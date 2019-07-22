@@ -110,7 +110,7 @@ public class Monster implements Comparable<Monster> {
 
 	/**
 	 * monster constructor, basic attack and list of specials
-	 * @see {@link} {@link Monster#Monster(String, boolean, boolean, List)}
+	 * @see {@link Monster#Monster(String, boolean, boolean, List)}
 	 */
 	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats, List<Move> specials) {
 		this(name, aggro, attType, stats);

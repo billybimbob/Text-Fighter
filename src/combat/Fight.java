@@ -138,6 +138,7 @@ public class Fight {
 		
 		attacker.usePassive(nonSelf(attacker, fighters));
 		statusCheck(attacker, Status.BURN);
+		statusCheck(attacker, Status.FRENZY);
 		statusCheck(attacker, Status.POTION); //not sure if should be end of turn or beginning
 		statusCheck(attacker, Status.REFLECT);
 		statusCheck(attacker, Status.STUN);
@@ -152,6 +153,7 @@ public class Fight {
 
 
 		//end of turn
+		statusCheck(attacker, Status.CONTROL);
 		statusCheck(attacker, Status.DODGE);
 		statusCheck(attacker, Status.POISON);
 		statusCheck(attacker, Status.SHIFT);

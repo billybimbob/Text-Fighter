@@ -31,7 +31,7 @@ public class Disrupt extends Ability {
 				Interface.writeOut(" for " + damage + " damage");
 
 				float sto = setAttMod(0.4f);
-				if (attackHit(targets[0], null)) { //null not working
+				if (attackHit(targets[0])) {
 					Interface.writeOut(attacker.getName() + "'s blow also stuns " + targets[0].getName());
 					targets[0].setStatus(Status.STUN, true);
 				}

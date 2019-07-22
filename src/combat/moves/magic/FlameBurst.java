@@ -26,9 +26,9 @@ public class FlameBurst extends Ability {
                 String failPrompt = target.getName() + " resists the flames";
                 if (attackHit(target, failPrompt)) {
                     dealDamage(attacker, target, damage);
-                    Interface.writeOut(attacker.getName() + "'s fire deals " + damage + " damage");
+                    Interface.writeOut(target.getName() + "is burned for " + damage + " damage");
                     target.setStatus(Status.BURN, 3);
-                    Interface.writeOut(target.getName() + " gets burned");
+                    Interface.writeOut(target.getName() + " is on burning for 3 turns");
                 }
             }
         }
