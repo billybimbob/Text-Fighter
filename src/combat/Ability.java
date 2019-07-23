@@ -60,9 +60,9 @@ public abstract class Ability implements Cloneable {
 	 * checks whether attacks lands on target; based on att/mag, attMod, and speed
 	 * damage calculated on success;
 	 * attack damage check based on either the att or mag stat
-	 * @param target Monster used to determine hit
-	 * @param failPrompt prints prompt if attack misses; null prints nothing on miss
-	 * @return true if attack hits, false if attack misses
+	 * @param target {@code Monster} used to determine if miss
+	 * @param failPrompt prints prompt if attack misses; {@code null} prints nothing on miss
+	 * @return {@code true} if attack hits, {@code false} if attack misses
 	 */
 	protected boolean attackHit(Monster target, String failPrompt) {
 		Stat hitStat = Monster.getHitStat(attType);
@@ -103,9 +103,9 @@ public abstract class Ability implements Cloneable {
 
 	/**
 	 * modfies(lowers) damage value based on target's defense stat
-	 * @param target Monster be dealt damage
-	 * @param blockedPrompt prints out blockedPrompt if return value is true
-	 * @return true if modified damage value is less than 0
+	 * @param target {@code Monster} to be dealt damage
+	 * @param blockedPrompt prints out the value if return value is {@code true}
+	 * @return {@code true} if modified damage value is less than or equal to 0
 	 */
 	protected boolean targetReduct(Monster target, String blockedPrompt) { //maybe look over
 		Stat hitStat = Monster.getHitStat(attType), blockStat = Monster.getBlockStat(attType);
@@ -128,9 +128,9 @@ public abstract class Ability implements Cloneable {
 	 * @param tempVal new value to change attMod to
 	 * @return old value of attMod
 	 * */
-	protected float setAttMod(float tempVal) {
+	protected float setAttMod(float newVal) {
 		float ret = attMod;
-		attMod = tempVal;
+		attMod = newVal;
 		return ret;
 	}
 

@@ -88,9 +88,9 @@ public class Monster implements Comparable<Monster> {
 
 	/**
 	 * constructor to have no extra attacks but basic
-	 * @param attType true for melee, false for magic
-	 * @param stats order should follow Stat.java and not include MAXHP or MAXMP
-	 * @see Stat
+	 * @param aggro {@code true} for hero aggresivnes, {@code false} for aggressive against hero
+	 * @param attType {@code true} for melee, {@code false} for magic
+	 * @param statsIn order should follow order of {@link Stat}
 	 */
 	public Monster (String name, boolean aggro, boolean attType, List<Integer> statsIn) {
 		this.setId();
@@ -442,8 +442,8 @@ public class Monster implements Comparable<Monster> {
 
 	/**
 	 * changes the stat by mod, caps new value to base based on flag
-	 * @param capped true if bounded by max value; or false if just temporary buff
-	 * @return the amount that went over the base cap
+	 * @param capped {@code true} if bounded by max value, {@code false} if just temporary buff
+	 * @return the amount that went over the max value cap
 	 */
 	public float modStat (Stat stat, boolean capped, float mod) { //changes stat by val
 		StatInfo info = stats.get(stat);
@@ -460,7 +460,7 @@ public class Monster implements Comparable<Monster> {
 
 	/**
 	 * turns on/off the inputted status
-	 * @param duration positive value turns on for that duration, negative turns off
+	 * @param duration positive value turns on for that amount of duration, negative turns off status
 	 */
 	public void setStatus(Status status, int duration) { //could set special status
 		if (duration > 0) {
@@ -484,7 +484,7 @@ public class Monster implements Comparable<Monster> {
 	/**
 	 * used for changing to another monster
 	 * @param status for now expected to be SHIFT status, all else will act as basic setStatus
-	 * @param duration any positive number to transform, 0 and negative will turn off status
+	 * @param duration any positive number to transform, negative will turn off status
 	 * @param shifting the monster to transform into
 	 */
 	public void setStatus(Status status, int duration, Monster shifting) {
@@ -520,10 +520,9 @@ public class Monster implements Comparable<Monster> {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other == null || !(other instanceof Monster))
-			return false;
-		else
-			return this.id == ((Monster)other).id;
+		return other != null
+			&& this.getClass() == other.getClass()
+			&& this.id == ((Monster)other).id;
 	}
 
 	@Override
