@@ -274,10 +274,10 @@ public class Monster implements Comparable<Monster>, Cloneable {
 
 	public void setRandomTargets(List<Monster> possTargets) {
 		this.clearTargets();
-		int numTar = this.getNumTar();
-		int amountTars = numTar>possTargets.size() ? numTar : possTargets.size();
-		for (int i = 0; i<amountTars; i++) {
-			int randIdx = (int)(Math.random()*(possTargets.size()+1));
+		int numTar = this.getNumTar(), size = possTargets.size();
+		int amountTars = size < numTar ? size : numTar;
+		for (int i = 0; i < amountTars; i++) {
+			int randIdx = (int)(Math.random()*(possTargets.size()));
 			this.addTarget(possTargets.remove(randIdx));
 		}
 	}
@@ -322,6 +322,9 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	}
 	public boolean getAggro() {
 		return aggro;
+	}
+	public Ability[] getMoves() {
+		return Arrays.copyOf(this.moveList, this.moveList.length);
 	}
 	public boolean getPriority() {
 		return turnMove == null ? false : turnMove.getPriority();
@@ -390,6 +393,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	}
 
 	public void executeTurn() { //wrapper for turnMove
+
 		if (targets.size() > 0 || this.getNumTar() == 0)
 			turnMove.execute();
 		else
@@ -406,11 +410,11 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	public void usePassive(List<Monster> possTargets) { //look at; assume all fighters passed in
 		if (passive != null) {
 			List<Monster> sto = this.targets; //store previous targets
-
 			this.targets = possTargets;
+
 			passive.execute(); //execute will handle targeting
 
-			this.clearTargets();
+			//this.clearTargets();
 			this.targets = sto;
 		}
 	}
@@ -473,11 +477,8 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	 * turns on/off the inputted status; defaults to one turn
 	 */
 	public void setStatus(Status status, boolean toggle) {
-		if (toggle) {
-			int start = 0, duration = 1;
-			onChecks(status, start, duration);
-		} else
-			offChecks(status);
+		int duration = toggle ? 1 : 0;
+		setStatus(status, duration);
 	}
 
 	/**
@@ -490,10 +491,12 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		if (status.equals(Status.SHIFT) && duration > 0) {
 			ShiftInfo info = (ShiftInfo)this.status.get(status);
 			if (info.getOriginal() == null) {
-				try { info.setOriginal((Monster)this.clone()); } catch (CloneNotSupportedException e) {System.out.println("here");};
+				try { info.setOriginal((Monster)this.clone()); } catch (CloneNotSupportedException e) {};
 			}
 
 			this.copyVals(shifting);
+			String oldName = info.getOriginal().name;
+			this.name = shifting.name + "(" + oldName + ")";
 		}
 			
 		setStatus(status, duration);

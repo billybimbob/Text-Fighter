@@ -134,7 +134,6 @@ public abstract class Ability implements Cloneable {
 		return ret;
 	}
 
-
 	/*
 	 * getters
 	 */
@@ -160,6 +159,11 @@ public abstract class Ability implements Cloneable {
 	public boolean resolved() { //check if multi turn, see if ability finished
 		return true;
 	}
+
+	public void setAttacker(Monster attacker) {
+		this.attacker = attacker;
+	}
+
 
 	@Override
 	public String toString() {

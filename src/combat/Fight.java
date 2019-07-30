@@ -142,7 +142,7 @@ public class Fight {
 		statusCheck(attacker, Status.POTION); //not sure if should be end of turn or beginning
 		statusCheck(attacker, Status.REFLECT);
 		statusCheck(attacker, Status.STUN);
-		
+
 		if (!skipTurn) 
 			/**
 			 * might be wrong attack since priority order different

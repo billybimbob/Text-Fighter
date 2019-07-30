@@ -1,8 +1,8 @@
 package combat.moves.magic.shapeshift;
 
 import assets.*;
-import main.Index;
-import main.Interface;
+import combat.Ability;
+import main.*;
 
 public class ChangeForm extends ShapeShift {
 
@@ -16,30 +16,30 @@ public class ChangeForm extends ShapeShift {
 		numTar = 0;
 		priority = true;
 		
-		formList = new Monster[] { //see if I can parameterize; clone doesn't work here
-			Index.createMonster("Eagle"), 
-			Index.createMonster("Pangolin"), 
-			Index.createMonster("Salamander") //circular dependency; bad
-		};		
-		
-		for(Monster shift: formList)
-			shift.addAttack(this);
-		
+		initFormList(this, attacker);
 	}
 
 	@Override
 	public Object clone(Monster attacker) throws CloneNotSupportedException { //update attacker of formList
 		ChangeForm copy = (ChangeForm)super.clone(attacker);
-		copy.formList = new Monster[] { //see if I can parameterize; clone doesn't work here
+		initFormList(copy, attacker);
+
+		return copy;
+	}
+
+	private static void initFormList(ChangeForm move, Monster attacker) {
+		move.formList = new Monster[] { //see if I can parameterize; clone doesn't work here
 			Index.createMonster("Eagle"), 
 			Index.createMonster("Pangolin"), 
 			Index.createMonster("Salamander") //circular dependency; bad
-		};		
-		
-		for(Monster shift: copy.formList)
-			shift.addAttack(copy);
+		};
 
-		return copy;
+		for(Monster shift: move.formList) {
+			for (Ability ability: shift.getMoves())
+				ability.setAttacker(attacker);
+			
+			shift.addAttack(move);
+		}
 	}
 	
 	public void execute() {
@@ -62,8 +62,6 @@ public class ChangeForm extends ShapeShift {
 				}
 			}
 
-			System.out.println("attacker is " + attacker.getName());
-
 			int formChoice = -1;
 			if (attacker.getClass() == Hero.class) {
 				String[] formNames = new String[tempList.length]; //sets list of names of available transformations
@@ -76,10 +74,10 @@ public class ChangeForm extends ShapeShift {
 			} else
 				formChoice = (int)(Math.random()*tempList.length);
 
-
-			String beforeName = attacker.getName();
-			transform(attacker, tempList[formChoice], 5);			
-			Interface.writeOut(beforeName + " has transformed into " + attacker.getName());
+			Monster newForm = tempList[formChoice];
+			String beforeName = attacker.getName(), newName = newForm.getName();
+			transform(attacker, newForm, 5);			
+			Interface.writeOut(beforeName + " has transformed into " + newName);
 			
 		}
 	}

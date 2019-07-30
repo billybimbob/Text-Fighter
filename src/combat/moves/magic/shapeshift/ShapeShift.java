@@ -4,7 +4,7 @@ import assets.*;
 import combat.*;
 
 public abstract class ShapeShift extends Ability { //abstract so doesn't have to implement execute
-	
+
 	protected ShapeShift(Monster user) {
 		super(user);
 	}

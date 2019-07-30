@@ -3,7 +3,7 @@ hp mp att def mag magr speed crit
 
 Monsters:
 Bandit, true, 15,15,3,3,3,3,6,6, charge
-Eagle, true, 15,15,8,2,2,2,9,5, disrupt, rage
+Eagle, true, 15,10,8,2,2,2,9,5, disrupt, rage
 Pangolin, true, 30,15,2,10,1,10,3,5, spin, intim
 Salamander, false, 25,15,1,5,5,6,5,5, drain
 Sheep, true, 5,5,1,1,1,1,1,1, sheep

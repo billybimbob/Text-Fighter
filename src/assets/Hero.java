@@ -75,12 +75,13 @@ public class Hero extends Monster {
 				return;
 			
 			this.turnMove = getMove(attNum-1); //start at 0th idx
-			Interface.writeOut("Move selected: " + this.turnMove.getName());
+			Interface.writeOut("Move selected: " + this.turnMove.getName() + "\n");
 			
 			//determine the targets of hero move
 			int numTar = this.getNumTar();
 			action = true;
 
+			System.out.println("possible targets: " + possTargets.size());
 			if (numTar == -1 || numTar >= possTargets.size())
 				this.addTargets(possTargets);
 			else {
