@@ -5,7 +5,6 @@ import java.util.function.Function;
 import java.io.*;
 
 import assets.*;
-import combat.Ability;
 import combat.moves.*;
 import combat.moves.magic.*;
 import combat.moves.magic.shapeshift.*;

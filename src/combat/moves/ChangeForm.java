@@ -1,7 +1,7 @@
-package combat.moves.magic.shapeshift;
+package combat.moves; //here to access ability members
 
 import assets.*;
-import combat.Ability;
+import combat.moves.magic.shapeshift.ShapeShift;
 import main.*;
 
 public class ChangeForm extends ShapeShift {
@@ -36,7 +36,7 @@ public class ChangeForm extends ShapeShift {
 
 		for(Monster shift: move.formList) {
 			for (Ability ability: shift.getMoves())
-				ability.setAttacker(attacker);
+				ability.attacker = attacker;
 			
 			shift.addAttack(move);
 		}

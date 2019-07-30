@@ -1,7 +1,7 @@
 package combat.moves.magic;
 
 import assets.*;
-import combat.Ability;
+import combat.moves.Ability;
 import main.Interface;
 
 public class Freeze extends Ability {

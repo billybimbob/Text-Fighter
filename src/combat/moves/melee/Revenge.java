@@ -1,6 +1,6 @@
 package combat.moves.melee;
 
-import combat.Ability;
+import combat.moves.Ability;
 import assets.Monster;
 import main.Interface;
 

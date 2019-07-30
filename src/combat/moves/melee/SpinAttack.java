@@ -1,7 +1,7 @@
 package combat.moves.melee;
 
 import assets.*;
-import combat.*;
+import combat.moves.Ability;
 import main.Interface;
 
 public class SpinAttack extends Ability {

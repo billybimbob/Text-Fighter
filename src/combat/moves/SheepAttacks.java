@@ -1,6 +1,5 @@
 package combat.moves;
 
-import combat.Ability;
 import assets.*;
 import main.Interface;
 

@@ -1,4 +1,4 @@
-package combat;
+package combat.moves;
 
 import assets.*;
 import main.Interface;
@@ -158,10 +158,6 @@ public abstract class Ability implements Cloneable {
 	}
 	public boolean resolved() { //check if multi turn, see if ability finished
 		return true;
-	}
-
-	public void setAttacker(Monster attacker) {
-		this.attacker = attacker;
 	}
 
 

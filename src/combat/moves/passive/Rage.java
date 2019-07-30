@@ -1,7 +1,7 @@
 package combat.moves.passive;
 
 import assets.*;
-import combat.Ability;
+import combat.moves.Ability;
 import main.Interface;
 
 public class Rage extends Ability {

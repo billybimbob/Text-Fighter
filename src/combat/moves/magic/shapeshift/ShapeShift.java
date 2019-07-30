@@ -1,7 +1,8 @@
 package combat.moves.magic.shapeshift;
 
 import assets.*;
-import combat.*;
+import combat.moves.Ability;
+import combat.Status;
 
 public abstract class ShapeShift extends Ability { //abstract so doesn't have to implement execute
 

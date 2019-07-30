@@ -1,7 +1,9 @@
 package assets;
 
 import java.util.*;
-import combat.*;
+
+import combat.moves.Ability;
+import combat.Status;
 import main.Index;
 import main.Interface;
 import main.Index.Move;

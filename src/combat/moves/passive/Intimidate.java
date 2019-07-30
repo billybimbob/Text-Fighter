@@ -1,6 +1,6 @@
 package combat.moves.passive;
 
-import combat.Ability;
+import combat.moves.Ability;
 import assets.*;
 import main.Interface;
 

@@ -1,7 +1,6 @@
 package combat.moves;
 
 import main.Interface;
-import combat.Ability;
 import assets.Monster;
 
 public class BasicAttack extends Ability {
@@ -14,7 +13,6 @@ public class BasicAttack extends Ability {
 	
 	public void execute() { //might need to change how the target is handled
 		//Attack based on RNG and modified by stats, need to consider magic attack
-		System.out.println("attacker is " + attacker);
 		attType = attacker.getAttType();
 		Monster[] targets = attacker.getTargets();
 

@@ -1,7 +1,8 @@
 package combat.moves.melee;
 
 import assets.*;
-import combat.*;
+import combat.moves.Ability;
+import combat.Status;
 import main.Interface;
 
 public class Disrupt extends Ability {

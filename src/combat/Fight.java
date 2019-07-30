@@ -2,6 +2,7 @@ package combat;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
 import assets.*;
 import main.*;
 import combat.moves.magic.shapeshift.*;
@@ -19,7 +20,7 @@ public class Fight {
 		this.fighters = fighters;
 	}
 	
-	void addLog(Monster attacker, Monster target, float damage) {
+	public void addLog(Monster attacker, Monster target, float damage) {
 		log.addLog(attacker, target, damage);
 	}
 

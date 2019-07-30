@@ -1,7 +1,8 @@
 package combat.moves.magic;
 
 import assets.*;
-import combat.*;
+import combat.moves.Ability;
+import combat.Status;
 import main.Interface;
 
 public class Reflect extends Ability { //not sure if should be priority or not

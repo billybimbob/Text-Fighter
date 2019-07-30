@@ -1,7 +1,7 @@
 package combat.moves.magic;
 
 import assets.*;
-import combat.*;
+import combat.moves.Ability;
 import main.Interface;
 
 public class LifeDrain extends Ability {
