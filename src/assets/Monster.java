@@ -6,7 +6,7 @@ import main.Index;
 import main.Interface;
 import main.Index.Move;
 
-public class Monster implements Comparable<Monster> {
+public class Monster implements Comparable<Monster>, Cloneable {
 
 	/** nested classes */
 
@@ -247,14 +247,13 @@ public class Monster implements Comparable<Monster> {
 		info.setDuration(-1);
 	}
 
-	/** used for transforming; so don't have to make many setters */
+	/** used for transforming; so don't have to make many setters; status is kept */
 	private void copyVals (Monster copy) {
 		this.name = copy.name;
 		this.attType = copy.attType;
 		this.passive = copy.passive;
 		this.moveList = copy.moveList;
 		this.stats = copy.stats;
-		this.status = copy.status;
 	}
 
 	private void setTargets(List<Monster> possTargets) {
@@ -391,7 +390,7 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	public void executeTurn() { //wrapper for turnMove
-		if (targets.size() > 0)
+		if (targets.size() > 0 || this.getNumTar() == 0)
 			turnMove.execute();
 		else
 			System.err.println("no targets found, aggro: " + this.aggro);
@@ -484,14 +483,14 @@ public class Monster implements Comparable<Monster> {
 	/**
 	 * used for changing to another monster
 	 * @param status for now expected to be SHIFT status, all else will act as basic setStatus
-	 * @param duration any positive number to transform, negative will turn off status
+	 * @param duration any positive number to transform, 0 and negative will turn off status
 	 * @param shifting the monster to transform into
 	 */
 	public void setStatus(Status status, int duration, Monster shifting) {
 		if (status.equals(Status.SHIFT) && duration > 0) {
 			ShiftInfo info = (ShiftInfo)this.status.get(status);
-			if (info.getOriginal() != null) {
-				try { info.setOriginal((Monster)this.clone()); } catch (CloneNotSupportedException e) {};
+			if (info.getOriginal() == null) {
+				try { info.setOriginal((Monster)this.clone()); } catch (CloneNotSupportedException e) {System.out.println("here");};
 			}
 
 			this.copyVals(shifting);

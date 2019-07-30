@@ -23,8 +23,10 @@ public class SpinAttack extends Ability {
 		if (enoughMana()) {
 			Interface.writeOut(attacker.getName() + " spins around");
 			
+			System.out.println("number of targets: " + targets.length);
 			for (Monster target: targets) { //Checks if hits for each monster; Attack based on RNG and modified by stats
 				
+				System.out.println("looping in spin");
 				String missPrompt = target.getName() + " dodges the attack";
 				if (attackHit(target, missPrompt)) { //Check if attack will be successful
 					/*if (critCheck()) { //Might add later

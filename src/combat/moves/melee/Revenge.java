@@ -25,7 +25,7 @@ public class Revenge extends Ability {
             Interface.writeOut(attacker.getName() + " enacts revenge");
             for (Monster target: targets) {
                 dealDamage(attacker, target, damage);
-                Interface.writeOut(target.getName() + "is dealt " + damage + " damage");
+                Interface.writeOut(target.getName() + " is dealt " + damage + " damage");
             }
         }
 

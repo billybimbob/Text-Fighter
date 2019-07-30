@@ -36,7 +36,7 @@ public class ChargeAttack extends Ability {
 				
 				boolean blocked = false;
 				if (!critCheck()) { //reduce damage on failure
-					String blockedPrompt = targets[0].getName() + " resisted the attack";
+					String blockedPrompt = targets[0].getName() + " resisted " + attacker.getName() + "'s attack";
 					blocked = targetReduct(targets[0], blockedPrompt);
 				}
 			

@@ -26,6 +26,21 @@ public class ChangeForm extends ShapeShift {
 			shift.addAttack(this);
 		
 	}
+
+	@Override
+	public Object clone(Monster attacker) throws CloneNotSupportedException { //update attacker of formList
+		ChangeForm copy = (ChangeForm)super.clone(attacker);
+		copy.formList = new Monster[] { //see if I can parameterize; clone doesn't work here
+			Index.createMonster("Eagle"), 
+			Index.createMonster("Pangolin"), 
+			Index.createMonster("Salamander") //circular dependency; bad
+		};		
+		
+		for(Monster shift: copy.formList)
+			shift.addAttack(copy);
+
+		return copy;
+	}
 	
 	public void execute() {
 		//this.shifter = (Hero)attacker;
@@ -46,6 +61,8 @@ public class ChangeForm extends ShapeShift {
 					tempList = tempStore;
 				}
 			}
+
+			System.out.println("attacker is " + attacker.getName());
 
 			int formChoice = -1;
 			if (attacker.getClass() == Hero.class) {
