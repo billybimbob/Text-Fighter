@@ -70,7 +70,7 @@ public class Hero extends Monster {
 	private void selectAttack(List<Monster> possTargets) { //array generate every time
 		do { //probably okay?
 			String attPrompt = "Which attack do you want to use?";
-			int attNum = Interface.choiceInput(true, this.getMoveNames(), attPrompt);
+			int attNum = Interface.choiceInput(true, this.getMoves(), attPrompt);
 			if (attNum == 0)
 				return;
 			
@@ -78,14 +78,11 @@ public class Hero extends Monster {
 			Interface.writeOut("Move selected: " + this.turnMove.getName() + "\n");
 			
 			//determine the targets of hero move
-			int numTar = this.getNumTar();
 			action = true;
 
-			if (numTar == -1 || numTar >= possTargets.size())
-				this.addTargets(possTargets);
-			else {
+			if (!checkAddAll(possTargets)) {
 				int numOptions = possTargets.size();
-				while (numOptions-possTargets.size() < numTar) { //loop until amount selected enough
+				while (numOptions-possTargets.size() < this.getNumTar()) { //loop until amount selected enough
 
 					String[] monNames = new String[possTargets.size()];
 					for (int j = 0; j<possTargets.size(); j++)

@@ -28,7 +28,7 @@ public class FlameBurst extends Ability {
                     dealDamage(attacker, target, damage);
                     Interface.writeOut(target.getName() + " is burned for " + damage + " damage");
                     target.setStatus(Status.BURN, 3);
-                    Interface.writeOut(target.getName() + " is on burning for 3 turns");
+                    Interface.writeOut(target.getName() + " is on fire for 3 turns");
                 }
             }
         }

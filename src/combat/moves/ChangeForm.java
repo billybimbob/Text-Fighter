@@ -35,6 +35,9 @@ public class ChangeForm extends ShapeShift {
 		};
 
 		for(Monster shift: move.formList) {
+			Ability passive = shift.getPassive();
+			if (passive != null)
+				passive.attacker = attacker;
 			for (Ability ability: shift.getMoves())
 				ability.attacker = attacker;
 			

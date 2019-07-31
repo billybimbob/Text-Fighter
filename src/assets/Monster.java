@@ -274,19 +274,18 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		}
 	}
 
-	public void setRandomTargets(List<Monster> possTargets) {
-		this.clearTargets();
-		int numTar = this.getNumTar(), size = possTargets.size();
-		int amountTars = size < numTar ? size : numTar;
-		for (int i = 0; i < amountTars; i++) {
-			int randIdx = (int)(Math.random()*(possTargets.size()));
-			this.addTarget(possTargets.remove(randIdx));
-		}
-	}
-
 	//protected helpers
 	protected void clearTargets() {
 		this.targets.clear();
+	}
+	protected boolean checkAddAll(List<Monster> possTargets) {
+		int numTar = this.getNumTar();
+
+		boolean check = numTar == -1 || numTar >= possTargets.size();
+		if (check)
+			this.addTargets(possTargets);
+
+		return check;
 	}
 	protected Ability getMove() {
 		return moveList[(int)(Math.random()*moveList.length)];
@@ -325,21 +324,17 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	public boolean getAggro() {
 		return aggro;
 	}
-	public Ability[] getMoves() {
-		return Arrays.copyOf(this.moveList, this.moveList.length);
-	}
 	public boolean getPriority() {
 		return turnMove == null ? false : turnMove.getPriority();
 	}
 	public boolean getAttType() {
 		return this.attType;
 	}
-
-	public String[] getMoveNames() {
-		String[] ret = new String[moveList.length];
-		for (int i = 0; i < moveList.length; i++)
-			ret[i] = moveList[i].getName() + " - " + (int)moveList[i].getCost() + " mana";
-		return ret;
+	public Ability[] getMoves() {
+		return Arrays.copyOf(this.moveList, this.moveList.length);
+	}
+	public Ability getPassive() {
+		return passive;
 	}
 
 	/**
@@ -384,6 +379,19 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	public void setAggro() { //flips
 		this.aggro = !this.aggro;
 	}
+
+	public void setRandomTargets(List<Monster> possTargets) {
+		this.clearTargets();
+		
+		if (!checkAddAll(possTargets)) {
+			int amountTars = this.getNumTar();
+			for (int i = 0; i < amountTars; i++) {
+				int randIdx = (int)(Math.random()*(possTargets.size()));
+				this.addTarget(possTargets.remove(randIdx));
+			}
+		}
+	}
+	
 	public void setTurn(List<Monster> targets) {
 		setMove();
 		setTargets(targets);
@@ -416,7 +424,6 @@ public class Monster implements Comparable<Monster>, Cloneable {
 
 			passive.execute(); //execute will handle targeting
 
-			//this.clearTargets();
 			this.targets = sto;
 		}
 	}

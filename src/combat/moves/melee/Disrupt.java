@@ -14,7 +14,7 @@ public class Disrupt extends Ability {
 		attType = true;
 		priority = true;
 		attMod = 0.02f;
-		manaCost = 5;
+		manaCost = 7;
 	}
 	
 	public void execute() {

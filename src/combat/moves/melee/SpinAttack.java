@@ -31,7 +31,7 @@ public class SpinAttack extends Ability {
 						baseDam *= 2;
 						Interface.writeOut("Critical Hit!");
 					}*/
-					String blockedPrompt = "but is blocked by " + target.getName();
+					String blockedPrompt = target.getName() + " blocks all damage";
 					if (!targetReduct(target, blockedPrompt)) {	
 						dealDamage(attacker, target, damage);
 						Interface.writeOut(target.getName() + " gets hit for " + damage + " damage");

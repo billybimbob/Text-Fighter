@@ -85,7 +85,14 @@ public class Interface {
 		KEYBOARD.nextLine();
 	}
 	
-	public static int choiceInput (boolean back, String[] options, String prompt) { //Returns user input from choices
+	/**
+	 * Takes in user input from multiple options, with input in the form of {@code int}
+	 * @param back if the value of {@code 0} should be an option
+	 * @param options all the possible options to be selected
+	 * @param prompt question shown before the options
+	 * @return the option that was selected, {@code 0} represents back option
+	 */
+	public static int choiceInput (boolean back, Object[] options, String prompt) { //Returns user input from choices
 		StringBuilder lstOptions = new StringBuilder();
 
 		lstOptions.append(LINESPACE + "\n");
@@ -93,7 +100,7 @@ public class Interface {
 		if (back) //option for "back"
 			lstOptions.append("0. Back\n");
 		for (int i = 0; i < options.length; i++)
-			lstOptions.append(i+1 + ". " + options[i] + "\n");
+			lstOptions.append(i+1 + ". " + options[i].toString() + "\n");
 
 		lstOptions.append(LINESPACE + "\n");
 		Interface.writeOut(lstOptions.toString());

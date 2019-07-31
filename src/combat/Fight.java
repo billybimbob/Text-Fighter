@@ -260,7 +260,7 @@ public class Fight {
 	public static List<Monster> nonSelf (Monster user, List<Monster> allFighters) {
 		List<Monster> sto = new ArrayList<>();
 		for (Monster mon: allFighters) {
-			if (mon != user)
+			if (!mon.equals(user))
 				sto.add(mon);
 		}
 		return sto;

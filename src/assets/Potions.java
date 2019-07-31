@@ -54,10 +54,11 @@ public class Potions extends Items {
 		turnStart = Interface.FIGHT.getTurnNum();
 		if (statMod.equals(Stat.HP) || statMod.equals(Stat.MP)) {
 			user.modStat(this.statMod, true, this.modVal);
-			Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod +" \nand will also gain " + statMod + " over time");
+			user.setStatus(Status.POTION, 5);
+			Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod +" \nAnd will also gain " + statMod + " over time");
 		} else {
-			Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod);	
 			user.modStat(this.statMod, false, this.modVal);
+			Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + modVal + " " + statMod);
 		}
 	}
 
