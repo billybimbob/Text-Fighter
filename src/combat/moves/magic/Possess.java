@@ -2,7 +2,7 @@ package combat.moves.magic;
 
 import combat.moves.Ability;
 import combat.Status;
-import assets.Monster;
+import assets.chars.Monster;
 import main.Interface;
 
 public class Possess extends Ability {

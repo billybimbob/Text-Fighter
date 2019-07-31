@@ -1,12 +1,13 @@
-package assets;
+package assets.chars;
 
 import java.util.*;
 
-import combat.moves.Ability;
+import assets.Stat;
 import combat.Status;
+import combat.moves.Ability;
 import main.Index;
-import main.Interface;
 import main.Index.Move;
+import main.Interface;
 
 public class Monster implements Comparable<Monster>, Cloneable {
 
@@ -46,7 +47,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		}
 	}
 
-	private static class StatusInfo {
+	static class StatusInfo {
 		private int start, duration;
 
 		StatusInfo () {
@@ -61,13 +62,6 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		void setDuration(int duration) { this.duration = duration; }
 	}
 
-	private static class ShiftInfo extends StatusInfo {
-		private Monster original;
-	
-		Monster getOriginal() { return original; }
-		void setOriginal(Monster original) { this.original = original; }
-	}
-
 
 	/**variables */
 
@@ -75,14 +69,14 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	
 	private static int idCount = 0;
 	private int id;
-	private Map<Stat, StatInfo> stats;
-	private Ability[] moveList;
-	private boolean attType; //attType true means physical attack
-	private Ability passive;
-	private Map<Status, StatusInfo> status;
 	
 	protected String name;
+	protected boolean attType; //attType true means physical attack
 	protected boolean aggro;
+	protected Map<Stat, StatInfo> stats;
+	protected Ability[] moveList;
+	protected Ability passive;
+	protected Map<Status, StatusInfo> status;
 	protected Ability turnMove;
 	protected List<Monster> targets; //look at how set and used
 	protected int level = 1;
@@ -174,10 +168,11 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		status = new HashMap<>();
 		for (Status statusName: Status.values())
 			if (statusName.equals(Status.SHIFT))
-				status.put(statusName, new ShiftInfo());
+				status.put(statusName, new ShapeShift.ShiftInfo());
 			else
 				status.put(statusName, new StatusInfo());
 	}
+
 
 	private void updateTurnVals(Ability move) {
 		if (turnMove == null) {
@@ -209,7 +204,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 					this.modStat(Stat.SPEED, false, this.getStatMax(Stat.SPEED)); //doubles speed
 				break;
 			case SHIFT:
-				flag = flag && ((ShiftInfo)info).getOriginal() != null;
+				flag = flag && ((ShapeShift.ShiftInfo)info).getOriginal() != null;
 				break;
 			default:
 				break;
@@ -234,12 +229,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 					this.modStat(Stat.SPEED, false, -this.getStatMax(Stat.SPEED));
 				break;
 			case SHIFT:
-				ShiftInfo shift = (ShiftInfo)info;
-				Monster original;
-				if ((original = shift.getOriginal()) != null) {
-					this.copyVals(original);
-					shift.setOriginal(null);
-				}
+				ShapeShift.offCheck(this);
 				break;
 			default:
 				break;
@@ -247,15 +237,6 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		
 		info.setStart(-1);
 		info.setDuration(-1);
-	}
-
-	/** used for transforming; so don't have to make many setters; status is kept */
-	private void copyVals (Monster copy) {
-		this.name = copy.name;
-		this.attType = copy.attType;
-		this.passive = copy.passive;
-		this.moveList = copy.moveList;
-		this.stats = copy.stats;
 	}
 
 	private void setTargets(List<Monster> possTargets) {
@@ -287,6 +268,11 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	}
 
 	//protected helpers
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
 	protected boolean checkAutoTar(List<Monster> possTargets) {
 		return checkAddAll(possTargets) || checkSelfTar();
 	}
@@ -492,27 +478,6 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	 */
 	public void setStatus(Status status, boolean toggle) {
 		int duration = toggle ? 1 : 0;
-		setStatus(status, duration);
-	}
-
-	/**
-	 * used for changing to another monster
-	 * @param status for now expected to be SHIFT status, all else will act as basic setStatus
-	 * @param duration any positive number to transform, 0 and negative will turn off status
-	 * @param shifting the monster to transform into
-	 */
-	public void setStatus(Status status, int duration, Monster shifting) {
-		if (status.equals(Status.SHIFT) && duration > 0) {
-			ShiftInfo info = (ShiftInfo)this.status.get(status);
-			if (info.getOriginal() == null) {
-				try { info.setOriginal((Monster)this.clone()); } catch (CloneNotSupportedException e) {};
-			}
-
-			this.copyVals(shifting);
-			String oldName = info.getOriginal().name;
-			this.name = shifting.name + "(" + oldName + ")";
-		}
-			
 		setStatus(status, duration);
 	}
 

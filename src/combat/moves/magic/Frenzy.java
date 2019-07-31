@@ -2,8 +2,8 @@ package combat.moves.magic;
 
 import combat.moves.Ability;
 import combat.Status;
+import assets.chars.Monster;
 import main.Interface;
-import assets.Monster;
 
 public class Frenzy extends Ability {
 

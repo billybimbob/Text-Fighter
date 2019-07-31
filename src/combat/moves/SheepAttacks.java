@@ -1,6 +1,7 @@
 package combat.moves;
 
-import assets.*;
+import assets.Stat;
+import assets.chars.Monster;
 import main.Interface;
 
 public class SheepAttacks extends Ability{

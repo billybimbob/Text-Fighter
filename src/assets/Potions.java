@@ -1,5 +1,6 @@
 package assets;
 
+import assets.chars.*;
 import combat.Status;
 import main.*;
 

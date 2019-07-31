@@ -1,10 +1,11 @@
-package combat.moves.magic.shapeshift;
+package combat.moves.magic;
 
-import assets.*;
+import assets.chars.*;
+import combat.moves.Ability;
 import main.Index;
 import main.Interface;
 
-public class Polymorph extends ShapeShift { //doesn't account for if the moveLists are different length
+public class Polymorph extends Ability { //doesn't account for if the moveLists are different length
 
 	public Polymorph(Monster user) {
 		super(user);
@@ -19,7 +20,7 @@ public class Polymorph extends ShapeShift { //doesn't account for if the moveLis
 		if (attackHit(target, failPrompt)) { //Check if attack will be successful
 			Interface.writeOut(attacker.getName() + " has transformed " + target.getName() + " into a sheep");
 			Monster sheep = Index.createMonster("Sheep");
-			transform(target, sheep, 3); //last 3 turns
+			ShapeShift.transform(target, sheep, 3); //last 3 turns
 		}
 	}
 

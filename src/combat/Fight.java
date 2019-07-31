@@ -4,8 +4,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import assets.*;
+import assets.chars.*;
 import main.*;
-import combat.moves.magic.shapeshift.*;
 
 public class Fight {
 	
@@ -247,10 +247,12 @@ public class Fight {
 
 				case STUN:
 					//triggered by chargeatt, magblast, disrupt
-					skipTurn = true;
-					Interface.writeOut(checking.getName() + " is stunned"); //multiTurn attack still carries on
 					if (check == 0)
 						checking.setStatus(status, false);
+					else {
+						skipTurn = true;
+						Interface.writeOut(checking.getName() + " is stunned"); //multiTurn attack still carries on
+					}
 					break;
 			}
 		}

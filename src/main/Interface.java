@@ -1,7 +1,8 @@
 package main;
 
 import java.util.*;
-import assets.*;
+
+import assets.chars.*;
 import combat.Fight;
 
 public class Interface {

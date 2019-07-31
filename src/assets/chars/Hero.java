@@ -1,6 +1,8 @@
-package assets;
+package assets.chars;
 
 import java.util.List;
+
+import assets.*;
 import combat.*;
 import main.*;
 

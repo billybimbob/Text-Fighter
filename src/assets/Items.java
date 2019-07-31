@@ -1,5 +1,6 @@
 package assets;
 
+import assets.chars.Monster;
 
 public abstract class Items {
 

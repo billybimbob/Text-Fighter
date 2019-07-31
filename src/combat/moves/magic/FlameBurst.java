@@ -1,8 +1,8 @@
 package combat.moves.magic;
 
-import assets.Monster;
-import combat.moves.Ability;
+import assets.chars.Monster;
 import combat.Status;
+import combat.moves.Ability;
 import main.Interface;
 
 public class FlameBurst extends Ability {

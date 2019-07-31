@@ -1,10 +1,10 @@
-package combat.moves; //here to access ability members
+package combat.moves; //here to access Ability members
 
-import assets.*;
-import combat.moves.magic.shapeshift.ShapeShift;
+import assets.chars.*;
+import combat.moves.Ability;
 import main.*;
 
-public class ChangeForm extends ShapeShift {
+public class ChangeForm extends Ability {
 
 	private Monster[] formList;
 	
@@ -76,7 +76,7 @@ public class ChangeForm extends ShapeShift {
 		
 		Monster newForm = tempList[formChoice];
 		String beforeName = attacker.getName(), newName = newForm.getName();
-		transform(attacker, newForm, 5);			
+		ShapeShift.transform(attacker, newForm, 5);			
 		Interface.writeOut(beforeName + " has transformed into " + newName);
 		
 	}

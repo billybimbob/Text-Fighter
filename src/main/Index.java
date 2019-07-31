@@ -5,9 +5,9 @@ import java.util.function.Function;
 import java.io.*;
 
 import assets.*;
+import assets.chars.Monster;
 import combat.moves.*;
 import combat.moves.magic.*;
-import combat.moves.magic.shapeshift.*;
 import combat.moves.melee.*;
 import combat.moves.passive.*;
 

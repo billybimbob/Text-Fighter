@@ -1,6 +1,7 @@
 package combat.moves;
 
-import assets.*;
+import assets.chars.Monster;
+import assets.Stat;
 import main.Interface;
 
 public abstract class Ability implements Cloneable {
@@ -67,8 +68,8 @@ public abstract class Ability implements Cloneable {
 	 * @return {@code true} if attack hits, {@code false} if attack misses
 	 */
 	protected boolean attackHit(Monster target, String failPrompt) {
-		Stat hitStat = Monster.getHitStat(attType);
-		Stat blockStat = Monster.getBlockStat(attType);
+		Stat hitStat = Stat.getHitStat(attType);
+		Stat blockStat = Stat.getBlockStat(attType);
 		double checkNum = Math.random()*attacker.getStat(hitStat) - Math.random()*target.getStat(Stat.SPEED)*0.5;
 		boolean check = checkNum > target.getStat(blockStat)*attMod;
 		
@@ -110,7 +111,7 @@ public abstract class Ability implements Cloneable {
 	 * @return {@code true} if modified damage value is less than or equal to 0
 	 */
 	protected boolean targetReduct(Monster target, String blockedPrompt) { //maybe look over
-		Stat hitStat = Monster.getHitStat(attType), blockStat = Monster.getBlockStat(attType);
+		Stat hitStat = Stat.getHitStat(attType), blockStat = Stat.getBlockStat(attType);
 		damage -= (int)(Math.random()*(target.getStat(blockStat)));
 		
 		int minDam = (int)attacker.getStat(hitStat);
