@@ -69,7 +69,7 @@ public class Index {
 
 	private static void readMonsters() {
 
-		try (BufferedReader reading = new BufferedReader(new FileReader("monster.txt"));) {
+		try (BufferedReader reading = new BufferedReader(new FileReader("src/assets/chars/monster.txt"));) {
 			final boolean defltAggro = false;
 			String line;
 			while((line = reading.readLine()) != null) {

@@ -23,26 +23,24 @@ public class Disrupt extends Ability {
 		if (attackHit(target, missPrompt)) { //Check if attack will be successful
 			
 			Interface.prompt(attacker.getName() + " slams into " + target.getName());
-			float selfDam = 0;
 
 			String blockedPrompt = "but was resisted";
 			if (!targetReduct(target, blockedPrompt)) { //check if the defense reduction value is greater than the attack, therefore blocking the attack
 				
 				dealDamage(attacker, target, damage);
 				Interface.writeOut(" for " + damage + " damage");
-				selfDam = (int)(damage*0.5);
 
 				float sto = setAttMod(0.4f);
-				if (attackHit(target)) {
+				if (attackHit(target)) { //mods damage
 					Interface.writeOut(attacker.getName() + "'s blow also stuns " + target.getName());
 					target.setStatus(Status.STUN, true);
 				}
 				setAttMod(sto);
 			}
 			
-			if (selfDam > 0) {
-				attacker.modStat(Stat.HP, true, -selfDam); //might add to damage received in turn?
-				Interface.writeOut(attacker.getName() + " deals " + selfDam + " damage to self from recoil");
+			if (damage > 0) {
+				attacker.modStat(Stat.HP, true, -damage); //might add to damage received in turn?
+				Interface.writeOut(attacker.getName() + " deals " + damage + " damage to self from recoil");
 			}
 			
 		}

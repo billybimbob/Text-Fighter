@@ -276,9 +276,6 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	protected boolean checkAutoTar(List<Monster> possTargets) {
 		return checkAddAll(possTargets) || checkSelfTar();
 	}
-	protected void clearTargets() {
-		this.targets.clear();
-	}
 	protected Ability getMove() {
 		return moveList[(int)(Math.random()*moveList.length)];
 	}
@@ -373,7 +370,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	}
 
 	public void setRandomTargets(List<Monster> possTargets) {
-		this.clearTargets();
+		this.targets.clear();
 		
 		if (!checkAutoTar(possTargets)) {
 			int amountTars = this.getNumTar();
@@ -404,7 +401,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	public void clearTurn() {
 		if (turnMove != null && turnMove.resolved()) {
 			turnMove = null;		
-			clearTargets();
+			this.targets.clear();
 		}
 	}
 	

@@ -95,7 +95,7 @@ public class Hero extends Monster {
 					if (tarNum == 0) {//have to change how to implement
 						action = false;
 						possTargets.addAll(this.targets);
-						clearTargets();
+						this.targets.clear();
 						break;
 					}
 					this.addTarget(possTargets.remove(tarNum-1));
