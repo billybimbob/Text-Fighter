@@ -45,43 +45,39 @@ public class ChangeForm extends ShapeShift {
 		}
 	}
 	
-	public void execute() {
-		//this.shifter = (Hero)attacker;
-		
-		if (enoughMana()) {
-			int availChange = formList.length;
-			Monster[] tempList = new Monster[availChange];
+	protected void execute(Monster target) {
+		int availChange = formList.length;
+		Monster[] tempList = new Monster[availChange];
 
-			for (int i = 0; i < formList.length; i++) { //determine available transformations, removes caster from list
-				if (attacker.getName() != formList[i].getName()) {
-					tempList[i-(formList.length-availChange)] = formList[i];
-				} else {
-					Monster[] tempStore = new Monster[--availChange];
-					for(int j = 0; j < tempStore.length; j++) {
-						tempStore[j] = tempList[j];
-					}
-					tempList = null;
-					tempList = tempStore;
+		for (int i = 0; i < formList.length; i++) { //determine available transformations, removes caster from list
+			if (attacker.getName() != formList[i].getName()) {
+				tempList[i-(formList.length-availChange)] = formList[i];
+			} else {
+				Monster[] tempStore = new Monster[--availChange];
+				for(int j = 0; j < tempStore.length; j++) {
+					tempStore[j] = tempList[j];
 				}
+				tempList = null;
+				tempList = tempStore;
 			}
-
-			int formChoice = -1;
-			if (attacker.getClass() == Hero.class) {
-				String[] formNames = new String[tempList.length]; //sets list of names of available transformations
-				for (int i = 0; i < tempList.length; i++)
-					formNames[i] = tempList[i].getName();
-				String changePrompt = "Which form do you want to take?";
-				
-				formChoice = Interface.choiceInput(false, formNames, changePrompt)-1;
-
-			} else
-				formChoice = (int)(Math.random()*tempList.length);
-
-			Monster newForm = tempList[formChoice];
-			String beforeName = attacker.getName(), newName = newForm.getName();
-			transform(attacker, newForm, 5);			
-			Interface.writeOut(beforeName + " has transformed into " + newName);
-			
 		}
+
+		int formChoice = -1;
+		if (attacker.getClass() == Hero.class) {
+			String[] formNames = new String[tempList.length]; //sets list of names of available transformations
+			for (int i = 0; i < tempList.length; i++)
+				formNames[i] = tempList[i].getName();
+			String changePrompt = "Which form do you want to take?";
+			
+			formChoice = Interface.choiceInput(false, formNames, changePrompt)-1;
+
+		} else
+			formChoice = (int)(Math.random()*tempList.length);
+		
+		Monster newForm = tempList[formChoice];
+		String beforeName = attacker.getName(), newName = newForm.getName();
+		transform(attacker, newForm, 5);			
+		Interface.writeOut(beforeName + " has transformed into " + newName);
+		
 	}
 }

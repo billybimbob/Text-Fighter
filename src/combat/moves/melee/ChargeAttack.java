@@ -23,34 +23,36 @@ public class ChargeAttack extends Ability {
 	@Override
 	public boolean resolved() {
 		return turnCount == 0; //means reset count
-		//return Interface.FIGHT.getTurnNum()-start > duration;
+	}
+
+	@Override
+	protected boolean preExecute() { //checks happen later
+		return true;
 	}
 	
-	public void execute() { //Change, too messy, might put the print statements in the fight class
-		Monster[] targets = attacker.getTargets();
-		
+	protected void execute(Monster target) { //might put the print statements in the fight class
 		if (turnCount == 1) { //checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
 
 			String missPrompt = attacker.getName() + "'s attack missed";
-			if (attackHit(targets[0], missPrompt)) {
+			if (attackHit(target, missPrompt)) {
 				
 				boolean blocked = false;
 				if (!critCheck()) { //reduce damage on failure
-					String blockedPrompt = targets[0].getName() + " resisted " + attacker.getName() + "'s attack";
-					blocked = targetReduct(targets[0], blockedPrompt);
+					String blockedPrompt = target.getName() + " resisted " + attacker.getName() + "'s attack";
+					blocked = targetReduct(target, blockedPrompt);
 				}
 			
 				if (!blocked) {
-					dealDamage(attacker, targets[0], damage);
+					dealDamage(attacker, target, damage);
 					Interface.writeOut(attacker.getName() + " lands a powerful hit on " 
-						+ targets[0].getName() + " for " + damage + " damage");
+						+ target.getName() + " for " + damage + " damage");
 				}
 						
 				float sto = setAttMod(0.1f);
-				if (attackHit(targets[0])) {
-					Interface.writeOut(attacker.getName() + "'s charged attack stuns " + targets[0].getName());
-					targets[0].setStatus(Status.STUN, true);
+				if (attackHit(target)) {
+					Interface.writeOut(attacker.getName() + "'s charged attack stuns " + target.getName());
+					target.setStatus(Status.STUN, true);
 				}
 				setAttMod(sto);
 			}

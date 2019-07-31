@@ -16,29 +16,22 @@ public class SpinAttack extends Ability {
 		manaCost = 5;
 		damageMod = 1.25f;
 	}
-	
-	public void execute() { //current bug with null pointer
-		Monster[] targets = attacker.getTargets();
 
-		if (enoughMana()) {
-			Interface.writeOut(attacker.getName() + " spins around");
+	@Override
+	protected boolean preExecute() {
+		String attPrompt = attacker.getName() + " spins around";
+		return enoughMana(attPrompt);
+	}
+	
+	protected void execute(Monster target) {
+		String missPrompt = target.getName() + " dodges the attack";
+		if (attackHit(target, missPrompt)) { //Check if attack will be successful
 			
-			for (Monster target: targets) { //Checks if hits for each monster; Attack based on RNG and modified by stats
-				
-				String missPrompt = target.getName() + " dodges the attack";
-				if (attackHit(target, missPrompt)) { //Check if attack will be successful
-					/*if (critCheck()) { //Might add later
-						baseDam *= 2;
-						Interface.writeOut("Critical Hit!");
-					}*/
-					String blockedPrompt = target.getName() + " blocks all damage";
-					if (!targetReduct(target, blockedPrompt)) {	
-						dealDamage(attacker, target, damage);
-						Interface.writeOut(target.getName() + " gets hit for " + damage + " damage");
-					}
-				}
+			String blockedPrompt = target.getName() + " blocks all damage";
+			if (!targetReduct(target, blockedPrompt)) {	
+				dealDamage(attacker, target, damage);
+				Interface.writeOut(target.getName() + " gets hit for " + damage + " damage");
 			}
-		
 		}
 	}
 

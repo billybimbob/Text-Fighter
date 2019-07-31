@@ -13,7 +13,8 @@ public class Rage extends Ability {
 		passive = true;
 		numTar = -1;
 	}
-	public void execute() {
+
+	protected void execute(Monster target) {
 		attacker.modStat(Stat.ATT, false, 1);
 		Interface.writeOut(attacker.getName() + " gains attack boost");
 		attacker.modStat(Stat.DEF, false, -1);

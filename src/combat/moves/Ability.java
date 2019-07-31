@@ -18,17 +18,12 @@ public abstract class Ability implements Cloneable {
 		this.priority = false;
 		this.passive = false;
 		this.numTar = 1;
+		this.manaCost = 0;
 		this.damage = 0;
 		this.attMod = 0.01f;
 		this.damageMod = 1;
 		this.attacker = user;
 	}
-	
-	/*
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}*/
 
 	public Object clone(Monster attacker) throws CloneNotSupportedException { //can't do copy constructor becuase of subclasses
 		Ability newAbility = (Ability)this.clone();
@@ -46,14 +41,21 @@ public abstract class Ability implements Cloneable {
 	 * checks if attacker has enough mana cost for ability; uses mana on success and prints prompt on failure
 	 * @return true if attacker has enough mana, false if not
 	 */
-	protected boolean enoughMana() {
+	protected boolean enoughMana(String successPrompt) {
 		boolean check = attacker.getStat(Stat.MP) >= manaCost;
-		if (check) //not sure if I want to pair; immediately revmoves cost if able
+		if (check) {//not sure if I want to pair; immediately revmoves cost if able
 			attacker.modStat(Stat.MP, true, -manaCost);
-		else
+			if (successPrompt != null)
+				Interface.writeOut(successPrompt);
+
+		} else
 			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
 			
 		return check;
+	}
+
+	protected boolean enoughMana() {
+		return enoughMana(null);
 	}
 
 	/**
@@ -134,15 +136,18 @@ public abstract class Ability implements Cloneable {
 		return ret;
 	}
 
+	protected boolean preExecute() {
+		return enoughMana();
+	}
+
+	protected abstract void execute(Monster target);
+
+
 	/*
 	 * getters
 	 */
-
 	public String getName() {
 		return name;
-	}
-	public double getCost() {
-		return manaCost;
 	}
 	public int getNumTar() {
 		return numTar;
@@ -152,9 +157,6 @@ public abstract class Ability implements Cloneable {
 	}
 	public boolean isPassive() {
 		return passive;
-	}
-	public boolean targeted() {
-		return numTar > 0;
 	}
 	public boolean resolved() { //check if multi turn, see if ability finished
 		return true;
@@ -166,6 +168,12 @@ public abstract class Ability implements Cloneable {
 		return name + " - " + manaCost + " mana\n\t" + description;
 	}
 
+	public void useAbility() { //not sure if needs to be static
+		if (this.preExecute())
+			for (Monster target: attacker.getTargets())
+				this.execute(target);
+	}
+
 	/**
 	 * attacker deals damage to target, and the damage is logged
 	 */
@@ -173,7 +181,5 @@ public abstract class Ability implements Cloneable {
 		target.modStat(Stat.HP, true, -damage);
 		Interface.FIGHT.addLog(attacker, target, damage);
 	}
-
-	public abstract void execute();
 
 }

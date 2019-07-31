@@ -15,13 +15,11 @@ public class Possess extends Ability {
         manaCost = 10;
     }
 
-    public void execute() {
-        Monster[] targets = attacker.getTargets();
-
+	protected void execute(Monster target) {
 		String failPrompt = attacker.getName() + "'s spell failed";
-        if (enoughMana() && attackHit(targets[0], failPrompt)) {
-            targets[0].setStatus(Status.CONTROL, 3);
-            Interface.writeOut(attacker.getName() + " takes control of " + targets[0].getName());
+        if (attackHit(target, failPrompt)) {
+            target.setStatus(Status.CONTROL, 3);
+            Interface.writeOut(attacker.getName() + " takes control of " + target.getName());
         }
     }
 }

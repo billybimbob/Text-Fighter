@@ -16,19 +16,18 @@ public class Frenzy extends Ability {
         numTar = -1;
     }
 
-    public void execute() {
-        Monster[] targets = attacker.getTargets();
+    @Override
+    protected boolean preExecute() {
+        String attPrompt = attacker.getName() + " causes mass panic";
+        return enoughMana(attPrompt);
+    }
 
-        if(enoughMana()) {
-            Interface.writeOut(attacker.getName() + " causes mass panic");
-            
-            for (Monster target: targets) {
-                String failPrompt = target.getName() + " resists being frenzied";
-                if (attackHit(target, failPrompt)) {
-                    target.setStatus(Status.FRENZY, 2);
-                    Interface.writeOut(target.getName() + " becomes frenzied");
-                }
-            }
+	protected void execute(Monster target) {
+        String failPrompt = target.getName() + " resists being frenzied";
+        if (attackHit(target, failPrompt)) {
+            target.setStatus(Status.FRENZY, 2);
+            Interface.writeOut(target.getName() + " becomes frenzied");
         }
+    
     }
 }

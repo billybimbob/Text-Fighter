@@ -1,8 +1,8 @@
 package combat.moves.passive;
 
 import combat.moves.Ability;
-import assets.*;
 import main.Interface;
+import assets.*;
 
 public class Intimidate extends Ability {
 
@@ -14,11 +14,14 @@ public class Intimidate extends Ability {
 		numTar = -1;
 	}
 
-	public void execute() {
-		Monster[] targets = attacker.getTargets();
+	@Override
+	protected boolean preExecute() {
 		Interface.writeOut(attacker.getName() + " intimidates all enemies, and decreases all of their speed");
-		for (Monster target: targets)
-			target.modStat(Stat.SPEED, true, -1);
+		return true;
+	}
+
+	protected void execute(Monster target) {
+		target.modStat(Stat.SPEED, true, -1);
 	}
 
 }

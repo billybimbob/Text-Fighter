@@ -80,7 +80,7 @@ public class Hero extends Monster {
 			//determine the targets of hero move
 			action = true;
 
-			if (!checkAddAll(possTargets)) {
+			if (!checkAutoTar(possTargets)) {
 				int numOptions = possTargets.size();
 				while (numOptions-possTargets.size() < this.getNumTar()) { //loop until amount selected enough
 

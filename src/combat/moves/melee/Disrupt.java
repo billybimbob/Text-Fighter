@@ -17,24 +17,22 @@ public class Disrupt extends Ability {
 		manaCost = 7;
 	}
 	
-	public void execute() {
-		Monster[] targets = attacker.getTargets();
-
+	protected void execute(Monster target) {
 		String missPrompt = attacker.getName() + "'s attack missed";
-		if (enoughMana() && attackHit(targets[0], missPrompt)) { //Check if attack will be successful
+		if (attackHit(target, missPrompt)) { //Check if attack will be successful
 			
-			Interface.prompt(attacker.getName() + " slams into " + targets[0].getName());
+			Interface.prompt(attacker.getName() + " slams into " + target.getName());
 			
 			String blockedPrompt = "but was resisted";
-			if (!targetReduct(targets[0], blockedPrompt)) { //check if the defense reduction value is greater than the attack, therefore blocking the attack
+			if (!targetReduct(target, blockedPrompt)) { //check if the defense reduction value is greater than the attack, therefore blocking the attack
 				
-				dealDamage(attacker, targets[0], damage);
+				dealDamage(attacker, target, damage);
 				Interface.writeOut(" for " + damage + " damage");
 
 				float sto = setAttMod(0.4f);
-				if (attackHit(targets[0])) {
-					Interface.writeOut(attacker.getName() + "'s blow also stuns " + targets[0].getName());
-					targets[0].setStatus(Status.STUN, true);
+				if (attackHit(target)) {
+					Interface.writeOut(attacker.getName() + "'s blow also stuns " + target.getName());
+					target.setStatus(Status.STUN, true);
 				}
 				setAttMod(sto);
 			}

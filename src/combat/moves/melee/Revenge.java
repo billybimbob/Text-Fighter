@@ -15,19 +15,18 @@ public class Revenge extends Ability {
         numTar = 3;
     }
 
-    public void execute() {
-        Monster[] targets = attacker.getTargets();
+    @Override
+    protected boolean preExecute() {
+        int prevRound = Interface.FIGHT.getTurnNum()-1;
+        damage = Interface.FIGHT.getTurnDamage(prevRound, attacker); //keep eye on
 
-        if (enoughMana()) {
-            int prevRound = Interface.FIGHT.getTurnNum()-1;
-            damage = Interface.FIGHT.getTurnDamage(prevRound, attacker); //keep eye on
+        Interface.writeOut(attacker.getName() + " enacts revenge");
+        return enoughMana();
+    }
 
-            Interface.writeOut(attacker.getName() + " enacts revenge");
-            for (Monster target: targets) {
-                dealDamage(attacker, target, damage);
-                Interface.writeOut(target.getName() + " is dealt " + damage + " damage");
-            }
-        }
-
+    @Override
+	protected void execute(Monster target) {
+        dealDamage(attacker, target, damage);
+        Interface.writeOut(target.getName() + " is dealt " + damage + " damage");
     }
 }

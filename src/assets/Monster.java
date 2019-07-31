@@ -34,7 +34,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		float setTempCapped(float newVal) { //floor to 0; celings to base; returns amount over basecap
 			float capOver = 0;
 			
-			if (this.base < newVal) {
+			if (newVal > this.base) {
 				capOver = newVal-this.base;
 				if (this.temp < this.base) //keep old temp or ceiling to base
 					this.setTemp(this.base);
@@ -259,26 +259,17 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	}
 
 	private void setTargets(List<Monster> possTargets) {
-		int numTar = this.getNumTar();
+		if (!checkAutoTar(possTargets))
+			for (int i = 0; i < possTargets.size() 
+				&& this.targets.size() < this.getNumTar(); i++) { //gets targets if needed
+				
+				Monster possTarget = possTargets.get(i);
+				if (possTarget.getAggro() != this.getAggro())
+					this.addTarget(possTarget);
+			}
 
-		for (int i = 0; i<possTargets.size() 
-		   && this.targets.size()<numTar; i++) { //gets targets if needed
-			
-			Monster possTarget = possTargets.get(i);
-			if (possTarget.getAggro() != this.getAggro())
-				this.addTarget(possTarget);
-		}
-
-		if (numTar == -1) { //no limit, aoe
-			this.addTargets(possTargets);
-		}
 	}
-
-	//protected helpers
-	protected void clearTargets() {
-		this.targets.clear();
-	}
-	protected boolean checkAddAll(List<Monster> possTargets) {
+	private boolean checkAddAll(List<Monster> possTargets) {
 		int numTar = this.getNumTar();
 
 		boolean check = numTar == -1 || numTar >= possTargets.size();
@@ -286,6 +277,21 @@ public class Monster implements Comparable<Monster>, Cloneable {
 			this.addTargets(possTargets);
 
 		return check;
+	}
+	private boolean checkSelfTar() {
+		boolean check = this.getNumTar() == 0;
+		if (check)
+			this.addTarget(this);
+		
+		return check;
+	}
+
+	//protected helpers
+	protected boolean checkAutoTar(List<Monster> possTargets) {
+		return checkAddAll(possTargets) || checkSelfTar();
+	}
+	protected void clearTargets() {
+		this.targets.clear();
 	}
 	protected Ability getMove() {
 		return moveList[(int)(Math.random()*moveList.length)];
@@ -383,7 +389,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	public void setRandomTargets(List<Monster> possTargets) {
 		this.clearTargets();
 		
-		if (!checkAddAll(possTargets)) {
+		if (!checkAutoTar(possTargets)) {
 			int amountTars = this.getNumTar();
 			for (int i = 0; i < amountTars; i++) {
 				int randIdx = (int)(Math.random()*(possTargets.size()));
@@ -403,9 +409,8 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	}
 
 	public void executeTurn() { //wrapper for turnMove
-
-		if (targets.size() > 0 || this.getNumTar() == 0)
-			turnMove.execute();
+		if (targets.size() > 0)
+			turnMove.useAbility();
 		else
 			System.err.println("no targets found, aggro: " + this.aggro);
 	}
@@ -422,7 +427,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 			List<Monster> sto = this.targets; //store previous targets
 			this.targets = possTargets;
 
-			passive.execute(); //execute will handle targeting
+			passive.useAbility();
 
 			this.targets = sto;
 		}

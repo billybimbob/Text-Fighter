@@ -14,14 +14,12 @@ public class Polymorph extends ShapeShift { //doesn't account for if the moveLis
 		attMod = 0.05f;
 	}
 	
-	public void execute() {
-		Monster[] targets = attacker.getTargets();
-
+	protected void execute(Monster target) {
 		String failPrompt = attacker.getName() + " 's spell failed";
-		if (enoughMana() && attackHit(targets[0], failPrompt)) { //Check if attack will be successful
-			Interface.writeOut(attacker.getName() + " has transformed " + targets[0].getName() + " into a sheep");
+		if (attackHit(target, failPrompt)) { //Check if attack will be successful
+			Interface.writeOut(attacker.getName() + " has transformed " + target.getName() + " into a sheep");
 			Monster sheep = Index.createMonster("Sheep");
-			transform(targets[0], sheep, 3); //last 3 turns
+			transform(target, sheep, 3); //last 3 turns
 		}
 	}
 
