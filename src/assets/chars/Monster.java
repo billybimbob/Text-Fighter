@@ -1,16 +1,17 @@
-package assets;
+package assets.chars;
 
 import java.util.*;
-import combat.*;
+
+import assets.Stat;
+import combat.Status;
+import combat.moves.Ability;
 import main.Index;
-import main.Interface;
 import main.Index.Move;
+import main.Interface;
 
-public class Monster implements Comparable<Monster> {
+public class Monster implements Comparable<Monster>, Cloneable {
 
-	/**
-	 * nested classes
-	 */
+	/** nested classes */
 
 	private static class StatInfo {
 		float base, temp;
@@ -34,9 +35,11 @@ public class Monster implements Comparable<Monster> {
 		float setTempCapped(float newVal) { //floor to 0; celings to base; returns amount over basecap
 			float capOver = 0;
 			
-			if (this.base < newVal) {
+			if (newVal > this.base) {
 				capOver = newVal-this.base;
-				this.setTemp(this.base);
+				if (this.temp < this.base) //keep old temp or ceiling to base
+					this.setTemp(this.base);
+
 			} else
 				this.setTemp(newVal);
 
@@ -44,7 +47,7 @@ public class Monster implements Comparable<Monster> {
 		}
 	}
 
-	private static class StatusInfo {
+	static class StatusInfo {
 		private int start, duration;
 
 		StatusInfo () {
@@ -59,42 +62,37 @@ public class Monster implements Comparable<Monster> {
 		void setDuration(int duration) { this.duration = duration; }
 	}
 
-	private static class ShiftInfo extends StatusInfo {
-		private Monster original;
-	
-		Monster getOriginal() { return original; }
-		void setOriginal(Monster original) { this.original = original; }
-	}
-
 
 	/**variables */
 
 	public final static int levMult = 2;
 	
-	private float turnDam;
-	private Map<Stat, StatInfo> stats;
-	private Ability[] moveList;
-	private boolean attType;
-	private Ability passive, turnMove;
-	private Map<Status, StatusInfo> status;
-	private List<Monster> targets; //look at how set and used
+	private static int idCount = 0;
+	private int id;
 	
 	protected String name;
-	protected boolean aggro; //attType true means physical attack
+	protected boolean attType; //attType true means physical attack
+	protected boolean aggro;
+	protected Map<Stat, StatInfo> stats;
+	protected Ability[] moveList;
+	protected Ability passive;
+	protected Map<Status, StatusInfo> status;
+	protected Ability turnMove;
+	protected List<Monster> targets; //look at how set and used
 	protected int level = 1;
 
 
 	/**
 	 * constructor to have no extra attacks but basic
-	 * @param attType true for melee, false for magic
-	 * @param stats order should follow Stat.java and not include MAXHP or MAXMP
-	 * @see Stat
+	 * @param aggro {@code true} for hero aggresivnes, {@code false} for aggressive against hero
+	 * @param attType {@code true} for melee, {@code false} for magic
+	 * @param statsIn order should follow order of {@link Stat}
 	 */
 	public Monster (String name, boolean aggro, boolean attType, List<Integer> statsIn) {
+		this.setId();
 		this.name = name;
 		this.aggro = aggro;
 		this.attType = attType;
-		this.turnDam = 0;
 
 		this.stats = new HashMap<>();
 		//hp, mp, att, def, mag, magR, spe, crit}; //order must be same as enum
@@ -108,7 +106,7 @@ public class Monster implements Comparable<Monster> {
 
 	/**
 	 * monster constructor, basic attack and list of specials
-	 * @see {@link} {@link Monster#Monster(String, boolean, boolean, List)}
+	 * @see {@link Monster#Monster(String, boolean, boolean, List)}
 	 */
 	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats, List<Move> specials) {
 		this(name, aggro, attType, stats);
@@ -119,7 +117,7 @@ public class Monster implements Comparable<Monster> {
 		for (Move special: specials)
 			moveSto.add(createAbility(special));
 
-		moveList = moveSto.toArray(new Ability[moveSto.size()]);
+		moveList = moveSto.toArray(Ability[]::new);
 	}
 
 	/**
@@ -136,10 +134,10 @@ public class Monster implements Comparable<Monster> {
 	 * @param copy creates new Monster instance based off of values from copy
 	 */
 	public Monster (Monster copy) { //not sure if deep or shallow
+		this.setId();
 		this.name = copy.name;
 		this.aggro = copy.aggro;
 		this.attType = copy.attType;
-		this.turnDam = copy.turnDam;
 
 		this.stats = new HashMap<>(); //deep copy
 		for (Stat statName: Stat.values())
@@ -160,6 +158,8 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	//private helpers
+	private void setId() { this.id = idCount++; }
+
 	private void setPassive(Ability passive) {
 		if (passive.isPassive()) 
 			this.passive = passive;
@@ -168,17 +168,11 @@ public class Monster implements Comparable<Monster> {
 		status = new HashMap<>();
 		for (Status statusName: Status.values())
 			if (statusName.equals(Status.SHIFT))
-				status.put(statusName, new ShiftInfo());
+				status.put(statusName, new ShapeShift.ShiftInfo());
 			else
 				status.put(statusName, new StatusInfo());
 	}
 
-	private Ability getMove() {
-		return moveList[(int)(Math.random()*moveList.length)];
-	}
-	private Ability getMove(int idx) {
-		return this.moveList[idx];
-	}
 
 	private void updateTurnVals(Ability move) {
 		if (turnMove == null) {
@@ -186,15 +180,7 @@ public class Monster implements Comparable<Monster> {
 		}
 	}
 
-	/**
-	 * wrapper for list clear method
-	 */
-	private void clearTargets() {
-		this.targets.clear();
-	}
-	private void resetDamage() {
-		this.turnDam = 0;
-	}
+	/**wrapper for list clear method*/
 	private Ability createAbility(Move name) {
 		return Index.createAbility(name, this);
 	}
@@ -202,52 +188,101 @@ public class Monster implements Comparable<Monster> {
 		return Index.createPassive(name, this);
 	}
 	
-	private void onChecks(StatusInfo info, int start, int duration) { //could maybe make switch with a flag
-		if (info.getClass() != ShiftInfo.class
-		   || info.getClass() == ShiftInfo.class && ((ShiftInfo)info).getOriginal() != null) {
+	/** extra values to check/modify while turning on status;
+	 *  status will only update if new values will extend duration */
+	private void onChecks(Status status, int start, int duration) {
+		StatusInfo info = this.status.get(status);
+		
+		int oldStart = info.getStart(), oldDur = info.getDuration();
+		boolean flag = start+duration > oldStart+oldDur; //only update if will extend duration
+		switch(status) {
+			case CONTROL:
+				this.setAggro();
+				break;
+			case DODGE:
+				if (oldStart == -1 && oldDur == -1)
+					this.modStat(Stat.SPEED, false, this.getStatMax(Stat.SPEED)); //doubles speed
+				break;
+			case SHIFT:
+				flag = flag && ((ShapeShift.ShiftInfo)info).getOriginal() != null;
+				break;
+			default:
+				break;
+		}
+
+		if (flag) {
 			info.setStart(start);
 			info.setDuration(duration);
 		}
 	}
-	private void offChecks(StatusInfo info) {
+
+	/** extra vales to check/modify while turning off a status */
+	private void offChecks(Status status) {
+		StatusInfo info = this.status.get(status);
+
+		switch(status) {
+			case CONTROL:
+				this.setAggro();
+				break;
+			case DODGE:
+				if (info.getStart() >= 0 || info.getDuration() >= 0)
+					this.modStat(Stat.SPEED, false, -this.getStatMax(Stat.SPEED));
+				break;
+			case SHIFT:
+				ShapeShift.offCheck(this);
+				break;
+			default:
+				break;
+		}
+		
 		info.setStart(-1);
 		info.setDuration(-1);
-
-		if (info.getClass() == ShiftInfo.class) { //clear and revert if shift status
-			ShiftInfo shift = (ShiftInfo)info;
-			Monster original;
-			if ((original = shift.getOriginal()) != null) {
-				this.copyVals(original);
-				shift.setOriginal(null);
-			}
-		}
 	}
 
-	private void copyVals (Monster copy) { //used for transforming; so don't have to make many setters
-		this.name = copy.name;
-		this.attType = copy.attType;
-		this.passive = copy.passive;
-		this.moveList = copy.moveList;
-		this.stats = copy.stats;
-		this.status = copy.status;
-	}
 	private void setTargets(List<Monster> possTargets) {
+		if (!checkAutoTar(possTargets))
+			for (int i = 0; i < possTargets.size() 
+				&& this.targets.size() < this.getNumTar(); i++) { //gets targets if needed
+				
+				Monster possTarget = possTargets.get(i);
+				if (possTarget.getAggro() != this.getAggro())
+					this.addTarget(possTarget);
+			}
+
+	}
+	private boolean checkAddAll(List<Monster> possTargets) {
 		int numTar = this.getNumTar();
 
-		for (int i = 0; i<possTargets.size() 
-		   && this.targets.size()<numTar; i++) { //gets targets if needed
-			
-			Monster possTarget = possTargets.get(i);
-			if (possTarget.getAggro() != this.getAggro())
-				this.addTarget(possTarget);
-		}
-
-		if (numTar == -1) { //no limit, aoe
+		boolean check = numTar == -1 || numTar >= possTargets.size();
+		if (check)
 			this.addTargets(possTargets);
-		}
+
+		return check;
+	}
+	private boolean checkSelfTar() {
+		boolean check = this.getNumTar() == 0;
+		if (check)
+			this.addTarget(this);
+		
+		return check;
 	}
 
 	//protected helpers
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
+	protected boolean checkAutoTar(List<Monster> possTargets) {
+		return checkAddAll(possTargets) || checkSelfTar();
+	}
+	protected Ability getMove() {
+		return moveList[(int)(Math.random()*moveList.length)];
+	}
+	protected Ability getMove(int idx) {
+		return this.moveList[idx];
+	}
+
 	protected int currentTurn() {
 		return Interface.FIGHT.getTurnNum();
 	}
@@ -275,9 +310,6 @@ public class Monster implements Comparable<Monster> {
 	public String getName() {
 		return name;
 	}
-	public double getTurnDam() {
-		return this.turnDam;
-	}
 	public boolean getAggro() {
 		return aggro;
 	}
@@ -287,23 +319,22 @@ public class Monster implements Comparable<Monster> {
 	public boolean getAttType() {
 		return this.attType;
 	}
-
-	public String[] getMoveNames() {
-		String[] ret = new String[moveList.length];
-		for (int i = 0; i < moveList.length; i++)
-			ret[i] = moveList[i].getName() + " - " + (int)moveList[i].getCost() + " mana";
-		return ret;
+	public Ability[] getMoves() {
+		return Arrays.copyOf(this.moveList, this.moveList.length);
+	}
+	public Ability getPassive() {
+		return passive;
 	}
 
 	/**
-	 * @return -1 is no limit, 0 is self, >0 max number of targets
+	 * @return -1 is no limit, 0 is self, >0 max number of targets 
 	 */
 	public int getNumTar() {
 		return turnMove.getNumTar();
 	}
 
 	public Monster[] getTargets() {
-		return targets.toArray(new Monster[targets.size()]);
+		return targets.toArray(Monster[]::new);
 	}
 
 	public float getStatRatio(Stat stat) {
@@ -337,6 +368,19 @@ public class Monster implements Comparable<Monster> {
 	public void setAggro() { //flips
 		this.aggro = !this.aggro;
 	}
+
+	public void setRandomTargets(List<Monster> possTargets) {
+		this.targets.clear();
+		
+		if (!checkAutoTar(possTargets)) {
+			int amountTars = this.getNumTar();
+			for (int i = 0; i < amountTars; i++) {
+				int randIdx = (int)(Math.random()*(possTargets.size()));
+				this.addTarget(possTargets.remove(randIdx));
+			}
+		}
+	}
+	
 	public void setTurn(List<Monster> targets) {
 		setMove();
 		setTargets(targets);
@@ -347,26 +391,32 @@ public class Monster implements Comparable<Monster> {
 		setTargets(targets);
 	}
 
-	public void clearTurn() {
-		resetDamage();
-		if (turnMove != null && turnMove.resolved()) {
-			turnMove = null;		
-			clearTargets();
-		}
-	}
 	public void executeTurn() { //wrapper for turnMove
-		turnMove.execute();
+		if (targets.size() > 0)
+			turnMove.useAbility();
+		else
+			System.err.println("no targets found, aggro: " + this.aggro);
 	}
 
+	public void clearTurn() {
+		if (turnMove != null && turnMove.resolved()) {
+			turnMove = null;		
+			this.targets.clear();
+		}
+	}
+	
 	public void usePassive(List<Monster> possTargets) { //look at; assume all fighters passed in
 		if (passive != null) {
 			List<Monster> sto = this.targets; //store previous targets
+			this.targets = new ArrayList<>();
+			Ability stoMove = this.turnMove;
 
-			this.targets = possTargets;
-			passive.execute(); //execute will handle targeting
+			this.turnMove = passive;
+			this.setTargets(possTargets);
+			passive.useAbility();
 
-			this.clearTargets();
 			this.targets = sto;
+			this.turnMove = stoMove;
 		}
 	}
 
@@ -376,14 +426,13 @@ public class Monster implements Comparable<Monster> {
 			moveStore.add(move);
 
 		moveStore.add(adding);
-		moveList = new Ability[moveStore.size()];
-		moveList = moveStore.toArray(moveList);
+		moveList = moveStore.toArray(Ability[]::new);
 	}
 
 	/**
 	 * modifies max stat value to newVal
 	 */
-	public void setStatMax (Stat stat, float newVal) {
+	protected void setStatMax (Stat stat, float newVal) {
 		stats.get(stat).setBase(newVal);
 	}
 
@@ -395,9 +444,9 @@ public class Monster implements Comparable<Monster> {
 	}
 
 	/**
-	 * changes the stat by mod, caps new value to base
-	 * @param capped true if bounded by max value; or false if just temporary buff
-	 * @return the amount that went over the base cap
+	 * changes the stat by mod, caps new value to base based on flag
+	 * @param capped {@code true} if bounded by max value, {@code false} if just temporary buff
+	 * @return the amount that went over the max value cap
 	 */
 	public float modStat (Stat stat, boolean capped, float mod) { //changes stat by val
 		StatInfo info = stats.get(stat);
@@ -414,50 +463,22 @@ public class Monster implements Comparable<Monster> {
 
 	/**
 	 * turns on/off the inputted status
-	 * @param duration positive value turns on for that duration, negative turns off
+	 * @param duration positive value turns on for that amount of duration, negative turns off status
 	 */
 	public void setStatus(Status status, int duration) { //could set special status
-		StatusInfo info = this.status.get(status);
 		if (duration > 0) {
 			int start = currentTurn();
-			onChecks(info, start, duration);
+			onChecks(status, start, duration);
 		} else
-			offChecks(info);
+			offChecks(status);
 	}
 
 	/**
 	 * turns on/off the inputted status; defaults to one turn
 	 */
 	public void setStatus(Status status, boolean toggle) {
-		StatusInfo info = this.status.get(status);
-		if (toggle) {
-			int start = 0, duration = 0;
-			onChecks(info, start, duration);
-		} else
-			offChecks(info);
-	}
-
-	/**
-	 * used for changing to another monster
-	 * @param status for now expected to be SHIFT status, all else will act as basic setStatus
-	 * @param duration any positive number to transform, 0 and negative will turn off status
-	 * @param shifting the monster to transform into
-	 */
-	public void setStatus(Status status, int duration, Monster shifting) {
-		if (status.equals(Status.SHIFT) && duration > 0) {
-			ShiftInfo info = (ShiftInfo)this.status.get(status);
-			if (info.getOriginal() != null) {
-				try { info.setOriginal((Monster)this.clone()); } catch (CloneNotSupportedException e) {};
-			}
-
-			this.copyVals(shifting);
-		}
-			
+		int duration = toggle ? 1 : 0;
 		setStatus(status, duration);
-	}
-
-	public void addDamTurn(double damage) {
-		this.turnDam += damage;
 	}
 
 	/**
@@ -478,6 +499,19 @@ public class Monster implements Comparable<Monster> {
 		return name + " - " + getStat(Stat.HP) + " hp" + " - " + getStat(Stat.MP) + " mp" + " - " + getStat(Stat.SPEED) + " speed";
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		return other != null
+			&& this.getClass() == other.getClass()
+			&& this.id == ((Monster)other).id;
+	}
+
+	@Override
+	public int hashCode() { //hash by id
+		Integer idVal = Integer.valueOf(this.id);
+		return idVal.hashCode();
+	}
+
 	/**
 	 * based off of name, alphbetically
 	 */
@@ -485,15 +519,6 @@ public class Monster implements Comparable<Monster> {
 	public int compareTo (Monster other) {
 		String thisName = this.name, otherName = other.name;
 		return thisName.compareTo(otherName);
-	}
-
-
-	//static methods
-	public static Stat getHitStat(boolean attType) {
-		return attType ? Stat.ATT : Stat.MAG;
-	}
-	public static Stat getBlockStat(boolean attType) {
-		return attType ? Stat.DEF : Stat.MAGR;
 	}
 
 	

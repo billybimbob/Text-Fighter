@@ -1,7 +1,8 @@
 package combat.moves.magic;
 
-import assets.*;
-import combat.*;
+import assets.chars.Monster;
+import combat.moves.Ability;
+import combat.Status;
 import main.Interface;
 
 public class Shock extends Ability {
@@ -9,37 +10,27 @@ public class Shock extends Ability {
 	public Shock (Monster user) {
 		super(user);
 		name = "Shock";
-		description = "A a magic attack with the same damage as a basic, but has chance to stun and ignores some armor";
+		description = "A quick magic attack that also buffs speed of user";
 		attType = false;
 		priority = true;
 		manaCost = 6;
 		damageMod = 1.5f;
 	}
-	
-	public void execute() {
-		Monster[] targets = attacker.getTargets();
-		boolean manaUsed;
-		
-		if ((manaUsed = enoughMana()) && attackHit(targets[0], 0.01)) {
-			targetReduct(targets[0]);
+
+	protected void execute(Monster target) {
+		String failPrompt = attacker.getName() + "'s spell failed";
+		if (attackHit(target, failPrompt)) {
 			
-			if (blocked()) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				Interface.writeOut(attacker.getName() + "'s magic blast was resisted by " + targets[0].getName());
-			} else {
-				Interface.writeOut(attacker.getName() + " blasts " + targets[0].getName() + " for " + damage + " damage");
-				dealDamage(attacker, targets[0], damage);
+			String blockedPrompt = attacker.getName() + "'s shock was resisted by " + target.getName();
+			if (!targetReduct(target, blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 				
-				if (attackHit(targets[0], 0.4)) {
-					Interface.writeOut(attacker.getName() + "'s blast stuns " + targets[0].getName());
-					targets[0].setStatus(Status.STUN, 2);
-				}
+				dealDamage(attacker, target, damage);
+				Interface.writeOut(attacker.getName() + " blasts " + target.getName() + " for " + damage + " damage");
+				
+				attacker.setStatus(Status.DODGE, 3); //keep eye on
+				Interface.writeOut(attacker.getName() + " gains increased evasiveness for 3 turns");
 			}
 
-		} else if (manaUsed) {
-			Interface.writeOut(attacker.getName() + "'s attack missed");
-
-		} else {
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
 		}
 	}
 }

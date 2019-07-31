@@ -98,7 +98,7 @@ public class Inventory implements Iterable<Items> {
 		/*for (Items item: this) //acall iterator
 			ret.add(item);*/
 
-		return ret.toArray(new Items[ret.size()]);
+		return ret.toArray(Items[]::new);
 	}
 
 	public String[] accessNames() {
@@ -107,7 +107,7 @@ public class Inventory implements Iterable<Items> {
 		for (Map.Entry<String, ItemInfo> entry: inventoryList.entrySet())
 			names.add(entry.getKey() + " x " + entry.getValue().getAmount());
 
-		return names.toArray(new String[names.size()]);
+		return names.toArray(String[]::new);
 	}
 	
 }

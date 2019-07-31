@@ -1,7 +1,8 @@
 package combat.moves.magic;
 
-import assets.*;
-import combat.*;
+import assets.Stat;
+import assets.chars.Monster;
+import combat.moves.Ability;
 import main.Interface;
 
 public class LifeDrain extends Ability {
@@ -15,31 +16,25 @@ public class LifeDrain extends Ability {
 		damageMod = 1.4f;
 	}
 
-	public void execute() {
-		Monster[] targets = attacker.getTargets();
-		boolean manaUsed;
+	protected void execute(Monster target) {
 
-		if ((manaUsed = enoughMana()) && attackHit(targets[0], 0.01)) { //Check if attack will be successful
-			targetReduct(targets[0]);
-			float selfHeal = (int)(damage*0.5);
+		String failPrompt = attacker.getName() + "'s spell failed";
+		if (attackHit(target, failPrompt)) { //Check if attack will be successful
 			
-			if (blocked()) {//Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				Interface.writeOut(attacker.getName() + "'s drain was resisted by " + targets[0].getName());
-			} else {
-				Interface.writeOut(attacker.getName() + " drains " + targets[0].getName() + " for " + damage + " damage");
-				dealDamage(attacker, targets[0], damage);
+			String blockedPrompt = attacker.getName() + "'s drain was resisted by " + target.getName();
+			if (!targetReduct(target, blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+				
+				dealDamage(attacker, target, damage);
+				Interface.writeOut(attacker.getName() + " drains " + target.getName() + " for " + damage + " damage");
 
-				if (selfHeal > 0) {
-					float capOver = attacker.modStat(Stat.HP, true, selfHeal);
-					Interface.writeOut(attacker.getName() + " absorbs " + (selfHeal-capOver) + " health");
-				}
+				float baseHeal = (int)(damage*0.5);
+				float capOver = attacker.modStat(Stat.HP, true, baseHeal);
+				float selfHeal = baseHeal-capOver;
+				if (selfHeal > 0)
+					Interface.writeOut(attacker.getName() + " absorbs " + selfHeal + " health");
+				
 			}
-		
-		} else if (manaUsed)
-			Interface.writeOut(attacker.getName() + "'s attack missed");
-	
-		else
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
+		}
 		
 	}
 }

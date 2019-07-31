@@ -1,7 +1,8 @@
 package main;
 
 import java.util.*;
-import assets.*;
+
+import assets.chars.*;
 import combat.Fight;
 
 public class Interface {
@@ -22,7 +23,7 @@ public class Interface {
 		Interface.prompt("Step forth and state your name: ");
 		String name = KEYBOARD.nextLine();
 		
-		String[] availClass = {"Warrior", "Mage", "Shifter"};
+		String[] availClass = {"Warrior", "Mage", "Cleric", "Shifter"};
 		String classPrompt = "Which class you would like to be?\nThis will affect your stats, potions, and abilities";
 		int classChoice = choiceInput(false, availClass, classPrompt);
 		
@@ -30,21 +31,26 @@ public class Interface {
 		HERO = new Hero(name, classChoice);
 		
 		switch (classChoice) {
-		case 1: //warrior
-			HERO.addItems(Index.potionsList[2], 1);
-			HERO.addItems(Index.potionsList[3], 1);
-			Interface.writeOut("You are a warrior");
-			break;
-		case 2: //mage
-			HERO.addItems(Index.potionsList[4], 1);
-			HERO.addItems(Index.potionsList[5], 1);
-			Interface.writeOut("You are a mage");
-			break;
-		case 3: //shifter
-			HERO.addItems(Index.potionsList[4], 1);
-			HERO.addItems(Index.potionsList[5], 1);
-			Interface.writeOut("You are a shifter");
-			break;
+			case 1: //warrior
+				HERO.addItems(Index.potionsList[2], 1);
+				HERO.addItems(Index.potionsList[3], 1);
+				Interface.writeOut("You are a warrior");
+				break;
+			case 2: //mage
+				HERO.addItems(Index.potionsList[4], 1);
+				HERO.addItems(Index.potionsList[5], 1);
+				Interface.writeOut("You are a mage");
+				break;
+			case 3:
+				HERO.addItems(Index.potionsList[4], 1);
+				HERO.addItems(Index.potionsList[5], 1);
+				Interface.writeOut("You are a cleric");
+				break;
+			case 4: //shifter
+				HERO.addItems(Index.potionsList[4], 1);
+				HERO.addItems(Index.potionsList[5], 1);
+				Interface.writeOut("You are a shifter");
+				break;
 		}
 		
 		HERO.addItems(Index.potionsList[0], 3);
@@ -68,14 +74,26 @@ public class Interface {
 
 
 	public static void writeOut(String... printings) { //wrapper for system.out.print; can be other output
+		StringBuilder combined = new StringBuilder();
 		for (String printing: printings)
-			System.out.println(printing);
+			combined.append(printing);
+		System.out.println(combined.toString());
 	}
 	public static void prompt(String prompt) { //print to same line
 		System.out.print(prompt);
 	}
+	public static void confirm() {
+		KEYBOARD.nextLine();
+	}
 	
-	public static int choiceInput (boolean back, String[] options, String prompt) { //Returns user input from choices
+	/**
+	 * Takes in user input from multiple options, with input in the form of {@code int}
+	 * @param back if the value of {@code 0} should be an option
+	 * @param options all the possible options to be selected
+	 * @param prompt question shown before the options
+	 * @return the option that was selected, {@code 0} represents back option
+	 */
+	public static int choiceInput (boolean back, Object[] options, String prompt) { //Returns user input from choices
 		StringBuilder lstOptions = new StringBuilder();
 
 		lstOptions.append(LINESPACE + "\n");
@@ -83,7 +101,7 @@ public class Interface {
 		if (back) //option for "back"
 			lstOptions.append("0. Back\n");
 		for (int i = 0; i < options.length; i++)
-			lstOptions.append(i+1 + ". " + options[i] + "\n");
+			lstOptions.append(i+1 + ". " + options[i].toString() + "\n");
 
 		lstOptions.append(LINESPACE + "\n");
 		Interface.writeOut(lstOptions.toString());
@@ -108,7 +126,4 @@ public class Interface {
 		return choice;
 	}
 
-	public static void confirm() {
-		KEYBOARD.nextLine();
-	}
 }

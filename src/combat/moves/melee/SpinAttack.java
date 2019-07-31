@@ -1,7 +1,7 @@
 package combat.moves.melee;
 
-import assets.*;
-import combat.*;
+import assets.chars.Monster;
+import combat.moves.Ability;
 import main.Interface;
 
 public class SpinAttack extends Ability {
@@ -14,34 +14,25 @@ public class SpinAttack extends Ability {
 		attType = true; //melee attack; might make it based on the attacker
 		numTar = -1;
 		manaCost = 5;
+		damageMod = 1.25f;
+	}
+
+	@Override
+	protected boolean preExecute() {
+		String attPrompt = attacker.getName() + " spins around";
+		return enoughMana(attPrompt);
 	}
 	
-	public void execute() { //current bug with null pointer
-		Monster[] targets = attacker.getTargets();
-
-		if (enoughMana()) {
-			Interface.writeOut(attacker.getName() + " spins around");
+	protected void execute(Monster target) {
+		String missPrompt = target.getName() + " dodges the attack";
+		if (attackHit(target, missPrompt)) { //Check if attack will be successful
 			
-			for (Monster target: targets) { //Checks if hits for each monster
-				//Attack based on RNG and modified by stats
-				
-				if (attackHit(target, 0.005)) { //Check if attack will be successful
-					/*if (critCheck()) { //Might add later
-						baseDam *= 2;
-						Interface.writeOut("Critical Hit!");
-					}*/
-
-					targetReduct(target);
-					if (blocked())
-						Interface.writeOut("but is blocked by " + target.getName());
-					else {	
-						dealDamage(attacker, target, damage);
-						Interface.writeOut(target.getName() + " for " + damage + " damage");
-					}
-				}
+			String blockedPrompt = target.getName() + " blocks all damage";
+			if (!targetReduct(target, blockedPrompt)) {	
+				dealDamage(attacker, target, damage);
+				Interface.writeOut(target.getName() + " gets hit for " + damage + " damage");
 			}
-		
-		} else
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
+		}
 	}
+
 }

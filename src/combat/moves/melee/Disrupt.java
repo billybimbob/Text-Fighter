@@ -1,7 +1,9 @@
 package combat.moves.melee;
 
-import assets.*;
-import combat.*;
+import assets.Stat;
+import assets.chars.Monster;
+import combat.moves.Ability;
+import combat.Status;
 import main.Interface;
 
 public class Disrupt extends Ability {
@@ -12,37 +14,35 @@ public class Disrupt extends Ability {
 		description = "A quick bash disrupting a target while injuring yourself";
 		attType = true;
 		priority = true;
-		manaCost = 5;
+		attMod = 0.02f;
+		manaCost = 7;
 	}
 	
-	public void execute() {
-		Monster[] targets = attacker.getTargets();
-		boolean manaUsed;
+	protected void execute(Monster target) {
+		String missPrompt = attacker.getName() + "'s attack missed";
+		if (attackHit(target, missPrompt)) { //Check if attack will be successful
+			
+			Interface.prompt(attacker.getName() + " slams into " + target.getName());
 
-		if ((manaUsed = enoughMana()) && attackHit(targets[0], 0.01)) { //Check if attack will be successful
-			targetReduct(targets[0]);
-			Interface.prompt(attacker.getName() + " slams into " + targets[0].getName());
-			if (blocked()) //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				Interface.writeOut(" but was resisted");
-			else {
-				dealDamage(attacker, targets[0], damage);
+			String blockedPrompt = "but was resisted";
+			if (!targetReduct(target, blockedPrompt)) { //check if the defense reduction value is greater than the attack, therefore blocking the attack
+				
+				dealDamage(attacker, target, damage);
 				Interface.writeOut(" for " + damage + " damage");
-				if (attackHit(targets[0], 0.4)) {
-					Interface.writeOut(attacker.getName() + "'s blow also stuns " + targets[0].getName());
-					targets[0].setStatus(Status.STUN, true);
+
+				float sto = setAttMod(0.4f);
+				if (attackHit(target)) { //mods damage
+					Interface.writeOut(attacker.getName() + "'s blow also stuns " + target.getName());
+					target.setStatus(Status.STUN, true);
 				}
+				setAttMod(sto);
 			}
 			
-			float selfDam = (int)(damage*.5);
-			if (selfDam > 0) {
-				attacker.modStat(Stat.HP, true, -selfDam); //might add to damage received in turn?
-				Interface.writeOut(attacker.getName() + " deals " + selfDam + " damage to self from recoil");
+			if (damage > 0) {
+				attacker.modStat(Stat.HP, true, -damage); //might add to damage received in turn?
+				Interface.writeOut(attacker.getName() + " deals " + damage + " damage to self from recoil");
 			}
 			
-		} else if (manaUsed) {
-			Interface.writeOut(attacker.getName() + "'s attack missed");
-		} else {
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
 		}
 	}
 

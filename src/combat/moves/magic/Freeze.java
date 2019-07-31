@@ -1,7 +1,8 @@
 package combat.moves.magic;
 
-import assets.*;
-import combat.Ability;
+import assets.Stat;
+import assets.chars.Monster;
+import combat.moves.Ability;
 import main.Interface;
 
 public class Freeze extends Ability {
@@ -15,29 +16,25 @@ public class Freeze extends Ability {
 		damageMod = 0.75f;
 	}
 	
-	public void execute() {
-		Monster[] targets = attacker.getTargets();
-		boolean manaUsed;
+	protected void execute(Monster target) {
 
-		if ((manaUsed = enoughMana()) && attackHit(targets[0], 0.01)) {
+		String failPrompt = attacker.getName() + "'s spell failed";
+		if (attackHit(target, failPrompt)) {
 			//Attack based on RNG and modified by stats, need to consider magic attack
 
-			targetReduct(targets[0]);
-			if (blocked()) //Check if the defense reduction value is greater than the attack, therefore blocking the attack
-				Interface.writeOut(attacker.getName() + "'s freeze was resisted by " + targets[0].getName());
-			else {
-				Interface.writeOut(attacker.getName() + " freezes " + targets[0].getName() + " for " +damage + " damage");
-				dealDamage(attacker, targets[0], damage);
-				if (targets[0].getStat(Stat.SPEED) > 0) {
-					int statDam = 1;
-					targets[0].modStat(Stat.SPEED, true, -statDam);
-					Interface.writeOut(targets[0].getName() + "'s speed was lowered by " + statDam);
+			String blockedPrompt = attacker.getName() + "'s freeze was resisted by " + target.getName();
+			if (!targetReduct(target, blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+				
+				Interface.writeOut(attacker.getName() + " freezes " + target.getName() + " for " +damage + " damage");
+				dealDamage(attacker, target, damage);
+				
+				if (target.getStat(Stat.SPEED) > 0) {
+					int statDam = (int)(damage*0.5);		
+					target.modStat(Stat.SPEED, true, -statDam);
+					Interface.writeOut(target.getName() + "'s speed was lowered by " + statDam);
 				}
 			}
-		} else if (manaUsed) { //attackHit failed
-			Interface.writeOut(attacker.getName() + "'s attack missed");
-		} else {
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
+
 		}
 	}
 	

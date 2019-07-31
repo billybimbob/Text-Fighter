@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Interface",
+            "request": "launch",
+            "mainClass": "main.Interface",
+            "projectName": "TextFighter"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)",
+            "request": "launch",
+            "console": "externalTerminal",
+            "stopOnEntry": false,
+            "mainClass": "main.Interface",
+            "args": ""
+        }
+    ]
+}

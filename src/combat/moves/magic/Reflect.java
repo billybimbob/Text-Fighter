@@ -1,7 +1,8 @@
 package combat.moves.magic;
 
-import assets.*;
-import combat.*;
+import assets.chars.Monster;
+import combat.moves.Ability;
+import combat.Status;
 import main.Interface;
 
 public class Reflect extends Ability { //not sure if should be priority or not
@@ -15,14 +16,9 @@ public class Reflect extends Ability { //not sure if should be priority or not
 		numTar = 0;
 	}
 
-	public void execute() {
-		if (enoughMana()) { //Checks if sufficient mana
-			attacker.modStat(Stat.MP, true, -manaCost);
-			attacker.setStatus(Status.REFLECT, 5);
-			Interface.writeOut(attacker.getName() + " casts a reflecting shield for " + manaCost + " mana");
-			
-		} else
-			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
-
+	protected void execute(Monster target) {
+		attacker.setStatus(Status.REFLECT, 5);
+		Interface.writeOut(attacker.getName() + " casts a reflecting shield for " + manaCost + " mana");
 	}
+
 }

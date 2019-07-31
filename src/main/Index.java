@@ -5,18 +5,19 @@ import java.util.function.Function;
 import java.io.*;
 
 import assets.*;
-import combat.Ability;
+import assets.chars.Monster;
 import combat.moves.*;
 import combat.moves.magic.*;
-import combat.moves.magic.shapeshift.*;
 import combat.moves.melee.*;
 import combat.moves.passive.*;
 
 public class Index {
 
 	public static enum Move { 
-		BASIC, CHARGE, DISRUPT, SPIN, SHOCK, DRAIN, FREEZE, POLY, REFLECT, SHIFT, SHEEP, //attacks
-		FLURRY, INTIM; //pasives
+		BASIC, SHEEP, //atcks
+		BURST, DRAIN, FREEZE, FRENZY, POLY, POSSESS, REFLECT, SHIFT, SHOCK, //magic
+		CHARGE, DISRUPT, REVENGE, SPIN, //melee
+		INTIM, RAGE; //passives
 	}
 
 	private static final Map<Move, Function<Monster, Ability>> attackList = new HashMap<>();
@@ -39,31 +40,36 @@ public class Index {
 		for (Stat stat: Stat.values())
 			potionsSto.add(new Potions(stat));
 
-		potionsList = potionsSto.toArray(new Potions[potionsSto.size()]);
+		potionsList = potionsSto.toArray(Potions[]::new);
 	}
 
 	private static void mapMoves() {
-
-		//could split different class abilities
-		attackList.put(Move.BASIC, BasicAttack::new);
-		attackList.put(Move.CHARGE, ChargeAttack::new);
-		attackList.put(Move.DISRUPT, Disrupt::new);
-		attackList.put(Move.SPIN, SpinAttack::new);
-		attackList.put(Move.SHOCK, Shock::new);
-		attackList.put(Move.DRAIN, LifeDrain::new);
-		attackList.put(Move.FREEZE, Freeze::new);
-		attackList.put(Move.POLY, Polymorph::new);
-		attackList.put(Move.REFLECT, Reflect::new);
-		attackList.put(Move.SHEEP, SheepAttacks::new);
-		attackList.put(Move.SHIFT, ChangeForm::new);
 		
-		passiveList.put(Move.FLURRY, Flurry::new);
-		passiveList.put(Move.INTIM, Intimidate::new);
+		//could split different class abilities
+		attackList.put(Move.BASIC,   BasicAttack::new);
+		attackList.put(Move.BURST,   FlameBurst::new);
+		attackList.put(Move.CHARGE,  ChargeAttack::new);
+		attackList.put(Move.DISRUPT, Disrupt::new);
+		attackList.put(Move.DRAIN,   LifeDrain::new);
+		attackList.put(Move.FREEZE,  Freeze::new);
+		attackList.put(Move.FRENZY,  Frenzy::new);
+		attackList.put(Move.POLY,    Polymorph::new);
+		attackList.put(Move.POSSESS, Possess::new);
+		attackList.put(Move.REFLECT, Reflect::new);
+		attackList.put(Move.REVENGE, Revenge::new);
+		attackList.put(Move.SHEEP,   SheepAttacks::new);
+		attackList.put(Move.SHIFT,   ChangeForm::new);
+		attackList.put(Move.SHOCK,   Shock::new);
+		attackList.put(Move.SPIN,    SpinAttack::new);
+
+		passiveList.put(Move.INTIM,  Intimidate::new);
+		passiveList.put(Move.RAGE,   Rage::new);
+
 	}
 
 	private static void readMonsters() {
 
-		try (BufferedReader reading = new BufferedReader(new FileReader("monster.txt"));) {
+		try (BufferedReader reading = new BufferedReader(new FileReader("src/assets/chars/monster.txt"));) {
 			final boolean defltAggro = false;
 			String line;
 			while((line = reading.readLine()) != null) {

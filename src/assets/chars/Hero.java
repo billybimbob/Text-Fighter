@@ -1,6 +1,8 @@
-package assets;
+package assets.chars;
 
 import java.util.List;
+
+import assets.*;
 import combat.*;
 import main.*;
 
@@ -29,7 +31,10 @@ public class Hero extends Monster {
 			case 2: //mage
 				fightClass = Index.getMonBase("Mage");
 				break;
-			case 3: //shifter
+			case 3: //cleric
+				fightClass = Index.getMonBase("Cleric");
+				break;
+			case 4: //shifter
 				fightClass = Index.getMonBase("Shifter");
 				break;
 		}
@@ -42,7 +47,7 @@ public class Hero extends Monster {
 	@Override
 	public void setTurn(List<Monster> targets) { //look at respone idx
 		//Hero user input/determine hero actions
-		action = false;
+		action = turnMove!=null && !turnMove.resolved();
 
 		while (!action) {
 			String fightPrompt = "Which action would you like to do?";
@@ -64,34 +69,38 @@ public class Hero extends Monster {
 		}
 	}
 
-	private void selectAttack(List<Monster> targets) { //array generate every time
-		String[] monNames = new String[targets.size()];
-		for (int i = 0; i<targets.size(); i++)
-			monNames[i] = targets.get(i).getName();
-
+	private void selectAttack(List<Monster> possTargets) { //array generate every time
 		do { //probably okay?
 			String attPrompt = "Which attack do you want to use?";
-			int attNum = Interface.choiceInput(true, this.getMoveNames(), attPrompt);
+			int attNum = Interface.choiceInput(true, this.getMoves(), attPrompt);
 			if (attNum == 0)
 				return;
 			
-			super.setMove(attNum-1); //start at 0th idx
+			this.turnMove = getMove(attNum-1); //start at 0th idx
+			Interface.writeOut("Move selected: " + this.turnMove.getName() + "\n");
 			
 			//determine the targets of hero move
-			int numTar = this.getNumTar();
 			action = true;
-			for (int i = 0; i < numTar; i++) { //gets targets if needed
-				String tarPrompt = "Which monster would you want to target?";
-				int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
-				if (tarNum == 0) {//have to change how to implement
-					action = false;
-					break;
-				}
-				this.addTarget(targets.get(tarNum-1));
-			}
 
-			if (numTar == -1)
-				this.addTargets(targets);
+			if (!checkAutoTar(possTargets)) {
+				int numOptions = possTargets.size();
+				while (numOptions-possTargets.size() < this.getNumTar()) { //loop until amount selected enough
+
+					String[] monNames = new String[possTargets.size()];
+					for (int j = 0; j<possTargets.size(); j++)
+						monNames[j] = possTargets.get(j).getName();
+					
+					String tarPrompt = "Which monster would you want to target?";
+					int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
+					if (tarNum == 0) {//have to change how to implement
+						action = false;
+						possTargets.addAll(this.targets);
+						this.targets.clear();
+						break;
+					}
+					this.addTarget(possTargets.remove(tarNum-1));
+				}
+			}
 
 		} while (!action);
 	}
@@ -138,7 +147,7 @@ public class Hero extends Monster {
 		case 2: //Try to flee
 			//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
 			setStatus(Status.DODGE, 2);
-			Interface.writeOut("You try dodge all incoming attacks, increasing evasion by 7");
+			Interface.writeOut("You try dodge all incoming attacks, increasing evasiveness");
 			break;
 
 		case 3: //use inputed item
