@@ -521,14 +521,5 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		return thisName.compareTo(otherName);
 	}
 
-
-	//static methods
-	public static Stat getHitStat(boolean attType) {
-		return attType ? Stat.ATT : Stat.MAG;
-	}
-	public static Stat getBlockStat(boolean attType) {
-		return attType ? Stat.DEF : Stat.MAGR;
-	}
-
 	
 }
