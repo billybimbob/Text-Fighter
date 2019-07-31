@@ -117,7 +117,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		for (Move special: specials)
 			moveSto.add(createAbility(special));
 
-		moveList = moveSto.toArray(new Ability[moveSto.size()]);
+		moveList = moveSto.toArray(Ability[]::new);
 	}
 
 	/**
@@ -337,7 +337,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	}
 
 	public Monster[] getTargets() {
-		return targets.toArray(new Monster[targets.size()]);
+		return targets.toArray(Monster[]::new);
 	}
 
 	public float getStatRatio(Stat stat) {
@@ -411,11 +411,15 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	public void usePassive(List<Monster> possTargets) { //look at; assume all fighters passed in
 		if (passive != null) {
 			List<Monster> sto = this.targets; //store previous targets
-			this.targets = possTargets;
+			this.targets = new ArrayList<>();
+			Ability stoMove = this.turnMove;
 
+			this.turnMove = passive;
+			this.setTargets(possTargets);
 			passive.useAbility();
 
 			this.targets = sto;
+			this.turnMove = stoMove;
 		}
 	}
 
@@ -425,8 +429,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 			moveStore.add(move);
 
 		moveStore.add(adding);
-		moveList = new Ability[moveStore.size()];
-		moveList = moveStore.toArray(moveList);
+		moveList = moveStore.toArray(Ability[]::new);
 	}
 
 	/**

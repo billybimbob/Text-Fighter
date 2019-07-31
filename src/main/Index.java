@@ -40,7 +40,7 @@ public class Index {
 		for (Stat stat: Stat.values())
 			potionsSto.add(new Potions(stat));
 
-		potionsList = potionsSto.toArray(new Potions[potionsSto.size()]);
+		potionsList = potionsSto.toArray(Potions[]::new);
 	}
 
 	private static void mapMoves() {

@@ -22,14 +22,25 @@ public class ShapeShift {
 		target.moveList = copy.moveList;
 		target.stats = copy.stats;
 	}
+	
+	private static ShiftInfo getShiftInfo(Monster mon) {
+		ShiftInfo shift = (ShiftInfo)(mon.status.get(Status.SHIFT));
+		return shift;
+	}
 
+	
 	static void offCheck(Monster checking) {
-		ShiftInfo shift = (ShiftInfo)(checking.status.get(Status.SHIFT));
-		Monster original = shift.getOriginal();
+		ShiftInfo info = getShiftInfo(checking);
+		Monster original = info.getOriginal();
 		if (original != null) {
 			ShapeShift.copyVals(checking, original);
-			shift.setOriginal(null);
+			info.setOriginal(null);
 		}
+	}
+
+
+	public static Monster getOriginal(Monster mon) {
+		return getShiftInfo(mon).getOriginal();
 	}
 	
 	/**
@@ -40,8 +51,8 @@ public class ShapeShift {
 	 */
 	public static void transform (Monster target, Monster shiftedMon, int duration) { //might want to find a way to use Monster constructor to change values 
 		if (duration > 0) {
-			float hpRatio = target.getStatRatio(Stat.HP);
-			float mpRatio = target.getStatRatio(Stat.MP);
+			float hpRatio = (float)Math.ceil(target.getStatRatio(Stat.HP));
+			float mpRatio = (float)Math.ceil(target.getStatRatio(Stat.MP));
 		
 			ShiftInfo info = (ShiftInfo)target.status.get(Status.SHIFT);
 			if (info.getOriginal() == null) {
@@ -61,8 +72,8 @@ public class ShapeShift {
 	}
 
 	public static void revert (Monster target) { //can't ref by movelist; update status
-		float hpRatio = target.getStatRatio(Stat.HP);
-		float mpRatio = target.getStatRatio(Stat.MP);
+		float hpRatio = (float)Math.ceil(target.getStatRatio(Stat.HP));
+		float mpRatio = (float)Math.ceil(target.getStatRatio(Stat.MP));
 
 		target.setStatus(Status.SHIFT, false); //can be called without revert, leading to inconsistent state
 

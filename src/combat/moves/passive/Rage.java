@@ -12,7 +12,7 @@ public class Rage extends Ability {
 		name = "Rage";
 		description = "A passive that increases attack and decreases defense stat each turn";
 		passive = true;
-		numTar = -1;
+		numTar = 0;
 	}
 
 	protected void execute(Monster target) {

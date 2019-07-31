@@ -1,6 +1,9 @@
 package combat.moves; //here to access Ability members
 
+import java.util.*;
+
 import assets.chars.*;
+import combat.Status;
 import combat.moves.Ability;
 import main.*;
 
@@ -46,38 +49,34 @@ public class ChangeForm extends Ability {
 	}
 	
 	protected void execute(Monster target) {
-		int availChange = formList.length;
-		Monster[] tempList = new Monster[availChange];
+		List<Monster> tempList = new ArrayList<>();
+		boolean shifted = attacker.getStatus(Status.SHIFT) >= 0;
 
-		for (int i = 0; i < formList.length; i++) { //determine available transformations, removes caster from list
-			if (attacker.getName() != formList[i].getName()) {
-				tempList[i-(formList.length-availChange)] = formList[i];
-			} else {
-				Monster[] tempStore = new Monster[--availChange];
-				for(int j = 0; j < tempStore.length; j++) {
-					tempStore[j] = tempList[j];
-				}
-				tempList = null;
-				tempList = tempStore;
-			}
-		}
+		for (Monster shift: formList) //determine available transformations, removes caster from list
+			if (!attacker.getName().contains(shift.getName()))
+				tempList.add(shift);
+		
+		if (shifted)
+			tempList.add(ShapeShift.getOriginal(attacker));
 
 		int formChoice = -1;
 		if (attacker.getClass() == Hero.class) {
-			String[] formNames = new String[tempList.length]; //sets list of names of available transformations
-			for (int i = 0; i < tempList.length; i++)
-				formNames[i] = tempList[i].getName();
+			String[] formNames = tempList.stream().map(Monster::getName).toArray(String[]::new);
 			String changePrompt = "Which form do you want to take?";
-			
 			formChoice = Interface.choiceInput(false, formNames, changePrompt)-1;
 
 		} else
-			formChoice = (int)(Math.random()*tempList.length);
+			formChoice = (int)(Math.random()*tempList.size());
 		
-		Monster newForm = tempList[formChoice];
-		String beforeName = attacker.getName(), newName = newForm.getName();
-		ShapeShift.transform(attacker, newForm, 5);			
-		Interface.writeOut(beforeName + " has transformed into " + newName);
-		
+			
+		if (shifted && formChoice == tempList.size()-1) {
+			ShapeShift.revert(attacker);
+			Interface.writeOut(attacker.getName() + " reverted back");
+		} else {	
+			Monster newForm = tempList.get(formChoice);
+			String beforeName = attacker.getName(), newName = newForm.getName();
+			ShapeShift.transform(attacker, newForm, 5);			
+			Interface.writeOut(beforeName + " has transformed into " + newName);
+		}
 	}
 }
