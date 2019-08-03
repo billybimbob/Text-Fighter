@@ -69,15 +69,15 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	
 	private static int idCount = 0;
 	private int id;
+	private Ability turnMove;
 	
 	protected String name;
 	protected boolean attType; //attType true means physical attack
 	protected boolean aggro;
 	protected Map<Stat, StatInfo> stats;
+	protected Map<Status, StatusInfo> status;
 	protected Ability[] moveList;
 	protected Ability passive;
-	protected Map<Status, StatusInfo> status;
-	protected Ability turnMove;
 	protected List<Monster> targets; //look at how set and used
 	protected int level = 1;
 
@@ -168,19 +168,11 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		status = new HashMap<>();
 		for (Status statusName: Status.values())
 			if (statusName.equals(Status.SHIFT))
-				status.put(statusName, new ShapeShift.ShiftInfo());
+				ShapeShift.initShift(this);
 			else
 				status.put(statusName, new StatusInfo());
 	}
 
-
-	private void updateTurnVals(Ability move) {
-		if (turnMove == null) {
-			turnMove = move;
-		}
-	}
-
-	/**wrapper for list clear method*/
 	private Ability createAbility(Move name) {
 		return Index.createAbility(name, this);
 	}
@@ -194,7 +186,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		StatusInfo info = this.status.get(status);
 		
 		int oldStart = info.getStart(), oldDur = info.getDuration();
-		boolean flag = start+duration > oldStart+oldDur; //only update if will extend duration
+		boolean turnOn = start+duration > oldStart+oldDur; //only update if will extend duration
 		switch(status) {
 			case CONTROL:
 				this.setAggro();
@@ -204,13 +196,13 @@ public class Monster implements Comparable<Monster>, Cloneable {
 					this.modStat(Stat.SPEED, false, this.getStatMax(Stat.SPEED)); //doubles speed
 				break;
 			case SHIFT:
-				flag = flag && ((ShapeShift.ShiftInfo)info).getOriginal() != null;
+				turnOn = turnOn && ShapeShift.switchCheck(info, true);
 				break;
 			default:
 				break;
 		}
 
-		if (flag) {
+		if (turnOn) {
 			info.setStart(start);
 			info.setDuration(duration);
 		}
@@ -219,6 +211,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	/** extra vales to check/modify while turning off a status */
 	private void offChecks(Status status) {
 		StatusInfo info = this.status.get(status);
+		boolean turnOff = true;
 
 		switch(status) {
 			case CONTROL:
@@ -229,14 +222,16 @@ public class Monster implements Comparable<Monster>, Cloneable {
 					this.modStat(Stat.SPEED, false, -this.getStatMax(Stat.SPEED));
 				break;
 			case SHIFT:
-				ShapeShift.offCheck(this);
+				turnOff = turnOff && ShapeShift.switchCheck(info, false);
 				break;
 			default:
 				break;
 		}
 		
-		info.setStart(-1);
-		info.setDuration(-1);
+		if (turnOff) {
+			info.setStart(-1);
+			info.setDuration(-1);
+		}
 	}
 
 	private void setTargets(List<Monster> possTargets) {
@@ -246,59 +241,51 @@ public class Monster implements Comparable<Monster>, Cloneable {
 				
 				Monster possTarget = possTargets.get(i);
 				if (possTarget.getAggro() != this.getAggro())
-					this.addTarget(possTarget);
+					this.targets.add(possTarget);
 			}
 
 	}
+
 	private boolean checkAddAll(List<Monster> possTargets) {
 		int numTar = this.getNumTar();
 
 		boolean check = numTar == -1 || numTar >= possTargets.size();
 		if (check)
-			this.addTargets(possTargets);
+			this.targets.addAll(possTargets);
 
 		return check;
 	}
 	private boolean checkSelfTar() {
 		boolean check = this.getNumTar() == 0;
 		if (check)
-			this.addTarget(this);
+			this.targets.add(this);
 		
 		return check;
 	}
 
 	//protected helpers
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
 	protected boolean checkAutoTar(List<Monster> possTargets) {
 		return checkAddAll(possTargets) || checkSelfTar();
-	}
-	protected Ability getMove() {
-		return moveList[(int)(Math.random()*moveList.length)];
-	}
-	protected Ability getMove(int idx) {
-		return this.moveList[idx];
 	}
 
 	protected int currentTurn() {
 		return Interface.FIGHT.getTurnNum();
 	}
 	
-	protected void setMove() {
-		updateTurnVals(getMove());
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
-	protected void setMove(int idx) {
-		updateTurnVals(getMove(idx));
-	}
+
+	protected Ability getTurnMove() { return turnMove; }
 	
-	protected void addTarget(Monster add) {
-		this.targets.add(add);
+	protected void setTurnMove(int idx) {
+		if (turnMove == null)
+			turnMove = moveList[idx];	
 	}
-	protected void addTargets(List<Monster> adds) {
-		this.targets.addAll(adds);
+	protected void setTurnMove() {
+		int randInt = (int)(Math.random()*moveList.length);
+		setTurnMove(randInt);
 	}
 
 
@@ -376,18 +363,18 @@ public class Monster implements Comparable<Monster>, Cloneable {
 			int amountTars = this.getNumTar();
 			for (int i = 0; i < amountTars; i++) {
 				int randIdx = (int)(Math.random()*(possTargets.size()));
-				this.addTarget(possTargets.remove(randIdx));
+				this.targets.add(possTargets.remove(randIdx));
 			}
 		}
 	}
 	
 	public void setTurn(List<Monster> targets) {
-		setMove();
+		setTurnMove();
 		setTargets(targets);
 	}
 
 	public void setTurn(List<Monster> targets, int idx) {
-		setMove(idx);
+		setTurnMove(idx);
 		setTargets(targets);
 	}
 

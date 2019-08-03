@@ -5,7 +5,7 @@ import combat.Status;
 
 public class ShapeShift {
 
-	static class ShiftInfo extends Monster.StatusInfo {
+	private static class ShiftInfo extends Monster.StatusInfo {
 		private Monster original;
 
 		Monster getOriginal() { return original; }
@@ -18,24 +18,22 @@ public class ShapeShift {
 	private static void copyVals (Monster target, Monster copy) {
 		target.name = copy.name;
 		target.attType = copy.attType;
-		target.passive = copy.passive;
-		target.moveList = copy.moveList;
 		target.stats = copy.stats;
+		target.moveList = copy.moveList;
+		target.passive = copy.passive;
 	}
 	
 	private static ShiftInfo getShiftInfo(Monster mon) {
-		ShiftInfo shift = (ShiftInfo)(mon.status.get(Status.SHIFT));
-		return shift;
+		return (ShiftInfo)(mon.status.get(Status.SHIFT));
 	}
 
-	
-	static void offCheck(Monster checking) {
-		ShiftInfo info = getShiftInfo(checking);
-		Monster original = info.getOriginal();
-		if (original != null) {
-			ShapeShift.copyVals(checking, original);
-			info.setOriginal(null);
-		}
+	static void initShift(Monster mon) {
+		mon.status.put(Status.SHIFT, new ShiftInfo());
+	}
+
+	static boolean switchCheck(Monster.StatusInfo info, boolean turnOn) { //can only turn on/off Shift in trans/revert
+		Monster original = ((ShiftInfo)info).getOriginal();
+		return turnOn ? original != null : original == null;
 	}
 
 
@@ -54,7 +52,7 @@ public class ShapeShift {
 			float hpRatio = (float)Math.ceil(target.getStatRatio(Stat.HP));
 			float mpRatio = (float)Math.ceil(target.getStatRatio(Stat.MP));
 		
-			ShiftInfo info = (ShiftInfo)target.status.get(Status.SHIFT);
+			ShiftInfo info = getShiftInfo(target);
 			if (info.getOriginal() == null) {
 				try { info.setOriginal((Monster)target.clone()); } catch (CloneNotSupportedException e) {};
 			}
@@ -72,13 +70,20 @@ public class ShapeShift {
 	}
 
 	public static void revert (Monster target) { //can't ref by movelist; update status
-		float hpRatio = (float)Math.ceil(target.getStatRatio(Stat.HP));
-		float mpRatio = (float)Math.ceil(target.getStatRatio(Stat.MP));
+		ShiftInfo info = getShiftInfo(target);
+		Monster original = info.getOriginal();
 
-		target.setStatus(Status.SHIFT, false); //can be called without revert, leading to inconsistent state
+		if (original != null) {
+			float hpRatio = (float)Math.ceil(target.getStatRatio(Stat.HP));
+			float mpRatio = (float)Math.ceil(target.getStatRatio(Stat.MP));
 
-		target.setStat(Stat.HP, target.getStat(Stat.HP)*hpRatio);
-		target.setStat(Stat.MP, target.getStat(Stat.MP)*mpRatio);
+			ShapeShift.copyVals(target, original);
+			info.setOriginal(null);
+			target.setStatus(Status.SHIFT, false);
+
+			target.setStat(Stat.HP, target.getStat(Stat.HP)*hpRatio);
+			target.setStat(Stat.MP, target.getStat(Stat.MP)*mpRatio);
+		}
 	}
 
 

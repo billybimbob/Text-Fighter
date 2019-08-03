@@ -37,60 +37,58 @@ public class Fight {
 	public void start() {
 		boolean fightControl = true; //could add flee back
 		
-		while (fightControl) {
-			List<Monster> monFighters = newRound();
-
+		do {
+			newRound();
+			
 			//decides the turns
-			for (Monster fighter: fighters) {
+			for (Monster fighter: fighters)
 				fighter.setTurn(nonSelf(fighter, fighters)); //could determine nonSelf in setTurn
-			}
 			
 			priorities();
 			
 			//Goes through the move of each fighter
-			for (int i = 0; i < fighters.size(); i++) {
-				
-				runTurn(fighters.get(i), monFighters); //not sure
+			for (Monster fighter: fighters)
+				runTurn(fighter);
 
-				for (int j = 0; j < monFighters.size(); j++) { //check if any monster died, immediately after hero's turn
-					if (monFighters.get(j).getStat(Stat.HP) <= 0) {
-						if (j < i)
-							i--;
-						fighters.remove(monFighters.get(j));
-						Interface.writeOut("\n" + monFighters.get(j).getName() + " has died");
-						monFighters.remove(j--);
+
+			for (int i = 0; i < fighters.size(); i++) {
+				Monster fighter = fighters.get(i);
+				
+				if (fighter.getStat(Stat.HP) <= 0) {
+					if (fighter.getClass().equals(Hero.class)) {
+						fightControl = false;
+						Interface.writeOut("You have received a fatal blow, and have died");
+						break;
+					} else {
+						String monName = fighters.remove(i--).getName();
+						Interface.writeOut(monName + " has died");
 					}
 				}
 			}
 
-			
-			if (monFighters.size() == 0) { //Check if all Monster are killed
+			if (fightControl && nonSelf(Interface.HERO, fighters).size() == 0) { //Check if all Monster are killed
 				Interface.writeOut("All of the Monster have been killed, you win!");
 				fightControl = false;
-			} else if (Interface.HERO.getStat(Stat.HP) <= 0) { //Check if hero hp is zero
-				Interface.writeOut("You have received a fatal blow, and have died");
-				fightControl = false;
-			/*} else if (flee) {
-				Interface.writeOut("You have successfully escaped");
-				fightControl = false;*/
 			}
-		}
+
+		} while(fightControl);
 
 		Interface.writeOut("Exiting fight");
 		log.clear();
 	}
 
 
-	private List<Monster> newRound () {
+	private void newRound() {
 		log.newRound();
-				
-		Interface.writeOut(Interface.LINESPACE);
+		
+		StringBuilder lstFighters = new StringBuilder(Interface.LINESPACE);
 
 		attackOrder(); //Orders the fighters by speed
-		List<Monster> monFighters = determineEnemies();
-
-		Interface.writeOut(Interface.LINESPACE);
-		return monFighters;
+		for (Monster fighter: fighters) //Determine which is the hero, may change later, also prints each fighter and stats
+			lstFighters.append(fighter + "\n");
+		
+		lstFighters.append(Interface.LINESPACE);
+		Interface.writeOut(lstFighters.toString());
 	}
 	
 	private void attackOrder () { //orders the combatants from highest speed to lowest
@@ -101,16 +99,6 @@ public class Fight {
 				return bSpeed.compareTo(aSpeed);
 			}
 		});
-	}
-
-	private List<Monster> determineEnemies() {
-		StringBuilder lstFighters = new StringBuilder();
-		for (Monster fighter: fighters) //Determine which is the hero, may change later, also prints each fighter and stats
-			lstFighters.append(fighter + "\n");
-		
-		Interface.writeOut(lstFighters.toString());
-
-		return nonSelf(Interface.HERO, fighters);
 	}
 
 	private void priorities() {
@@ -132,7 +120,7 @@ public class Fight {
 		}
 	}
 
-	private void runTurn(Monster attacker, List<Monster> enemies) {
+	private void runTurn(Monster attacker) {
 		skipTurn = false;
 		if (attacker.getStat(Stat.HP) <= 0) //got rid of flee, maybe temporary
 			return;
@@ -160,7 +148,6 @@ public class Fight {
 		statusCheck(attacker, Status.SHIFT);
 		
 		attacker.clearTurn();
-
 		attacker.modStat(Stat.MP, true, 1); //passive mp gain, could change the val
 
 		try {
@@ -175,40 +162,65 @@ public class Fight {
 	 */
 	private void statusCheck (Monster checking, Status status) {
 		int check = checking.getStatus(status);
+	
+		if (check == 0) { //finished
+			checking.setStatus(status, false);
 
-		if (check > -1) { //status active
 			switch(status) {
 				case BURN:
 					int burnDam = (int)(checking.getStat(Stat.HP)*0.1);
 					checking.modStat(Stat.HP, false, -burnDam);
 					Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
-					if (check == 0) {
-						checking.setStatus(status, false);
-						Interface.writeOut(checking.getName() + " is no longer burned");
-					}
+					Interface.writeOut(checking.getName() + " is no longer burned");
 					break;
 
 				case CONTROL:
-					if (check == 0) {
-						checking.setStatus(status, false);
-						Interface.writeOut(checking.getName() + " is no longer controlled");
-					}
+					Interface.writeOut(checking.getName() + " is no longer controlled");
+					break;
+
+				case POISON:
+					checking.setStatus(status, true);
+					int poiDam = (int)(checking.getStat(Stat.HP)*0.01*(getTurnNum()%10));
+					checking.modStat(Stat.HP, false, -poiDam);
+					Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
+					break;
+
+				case POTION:	
+					Hero user = (Hero)checking;
+					boolean finished = check == 0;
+					Potions.buffCheck(user, finished);
+					break;
+
+				case REFLECT:
+					Interface.writeOut(checking.getName() + "'s reflect has worn off");
+					break;
+
+				case SHIFT:
+					ShapeShift.revert(checking);
+					Interface.writeOut(checking.getName() + " reverted back");
+					break;
+					
+				case DODGE:
+				case FRENZY:
+				case STUN:
+					break;
+			}
+
+		} else if (check > -1) { //active
+			switch(status) {
+				case BURN:
+					int burnDam = (int)(checking.getStat(Stat.HP)*0.1);
+					checking.modStat(Stat.HP, false, -burnDam);
+					Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
 					break;
 
 				case DODGE:
-					if (check == 0) //done
-						checking.setStatus(status, false);
-					else
-						Interface.writeOut(checking.getName() + " has increased evasiveness");
+					Interface.writeOut(checking.getName() + " has increased evasiveness");
 					break;
 
 				case FRENZY:
-					if (check == 0)
-						checking.setStatus(status, false);
-					else {
-						checking.setRandomTargets(nonSelf(checking, fighters)); //nonself might be slow
-						Interface.writeOut(checking.getName() + " is frenzied, targets are random");
-					}	
+					checking.setRandomTargets(nonSelf(checking, fighters)); //nonself might be slow
+					Interface.writeOut(checking.getName() + " is frenzied, targets are random");
 					break;
 
 				case POISON:
@@ -223,7 +235,7 @@ public class Fight {
 					Potions.buffCheck(user, finished);
 					break;
 
-				case REFLECT: //try to go from turn to turn
+				case REFLECT:
 					for (FightLog.LogInfo info: log.getInfo(getTurnNum()-1, checking)) { //checking all damage recieved from last round
 						Monster attacker = info.getAttacker();
 						double damDeal = info.getDamage();
@@ -231,28 +243,15 @@ public class Fight {
 						attacker.modStat(Stat.HP, false, -refDam);
 						Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
 					}
-
-					if (check == 0) { //finished
-						checking.setStatus(status, false);
-						Interface.writeOut(checking.getName() + "'s reflect has worn off");
-					}
-					break;
-
-				case SHIFT:
-					if (check == 0) { //triggered by shapeshift
-						ShapeShift.revert(checking);
-						Interface.writeOut(checking.getName() + " reverted back");
-					}
 					break;
 
 				case STUN:
-					//triggered by chargeatt, magblast, disrupt
-					if (check == 0)
-						checking.setStatus(status, false);
-					else {
-						skipTurn = true;
-						Interface.writeOut(checking.getName() + " is stunned"); //multiTurn attack still carries on
-					}
+					skipTurn = true;
+					Interface.writeOut(checking.getName() + " is stunned"); //multiTurn attack still carries on
+					break;
+
+				case CONTROL:
+				case SHIFT:
 					break;
 			}
 		}

@@ -4,6 +4,7 @@ import java.util.List;
 
 import assets.*;
 import combat.*;
+import combat.moves.Ability;
 import main.*;
 
 public class Hero extends Monster {
@@ -47,6 +48,7 @@ public class Hero extends Monster {
 	@Override
 	public void setTurn(List<Monster> targets) { //look at respone idx
 		//Hero user input/determine hero actions
+		Ability turnMove = this.getTurnMove();
 		action = turnMove!=null && !turnMove.resolved();
 
 		while (!action) {
@@ -76,8 +78,8 @@ public class Hero extends Monster {
 			if (attNum == 0)
 				return;
 			
-			this.turnMove = getMove(attNum-1); //start at 0th idx
-			Interface.writeOut("Move selected: " + this.turnMove.getName() + "\n");
+			this.setTurnMove(attNum-1); //start at 0th idx
+			Interface.writeOut("Move selected: " + this.getTurnMove().getName() + "\n");
 			
 			//determine the targets of hero move
 			action = true;
@@ -98,7 +100,7 @@ public class Hero extends Monster {
 						this.targets.clear();
 						break;
 					}
-					this.addTarget(possTargets.remove(tarNum-1));
+					this.targets.add(possTargets.remove(tarNum-1));
 				}
 			}
 
