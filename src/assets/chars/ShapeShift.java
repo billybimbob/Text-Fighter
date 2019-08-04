@@ -20,7 +20,7 @@ public class ShapeShift {
 		target.attType = copy.attType;
 		target.stats = copy.stats;
 		target.moveList = copy.moveList;
-		target.passive = copy.passive;
+		target.setPassive(copy.getPassive());
 	}
 	
 	private static ShiftInfo getShiftInfo(Monster mon) {

@@ -2,6 +2,7 @@ package combat;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import assets.*;
 import assets.chars.*;
@@ -28,9 +29,9 @@ public class Fight {
 
 	public float getTurnDamage(int round, Monster target) {
 		float totalDam = 0;
-		for(FightLog.LogInfo info: log.getInfo(round, target)) {
+		for(FightLog.LogInfo info: log.getInfo(round, target))
 			totalDam += info.getDamage();
-		}
+		
 		return totalDam;
 	}
 
@@ -81,13 +82,13 @@ public class Fight {
 	private void newRound() {
 		log.newRound();
 		
-		StringBuilder lstFighters = new StringBuilder(Interface.LINESPACE);
+		StringBuilder lstFighters = new StringBuilder(Interface.LINESPACE + "\n");
 
 		attackOrder(); //Orders the fighters by speed
-		for (Monster fighter: fighters) //Determine which is the hero, may change later, also prints each fighter and stats
-			lstFighters.append(fighter + "\n");
-		
-		lstFighters.append(Interface.LINESPACE);
+		//determine which is the hero, may change later, also prints each fighter and stats
+		fighters.forEach(fighter -> lstFighters.append(fighter + "\n"));
+
+		lstFighters.append(Interface.LINESPACE + "\n");
 		Interface.writeOut(lstFighters.toString());
 	}
 	
@@ -104,13 +105,13 @@ public class Fight {
 	private void priorities() {
 		//check for priority, need to check what happens if speed is same with 2 priorities
 		for (int src = 0; src < fighters.size(); src++) {
-			Monster priAttacker = fighters.get(src);
+			Monster priAtt = fighters.get(src);
 
-			if (priAttacker.getPriority() && src != 0) { //if priority and first, no need to move
+			if (priAtt.getPriority() && src != 0) { //if priority and first, no need to move
 				for (int dst = 0; dst < src; dst++) { //finds where to switch, as highest speed priority is dst
 					Monster priCheck = fighters.get(dst);
-					if (!priCheck.getPriority() || (priCheck.getPriority() 
-						&& (priCheck.getStat(Stat.SPEED) < priAttacker.getStat(Stat.SPEED)))) {	
+					if (!priCheck.getPriority() 
+					  || priCheck.getPriority() && priCheck.getStat(Stat.SPEED) < priAtt.getStat(Stat.SPEED)) {	
 						
 						fighters.add(dst, fighters.remove(src)); //moves mon to dst, and scoots down rest
 						break;
@@ -185,10 +186,8 @@ public class Fight {
 					Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
 					break;
 
-				case POTION:	
-					Hero user = (Hero)checking;
-					boolean finished = check == 0;
-					Potions.buffCheck(user, finished);
+				case POTION:
+					Potions.buffCheck((Hero)checking, true);
 					break;
 
 				case REFLECT:
@@ -230,16 +229,13 @@ public class Fight {
 					break;
 
 				case POTION:
-					Hero user = (Hero)checking;
-					boolean finished = check == 0;
-					Potions.buffCheck(user, finished);
+					Potions.buffCheck((Hero)checking, false);
 					break;
 
 				case REFLECT:
 					for (FightLog.LogInfo info: log.getInfo(getTurnNum()-1, checking)) { //checking all damage recieved from last round
 						Monster attacker = info.getAttacker();
-						double damDeal = info.getDamage();
-						float refDam = (int)(damDeal*0.5);
+						float refDam = (int)(info.getDamage()*0.5);
 						attacker.modStat(Stat.HP, false, -refDam);
 						Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
 					}
@@ -259,12 +255,9 @@ public class Fight {
 
 	 //not sure if should be all enemies or all non-user, inefficient
 	public static List<Monster> nonSelf (Monster user, List<Monster> allFighters) {
-		List<Monster> sto = new ArrayList<>();
-		for (Monster mon: allFighters) {
-			if (!mon.equals(user))
-				sto.add(mon);
-		}
-		return sto;
+		return allFighters.stream()
+			.filter(mon -> !mon.equals(user))
+			.collect(Collectors.toList());
 	}
 
 }

@@ -69,6 +69,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	
 	private static int idCount = 0;
 	private int id;
+	private Ability passive;
 	private Ability turnMove;
 	
 	protected String name;
@@ -77,7 +78,6 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	protected Map<Stat, StatInfo> stats;
 	protected Map<Status, StatusInfo> status;
 	protected Ability[] moveList;
-	protected Ability passive;
 	protected List<Monster> targets; //look at how set and used
 	protected int level = 1;
 
@@ -160,10 +160,6 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	//private helpers
 	private void setId() { this.id = idCount++; }
 
-	private void setPassive(Ability passive) {
-		if (passive.isPassive()) 
-			this.passive = passive;
-	}
 	private void initStatus() {
 		status = new HashMap<>();
 		for (Status statusName: Status.values())
@@ -264,6 +260,11 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	}
 
 	//protected helpers
+	protected void setPassive(Ability passive) {
+		if (passive.isPassive()) 
+			this.passive = passive;
+	}
+
 	protected boolean checkAutoTar(List<Monster> possTargets) {
 		return checkAddAll(possTargets) || checkSelfTar();
 	}
