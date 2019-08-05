@@ -25,7 +25,7 @@ public class Fight {
 		log.addLog(attacker, target, damage);
 	}
 
-	public int getTurnNum() { return log.roundCount(); }
+	public int getTurnNum() { return log.roundCount()-1; }
 
 	public float getTurnDamage(int round, Monster target) {
 		float totalDam = 0;
@@ -51,9 +51,8 @@ public class Fight {
 			for (Monster fighter: fighters)
 				runTurn(fighter);
 
-
-			for (int i = 0; i < fighters.size(); i++) {
-				Monster fighter = fighters.get(i);
+			for (Iterator<Monster> i = fighters.iterator(); i.hasNext(); ) {
+				Monster fighter = i.next();
 				
 				if (fighter.getStat(Stat.HP) <= 0) {
 					if (fighter.getClass().equals(Hero.class)) {
@@ -61,8 +60,8 @@ public class Fight {
 						Interface.writeOut("You have received a fatal blow, and have died");
 						break;
 					} else {
-						String monName = fighters.remove(i--).getName();
-						Interface.writeOut(monName + " has died");
+						i.remove();
+						Interface.writeOut(fighter.getName() + " has died");
 					}
 				}
 			}
@@ -93,32 +92,27 @@ public class Fight {
 	}
 	
 	private void attackOrder () { //orders the combatants from highest speed to lowest
-		Collections.sort(fighters, new Comparator<Monster>() {
+		fighters.sort(new Comparator<Monster>() {
 			@Override
 			public int compare(Monster a, Monster b) {	//highest speed first
-				Float aSpeed = a.getStat(Stat.SPEED), bSpeed = b.getStat(Stat.SPEED);
-				return bSpeed.compareTo(aSpeed);
+				return Monster.speedCompare(a, b);
 			}
 		});
 	}
 
 	private void priorities() {
 		//check for priority, need to check what happens if speed is same with 2 priorities
-		for (int src = 0; src < fighters.size(); src++) {
-			Monster priAtt = fighters.get(src);
-
-			if (priAtt.getPriority() && src != 0) { //if priority and first, no need to move
-				for (int dst = 0; dst < src; dst++) { //finds where to switch, as highest speed priority is dst
-					Monster priCheck = fighters.get(dst);
-					if (!priCheck.getPriority() 
-					  || priCheck.getPriority() && priCheck.getStat(Stat.SPEED) < priAtt.getStat(Stat.SPEED)) {	
-						
-						fighters.add(dst, fighters.remove(src)); //moves mon to dst, and scoots down rest
-						break;
-					}
-				}
+		fighters.sort(new Comparator<Monster>() {
+			@Override
+			public int compare(Monster a, Monster b) {
+				if (a.getPriority() && !b.getPriority())
+					return -1;
+				else if (!a.getPriority() && b.getPriority())
+					return 1;
+				else
+					return Monster.speedCompare(a, b);
 			}
-		}
+		});
 	}
 
 	private void runTurn(Monster attacker) {
@@ -135,8 +129,6 @@ public class Fight {
 
 		if (!skipTurn) 
 			/**
-			 * might be wrong attack since priority order different
-			 * doesn't account for multiple targets, maybe do rng to select other targets?
 			 * includes heroTurn, overriden
 			 */
 			attacker.executeTurn();
@@ -223,7 +215,7 @@ public class Fight {
 					break;
 
 				case POISON:
-					int poiDam = (int)(checking.getStat(Stat.HP)*0.01*(getTurnNum()%10));
+					int poiDam = (int)(checking.getStat(Stat.HP)*0.1*(getTurnNum()%10));
 					checking.modStat(Stat.HP, false, -poiDam);
 					Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
 					break;

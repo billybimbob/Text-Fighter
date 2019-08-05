@@ -35,6 +35,7 @@ class FightLog {
     public int roundCount() {
         return log.size(); 
     }
+    
     public List<LogInfo> getInfo (int round, Monster target) {
         List<LogInfo> info = null;
         try {

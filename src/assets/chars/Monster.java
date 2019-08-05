@@ -147,16 +147,24 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		try {		
 			if (copy.passive != null)
 				this.setPassive((Ability)copy.passive.clone(this));
-
+			
 			this.moveList = new Ability[copy.moveList.length];
-			for (int i = 0; i < moveList.length; i++)
+			for(int i = 0; i < copy.moveList.length; i++)
 				this.moveList[i] = (Ability)copy.moveList[i].clone(this);
 
 		} catch (CloneNotSupportedException e) {}
+
 	}
 
 	//private helpers
 	private void setId() { this.id = idCount++; }
+
+	private Ability createAbility(Move name) {
+		return Index.createAbility(name, this);
+	}
+	private Ability createPassive(Move name) {
+		return Index.createPassive(name, this);
+	}
 
 	private void initStatus() {
 		status = new HashMap<>();
@@ -167,12 +175,6 @@ public class Monster implements Comparable<Monster>, Cloneable {
 				status.put(statusName, new StatusInfo());
 	}
 
-	private Ability createAbility(Move name) {
-		return Index.createAbility(name, this);
-	}
-	private Ability createPassive(Move name) {
-		return Index.createPassive(name, this);
-	}
 	
 	/** extra values to check/modify while turning on status;
 	 *  status will only update if new values will extend duration */
@@ -394,9 +396,9 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	public void usePassive(List<Monster> possTargets) { //look at; assume all fighters passed in
 		if (passive != null) {
 			List<Monster> sto = this.targets; //store previous targets
-			this.targets = new ArrayList<>();
 			Ability stoMove = this.turnMove;
 
+			this.targets = new ArrayList<>();
 			this.turnMove = passive;
 			this.setTargets(possTargets);
 			passive.useAbility();
@@ -505,6 +507,12 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	public int compareTo (Monster other) {
 		String thisName = this.name, otherName = other.name;
 		return thisName.compareTo(otherName);
+	}
+
+
+	public static int speedCompare(Monster a, Monster b) {
+		Float aSpeed = a.getStat(Stat.SPEED), bSpeed = b.getStat(Stat.SPEED);
+		return bSpeed.compareTo(aSpeed);
 	}
 
 	

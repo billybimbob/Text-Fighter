@@ -21,12 +21,25 @@ public class Index {
 		INTIM, RAGE; //passives
 	}
 
+	private static class MonsterList {
+		static final List<Monster> monList = new ArrayList<>(); //all monsters
+		static final Map<String, Integer> monIds = new HashMap<>(); //name to list idx
+
+		static void add(Monster mon) {
+			monList.add(mon);
+			monIds.put(mon.getName(), monList.size()-1); //should be the list idx
+		}
+
+		static int size() { return monList.size();}
+		static Monster get(int idx) { return monList.get(idx); }
+		static Monster get(String name) { return MonsterList.get( monIds.get(name) ); }
+
+	}
 	private static final Map<Move, Function<Monster, Ability>> attackList = new HashMap<>();
 	private static final Map<Move, Function<Monster, Ability>> passiveList = new HashMap<>();
 	public static Potions[] potionsList;
-	private static final List<Monster> monsterList = new ArrayList<>(); //all monsters
-	private static final Map<String, Integer> monIds = new HashMap<>(); //name to list idx
 	
+
 	public static void createVals() {
 		createPotions();
 		mapMoves();
@@ -70,6 +83,7 @@ public class Index {
 		try (BufferedReader reading = new BufferedReader(new FileReader("src/assets/chars/monster.txt"));) {
 			final boolean defltAggro = false;
 			String line;
+			
 			while((line = reading.readLine()) != null) {
 				String[] tok = line.split(", ");
 				final int parseLen = tok.length;
@@ -91,15 +105,14 @@ public class Index {
 
 					if (parseLen >= 5) { //has passive
 						Move passive = Move.valueOf(tok[4].toUpperCase());
-						monsterList.add(new Monster(name, defltAggro, attType, stats, moves, passive));
+						MonsterList.add(new Monster(name, defltAggro, attType, stats, moves, passive));
 					} else
-						monsterList.add(new Monster(name, defltAggro, attType, stats, moves));
+						MonsterList.add(new Monster(name, defltAggro, attType, stats, moves));
 
 				} else //basic
-					monsterList.add(new Monster(name, defltAggro, attType, stats));
-
-				monIds.put(name, monsterList.size()-1); //should be the list idx
+					MonsterList.add(new Monster(name, defltAggro, attType, stats));
 			} 
+
 		} catch (IOException e) {
 			System.err.println("Issue reading file");
 		}
@@ -115,10 +128,10 @@ public class Index {
 
 
 	public static Monster getMonBase(int id) {
-		return monsterList.get(id);
+		return MonsterList.get(id);
 	}
 	public static Monster getMonBase(String name) {
-		return monsterList.get( monIds.get(name) );
+		return MonsterList.get(name);
 	}
 
 	public static Monster createMonster(int id) {
@@ -129,7 +142,7 @@ public class Index {
 	}
 
 	public static Monster randomMonster() {
-		int id = (int)(Math.random()*monsterList.size());
+		int id = (int)(Math.random()*MonsterList.size());
 		return createMonster(id);
 	}
 }

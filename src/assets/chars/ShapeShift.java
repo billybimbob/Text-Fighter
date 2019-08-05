@@ -54,7 +54,11 @@ public class ShapeShift {
 		
 			ShiftInfo info = getShiftInfo(target);
 			if (info.getOriginal() == null) {
-				try { info.setOriginal((Monster)target.clone()); } catch (CloneNotSupportedException e) {};
+				try {
+					info.setOriginal((Monster)target.clone());
+				} catch (CloneNotSupportedException e) {
+					System.err.println("issue with cloning");
+				}
 			}
 
 			ShapeShift.copyVals(target, shiftedMon);
