@@ -111,11 +111,9 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats, List<Move> specials) {
 		this(name, aggro, attType, stats);
 		
-		List<Ability> moveSto = new ArrayList<>();
-		for (Ability prevMove: moveList) //abilities from default constructor
-			moveSto.add(prevMove);
-		for (Move special: specials)
-			moveSto.add(createAbility(special));
+		List<Ability> moveSto = new ArrayList<>(Arrays.asList(moveList)); //abilities from default constructor
+		specials.forEach(special -> 
+			moveSto.add(createAbility(special)));
 
 		moveList = moveSto.toArray(Ability[]::new);
 	}
@@ -260,13 +258,13 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	}
 
 	//protected helpers
-	protected void setPassive(Ability passive) {
-		if (passive.isPassive()) 
-			this.passive = passive;
-	}
-
 	protected boolean checkAutoTar(List<Monster> possTargets) {
 		return checkAddAll(possTargets) || checkSelfTar();
+	}
+
+	protected void setPassive(Ability passive) {
+		if (passive != null && passive.isPassive() || passive == null) 
+			this.passive = passive;
 	}
 
 	protected int currentTurn() {

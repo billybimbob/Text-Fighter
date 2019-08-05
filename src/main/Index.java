@@ -2,6 +2,7 @@ package main;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.io.*;
 
 import assets.*;
@@ -27,7 +28,6 @@ public class Index {
 	private static final Map<String, Integer> monIds = new HashMap<>(); //name to list idx
 	
 	public static void createVals() {
-		
 		createPotions();
 		mapMoves();
 
@@ -36,11 +36,9 @@ public class Index {
 	}
 
 	private static void createPotions() {
-		List<Potions> potionsSto = new ArrayList<>();
-		for (Stat stat: Stat.values())
-			potionsSto.add(new Potions(stat));
-
-		potionsList = potionsSto.toArray(Potions[]::new);
+		potionsList = Arrays.stream(Stat.values())
+			.map(stat -> new Potions(stat))
+			.toArray(Potions[]::new);
 	}
 
 	private static void mapMoves() {
@@ -82,14 +80,14 @@ public class Index {
 				String name = tok[0];
 				boolean attType = Boolean.parseBoolean(tok[1]);
 				
-				List<Integer> stats = new ArrayList<>();
-				for (String numTok: tok[2].split(","))
-					stats.add(Integer.parseInt(numTok));
+				List<Integer> stats = Arrays.stream(tok[2].split(","))
+					.map(numTok -> Integer.parseInt(numTok))
+					.collect(Collectors.toList());
 
 				if (parseLen >= 4) { //has special moves
-					List<Move> moves = new ArrayList<>();
-					for (String moveTok: tok[3].split(","))
-						moves.add(Move.valueOf(moveTok.toUpperCase()));
+					List<Move> moves = Arrays.stream(tok[3].split(","))
+						.map(moveTok -> Move.valueOf(moveTok.toUpperCase()))
+						.collect(Collectors.toList());
 
 					if (parseLen >= 5) { //has passive
 						Move passive = Move.valueOf(tok[4].toUpperCase());
@@ -97,7 +95,7 @@ public class Index {
 					} else
 						monsterList.add(new Monster(name, defltAggro, attType, stats, moves));
 
-				} else
+				} else //basic
 					monsterList.add(new Monster(name, defltAggro, attType, stats));
 
 				monIds.put(name, monsterList.size()-1); //should be the list idx

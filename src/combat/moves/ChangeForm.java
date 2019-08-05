@@ -1,6 +1,7 @@
 package combat.moves; //here to access Ability members
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import assets.chars.*;
 import combat.Status;
@@ -49,12 +50,11 @@ public class ChangeForm extends Ability {
 	}
 	
 	protected void execute(Monster target) {
-		List<Monster> tempList = new ArrayList<>();
 		boolean shifted = attacker.getStatus(Status.SHIFT) >= 0;
 
-		for (Monster shift: formList) //determine available transformations, removes caster from list
-			if (!attacker.getName().contains(shift.getName()))
-				tempList.add(shift);
+		List<Monster> tempList = Arrays.stream(formList) //determine available transformations, removes caster from list
+			.filter(shift -> !attacker.getName().contains(shift.getName()))
+			.collect(Collectors.toList()); //keep eye on from toList
 		
 		if (shifted)
 			tempList.add(ShapeShift.getOriginal(attacker));

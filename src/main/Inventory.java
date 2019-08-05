@@ -21,16 +21,22 @@ public class Inventory implements Iterable<Items> {
 	}
 
 	private int inventSpace, slotsUsed;
-	private Map<String, ItemInfo> inventoryList; //Inventory space limit of 25, can increase with cloning, might want to make sorted
+	private Map<String, ItemInfo> inventoryList; //Inventory space limit of 25
 	
 	public Inventory() {
 		inventSpace = 25;
 		slotsUsed = 0;
-		inventoryList = new TreeMap<>();
+		inventoryList = new TreeMap<>(); //to make sorted
 	}
 	public Inventory(int space) {
 		this();
 		inventSpace = space;
+	}
+
+	private Items[] listItems() {
+		return inventoryList.entrySet().stream()
+			.map(entry -> entry.getValue().getItem())
+			.toArray(Items[]::new);
 	}
 
 	public boolean empty() {
@@ -38,7 +44,7 @@ public class Inventory implements Iterable<Items> {
 	}
 	
 	public Items getItem(int idx) {
-		Items getting = this.accessItems()[idx];
+		Items getting = this.listItems()[idx];
 		this.removeItems(getting);
 		return getting;
 	}
@@ -52,28 +58,28 @@ public class Inventory implements Iterable<Items> {
 			info = new ItemInfo(added, canAdd);
 			inventoryList.put(added.name, info);
 		} else
-			info.addAmount(canAdd);;
+			info.addAmount(canAdd);
 		
-			slotsUsed += canAdd;
+		slotsUsed += canAdd;
 
 		if (canAdd != amount)
-			Interface.writeOut("Your inventory is full, and cannot fit " + (amount-canAdd) + " " + added.name + " (s)\n");
+			Interface.writeOut("Your inventory is full, and cannot fit " 
+				+ (amount-canAdd) + " " + added.name + " (s)\n");
 	}
 
-	public void removeItems (Items remove) { //Removes one item
+	public void removeItems (Items remove) { //Removes one item; could change to param amounts
 		String name = remove.name;
+		
 		ItemInfo info = inventoryList.get(name);
-
 		if (info == null) {
 			Interface.writeOut("Item does not exist");
 		} else {
 			slotsUsed -= 1;
 			int val = info.getAmount();
-			if (val == 0) {
+			if (val == 1)
 				inventoryList.remove(name);
-			} else {
-				info.addAmount(-1);; //sub by one
-			}
+			else
+				info.addAmount(-1); //sub by one
 		}
 
 	}
@@ -88,26 +94,10 @@ public class Inventory implements Iterable<Items> {
 		return ret.iterator();
 	}
 
-	private Items[] accessItems() { //convert to array
-		List<Items> ret = new ArrayList<>();
-		
-		for (Map.Entry<String, ItemInfo> entry: inventoryList.entrySet())
-			for (int i = 0; i < entry.getValue().getAmount(); i++)
-				ret.add(entry.getValue().getItem());
-
-		/*for (Items item: this) //acall iterator
-			ret.add(item);*/
-
-		return ret.toArray(Items[]::new);
-	}
-
 	public String[] accessNames() {
-		List<String> names = new ArrayList<>();
-
-		for (Map.Entry<String, ItemInfo> entry: inventoryList.entrySet())
-			names.add(entry.getKey() + " x " + entry.getValue().getAmount());
-
-		return names.toArray(String[]::new);
+		return inventoryList.entrySet().stream()
+			.map(entry -> entry.getKey() + " x " + entry.getValue().getAmount())
+			.toArray(String[]::new);
 	}
 	
 }

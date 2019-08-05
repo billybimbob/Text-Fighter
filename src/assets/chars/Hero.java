@@ -88,12 +88,10 @@ public class Hero extends Monster {
 				int numOptions = possTargets.size();
 				while (numOptions-possTargets.size() < this.getNumTar()) { //loop until amount selected enough
 
-					String[] monNames = new String[possTargets.size()];
-					for (int j = 0; j<possTargets.size(); j++)
-						monNames[j] = possTargets.get(j).getName();
-					
+					String[] monNames = possTargets.stream().map(Monster::getName).toArray(String[]::new);
 					String tarPrompt = "Which monster would you want to target?";
 					int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
+					
 					if (tarNum == 0) {//have to change how to implement
 						action = false;
 						possTargets.addAll(this.targets);
