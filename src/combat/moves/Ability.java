@@ -11,7 +11,7 @@ public abstract class Ability implements Cloneable {
 	protected Monster attacker;
 	protected int numTar;
 	protected boolean attType, priority, passive; //aoe attacks can't work with Monster
-	
+
 	/**
 	 * set default values for an abiltiy
 	 */
@@ -26,11 +26,16 @@ public abstract class Ability implements Cloneable {
 		this.attacker = user;
 	}
 
-	public Object clone(Monster attacker) throws CloneNotSupportedException { //can't do copy constructor becuase of subclasses
-		Ability newAbility = (Ability)this.clone();
-		newAbility.attacker = attacker;
-		newAbility.damage = 0;
-		return newAbility;
+	public Object clone(Monster attacker) { //can't do copy constructor becuase of subclasses
+		try {
+			Ability newAbility = (Ability)this.clone();
+			newAbility.attacker = attacker;
+			newAbility.damage = 0;
+			return newAbility;
+		} catch (CloneNotSupportedException e) {
+			System.err.println("issue cloning ability");
+			return null;
+		}
 	}
 
 

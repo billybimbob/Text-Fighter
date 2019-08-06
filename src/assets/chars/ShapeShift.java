@@ -53,13 +53,8 @@ public class ShapeShift {
 			float mpRatio = (float)Math.ceil(target.getStatRatio(Stat.MP));
 		
 			ShiftInfo info = getShiftInfo(target);
-			if (info.getOriginal() == null) {
-				try {
-					info.setOriginal((Monster)target.clone());
-				} catch (CloneNotSupportedException e) {
-					System.err.println("issue with cloning");
-				}
-			}
+			if (info.getOriginal() == null)
+				info.setOriginal((Monster)target.clone());
 
 			ShapeShift.copyVals(target, shiftedMon);
 			String oldName = info.getOriginal().name;

@@ -24,7 +24,7 @@ public class ChangeForm extends Ability {
 	}
 
 	@Override
-	public Object clone(Monster attacker) throws CloneNotSupportedException { //update attacker of formList
+	public Object clone(Monster attacker) { //update attacker of formList
 		ChangeForm copy = (ChangeForm)super.clone(attacker);
 		initFormList(copy, attacker);
 

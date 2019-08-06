@@ -144,16 +144,12 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		this.targets = new ArrayList<>(copy.targets);
 		initStatus();
 
-		try {		
-			if (copy.passive != null)
-				this.setPassive((Ability)copy.passive.clone(this));
-			
-			List<Ability> moveSto = new ArrayList<>();
-			for(Ability move: copy.moveList)
-				moveSto.add((Ability)move.clone(this));
-			this.moveList = moveSto.toArray(Ability[]::new);
-
-		} catch (CloneNotSupportedException e) {}
+		if (copy.passive != null)
+			this.setPassive((Ability)copy.passive.clone(this));
+		
+		this.moveList = Arrays.stream(copy.moveList)
+			.map(move -> (Ability)move.clone(this))
+			.toArray(Ability[]::new);
 
 	}
 
@@ -275,8 +271,13 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	}
 	
 	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
+	protected Object clone() { //intentional shallow copy
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			System.err.println("issue cloning monster");
+			return null;
+		}
 	}
 
 	protected Ability getTurnMove() { return turnMove; }

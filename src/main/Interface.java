@@ -15,7 +15,7 @@ public class Interface {
 	private static final Scanner KEYBOARD = new Scanner(System.in);
 	
 	
-	public static void main(String[] args) throws InterruptedException { //All this is probably temporary
+	public static void main(String[] args) { //All this is probably temporary
 		Index.createVals();
 		
 		List<Monster> fighters = new ArrayList<>();
@@ -94,9 +94,7 @@ public class Interface {
 	 * @return the option that was selected, {@code 0} represents back option
 	 */
 	public static int choiceInput (boolean back, Object[] options, String prompt) { //Returns user input from choices
-		StringBuilder lstOptions = new StringBuilder();
-
-		lstOptions.append(LINESPACE + "\n");
+		StringBuilder lstOptions = new StringBuilder(LINESPACE + "\n");
 
 		if (back) //option for "back"
 			lstOptions.append("0. Back\n");
@@ -114,7 +112,7 @@ public class Interface {
 				choice = Integer.parseInt(KEYBOARD.nextLine());
 			} catch (NumberFormatException e) {} //might want to restructure somehow, right now, just preventing from crashing
 			
-			if ((choice <= options.length && choice > 0) || (back && choice == 0)) //Checks if input is valid
+			if (choice <= options.length && choice > 0 || back && choice == 0) //Checks if input is valid
 				heroAction = true;
 			else
 				Interface.writeOut("\nInvalid choice, please try again\n");

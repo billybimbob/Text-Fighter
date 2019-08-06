@@ -39,6 +39,7 @@ public class Index {
 	private static final Map<Move, Function<Monster, Ability>> passiveList = new HashMap<>();
 	public static Potions[] potionsList;
 	
+	private Index() { }
 
 	public static void createVals() {
 		createPotions();
