@@ -11,7 +11,7 @@ public class Hero extends Monster {
 
 	private Inventory inventory;
 	private int choice;
-	private Items pick;
+	private Item pick;
 	private boolean action;
 	
 	public Hero (String name, int classChoice) { //if classes true, warrior
@@ -42,8 +42,6 @@ public class Hero extends Monster {
 
 		return fightClass;
 	}
-
-	public Items getPick() { return pick; }
 	
 	@Override
 	public void setTurn(List<Monster> targets) { //look at respone idx
@@ -112,7 +110,6 @@ public class Hero extends Monster {
 		}
 
 		String[] inventNames = inventory.accessNames();
-		int turnNum = currentTurn(); //keep eye on
 		String itemPrompt = "Which item do you want to use?";
 		int pickNum = Interface.choiceInput(true, inventNames, itemPrompt);
 		
@@ -129,7 +126,6 @@ public class Hero extends Monster {
 				return;
 		}
 
-		Potions.turnStart = turnNum + Potions.timeLength;
 		pick = inventory.getItem(pickNum-1);
 		action = true;
 	}
@@ -151,12 +147,12 @@ public class Hero extends Monster {
 			break;
 
 		case 3: //use inputed item
-			setStatus(Status.POTION, true);
-			pick.useItem(this);
+			Equipment.equip(this, pick);
+			pick = null;
 		}
 	}
 
-	public void addItems (Items added, int amount) {
+	public void addItems (Item added, int amount) {
 		inventory.addItems(added, amount);
 	}
 }

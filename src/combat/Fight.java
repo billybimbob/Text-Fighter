@@ -176,7 +176,7 @@ public class Fight {
 					break;
 
 				case POTION:
-					Potions.buffCheck((Hero)checking, true);
+					Equipment.overTime(checking);
 					break;
 
 				case REFLECT:
@@ -218,7 +218,7 @@ public class Fight {
 					break;
 
 				case POTION:
-					Potions.buffCheck((Hero)checking, false);
+					Equipment.unequip(checking, Equipment.Slot.POTION);
 					break;
 
 				case REFLECT:

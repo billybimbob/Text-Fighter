@@ -37,7 +37,7 @@ public class Index {
 	}
 	private static final Map<Move, Function<Monster, Ability>> attackList = new HashMap<>();
 	private static final Map<Move, Function<Monster, Ability>> passiveList = new HashMap<>();
-	public static Potions[] potionsList;
+	public static Potion[] potionsList;
 	
 	private Index() { }
 
@@ -51,8 +51,8 @@ public class Index {
 
 	private static void createPotions() {
 		potionsList = Arrays.stream(Stat.values())
-			.map(stat -> new Potions(stat))
-			.toArray(Potions[]::new);
+			.map(stat -> new Potion(stat))
+			.toArray(Potion[]::new);
 	}
 
 	private static void mapMoves() {

@@ -76,7 +76,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	protected boolean attType; //attType true means physical attack
 	protected boolean aggro;
 	protected Map<Stat, StatInfo> stats;
-	protected Map<Status, StatusInfo> status;
+	protected Map<Status, StatusInfo> status; //temporary values
 	protected Ability[] moveList;
 	protected List<Monster> targets; //look at how set and used
 	protected int level = 1;
@@ -168,6 +168,8 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		for (Status statusName: Status.values())
 			if (statusName.equals(Status.SHIFT))
 				ShapeShift.initShift(this);
+			else if (statusName.equals(Status.POTION))
+				Equipment.initEquip(this);
 			else
 				status.put(statusName, new StatusInfo());
 	}
@@ -191,6 +193,8 @@ public class Monster implements Comparable<Monster>, Cloneable {
 			case SHIFT:
 				turnOn = turnOn && ShapeShift.switchCheck(info, true);
 				break;
+			case POTION:
+				turnOn = turnOn && Equipment.switchCheck(info, true);
 			default:
 				break;
 		}
@@ -217,6 +221,8 @@ public class Monster implements Comparable<Monster>, Cloneable {
 			case SHIFT:
 				turnOff = turnOff && ShapeShift.switchCheck(info, false);
 				break;
+			case POTION:
+				turnOff = turnOff && Equipment.switchCheck(info, false);
 			default:
 				break;
 		}
