@@ -9,7 +9,7 @@ public class Revenge extends Ability {
     public Revenge(Monster user) {
         super(user);
         name = "Revenge";
-        description = "Deal all damage received this turn to up to 3 targets; guranteed to hit";
+        description = "Deal all damage received last turn to up to 3 targets; guranteed to hit";
         attType = true;
         manaCost = 6;
         numTar = 3;

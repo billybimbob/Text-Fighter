@@ -148,9 +148,10 @@ public class Monster implements Comparable<Monster>, Cloneable {
 			if (copy.passive != null)
 				this.setPassive((Ability)copy.passive.clone(this));
 			
-			this.moveList = new Ability[copy.moveList.length];
-			for(int i = 0; i < copy.moveList.length; i++)
-				this.moveList[i] = (Ability)copy.moveList[i].clone(this);
+			List<Ability> moveSto = new ArrayList<>();
+			for(Ability move: copy.moveList)
+				moveSto.add((Ability)move.clone(this));
+			this.moveList = moveSto.toArray(Ability[]::new);
 
 		} catch (CloneNotSupportedException e) {}
 

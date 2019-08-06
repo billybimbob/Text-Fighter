@@ -7,14 +7,17 @@ import main.Interface;
 
 public class FlameBurst extends Ability {
 
+    private int duration;
+
     public FlameBurst(Monster user) {
         super(user);
         name = "Flame Burst";
-        description = "A blast of fire that causes all others to be set on fire";
+        description = "A blast of fire that causes all others to be set on fire for " + duration + " turns";
         attType = false;
         manaCost = 6;
         numTar = -1;
-        damageMod = 0.75f;
+        damageMod = 0.5f;
+        duration = 3;
     }
 
     @Override
@@ -27,9 +30,9 @@ public class FlameBurst extends Ability {
         String failPrompt = target.getName() + " resists the flames";
         if (attackHit(target, failPrompt)) {
             dealDamage(attacker, target, damage);
-            Interface.writeOut(target.getName() + " is burned for " + damage + " damage");
-            target.setStatus(Status.BURN, 3);
-            Interface.writeOut(target.getName() + " is also burning for 3 turns");
+            target.setStatus(Status.BURN, duration);
+            Interface.writeOut(target.getName() + " is hit with flames for " + damage + " damage"
+                + "\n\tand is also burning for " + duration + " turns");
         }
     }
 

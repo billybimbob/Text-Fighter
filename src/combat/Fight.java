@@ -161,9 +161,6 @@ public class Fight {
 
 			switch(status) {
 				case BURN:
-					int burnDam = (int)(checking.getStat(Stat.HP)*0.1);
-					checking.modStat(Stat.HP, false, -burnDam);
-					Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
 					Interface.writeOut(checking.getName() + " is no longer burned");
 					break;
 
