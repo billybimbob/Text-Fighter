@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import assets.chars.Equipment;
 import assets.chars.Monster;
 import assets.chars.Equipment.Slot;
 
@@ -25,11 +24,15 @@ public abstract class Item implements Comparable<Item> {
 	}
 
 	protected String name;
-	protected Equipment.Slot slot;
+	protected Slot slot;
 	protected List<ModInfo> mods; //can modify multiple stats
+
+	//vallues that change per use call
 	protected Set<Monster> using; //not sure
+	protected Monster currentUser; //potential issue with multiple threads
+	protected boolean remove;
 
-
+	
 	protected Item() {
 		mods = new ArrayList<>();
 		using = new HashSet<>();
@@ -65,7 +68,7 @@ public abstract class Item implements Comparable<Item> {
 	 * modifies user's stats by values in info
 	 * what stats to modify based on state
 	 */
-	protected abstract void useInfo(Monster user, boolean remove, ModInfo info);
+	protected abstract void statMod (Stat stat, int modVal);
 	
 
 	/**
@@ -73,13 +76,16 @@ public abstract class Item implements Comparable<Item> {
 	 * @param user monster using the item
 	 * @param remove {@code true} if to remove stats from user
 	 */
-	public void use (Monster user, boolean remove) {
+	public void use (Monster user, boolean remove) { //not sure if should be public or not
+		this.currentUser = user;
+		this.remove = remove;
+
 		if (remove)
 			using.remove(user);
 		else
 			using.add(user);
 	
-		mods.forEach(info -> useInfo(user, remove, info));
+		mods.forEach(info -> statMod(info.getStat(), info.getMod()));
 	}
 
 	/**

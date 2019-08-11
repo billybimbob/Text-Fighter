@@ -1,6 +1,8 @@
 package assets;
 
-import assets.chars.*;
+import java.util.stream.Collectors;
+
+import assets.chars.Monster;
 import assets.chars.Equipment.Slot;
 import combat.Status;
 import main.*;
@@ -9,6 +11,7 @@ public class Potion extends Item {
 	
 	private int duration = 5;
 	private boolean overTime;
+	private boolean start;
 	
 	public Potion (Stat stat) {
 		this.slot = Slot.POTION;
@@ -56,37 +59,51 @@ public class Potion extends Item {
 
 		mods.add(new Item.ModInfo(stat, modVal));
 	}
-	
-	protected void useInfo (Monster user, boolean remove, ModInfo info) {
-		int modVal = info.getMod();
-		Stat stat = info.getStat();
 
+	@Override
+	public void use(Monster user, boolean remove) { //override for printing
+		
 		if (remove) {
-			if (!overTime)
-				user.modStat(stat, false, -modVal);
-			
 			user.setStatus(Status.POTION, false);
 			Interface.writeOut(this.name + " has worn off");
 
 		} else {
-			boolean start = user.getStatus(Status.POTION) == -1;
-			
+			start = user.getStatus(Status.POTION) == -1; //potential issue; potion can't refresh
+
 			if (start) {
 				user.setStatus(Status.POTION, duration);
-				if (overTime) {
-					float capOver = user.modStat(stat, true, modVal);
-					Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + (modVal-capOver)
-						+ " " + stat + " \nAnd will also gain " + modVal + " " + stat + " over time");
 
-				} else {
-					user.modStat(info.getStat(), false, modVal);
-					Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + modVal + " " + stat);
-				}
+				if (this.overTime) {
+					String modNames = mods.stream()
+						.map(info -> info.getStat().toString())
+						.collect(Collectors.joining(", "));
 
-			} else if (!start && overTime) { //while active, overTime
-				float capOver = user.modStat(info.getStat(), true, modVal);
-				//find out how to print past max val
-				Interface.writeOut("You gain " + (modVal-capOver) + " " + stat + " from the " + this.name);
+					Interface.writeOut(user.getName() + " has used " 
+						+ this.name + " and will gain " + modNames + " over time");
+						
+				} else
+					Interface.writeOut(user.getName() + " has used " + this.name);
+				
+			}
+		}
+		
+		super.use(user, remove);
+	}
+	
+	protected void statMod (Stat stat, int modVal) {
+
+		if (this.overTime && !this.remove) { //for start and overTime
+			float capOver = currentUser.modStat(stat, true, modVal);
+			Interface.writeOut(currentUser.getName() + " gain " 
+				+ (modVal-capOver) + " " + stat + " from the " + this.name);
+		} else { //nothing done if not start or remove
+			
+			if (this.remove)
+				currentUser.modStat(stat, false, -modVal);
+			
+			else if (start) {
+				currentUser.modStat(stat, false, modVal);
+				Interface.writeOut(currentUser.getName() + " and gained " + modVal + " " + stat);
 			}
 		}
 	}
