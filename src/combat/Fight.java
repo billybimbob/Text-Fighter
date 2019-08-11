@@ -176,7 +176,7 @@ public class Fight {
 					break;
 
 				case POTION:
-					Equipment.overTime(checking);
+					Equipment.unequip(checking, Equipment.Slot.POTION);
 					break;
 
 				case REFLECT:
@@ -218,7 +218,7 @@ public class Fight {
 					break;
 
 				case POTION:
-					Equipment.unequip(checking, Equipment.Slot.POTION);
+					Equipment.overTime(checking);
 					break;
 
 				case REFLECT:

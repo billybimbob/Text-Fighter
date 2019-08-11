@@ -54,36 +54,40 @@ public class Potion extends Item {
 			break;
 		}
 
-		statMod.add(new Item.ModInfo(stat, modVal));
+		mods.add(new Item.ModInfo(stat, modVal));
 	}
 	
-	@Override
-	protected void useInfo (Monster user, ModInfo info, boolean remove) {
-		boolean start = user.getStatus(Status.POTION) == -1;
+	protected void useInfo (Monster user, boolean remove, ModInfo info) {
 		int modVal = info.getMod();
+		Stat stat = info.getStat();
 
 		if (remove) {
 			if (!overTime)
-				user.modStat(info.getStat(), false, -info.getMod());
+				user.modStat(stat, false, -modVal);
 			
+			user.setStatus(Status.POTION, false);
 			Interface.writeOut(this.name + " has worn off");
 
-		} else if (start) {
-			user.setStatus(Status.POTION, duration);
-			if (overTime) {
+		} else {
+			boolean start = user.getStatus(Status.POTION) == -1;
+			
+			if (start) {
+				user.setStatus(Status.POTION, duration);
+				if (overTime) {
+					float capOver = user.modStat(stat, true, modVal);
+					Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + (modVal-capOver)
+						+ " " + stat + " \nAnd will also gain " + modVal + " " + stat + " over time");
+
+				} else {
+					user.modStat(info.getStat(), false, modVal);
+					Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + modVal + " " + stat);
+				}
+
+			} else if (!start && overTime) { //while active, overTime
 				float capOver = user.modStat(info.getStat(), true, modVal);
-				Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + (modVal-capOver)
-					+ " " + info.getStat() + " \nAnd will also gain " + modVal + " over time");
-
-			} else {
-				user.modStat(info.getStat(), false, modVal);
-				Interface.writeOut(user.getName() + " has used " + this.name + " and gained " + modVal + " " + info.getStat());
+				//find out how to print past max val
+				Interface.writeOut("You gain " + (modVal-capOver) + " " + stat + " from the " + this.name);
 			}
-
-		} else if (!start && overTime) { //while active, overTime
-			float capOver = user.modStat(info.getStat(), true, modVal);
-			//find out how to print past max val
-			Interface.writeOut("You gain " + (modVal-capOver) + " " + info.getStat() + " from the " + this.name);
 		}
 	}
 

@@ -1,7 +1,9 @@
 package assets;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import assets.chars.Equipment;
 import assets.chars.Monster;
@@ -24,11 +26,13 @@ public abstract class Item implements Comparable<Item> {
 
 	protected String name;
 	protected Equipment.Slot slot;
-	protected List<ModInfo> statMod;
+	protected List<ModInfo> mods; //can modify multiple stats
+	protected Set<Monster> using; //not sure
 
 
 	protected Item() {
-		statMod = new ArrayList<>();
+		mods = new ArrayList<>();
+		using = new HashSet<>();
 	}
 
 	protected int qualityTier (String tier, int modVal) {
@@ -46,11 +50,49 @@ public abstract class Item implements Comparable<Item> {
 		return modVal;
 	}
 	
+	/*
 	protected void useInfo(Monster user, ModInfo info, boolean remove) {
 		int modVal = remove ? -info.mod : info.mod;
 		user.modStat(info.stat, false, modVal); //want to mod max
+	}*/
+
+	/**determines if to remove or not; determines state */
+	protected boolean defaultRemove (Monster user) {
+		return using.contains(user);
 	}
 
+	/**
+	 * modifies user's stats by values in info
+	 * what stats to modify based on state
+	 */
+	protected abstract void useInfo(Monster user, boolean remove, ModInfo info);
+	
+
+	/**
+	 * modifies user's stats by the Item
+	 * @param user monster using the item
+	 * @param remove {@code true} if to remove stats from user
+	 */
+	public void use (Monster user, boolean remove) {
+		if (remove)
+			using.remove(user);
+		else
+			using.add(user);
+	
+		mods.forEach(info -> useInfo(user, remove, info));
+	}
+
+	/**
+	 * use method with the default remove value; 
+	 * multiple calls of {@code use} on the same Item will toggle between
+	 * the remove paramter first being off then on
+	 * @param user
+	 */
+	public void use (Monster user) {
+		use(user, defaultRemove(user));			
+	}
+
+	
 	public String getName() { return name; }
 	public Slot getSlot() { return slot; }
 
@@ -70,11 +112,5 @@ public abstract class Item implements Comparable<Item> {
 	public int compareTo(Item other) {
 		return this.name.compareTo(other.name);
 	}
-
-	public void use (Monster user, boolean remove) {
-		for (ModInfo info: statMod)
-			useInfo(user, info, remove);
-	}
-
 
 }

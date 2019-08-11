@@ -21,7 +21,7 @@ public class Equipment {
                 slots.put(slot, null);*/
         }
 
-        private Item getSlot(Slot slot) { return slots.get(slot); }
+        private Item getItem(Slot slot) { return slots.get(slot); }
         
         private void addItem(Item item) {
             slots.put(item.getSlot(), item);
@@ -36,8 +36,8 @@ public class Equipment {
     }
 
     static boolean switchCheck(Monster.StatusInfo info, boolean turnOn) { //only turn on if potion slot used
-        Item potion = ((EquipInfo)info).getSlot(Slot.POTION);
-		return turnOn ? potion != null : potion == null;
+        Item potion = ((EquipInfo)info).getItem(Slot.POTION);
+	    return turnOn ? potion != null : potion == null;
     }
 
     static void initEquip(Monster mon) {
@@ -46,24 +46,25 @@ public class Equipment {
 
     public static void equip(Monster user, Item item) { //check if item already there
         EquipInfo info = getInfo(user);
+        Slot slot = item.getSlot();
         
-        if (info.getSlot(item.getSlot()) != null)
-            info.removeItem(item.getSlot());
+        if (info.getItem(slot) != null) //same potions treated as new ones
+            unequip(user, slot); //not sure
 
         info.addItem(item);
-        item.use(user, false);
+        item.use(user);
     }
 
     public static void unequip(Monster user, Slot slot) {
         EquipInfo info = getInfo(user);
-        Item item = info.getSlot(slot);
+        Item item = info.getItem(slot);
         info.removeItem(slot);
-        item.use(user, true);
+        item.use(user);
     }
 
     public static void overTime(Monster user) { //for now just Potion slot
         EquipInfo info = getInfo(user);
         for (Slot slot: new Slot[]{ Slot.POTION })
-            info.getSlot(slot).use(user, false);
+            info.getItem(slot).use(user, false);
     }
 }
