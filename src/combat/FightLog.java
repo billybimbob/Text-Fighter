@@ -1,7 +1,7 @@
 package combat;
 
 import java.util.*;
-import assets.chars.Monster;
+import assets.Monster;
 
 class FightLog {
 

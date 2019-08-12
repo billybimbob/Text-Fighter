@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import assets.*;
-import assets.chars.*;
 import main.*;
 
 public class Fight {

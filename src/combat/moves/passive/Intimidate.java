@@ -3,7 +3,7 @@ package combat.moves.passive;
 import combat.moves.Ability;
 import main.Interface;
 import assets.Stat;
-import assets.chars.Monster;
+import assets.Monster;
 
 public class Intimidate extends Ability {
 

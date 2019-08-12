@@ -1,6 +1,6 @@
 package combat.moves;
 
-import assets.chars.Monster;
+import assets.Monster;
 import assets.Stat;
 import main.Interface;
 

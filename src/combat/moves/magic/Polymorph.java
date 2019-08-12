@@ -1,6 +1,6 @@
 package combat.moves.magic;
 
-import assets.chars.*;
+import assets.*;
 import combat.moves.Ability;
 import main.Index;
 import main.Interface;

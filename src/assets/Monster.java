@@ -1,15 +1,14 @@
-package assets.chars;
+package assets;
 
 import java.util.*;
 
-import assets.Stat;
 import combat.Status;
 import combat.moves.Ability;
 import main.Index;
 import main.Index.Move;
 import main.Interface;
 
-public class Monster implements Comparable<Monster>, Cloneable {
+public class Monster extends Entity implements Cloneable {
 
 	/** nested classes */
 
@@ -67,12 +66,9 @@ public class Monster implements Comparable<Monster>, Cloneable {
 
 	public final static int levMult = 2;
 	
-	private static int idCount = 0;
-	private int id;
 	private Ability passive;
 	private Ability turnMove;
 	
-	protected String name;
 	protected boolean attType; //attType true means physical attack
 	protected boolean aggro;
 	protected Map<Stat, StatInfo> stats;
@@ -89,7 +85,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	 * @param statsIn order should follow order of {@link Stat}
 	 */
 	public Monster (String name, boolean aggro, boolean attType, List<Integer> statsIn) {
-		this.setId();
+		super();
 		this.name = name;
 		this.aggro = aggro;
 		this.attType = attType;
@@ -132,7 +128,7 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	 * @param copy creates new Monster instance based off of values from copy
 	 */
 	public Monster (Monster copy) { //not sure if deep or shallow
-		this.setId();
+		super();
 		this.name = copy.name;
 		this.aggro = copy.aggro;
 		this.attType = copy.attType;
@@ -154,8 +150,6 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	}
 
 	//private helpers
-	private void setId() { this.id = idCount++; }
-
 	private Ability createAbility(Move name) {
 		return Index.createAbility(name, this);
 	}
@@ -303,9 +297,6 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	 */
 
 	//accessors
-	public String getName() {
-		return name;
-	}
 	public boolean getAggro() {
 		return aggro;
 	}
@@ -432,6 +423,11 @@ public class Monster implements Comparable<Monster>, Cloneable {
 		stats.get(stat).setBase(newVal);
 	}
 
+	protected void modStatMax (Stat stat, float mod) {
+		float modVal = mod + stats.get(stat).getBase();
+		setStatMax(stat, modVal);
+	}
+
 	/**
 	 * modifies current stat value to newVal, caps at base
 	 */
@@ -446,8 +442,8 @@ public class Monster implements Comparable<Monster>, Cloneable {
 	 */
 	public float modStat (Stat stat, boolean capped, float mod) { //changes stat by val
 		StatInfo info = stats.get(stat);
-		float capOver = 0;
 		float newVal = info.getTemp()+mod;
+		float capOver = 0;
 
 		if (capped) //keep eye on
 			capOver = info.setTempCapped(newVal);
@@ -492,29 +488,10 @@ public class Monster implements Comparable<Monster>, Cloneable {
 
 	@Override
 	public String toString () {
-		return name + " - " + getStat(Stat.HP) + " hp" + " - " + getStat(Stat.MP) + " mp" + " - " + getStat(Stat.SPEED) + " speed";
-	}
-
-	@Override
-	public boolean equals(Object other) {
-		return other != null
-			&& this.getClass() == other.getClass()
-			&& this.id == ((Monster)other).id;
-	}
-
-	@Override
-	public int hashCode() { //hash by id
-		Integer idVal = Integer.valueOf(this.id);
-		return idVal.hashCode();
-	}
-
-	/**
-	 * based off of name, alphbetically
-	 */
-	@Override
-	public int compareTo (Monster other) {
-		String thisName = this.name, otherName = other.name;
-		return thisName.compareTo(otherName);
+		return this.getName() + " - " 
+			+ getStat(Stat.HP) + " hp" + " - " 
+			+ getStat(Stat.MP) + " mp" + " - "
+			+ getStat(Stat.SPEED) + " speed";
 	}
 
 

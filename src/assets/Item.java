@@ -5,10 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import assets.chars.Monster;
-import assets.chars.Equipment.Slot;
+import assets.Equipment.Slot;
 
-public abstract class Item implements Comparable<Item> {
+public abstract class Item extends Entity {
 
 	protected static class ModInfo {
 		private Stat stat;
@@ -23,7 +22,6 @@ public abstract class Item implements Comparable<Item> {
 		int getMod() { return mod; }
 	}
 
-	protected String name;
 	protected Slot slot;
 	protected List<ModInfo> mods; //can modify multiple stats
 
@@ -34,6 +32,7 @@ public abstract class Item implements Comparable<Item> {
 
 	
 	protected Item() {
+		super();
 		mods = new ArrayList<>();
 		using = new HashSet<>();
 	}
@@ -52,12 +51,7 @@ public abstract class Item implements Comparable<Item> {
 		}
 		return modVal;
 	}
-	
-	/*
-	protected void useInfo(Monster user, ModInfo info, boolean remove) {
-		int modVal = remove ? -info.mod : info.mod;
-		user.modStat(info.stat, false, modVal); //want to mod max
-	}*/
+
 
 	/**determines if to remove or not; determines state */
 	protected boolean defaultRemove (Monster user) {
@@ -99,23 +93,13 @@ public abstract class Item implements Comparable<Item> {
 	}
 
 	
-	public String getName() { return name; }
-	public Slot getSlot() { return slot; }
-
-	@Override
-	public int hashCode() {
-		return name.hashCode();
+	public Slot getSlot() {
+		return slot;
 	}
 
+	
 	@Override
-	public boolean equals(Object other) {
-		return other != null
-			&& this.getClass().equals(other.getClass())
-			&& this.name.equals( ((Item)other).name );
-	}
-
-	@Override
-	public int compareTo(Item other) {
+	public int compareTo(Entity other) {
 		return this.name.compareTo(other.name);
 	}
 

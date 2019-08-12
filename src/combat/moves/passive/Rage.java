@@ -1,7 +1,7 @@
 package combat.moves.passive;
 
 import assets.Stat;
-import assets.chars.Monster;
+import assets.Monster;
 import combat.moves.Ability;
 import main.Interface;
 

@@ -1,6 +1,5 @@
-package assets.chars;
+package assets;
 
-import assets.Stat;
 import combat.Status;
 
 public class ShapeShift {
@@ -57,8 +56,8 @@ public class ShapeShift {
 				info.setOriginal((Monster)target.clone());
 
 			ShapeShift.copyVals(target, shiftedMon);
-			String oldName = info.getOriginal().name;
-			target.name = shiftedMon.name + "(" + oldName + ")";
+			String oldName = info.getOriginal().getName();
+			target.name = target.name + "(" + oldName + ")";
 
 			target.setStatus(Status.SHIFT, duration);
 	

@@ -3,7 +3,7 @@ package combat.moves; //here to access Ability members
 import java.util.*;
 import java.util.stream.Collectors;
 
-import assets.chars.*;
+import assets.*;
 import combat.Status;
 import combat.moves.Ability;
 import main.*;

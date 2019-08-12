@@ -1,9 +1,8 @@
-package assets.chars;
+package assets;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import assets.Item;
 import combat.Status;
 
 public class Equipment {

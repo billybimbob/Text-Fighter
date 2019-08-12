@@ -1,7 +1,7 @@
 package combat.moves.melee;
 
 import combat.moves.Ability;
-import assets.chars.Monster;
+import assets.Monster;
 import main.Interface;
 
 public class Revenge extends Ability {

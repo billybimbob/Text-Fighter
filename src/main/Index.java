@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import java.io.*;
 
 import assets.*;
-import assets.chars.Monster;
 import combat.moves.*;
 import combat.moves.magic.*;
 import combat.moves.melee.*;
@@ -21,72 +20,113 @@ public class Index {
 		INTIM, RAGE; //passives
 	}
 
-	private static class MonsterList {
-		static final List<Monster> monList = new ArrayList<>(); //all monsters
-		static final Map<String, Integer> monIds = new HashMap<>(); //name to list idx
 
-		static void add(Monster mon) {
-			monList.add(mon);
-			monIds.put(mon.getName(), monList.size()-1); //should be the list idx
+	private static class NameList <T extends Entity> {
+		final List<T> lst = new ArrayList<>();
+		final Map<Integer, Integer> ids = new HashMap<>(); //name to list idx
+		final Map<String, Integer> names = new HashMap<>();
+
+		void add(T adding) {
+			lst.add(adding);
+			ids.put(adding.getId(), lst.size()-1); //should be the list idx
+			names.put(adding.getName(), lst.size()-1);
 		}
 
-		static int size() { return monList.size();}
-		static Monster get(int idx) { return monList.get(idx); }
-		static Monster get(String name) { return MonsterList.get( monIds.get(name) ); }
+		int size() { return lst.size(); }
+		T idxGet(int idx) {return lst.get(idx); }
 
+		T get(int id) { return this.idxGet( ids.get(id) ); }
+		T get(String name) { return this.idxGet( names.get(name) ); }
 	}
-	private static final Map<Move, Function<Monster, Ability>> attackList = new HashMap<>();
-	private static final Map<Move, Function<Monster, Ability>> passiveList = new HashMap<>();
-	public static Potion[] potionsList;
 	
+	
+	private static class Abilities { //used to lump togeter
+		static final Map<Move, Function<Monster, Ability>> attacks = new HashMap<>();
+		static final Map<Move, Function<Monster, Ability>> passives = new HashMap<>();
+
+		static void addPassive(Move move, Function<Monster, Ability> construct) {
+			passives.put(move, construct);
+		}
+		static void addAttack(Move move, Function<Monster, Ability> construct) {
+			attacks.put(move, construct);
+		}
+		
+		static Function<Monster, Ability> getPassive(Move move) { return passives.get(move); }
+		static Function<Monster, Ability> getAttack(Move move) { return attacks.get(move); }
+	}
+
+	private static final NameList<Monster> monsters = new NameList<>();
+	private static final NameList<Potion> potions = new NameList<>();
+	
+
 	private Index() { }
 
 	public static void createVals() {
-		createPotions();
 		mapMoves();
+		createPotions();
 
 		// hp, mp, atk, def, magic, mres, speed, crit, special attack
 		readMonsters();
 	}
 
-	private static void createPotions() {
-		potionsList = Arrays.stream(Stat.values())
-			.map(stat -> new Potion(stat))
-			.toArray(Potion[]::new);
-	}
 
 	private static void mapMoves() {
-		
 		//could split different class abilities
-		attackList.put(Move.BASIC,   BasicAttack::new);
-		attackList.put(Move.BURST,   FlameBurst::new);
-		attackList.put(Move.CHARGE,  ChargeAttack::new);
-		attackList.put(Move.DISRUPT, Disrupt::new);
-		attackList.put(Move.DRAIN,   LifeDrain::new);
-		attackList.put(Move.FREEZE,  Freeze::new);
-		attackList.put(Move.FRENZY,  Frenzy::new);
-		attackList.put(Move.POLY,    Polymorph::new);
-		attackList.put(Move.POSSESS, Possess::new);
-		attackList.put(Move.REFLECT, Reflect::new);
-		attackList.put(Move.REVENGE, Revenge::new);
-		attackList.put(Move.SHEEP,   SheepAttacks::new);
-		attackList.put(Move.SHIFT,   ChangeForm::new);
-		attackList.put(Move.SHOCK,   Shock::new);
-		attackList.put(Move.SPIN,    SpinAttack::new);
+		Abilities.addAttack(Move.BASIC,   BasicAttack::new);
+		Abilities.addAttack(Move.BURST,   FlameBurst::new);
+		Abilities.addAttack(Move.CHARGE,  ChargeAttack::new);
+		Abilities.addAttack(Move.DISRUPT, Disrupt::new);
+		Abilities.addAttack(Move.DRAIN,   LifeDrain::new);
+		Abilities.addAttack(Move.FREEZE,  Freeze::new);
+		Abilities.addAttack(Move.FRENZY,  Frenzy::new);
+		Abilities.addAttack(Move.POLY,    Polymorph::new);
+		Abilities.addAttack(Move.POSSESS, Possess::new);
+		Abilities.addAttack(Move.REFLECT, Reflect::new);
+		Abilities.addAttack(Move.REVENGE, Revenge::new);
+		Abilities.addAttack(Move.SHEEP,   SheepAttacks::new);
+		Abilities.addAttack(Move.SHIFT,   ChangeForm::new);
+		Abilities.addAttack(Move.SHOCK,   Shock::new);
+		Abilities.addAttack(Move.SPIN,    SpinAttack::new);
 
-		passiveList.put(Move.INTIM,  Intimidate::new);
-		passiveList.put(Move.RAGE,   Rage::new);
+		Abilities.addPassive(Move.INTIM,  Intimidate::new);
+		Abilities.addPassive(Move.RAGE,   Rage::new);
 
+	}
+
+
+	private static void createPotions() {
+		try (BufferedReader reader = new BufferedReader(new FileReader("src/data/potion.txt"))) {
+			String line;
+
+			while((line = reader.readLine()) != null) {
+				String[] tok = line.split(",\\s+");
+				if (tok.length < 5)
+					continue;
+
+				String name = tok[0];
+				List<Stat> stats = Arrays.stream(tok[1].split(","))
+					.map(str -> Stat.valueOf(str.toUpperCase()))
+					.collect(Collectors.toList());
+				int val = Integer.parseInt(tok[2]);
+				int duration = Integer.parseInt(tok[3]);
+				boolean overTime = Boolean.parseBoolean(tok[4]);
+
+				potions.add(new Potion(name, stats, val, duration, overTime));
+			}
+
+		} catch (IOException e) {
+			System.err.println("Issue reading potions");
+		}
 	}
 
 	private static void readMonsters() {
 
-		try (BufferedReader reading = new BufferedReader(new FileReader("src/assets/chars/monster.txt"));) {
+		try (BufferedReader reader = new BufferedReader(new FileReader("src/data/monster.txt"));) {
 			final boolean defltAggro = false;
 			String line;
 			
-			while((line = reading.readLine()) != null) {
-				String[] tok = line.split(", ");
+			while((line = reader.readLine()) != null) {
+				String[] tok = line.split(",\\s+");
 				final int parseLen = tok.length;
 
 				if (parseLen < 3) //skip line
@@ -94,7 +134,6 @@ public class Index {
 
 				String name = tok[0];
 				boolean attType = Boolean.parseBoolean(tok[1]);
-				
 				List<Integer> stats = Arrays.stream(tok[2].split(","))
 					.map(numTok -> Integer.parseInt(numTok))
 					.collect(Collectors.toList());
@@ -106,34 +145,34 @@ public class Index {
 
 					if (parseLen >= 5) { //has passive
 						Move passive = Move.valueOf(tok[4].toUpperCase());
-						MonsterList.add(new Monster(name, defltAggro, attType, stats, moves, passive));
+						monsters.add(new Monster(name, defltAggro, attType, stats, moves, passive));
+
 					} else
-						MonsterList.add(new Monster(name, defltAggro, attType, stats, moves));
+						monsters.add(new Monster(name, defltAggro, attType, stats, moves));
 
 				} else //basic
-					MonsterList.add(new Monster(name, defltAggro, attType, stats));
+					monsters.add(new Monster(name, defltAggro, attType, stats));
 			} 
 
 		} catch (IOException e) {
-			System.err.println("Issue reading file");
+			System.err.println("Issue reading monsters");
 		}
 
 	}
 
 	public static Ability createAbility(Move name, Monster user) { //wrapper for getting and apply
-		return attackList.get(name).apply(user);
+		return Abilities.getAttack(name).apply(user);
 	}
 	public static Ability createPassive(Move name, Monster user) {
-		return passiveList.get(name).apply(user);
+		return Abilities.getPassive(name).apply(user);
 	}
 
+	public static Potion getPotion(int id) { return potions.get(id); }
+	public static Potion getPotion(String name) { return potions.get(name); }
 
-	public static Monster getMonBase(int id) {
-		return MonsterList.get(id);
-	}
-	public static Monster getMonBase(String name) {
-		return MonsterList.get(name);
-	}
+
+	public static Monster getMonBase(int id) { return monsters.get(id); }
+	public static Monster getMonBase(String name) { return monsters.get(name); }
 
 	public static Monster createMonster(int id) {
 		return new Monster( getMonBase(id) );
@@ -143,7 +182,7 @@ public class Index {
 	}
 
 	public static Monster randomMonster() {
-		int id = (int)(Math.random()*MonsterList.size());
-		return createMonster(id);
+		int idx = (int)(Math.random()*monsters.size());
+		return new Monster( monsters.idxGet(idx) );
 	}
 }

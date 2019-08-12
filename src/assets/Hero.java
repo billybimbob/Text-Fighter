@@ -1,8 +1,7 @@
-package assets.chars;
+package assets;
 
 import java.util.List;
 
-import assets.*;
 import combat.*;
 import combat.moves.Ability;
 import main.*;

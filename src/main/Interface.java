@@ -2,7 +2,7 @@ package main;
 
 import java.util.*;
 
-import assets.chars.*;
+import assets.*;
 import combat.Fight;
 
 public class Interface {
@@ -32,31 +32,31 @@ public class Interface {
 		
 		switch (classChoice) {
 			case 1: //warrior
-				HERO.addItems(Index.potionsList[2], 1);
-				HERO.addItems(Index.potionsList[3], 1);
+				HERO.addItems(Index.getPotion("Ironskin Potion"), 1);
+				HERO.addItems(Index.getPotion("Potion of Offense"), 1);
 				Interface.writeOut("You are a warrior");
 				break;
 			case 2: //mage
-				HERO.addItems(Index.potionsList[4], 1);
-				HERO.addItems(Index.potionsList[5], 1);
+				HERO.addItems(Index.getPotion("Potion of Elements"), 1);
+				HERO.addItems(Index.getPotion("Swiftness Potion"), 1);
 				Interface.writeOut("You are a mage");
 				break;
 			case 3:
-				HERO.addItems(Index.potionsList[4], 1);
-				HERO.addItems(Index.potionsList[5], 1);
+				HERO.addItems(Index.getPotion("Element Barrier Potion Potion"), 1);
+				HERO.addItems(Index.getPotion("Ironskin Potion"), 1);
 				Interface.writeOut("You are a cleric");
 				break;
 			case 4: //shifter
-				HERO.addItems(Index.potionsList[4], 1);
-				HERO.addItems(Index.potionsList[5], 1);
+				HERO.addItems(Index.getPotion("Ironskin Potion"), 1);
+				HERO.addItems(Index.getPotion("Element Barrier Potion"), 1);
 				Interface.writeOut("You are a shifter");
 				break;
 		}
 		
-		HERO.addItems(Index.potionsList[0], 3);
-		HERO.addItems(Index.potionsList[1], 3);
-		HERO.addItems(Index.potionsList[6], 1);
-		HERO.addItems(Index.potionsList[7], 1);
+		HERO.addItems(Index.getPotion("Health Potion"), 3);
+		HERO.addItems(Index.getPotion("Mana Potion"), 3);
+		HERO.addItems(Index.getPotion("Swiftness Potion"), 1);
+		HERO.addItems(Index.getPotion("Lucky Potion"), 1);
 		
 		fighters.add(HERO);
 		

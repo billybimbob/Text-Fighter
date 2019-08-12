@@ -1,7 +1,7 @@
 package combat.moves;
 
 import assets.Stat;
-import assets.chars.Monster;
+import assets.Monster;
 import main.Interface;
 
 public class SheepAttacks extends Ability{
@@ -16,7 +16,7 @@ public class SheepAttacks extends Ability{
 		int dialogue = (int)(Math.random()*4);
 		switch(dialogue) {
 			case 0:
-				Interface.writeOut(attacker.getName() + " readies its... hoof to strike");
+				Interface.writeOut(attacker.getName() + " readies its.. hoof to strike");
 				break;
 			case 1:
 				Interface.writeOut(attacker.getName() + " wonders around, looking for some grass to eat");
