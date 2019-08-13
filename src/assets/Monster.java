@@ -28,6 +28,7 @@ public class Monster extends Entity implements Cloneable {
 			this.base = base<0 ? 0 : base;
 			this.temp = temp>base ? base : temp; //if new base is less than temp
 		}
+		
 		void setTemp(float newVal) {
 			this.temp = newVal<0 ? 0 : newVal;
 		}
@@ -81,7 +82,6 @@ public class Monster extends Entity implements Cloneable {
 	 * @param statsIn order should follow order of {@link Stat}
 	 */
 	public Monster (String name, boolean aggro, boolean attType, List<Integer> statsIn) {
-		super();
 		this.name = name;
 		this.aggro = aggro;
 		this.attType = attType;
@@ -124,7 +124,6 @@ public class Monster extends Entity implements Cloneable {
 	 * @param copy creates new Monster instance based off of values from copy
 	 */
 	public Monster (Monster copy) { //not sure if deep or shallow
-		super();
 		this.name = copy.name;
 		this.aggro = copy.aggro;
 		this.attType = copy.attType;
@@ -167,17 +166,18 @@ public class Monster extends Entity implements Cloneable {
 	
 	/** extra values to check/modify while turning on status;
 	 *  status will only update if new values will extend duration */
-	private void onChecks(Status status, int endTurn) {
+	private boolean onChecks(Status status, int endTurn) {
 		StatusInfo info = this.status.get(status);
 		int oldEnd = info.getEnd();
+
 		boolean turnOn = endTurn > oldEnd; //only update if will extend duration
-		
 		switch(status) {
 			case CONTROL:
-				this.setAggro();
+				if (turnOn)
+					this.setAggro();
 				break;
 			case DODGE:
-				if (oldEnd == -1)
+				if (turnOn && oldEnd == -1)
 					this.modStat(Stat.SPEED, false, this.getStatMax(Stat.SPEED)); //doubles speed
 				break;
 			case SHIFT:
@@ -191,19 +191,22 @@ public class Monster extends Entity implements Cloneable {
 
 		if (turnOn)
 			info.setEnd(endTurn);
+
+		return turnOn;
 	}
 
 	/** extra vales to check/modify while turning off a status */
-	private void offChecks(Status status) {
+	private boolean offChecks(Status status) {
 		StatusInfo info = this.status.get(status);
+		
 		boolean turnOff = true;
-
 		switch(status) {
 			case CONTROL:
-				this.setAggro();
+				if (turnOff)
+					this.setAggro();
 				break;
 			case DODGE:
-				if (info.getEnd() >= 0)
+				if (turnOff && info.getEnd() >= 0)
 					this.modStat(Stat.SPEED, false, -this.getStatMax(Stat.SPEED));
 				break;
 			case SHIFT:
@@ -217,10 +220,13 @@ public class Monster extends Entity implements Cloneable {
 		
 		if (turnOff)
 			info.setEnd(-1);
+
+		return turnOff;
 	}
 
+
 	private void setTargets(List<Monster> possTargets) {
-		if (!checkAutoTar(possTargets))
+		if (!checkAutoTar(possTargets)) {
 			for (int i = 0; i < possTargets.size() 
 				&& this.targets.size() < this.getNumTar(); i++) { //gets targets if needed
 				
@@ -228,7 +234,7 @@ public class Monster extends Entity implements Cloneable {
 				if (possTarget.getAggro() != this.getAggro())
 					this.targets.add(possTarget);
 			}
-
+		}
 	}
 
 	private boolean checkAddAll(List<Monster> possTargets) {
@@ -328,13 +334,15 @@ public class Monster extends Entity implements Cloneable {
 	}
 
 	/**
-	 * @return -1 not active, 0 finished, >0 amount of time remaining
+	 * shows the amount of time for the status;
+	 * @return {@code -1} not active, {@code 0} finished, 
+	 * {@code >0} amount of time remaining
 	 */
 	public int getStatus(Status status) { //checks if status needs updating, keep eye on
 		int endTurn = this.status.get(status).getEnd();
-		return endTurn == -1 
+		return endTurn == -1
 			? -1
-			: endTurn - currentTurn(); //should never be currentTurn > endTurn
+			: endTurn - currentTurn();
 	}
 
 	//mutators
@@ -442,21 +450,51 @@ public class Monster extends Entity implements Cloneable {
 	/**
 	 * turns on/off the inputted status
 	 * @param duration positive value turns on for that amount of duration, negative turns off status
+	 * @return {@code true} if status was successfully updated
 	 */
-	public void setStatus(Status status, int duration) { //could set special status
+	public boolean setStatus(Status status, int duration) { //could set special status
 		if (duration > 0) {
 			int endTurn = currentTurn() + duration;
-			onChecks(status, endTurn);
+			return onChecks(status, endTurn);
 		} else
-			offChecks(status);
+			return offChecks(status);
 	}
 
 	/**
-	 * turns on/off the inputted status; defaults to one turn
+	 * turns on/off the inputted status; defaults to one turn; 
+	 * status may not always successful be changed, if the state
+	 * of the monster is not correct
+	 * @see {@link Monster#setStatus(Status, int)}
 	 */
-	public void setStatus(Status status, boolean toggle) {
+	public boolean setStatus(Status status, boolean toggle) {
 		int duration = toggle ? 1 : 0;
-		setStatus(status, duration);
+		return setStatus(status, duration);
+	}
+
+	/** 
+	 * returns the time of the status, and also updating state
+	 * if the time is {@code 0}, then the status will automatically be turned off; 
+	 * multiple calls of this method when status is initially {@code 0} will then 
+	 * be {@code -1} on calls afterwards
+	 * @return {@code -1} not active, {@code 0} finished, 
+	 * {@code >0} amount of time remaining 
+	 */
+	public int updateStatus(Status status) {
+		int timeLeft = this.getStatus(status);
+
+		if (timeLeft == 0) {
+			switch(status) {
+				case SHIFT:
+					ShapeShift.revert(this);
+					break;
+				case POTION:
+					Equipment.unequip(this, Equipment.Slot.POTION);
+					break;
+				default:
+					this.setStatus(status, false);
+			}
+		}
+		return timeLeft;
 	}
 
 	/**

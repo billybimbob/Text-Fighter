@@ -13,11 +13,7 @@ public class Equipment {
         private Map<Slot, Item> slots;
         
         EquipInfo() {
-            super();
             slots = new HashMap<>();
-            /*
-            for (Slot slot: Slot.values())
-                slots.put(slot, null);*/
         }
 
         private Item getItem(Slot slot) { return slots.get(slot); }
@@ -43,6 +39,8 @@ public class Equipment {
         mon.status.put(Status.POTION, new EquipInfo());
     }
 
+
+    //public methods
     public static void equip(Monster user, Item item) { //check if item already there
         EquipInfo info = getInfo(user);
         Slot slot = item.getSlot();

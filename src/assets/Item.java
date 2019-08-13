@@ -33,7 +33,6 @@ public abstract class Item extends Entity {
 
 	
 	protected Item() {
-		super();
 		mods = new ArrayList<>();
 		using = new HashSet<>();
 	}

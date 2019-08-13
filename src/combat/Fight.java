@@ -121,6 +121,8 @@ public class Fight {
 			return;
 		
 		attacker.usePassive(nonSelf(attacker, fighters));
+		
+		//could put status in array
 		statusCheck(attacker, Status.BURN);
 		statusCheck(attacker, Status.FRENZY);
 		statusCheck(attacker, Status.POTION); //not sure if should be end of turn or beginning
@@ -154,11 +156,9 @@ public class Fight {
 	 * each turn effects, while status is active
 	 */
 	private void statusCheck (Monster checking, Status status) {
-		int check = checking.getStatus(status);
+		int check = checking.updateStatus(status);
 	
 		if (check == 0) { //finished
-			checking.setStatus(status, false);
-
 			switch(status) {
 				case BURN:
 					Interface.writeOut(checking.getName() + " is no longer burned");
@@ -175,21 +175,17 @@ public class Fight {
 					Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
 					break;
 
-				case POTION:
-					Equipment.unequip(checking, Equipment.Slot.POTION);
-					break;
-
 				case REFLECT:
 					Interface.writeOut(checking.getName() + "'s reflect has worn off");
 					break;
 
 				case SHIFT:
-					ShapeShift.revert(checking);
 					Interface.writeOut(checking.getName() + " reverted back");
 					break;
 					
 				case DODGE:
 				case FRENZY:
+				case POTION:
 				case STUN:
 					break;
 			}
