@@ -6,14 +6,12 @@ import assets.Item;
 public class Inventory implements Iterable<Item> {
 	
 	private static class ItemInfo {
-		private Item item;
 		private int amount;
 
-		public ItemInfo(Item item, int amount) {
-			this.item = item;
+		public ItemInfo(int amount) {
 			this.amount = amount;
 		}
-		public Item getItem() { return item; }
+
 		public int getAmount() { return amount; }
 		public void addAmount(int amount) {
 			this.amount += amount;
@@ -34,10 +32,9 @@ public class Inventory implements Iterable<Item> {
 	}
 
 	private Item[] listItems() {
-		return inventoryList.entrySet().stream()
-			.map(entry -> entry.getValue().getItem())
-			.toArray(Item[]::new);
+		return inventoryList.keySet().toArray(Item[]::new);
 	}
+
 
 	public boolean empty() {
 		return slotsUsed == 0;
@@ -49,14 +46,18 @@ public class Inventory implements Iterable<Item> {
 		return getting;
 	}
 
-	public void addItems (Item added, int amount) { //Adds a specified item and amount, need to add control when at max capacity
+	public void addItems (Item item, int numItems) { //Adds a specified item and amount, need to add control when at max capacity
+		int amount = item.getSpace() * numItems;
 		int remain = inventSpace-slotsUsed;
-		int canAdd = remain >= amount ? amount : remain;
+		
+		int canAdd = remain >= amount
+			? amount
+			: remain - (remain % item.getSpace());
 
-		ItemInfo info = inventoryList.get(added);
+		ItemInfo info = inventoryList.get(item);
 		if (info == null) {
-			info = new ItemInfo(added, canAdd);
-			inventoryList.put(added, info);
+			info = new ItemInfo(canAdd);
+			inventoryList.put(item, info);
 		} else
 			info.addAmount(canAdd);
 		
@@ -64,19 +65,18 @@ public class Inventory implements Iterable<Item> {
 
 		if (canAdd != amount)
 			Interface.writeOut("Your inventory is full, and cannot fit " 
-				+ (amount-canAdd) + " " + added.getName() + " (s)\n");
+				+ (amount-canAdd) + " " + item.getName() + " (s)\n");
 	}
 
-	public void removeItems (Item remove) { //Removes one item; could change to param amounts
+	public void removeItems (Item item) { //Removes one item; could change to param amounts
 		
-		ItemInfo info = inventoryList.get(remove);
+		ItemInfo info = inventoryList.get(item);
 		if (info == null) {
 			Interface.writeOut("Item does not exist");
 		} else {
-			slotsUsed -= 1;
-			int val = info.getAmount();
-			if (val == 1)
-				inventoryList.remove(remove);
+			slotsUsed -= item.getSpace();
+			if (info.getAmount() == 1)
+				inventoryList.remove(item);
 			else
 				info.addAmount(-1); //sub by one
 		}
@@ -88,7 +88,7 @@ public class Inventory implements Iterable<Item> {
 		
 		for (Map.Entry<Item, ItemInfo> entry: inventoryList.entrySet())
 			for (int i = 0; i < entry.getValue().getAmount(); i++)
-				ret.add(entry.getValue().getItem());
+				ret.add(entry.getKey());
 		
 		return ret.iterator();
 	}

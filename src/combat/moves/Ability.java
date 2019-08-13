@@ -185,7 +185,7 @@ public abstract class Ability implements Cloneable {
 	 */
 	public static void dealDamage (Monster attacker, Monster target, float damage) {
 		target.modStat(Stat.HP, true, -damage);
-		Interface.FIGHT.addLog(attacker, target, damage);
+		Interface.currentFight().addLog(attacker, target, damage);
 	}
 
 }

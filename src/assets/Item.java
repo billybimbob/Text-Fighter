@@ -23,6 +23,7 @@ public abstract class Item extends Entity {
 	}
 
 	protected Slot slot;
+	protected int space; //amount of space used up in inventory
 	protected List<ModInfo> mods; //can modify multiple stats
 
 	//vallues that change per use call
@@ -84,18 +85,18 @@ public abstract class Item extends Entity {
 
 	/**
 	 * use method with the default remove value; 
-	 * multiple calls of {@code use} on the same Item will toggle between
+	 * multiple calls of this {@code use} on the same 
+	 * Item and user will toggle between
 	 * the remove paramter first being off then on
-	 * @param user
+	 * @param user user of the item
 	 */
 	public void use (Monster user) {
 		use(user, defaultRemove(user));			
 	}
 
 	
-	public Slot getSlot() {
-		return slot;
-	}
+	public Slot getSlot() { return slot; }
+	public int getSpace() { return space; }
 
 	
 	@Override

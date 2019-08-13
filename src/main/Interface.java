@@ -7,13 +7,12 @@ import combat.Fight;
 
 public class Interface {
 	
-	public static Hero HERO;
-	public static Fight FIGHT;
 	public static final String[] RESPONSEOPTIONS = {"Yes", "No"};
 	public static final String LINESPACE = "-----------------------------------------------";
 	
 	private static final Scanner KEYBOARD = new Scanner(System.in);
-	
+	private static Hero hero;
+	private static Fight fight;
 	
 	public static void main(String[] args) { //All this is probably temporary
 		Index.createVals();
@@ -28,51 +27,54 @@ public class Interface {
 		int classChoice = choiceInput(false, availClass, classPrompt);
 		
 		
-		HERO = new Hero(name, classChoice);
+		hero = new Hero(name, classChoice);
 		
 		switch (classChoice) {
 			case 1: //warrior
-				HERO.addItems(Index.getPotion("Ironskin Potion"), 1);
-				HERO.addItems(Index.getPotion("Potion of Offense"), 1);
+				hero.addItems(Index.getPotion("Ironskin Potion"), 1);
+				hero.addItems(Index.getPotion("Potion of Offense"), 1);
 				Interface.writeOut("You are a warrior");
 				break;
 			case 2: //mage
-				HERO.addItems(Index.getPotion("Potion of Elements"), 1);
-				HERO.addItems(Index.getPotion("Swiftness Potion"), 1);
+				hero.addItems(Index.getPotion("Potion of Elements"), 1);
+				hero.addItems(Index.getPotion("Swiftness Potion"), 1);
 				Interface.writeOut("You are a mage");
 				break;
 			case 3:
-				HERO.addItems(Index.getPotion("Element Barrier Potion Potion"), 1);
-				HERO.addItems(Index.getPotion("Ironskin Potion"), 1);
+				hero.addItems(Index.getPotion("Element Barrier Potion Potion"), 1);
+				hero.addItems(Index.getPotion("Ironskin Potion"), 1);
 				Interface.writeOut("You are a cleric");
 				break;
 			case 4: //shifter
-				HERO.addItems(Index.getPotion("Ironskin Potion"), 1);
-				HERO.addItems(Index.getPotion("Element Barrier Potion"), 1);
+				hero.addItems(Index.getPotion("Ironskin Potion"), 1);
+				hero.addItems(Index.getPotion("Element Barrier Potion"), 1);
 				Interface.writeOut("You are a shifter");
 				break;
 		}
 		
-		HERO.addItems(Index.getPotion("Health Potion"), 3);
-		HERO.addItems(Index.getPotion("Mana Potion"), 3);
-		HERO.addItems(Index.getPotion("Swiftness Potion"), 1);
-		HERO.addItems(Index.getPotion("Lucky Potion"), 1);
+		hero.addItems(Index.getPotion("Health Potion"), 3);
+		hero.addItems(Index.getPotion("Mana Potion"), 3);
+		hero.addItems(Index.getPotion("Swiftness Potion"), 1);
+		hero.addItems(Index.getPotion("Lucky Potion"), 1);
 		
-		fighters.add(HERO);
+		fighters.add(hero);
 		
 		for (int i = 0; i < 3; i++)
 			fighters.add(Index.randomMonster());
 
-		FIGHT = new Fight(fighters);
+		fight = new Fight(fighters);
 		Interface.writeOut("Press enter when you are ready to fight");
 		Interface.confirm();
-		FIGHT.start();
-
+		fight.run();
+		fight = null;
 		
 		KEYBOARD.close();
 	}
 
+	public static Fight currentFight() { return fight; }
+	public static Hero getHero() { return hero; }
 
+	
 	public static void writeOut(String... printings) { //wrapper for system.out.print; can be other output
 		StringBuilder combined = new StringBuilder();
 		for (String printing: printings)

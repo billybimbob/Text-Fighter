@@ -2,19 +2,19 @@ package assets;
 
 public abstract class Entity implements Comparable<Entity> {
 
-    private static int idCount = 0;
-    private int id; //think how to differentiate from monsters
-    protected String name;
+	private static int idCount = 0;
+	private int id; //think how to differentiate from monsters
+	protected String name;
 
-    protected Entity() {
-        setId();
-    }
+	protected Entity() {
+		setId();
+	}
 
-    protected void setId() { this.id = idCount++; }
+	protected void setId() { this.id = idCount++; }
 
-    public int getId() { return this.id; }
-    public String getName() { return this.name; }
-    
+	public int getId() { return this.id; }
+	public String getName() { return this.name; }
+
 
 	@Override
 	public boolean equals(Object other) {
@@ -34,6 +34,6 @@ public abstract class Entity implements Comparable<Entity> {
 	 */
 	@Override
 	public int compareTo (Entity other) {
-        return Integer.valueOf(this.id).compareTo(Integer.valueOf(other.id));
-    }
+		return Integer.valueOf(this.id).compareTo(Integer.valueOf(other.id));
+	}
 }

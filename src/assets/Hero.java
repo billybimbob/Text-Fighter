@@ -53,17 +53,17 @@ public class Hero extends Monster {
 			choice = Interface.choiceInput(false, Fight.FIGHTCHOICES, fightPrompt);
 			
 			switch (choice) {
-			case 1: //Attack a prompted target
-				selectAttack(targets);
-				break;
+				case 1: //Attack a prompted target
+					selectAttack(targets);
+					break;
 
-			case 2: //temporarily raises evasion, and costs 2 mana
-				action = true;
-				break;
+				case 2: //temporarily raises evasion, and costs 2 mana
+					action = true;
+					break;
 
-			case 3: //Check inventory
-				pickItem();
-				break;
+				case 3: //Check inventory
+					pickItem();
+					break;
 			}
 		}
 	}
@@ -135,19 +135,19 @@ public class Hero extends Monster {
 		action = false; //sets default value, will by default ask for user input
 
 		switch (choice) {
-		case 1: //attacks inputed target
-			super.executeTurn();
-			break;
+			case 1: //attacks inputed target
+				super.executeTurn();
+				break;
 
-		case 2: //Try to flee
-			//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
-			setStatus(Status.DODGE, 2);
-			Interface.writeOut("You try dodge all incoming attacks, increasing evasiveness");
-			break;
+			case 2: //Try to flee
+				//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
+				setStatus(Status.DODGE, 2);
+				Interface.writeOut("You try dodge all incoming attacks, increasing evasiveness");
+				break;
 
-		case 3: //use inputed item
-			Equipment.equip(this, pick);
-			pick = null;
+			case 3: //use inputed item
+				Equipment.equip(this, pick);
+				pick = null;
 		}
 	}
 

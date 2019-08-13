@@ -267,7 +267,7 @@ public class Monster extends Entity implements Cloneable {
 	}
 
 	protected int currentTurn() {
-		return Interface.FIGHT.getTurnNum();
+		return Interface.currentFight().getTurnNum();
 	}
 	
 	@Override

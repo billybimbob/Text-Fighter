@@ -34,7 +34,7 @@ public class Fight {
 		return totalDam;
 	}
 
-	public void start() {
+	public void run() {
 		boolean fightControl = true; //could add flee back
 		
 		do {
@@ -65,7 +65,7 @@ public class Fight {
 				}
 			}
 
-			if (fightControl && nonSelf(Interface.HERO, fighters).size() == 0) { //Check if all Monster are killed
+			if (fightControl && nonSelf(Interface.getHero(), fighters).size() == 0) { //Check if all Monster are killed
 				Interface.writeOut("All of the Monster have been killed, you win!");
 				fightControl = false;
 			}
@@ -77,6 +77,7 @@ public class Fight {
 	}
 
 
+	//private helpers
 	private void newRound() {
 		log.newRound();
 		

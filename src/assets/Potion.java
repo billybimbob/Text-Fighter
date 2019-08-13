@@ -15,6 +15,7 @@ public class Potion extends Item {
 	
 	public Potion(String name, List<Stat> modStats, int modVal, int duration, boolean overTime) {
 		this.slot = Slot.POTION;
+		this.space = 1; //could maybe paramerize
 		this.name = name;
 		this.duration = duration;
 		this.overTime = overTime;
