@@ -34,6 +34,20 @@ public class Inventory implements Iterable<Item> {
 	private Item[] listItems() {
 		return inventoryList.keySet().toArray(Item[]::new);
 	}
+	private void removeItem (Item item) { //removes one item; could change to param amounts
+		
+		ItemInfo info = inventoryList.get(item);
+		if (info == null) {
+			Interface.writeOut("Item does not exist");
+		} else {
+			slotsUsed -= item.getSpace();
+			if (info.getAmount() == 1)
+				inventoryList.remove(item);
+			else
+				info.addAmount(-1); //sub by one
+		}
+
+	}
 
 
 	public boolean empty() {
@@ -42,7 +56,7 @@ public class Inventory implements Iterable<Item> {
 	
 	public Item getItem(int idx) {
 		Item getting = this.listItems()[idx];
-		this.removeItems(getting);
+		this.removeItem(getting);
 		return getting;
 	}
 
@@ -68,20 +82,6 @@ public class Inventory implements Iterable<Item> {
 				+ (amount-canAdd) + " " + item.getName() + " (s)\n");
 	}
 
-	public void removeItems (Item item) { //Removes one item; could change to param amounts
-		
-		ItemInfo info = inventoryList.get(item);
-		if (info == null) {
-			Interface.writeOut("Item does not exist");
-		} else {
-			slotsUsed -= item.getSpace();
-			if (info.getAmount() == 1)
-				inventoryList.remove(item);
-			else
-				info.addAmount(-1); //sub by one
-		}
-
-	}
 	
 	public Iterator<Item> iterator() { //Goes through the inventory, accounting for duplicates, and sets each item to an index in an Array
 		List<Item> ret = new ArrayList<>();
@@ -93,10 +93,22 @@ public class Inventory implements Iterable<Item> {
 		return ret.iterator();
 	}
 
+	/**
+	 * returns array of string representation of the items in the inventory
+	 */
 	public String[] accessNames() {
-		return inventoryList.entrySet().stream()
-			.map(entry -> entry.getKey().getName() + " x " + entry.getValue().getAmount())
-			.toArray(String[]::new);
+		return this.toString().split("\n");
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+
+		for (Map.Entry<Item, ItemInfo> entry: inventoryList.entrySet())
+			str.append(entry.getKey().getName() 
+				+ " x " + entry.getValue().getAmount() + "\n");
+		
+		return str.toString();
 	}
 	
 }

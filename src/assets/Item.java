@@ -60,7 +60,7 @@ public abstract class Item extends Entity {
 	}
 
 	/**
-	 * modifies user's stats by values in info
+	 * modifies user's stat by value
 	 * what stats to modify based on state
 	 */
 	protected abstract void statMod (Stat stat, int modVal);

@@ -102,6 +102,7 @@ public class Index {
 
 		} catch (IOException e) {
 			System.err.println("Issue reading potions");
+			System.exit(-1);
 		}
 	}
 
@@ -143,6 +144,7 @@ public class Index {
 
 		} catch (IOException e) {
 			System.err.println("Issue reading monsters");
+			System.exit(-1);
 		}
 
 	}
@@ -155,6 +157,7 @@ public class Index {
 		return passives.get(name).apply(user);
 	}
 
+
 	public static Potion getPotion(int id) { return potions.get(id); }
 	public static Potion getPotion(String name) { return potions.get(name); }
 
@@ -162,12 +165,14 @@ public class Index {
 	public static Monster getMonBase(int id) { return monsters.get(id); }
 	public static Monster getMonBase(String name) { return monsters.get(name); }
 
+
 	public static Monster createMonster(int id) {
 		return new Monster( getMonBase(id) );
 	}
 	public static Monster createMonster(String name) {
 		return new Monster( getMonBase(name) );
 	}
+
 
 	public static Monster randomMonster() {
 		int idx = (int)(Math.random()*monsters.size());

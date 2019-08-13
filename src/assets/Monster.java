@@ -47,18 +47,14 @@ public class Monster extends Entity implements Cloneable {
 	}
 
 	static class StatusInfo {
-		private int start, duration;
+		private int end;
 
 		StatusInfo () {
-			this.start = -1;
-			this.duration = -1;
+			this.end = -1;
 		}
 
-		int getStart() { return start; }
-		int getDuration() { return duration; }
-
-		void setStart(int start) { this.start = start; }
-		void setDuration(int duration) { this.duration = duration; }
+		int getEnd() { return end; };
+		void setEnd(int end) { this.end = end; }
 	}
 
 
@@ -171,17 +167,17 @@ public class Monster extends Entity implements Cloneable {
 	
 	/** extra values to check/modify while turning on status;
 	 *  status will only update if new values will extend duration */
-	private void onChecks(Status status, int start, int duration) {
+	private void onChecks(Status status, int endTurn) {
 		StatusInfo info = this.status.get(status);
+		int oldEnd = info.getEnd();
+		boolean turnOn = endTurn > oldEnd; //only update if will extend duration
 		
-		int oldStart = info.getStart(), oldDur = info.getDuration();
-		boolean turnOn = start+duration > oldStart+oldDur; //only update if will extend duration
 		switch(status) {
 			case CONTROL:
 				this.setAggro();
 				break;
 			case DODGE:
-				if (oldStart == -1 && oldDur == -1)
+				if (oldEnd == -1)
 					this.modStat(Stat.SPEED, false, this.getStatMax(Stat.SPEED)); //doubles speed
 				break;
 			case SHIFT:
@@ -193,10 +189,8 @@ public class Monster extends Entity implements Cloneable {
 				break;
 		}
 
-		if (turnOn) {
-			info.setStart(start);
-			info.setDuration(duration);
-		}
+		if (turnOn)
+			info.setEnd(endTurn);
 	}
 
 	/** extra vales to check/modify while turning off a status */
@@ -209,7 +203,7 @@ public class Monster extends Entity implements Cloneable {
 				this.setAggro();
 				break;
 			case DODGE:
-				if (info.getStart() >= 0 || info.getDuration() >= 0)
+				if (info.getEnd() >= 0)
 					this.modStat(Stat.SPEED, false, -this.getStatMax(Stat.SPEED));
 				break;
 			case SHIFT:
@@ -221,10 +215,8 @@ public class Monster extends Entity implements Cloneable {
 				break;
 		}
 		
-		if (turnOff) {
-			info.setStart(-1);
-			info.setDuration(-1);
-		}
+		if (turnOff)
+			info.setEnd(-1);
 	}
 
 	private void setTargets(List<Monster> possTargets) {
@@ -316,7 +308,7 @@ public class Monster extends Entity implements Cloneable {
 	/**
 	 * @return -1 is no limit, 0 is self, >0 max number of targets 
 	 */
-	public int getNumTar() {
+	public int getNumTar() { //could be null
 		return turnMove.getNumTar();
 	}
 
@@ -339,16 +331,10 @@ public class Monster extends Entity implements Cloneable {
 	 * @return -1 not active, 0 finished, >0 amount of time remaining
 	 */
 	public int getStatus(Status status) { //checks if status needs updating, keep eye on
-		StatusInfo info = this.status.get(status);
-		int start = info.getStart(), duration = info.getDuration();
-		int turnNum = currentTurn();
-
-		int ret = -1;
-		if (start > -1 && duration > -1) {
-			int timeActive = turnNum-start;
-			ret = timeActive >= duration ? 0 : duration-timeActive;
-		}
-		return ret;
+		int endTurn = this.status.get(status).getEnd();
+		return endTurn == -1 
+			? -1
+			: endTurn - currentTurn(); //should never be currentTurn > endTurn
 	}
 
 	//mutators
@@ -459,8 +445,8 @@ public class Monster extends Entity implements Cloneable {
 	 */
 	public void setStatus(Status status, int duration) { //could set special status
 		if (duration > 0) {
-			int start = currentTurn();
-			onChecks(status, start, duration);
+			int endTurn = currentTurn() + duration;
+			onChecks(status, endTurn);
 		} else
 			offChecks(status);
 	}
