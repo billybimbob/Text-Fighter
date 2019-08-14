@@ -24,7 +24,7 @@ public class Potion extends Item {
 
 	
 	@Override
-	public void use(Monster user, boolean remove) { //override for printing
+	protected void use(Monster user, boolean remove) { //override for printing
 
 		if (remove) {
 			user.setStatus(Status.POTION, false);

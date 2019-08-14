@@ -28,7 +28,7 @@ public class Monster extends Entity implements Cloneable {
 			this.base = base<0 ? 0 : base;
 			this.temp = temp>base ? base : temp; //if new base is less than temp
 		}
-		
+
 		void setTemp(float newVal) {
 			this.temp = newVal<0 ? 0 : newVal;
 		}
@@ -71,7 +71,7 @@ public class Monster extends Entity implements Cloneable {
 	protected Map<Stat, StatInfo> stats;
 	protected Map<Status, StatusInfo> status; //temporary values
 	protected Ability[] moveList;
-	protected List<Monster> targets; //look at how set and used
+	protected List<Monster> targets; //keep eye on how set and used
 	protected int level = 1;
 
 
@@ -87,7 +87,7 @@ public class Monster extends Entity implements Cloneable {
 		this.attType = attType;
 
 		this.stats = new HashMap<>();
-		//hp, mp, att, def, mag, magR, spe, crit}; //order must be same as enum
+		//hp, mp, att, def, mag, magR, spe, crit //order must be same as enum
 		for (int i = 0; i < statsIn.size(); i++)
 			this.stats.put(Stat.values()[i], new StatInfo(statsIn.get(i)));
 
@@ -139,7 +139,7 @@ public class Monster extends Entity implements Cloneable {
 			this.setPassive((Ability)copy.passive.clone(this));
 		
 		this.moveList = Arrays.stream(copy.moveList)
-			.map(move -> (Ability)move.clone(this))
+			.map(move -> (Ability)move.clone(this)) //could use name and valueOf
 			.toArray(Ability[]::new);
 
 	}
@@ -195,7 +195,7 @@ public class Monster extends Entity implements Cloneable {
 		return turnOn;
 	}
 
-	/** extra vales to check/modify while turning off a status */
+	/** extra values to check/modify while turning off a status */
 	private boolean offChecks(Status status) {
 		StatusInfo info = this.status.get(status);
 		
@@ -473,16 +473,16 @@ public class Monster extends Entity implements Cloneable {
 
 	/** 
 	 * returns the time of the status, and also updating state
-	 * if the time is {@code 0}, then the status will automatically be turned off; 
-	 * multiple calls of this method when status is initially {@code 0} will then 
-	 * be {@code -1} on calls afterwards
+	 * if the time is {@code 0}; if {@code 0}, the status will automatically be turned off; 
+	 * multiple, consecutive calls of this method when status is initially {@code 0} will
+	 * then be {@code -1} on calls afterwards
 	 * @return {@code -1} not active, {@code 0} finished, 
 	 * {@code >0} amount of time remaining 
 	 */
-	public int updateStatus(Status status) {
+	public int updateStatus(Status status) { //could add active mods here
 		int timeLeft = this.getStatus(status);
 
-		if (timeLeft == 0) {
+		if (timeLeft == 0) { //keep eye on
 			switch(status) {
 				case SHIFT:
 					ShapeShift.revert(this);

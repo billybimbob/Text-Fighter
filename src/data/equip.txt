@@ -1,0 +1,16 @@
+name slot attType stats val
+
+Weapons:
+Broadsword, larm, true,  att,def,        3
+Staff,      larm, false, mag,magr,       3
+Dagger,     larm, true,  att,speed,crit, 2
+Tome,       larm, false, mag,speed,crit, 2
+
+Armor:
+Shield,    rarm, true,  hp,def,     2
+Ward,      rarm, false, mp,magr,    2
+Helmet,    head, true,  hp,def,     1
+Hat,       head, false, mp,magr,    1
+Hood,      head, true,  speed,crit, 1
+Chainmail, body, true,  hp,def,     2
+Robes,     body, false, mp,magr,    2

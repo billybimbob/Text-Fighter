@@ -13,11 +13,13 @@ public class Fight {
 
 	private FightLog log;
 	private List<Monster> fighters;
+	private boolean fightControl;
 	private boolean skipTurn;
 
 	public Fight(List<Monster> fighters) {
 		this.log = new FightLog();
 		this.fighters = fighters;
+		this.fightControl = false;
 	}
 	
 	public void addLog(Monster attacker, Monster target, float damage) {
@@ -35,14 +37,18 @@ public class Fight {
 	}
 
 	public void run() {
-		boolean fightControl = true; //could add flee back
+		if (fightControl) {
+			System.err.println("fight is already running");
+			return;
+		}
 		
+		fightControl = true;
 		do {
 			newRound();
 			
 			//decides the turns
 			for (Monster fighter: fighters)
-				fighter.setTurn(nonSelf(fighter, fighters)); //could determine nonSelf in setTurn
+				fighter.setTurn( otherFighters(fighter) ); //could determine nonSelf in setTurn
 			
 			priorities();
 			
@@ -65,7 +71,7 @@ public class Fight {
 				}
 			}
 
-			if (fightControl && nonSelf(Interface.getHero(), fighters).size() == 0) { //Check if all Monster are killed
+			if (fightControl && otherFighters(Interface.getHero()).size() == 0) { //Check if all Monster are killed
 				Interface.writeOut("All of the Monster have been killed, you win!");
 				fightControl = false;
 			}
@@ -78,13 +84,18 @@ public class Fight {
 
 
 	//private helpers
+	private List<Monster> otherFighters (Monster user) { //inefficient maybe
+		return this.fighters.stream()
+			.filter(mon -> !mon.equals(user))
+			.collect(Collectors.toList());
+	}
+
 	private void newRound() {
 		log.newRound();
 		
 		StringBuilder lstFighters = new StringBuilder(Interface.LINESPACE + "\n");
 
 		attackOrder(); //Orders the fighters by speed
-		//determine which is the hero, may change later, also prints each fighter and stats
 		fighters.forEach(fighter -> lstFighters.append(fighter + "\n"));
 
 		lstFighters.append(Interface.LINESPACE + "\n");
@@ -120,7 +131,7 @@ public class Fight {
 		if (attacker.getStat(Stat.HP) <= 0) //got rid of flee, maybe temporary
 			return;
 		
-		attacker.usePassive(nonSelf(attacker, fighters));
+		attacker.usePassive( otherFighters(attacker) );
 		
 		//could put status in array
 		statusCheck(attacker, Status.BURN);
@@ -203,7 +214,7 @@ public class Fight {
 					break;
 
 				case FRENZY:
-					checking.setRandomTargets(nonSelf(checking, fighters)); //nonself might be slow
+					checking.setRandomTargets( otherFighters(checking) ); //nonself might be slow
 					Interface.writeOut(checking.getName() + " is frenzied, targets are random");
 					break;
 
@@ -236,13 +247,6 @@ public class Fight {
 					break;
 			}
 		}
-	}
-
-	 //not sure if should be all enemies or all non-user, inefficient
-	public static List<Monster> nonSelf (Monster user, List<Monster> allFighters) {
-		return allFighters.stream()
-			.filter(mon -> !mon.equals(user))
-			.collect(Collectors.toList());
 	}
 
 }

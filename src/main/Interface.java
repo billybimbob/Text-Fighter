@@ -120,9 +120,7 @@ public class Interface {
 				Interface.writeOut("\nInvalid choice, please try again\n");
 		} while (!heroAction);
 		
-		heroAction = false;
 		Interface.writeOut();
-		
 		return choice;
 	}
 

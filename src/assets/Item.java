@@ -1,9 +1,9 @@
 package assets;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import assets.Equipment.Slot;
 
@@ -22,11 +22,11 @@ public abstract class Item extends Entity {
 		int getMod() { return mod; }
 	}
 
-	protected Slot slot;
+	protected Slot slot; //think how to handle 2h
 	protected int space; //amount of space used up in inventory
 	protected List<ModInfo> mods; //can modify multiple stats
 
-	//vallues that change per use call
+	//values that change per use call
 	protected Set<Monster> using; //not sure
 	protected Monster currentUser; //potential issue with multiple threads
 	protected boolean remove;
@@ -59,8 +59,7 @@ public abstract class Item extends Entity {
 	}
 
 	/**
-	 * modifies user's stat by value
-	 * what stats to modify based on state
+	 * modifies user's individual stat by value
 	 */
 	protected abstract void statMod (Stat stat, int modVal);
 	
@@ -70,11 +69,9 @@ public abstract class Item extends Entity {
 	 * @param user monster using the item
 	 * @param remove {@code true} if to remove stats from user
 	 */
-	public void use (Monster user, boolean remove) { //not sure if should be public or not
+	protected void use (Monster user, boolean remove) { //not sure if should be public or not
 		this.currentUser = user;
-		this.remove = remove;
-
-		if (remove)
+		if (this.remove = remove)
 			using.remove(user);
 		else
 			using.add(user);
@@ -89,7 +86,7 @@ public abstract class Item extends Entity {
 	 * the remove paramter first being off then on
 	 * @param user user of the item
 	 */
-	public void use (Monster user) {
+	protected void use (Monster user) {
 		use(user, defaultRemove(user));			
 	}
 

@@ -44,7 +44,7 @@ public class Index {
 	private static final Map<Move, Function<Monster, Ability>> passives = new HashMap<>();
 	private static final NameList<Monster> monsters = new NameList<>();
 	private static final NameList<Potion> potions = new NameList<>();
-	
+	private static final NameList<Armor> armors = new NameList<>();
 
 	private Index() { }
 
@@ -52,6 +52,7 @@ public class Index {
 	public static void createVals() {
 		mapMoves();
 		readPotions();
+		readArmors();
 		readMonsters();
 	}
 
@@ -103,6 +104,32 @@ public class Index {
 		} catch (IOException e) {
 			System.err.println("Issue reading potions");
 			System.exit(-1);
+		}
+	}
+
+	private static void readArmors() {
+		try (BufferedReader reader = new BufferedReader(new FileReader("src/data/equip.txt"))) {
+			String line;
+
+			while((line = reader.readLine()) != null) {
+				String[] toks = line.split(",\\s+");
+				if (toks.length < 5)
+					continue;
+
+				String name = toks[0];
+				Equipment.Slot slot = Equipment.Slot.valueOf(toks[1].toUpperCase());
+				boolean attType = Boolean.parseBoolean(toks[2]);
+				List<Stat> stats = Arrays.stream(toks[3].split(","))
+					.map(stat -> Stat.valueOf(stat.toUpperCase()))
+					.collect(Collectors.toList());
+				int modVal = Integer.parseInt(toks[4]);
+
+				armors.add(new Armor(name, slot, attType, stats, modVal));
+			}
+
+		} catch (IOException e) {
+			System.err.println("Issue reading armors");
+			System.exit(-1);		
 		}
 	}
 
@@ -161,6 +188,8 @@ public class Index {
 	public static Potion getPotion(int id) { return potions.get(id); }
 	public static Potion getPotion(String name) { return potions.get(name); }
 
+	public static Armor getArmor(int id) { return armors.get(id); }
+	public static Armor getArmor(String name) { return armors.get(name); }
 
 	public static Monster getMonBase(int id) { return monsters.get(id); }
 	public static Monster getMonBase(String name) { return monsters.get(name); }
