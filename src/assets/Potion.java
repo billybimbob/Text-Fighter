@@ -1,9 +1,7 @@
 package assets;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import assets.Equipment.Slot;
 import combat.Status;
 import main.*;
 
@@ -30,19 +28,17 @@ public class Potion extends Item {
 			user.setStatus(Status.POTION, false);
 			Interface.writeOut(this.getName() + " has worn off");
 
-		} else if (start = user.getStatus(Status.POTION) == -1) { //potential issue; potion can't refresh
+		} else if (this.start = user.getStatus(Status.POTION) == -1) { //potential issue; potion can't refresh
 			user.setStatus(Status.POTION, duration);
+			String modNames = this.getModNames();
 
-			if (this.overTime) {
-				String modNames = mods.stream()
-					.map(info -> info.getStat().toString())
-					.collect(Collectors.joining(", "));
-
+			if (this.overTime)
 				Interface.writeOut(user.getName() + " has used " 
 					+ this.getName() + " and will gain " + modNames + " over time");
 					
-			} else
-				Interface.writeOut(user.getName() + " has used " + this.getName());
+			else
+				Interface.writeOut(user.getName() + " has used " + this.getName()
+					+ " and gains a boost in " + modNames);
 		}
 		
 		super.use(user, remove);

@@ -49,13 +49,18 @@ public class Monster extends Entity implements Cloneable {
 
 	static class StatusInfo {
 		private int end;
+		private boolean checked;
 
 		StatusInfo () {
 			this.end = -1;
+			checked = true;
 		}
 
-		int getEnd() { return end; };
+		int getEnd() { return end; }
+		boolean getChecked() { return checked; }
 		void setEnd(int end) { this.end = end; }
+		void setCheck(boolean checked) { this.checked = checked; }
+
 	}
 
 
@@ -259,6 +264,13 @@ public class Monster extends Entity implements Cloneable {
 		return checkAddAll(possTargets) || checkSelfTar();
 	}
 
+	/**
+	 * @return -1 is no limit, 0 is self, >0 max number of targets 
+	 */
+	protected int getNumTar() { //could be null
+		return turnMove.getNumTar();
+	}
+
 	protected void setPassive(Ability passive) {
 		if (passive != null && passive.isPassive() || passive == null) 
 			this.passive = passive;
@@ -311,13 +323,6 @@ public class Monster extends Entity implements Cloneable {
 		return passive;
 	}
 
-	/**
-	 * @return -1 is no limit, 0 is self, >0 max number of targets 
-	 */
-	public int getNumTar() { //could be null
-		return turnMove.getNumTar();
-	}
-
 	public Monster[] getTargets() {
 		return targets.toArray(Monster[]::new);
 	}
@@ -345,6 +350,20 @@ public class Monster extends Entity implements Cloneable {
 			: endTurn - currentTurn();
 	}
 
+	public Status[] getNotChecked() {
+		return this.status.entrySet().stream()
+			.filter(entry -> !entry.getValue().getChecked())
+			.map(entry -> entry.getKey())
+			.toArray(Status[]::new);
+	}
+
+	public boolean statusUpdated() {
+		return this.status.values().stream()
+			.map(StatusInfo::getChecked)
+			.reduce(true, (accum, info) -> accum && info);
+	}
+
+
 	//mutators
 	public void setAggro() { //flips
 		this.aggro = !this.aggro;
@@ -353,12 +372,13 @@ public class Monster extends Entity implements Cloneable {
 	public void setRandomTargets(List<Monster> possTargets) {
 		this.targets.clear();
 		
-		if (!checkAutoTar(possTargets)) {
-			int amountTars = this.getNumTar();
-			for (int i = 0; i < amountTars; i++) {
-				int randIdx = (int)(Math.random()*(possTargets.size()));
-				this.targets.add(possTargets.remove(randIdx));
-			}
+		if (turnMove == null || checkAutoTar(possTargets))
+			return;
+
+		int amountTars = this.getNumTar();
+		for (int i = 0; i < amountTars; i++) {
+			int randIdx = (int)(Math.random()*(possTargets.size()));
+			this.targets.add(possTargets.remove(randIdx));
 		}
 	}
 	
@@ -488,13 +508,21 @@ public class Monster extends Entity implements Cloneable {
 					ShapeShift.revert(this);
 					break;
 				case POTION:
-					Equipment.unequip(this, Equipment.Slot.POTION);
+					Equipment.unequip(this, Slot.POTION);
 					break;
 				default:
 					this.setStatus(status, false);
 			}
 		}
+
+		this.status.get(status).setCheck(true); //inefficient
 		return timeLeft;
+	}
+	
+	public void resetStatusChecks() {
+		this.status.values().stream()
+			.filter(info -> info.getEnd() > -1)
+			.forEach(info -> info.setCheck(false));
 	}
 
 	/**

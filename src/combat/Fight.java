@@ -9,7 +9,7 @@ import main.*;
 
 public class Fight {
 	
-	public static final String[] FIGHTCHOICES = {"Fight", "Dodge", "Inventory"};
+	public static final String[] FIGHTCHOICES = {"Fight", "Dodge", "Inventory", "View Equipment"};
 
 	private FightLog log;
 	private List<Monster> fighters;
@@ -92,11 +92,15 @@ public class Fight {
 
 	private void newRound() {
 		log.newRound();
-		
+
 		StringBuilder lstFighters = new StringBuilder(Interface.LINESPACE + "\n");
 
 		attackOrder(); //Orders the fighters by speed
-		fighters.forEach(fighter -> lstFighters.append(fighter + "\n"));
+
+		fighters.forEach(fighter -> {
+			fighter.resetStatusChecks();
+			lstFighters.append(fighter + "\n");
+		});
 
 		lstFighters.append(Interface.LINESPACE + "\n");
 		Interface.writeOut(lstFighters.toString());
@@ -155,6 +159,13 @@ public class Fight {
 		
 		attacker.clearTurn();
 		attacker.modStat(Stat.MP, true, 1); //passive mp gain, could change the val
+		
+		if (!attacker.statusUpdated()) { //might be temporary
+			System.err.println("status failed to updated");
+			for (Status status: attacker.getNotChecked())
+				statusCheck(attacker, status);
+		}
+
 
 		try {
 			TimeUnit.SECONDS.sleep(2);

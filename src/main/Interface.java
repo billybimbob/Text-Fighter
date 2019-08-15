@@ -31,23 +31,27 @@ public class Interface {
 		
 		switch (classChoice) {
 			case 1: //warrior
-				hero.addItems(Index.getPotion("Ironskin Potion"), 1);
-				hero.addItems(Index.getPotion("Potion of Offense"), 1);
+				hero.addItem(Index.getArmor("Broadsword"));
+				hero.addItem(Index.getPotion("Ironskin Potion"));
+				hero.addItem(Index.getPotion("Potion of Offense"));
 				Interface.writeOut("You are a warrior");
 				break;
 			case 2: //mage
-				hero.addItems(Index.getPotion("Potion of Elements"), 1);
-				hero.addItems(Index.getPotion("Swiftness Potion"), 1);
+				hero.addItem(Index.getArmor("Staff"));
+				hero.addItem(Index.getPotion("Potion of Elements"));
+				hero.addItem(Index.getPotion("Swiftness Potion"));
 				Interface.writeOut("You are a mage");
 				break;
 			case 3:
-				hero.addItems(Index.getPotion("Element Barrier Potion Potion"), 1);
-				hero.addItems(Index.getPotion("Ironskin Potion"), 1);
+				hero.addItem(Index.getArmor("Tome"));
+				hero.addItem(Index.getPotion("Element Barrier Potion Potion"));
+				hero.addItem(Index.getPotion("Ironskin Potion"));
 				Interface.writeOut("You are a cleric");
 				break;
 			case 4: //shifter
-				hero.addItems(Index.getPotion("Ironskin Potion"), 1);
-				hero.addItems(Index.getPotion("Element Barrier Potion"), 1);
+				hero.addItem(Index.getArmor("Dagger"));
+				hero.addItem(Index.getPotion("Ironskin Potion"));
+				hero.addItem(Index.getPotion("Element Barrier Potion"));
 				Interface.writeOut("You are a shifter");
 				break;
 		}

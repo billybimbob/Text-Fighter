@@ -2,10 +2,10 @@ package assets;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import assets.Equipment.Slot;
 
 public abstract class Item extends Entity {
 
@@ -52,6 +52,11 @@ public abstract class Item extends Entity {
 		return modVal;
 	}
 
+	protected String getModNames() { 
+		return mods.stream()
+			.map(info -> info.getStat().toString())
+			.collect(Collectors.joining(", "));
+	}
 
 	/**determines if to remove or not; determines state */
 	protected boolean defaultRemove (Monster user) {
@@ -89,11 +94,9 @@ public abstract class Item extends Entity {
 	protected void use (Monster user) {
 		use(user, defaultRemove(user));			
 	}
-
 	
 	public Slot getSlot() { return slot; }
 	public int getSpace() { return space; }
-
 	
 	@Override
 	public int compareTo(Entity other) {

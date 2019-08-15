@@ -3,14 +3,14 @@ package assets;
 import java.util.List;
 
 import combat.*;
-import combat.moves.Ability;
 import main.*;
 
 public class Hero extends Monster {
 
 	private Inventory inventory;
 	private int choice;
-	private Item pick;
+	private Item item; //not sure
+	private Slot slot; //not sure
 	private boolean action;
 	
 	public Hero (String name, int classChoice) { //if classes true, warrior
@@ -45,11 +45,10 @@ public class Hero extends Monster {
 	@Override
 	public void setTurn(List<Monster> targets) { //look at respone idx
 		//Hero user input/determine hero actions
-		Ability turnMove = this.getTurnMove();
-		action = turnMove!=null && !turnMove.resolved();
+		action = this.getTurnMove() != null;
 
 		while (!action) {
-			String fightPrompt = "Which action would you like to do?";
+			final String fightPrompt = "Which action would you like to do?";
 			choice = Interface.choiceInput(false, Fight.FIGHTCHOICES, fightPrompt);
 			
 			switch (choice) {
@@ -57,12 +56,16 @@ public class Hero extends Monster {
 					selectAttack(targets);
 					break;
 
-				case 2: //temporarily raises evasion, and costs 2 mana
+				case 2: //temporarily raises evasion
 					action = true;
 					break;
 
 				case 3: //Check inventory
 					pickItem();
+					break;
+
+				case 4:
+					viewEquipment();
 					break;
 			}
 		}
@@ -70,7 +73,7 @@ public class Hero extends Monster {
 
 	private void selectAttack(List<Monster> possTargets) { //array generate every time
 		do { //probably okay?
-			String attPrompt = "Which attack do you want to use?";
+			final String attPrompt = "Which attack do you want to use?";
 			int attNum = Interface.choiceInput(true, this.getMoves(), attPrompt);
 			if (attNum == 0)
 				return;
@@ -80,23 +83,23 @@ public class Hero extends Monster {
 			
 			//determine the targets of hero move
 			action = true;
+			if (checkAutoTar(possTargets))
+				continue;
+				
+			int numOptions = possTargets.size();
+			while (numOptions-possTargets.size() < this.getNumTar()) { //loop until amount selected enough
 
-			if (!checkAutoTar(possTargets)) {
-				int numOptions = possTargets.size();
-				while (numOptions-possTargets.size() < this.getNumTar()) { //loop until amount selected enough
-
-					String[] monNames = possTargets.stream().map(Monster::getName).toArray(String[]::new);
-					String tarPrompt = "Which monster would you want to target?";
-					int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
-					
-					if (tarNum == 0) {//have to change how to implement
-						action = false;
-						possTargets.addAll(this.targets);
-						this.targets.clear();
-						break;
-					}
-					this.targets.add(possTargets.remove(tarNum-1));
+				String[] monNames = possTargets.stream().map(Monster::getName).toArray(String[]::new);
+				final String tarPrompt = "Which monster would you want to target?";
+				int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
+				
+				if (tarNum == 0) {//have to change how to implement
+					action = false;
+					possTargets.addAll(this.targets);
+					this.targets.clear();
+					break;
 				}
+				this.targets.add(possTargets.remove(tarNum-1));
 			}
 
 		} while (!action);
@@ -109,14 +112,14 @@ public class Hero extends Monster {
 		}
 
 		String[] inventNames = inventory.accessNames();
-		String itemPrompt = "Which item do you want to use?";
+		final String itemPrompt = "Which item do you want to use?";
 		int pickNum = Interface.choiceInput(true, inventNames, itemPrompt);
 		
 		if (pickNum == 0)
 			return;
 
 		if (this.getStatus(Status.POTION) > 0) { //potin still active
-			String usePrompt = "Another buff is still active, "
+			final String usePrompt = "Another buff is still active, "
 				+ "and will be canceled by this potion"
 				+ "\nAre you sure you want to do this?";
 
@@ -125,14 +128,33 @@ public class Hero extends Monster {
 				return;
 		}
 
-		pick = inventory.getItem(pickNum-1);
+		item = inventory.getItem(pickNum-1);
 		action = true;
+	}
+
+	private void viewEquipment() {
+		String[] equipList = Equipment.showEquipped(this);
+		final String unequipPrompt = "Select a slot to unequip an item";
+		do {
+			int pickNum = Interface.choiceInput(true, equipList, unequipPrompt);
+			if (pickNum == 0)
+				return;
+
+			slot = Equipment.numToSlot(pickNum-1);
+
+			if (Equipment.checkSlot(this, slot) == null) {
+				Interface.writeOut("No item is in the selected slot");
+				continue;
+			}
+
+			action = true;
+
+		} while(!action);
 	}
 
 
 	@Override
 	public void executeTurn() {
-		action = false; //sets default value, will by default ask for user input
 
 		switch (choice) {
 			case 1: //attacks inputed target
@@ -141,17 +163,27 @@ public class Hero extends Monster {
 
 			case 2: //Try to flee
 				//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
-				setStatus(Status.DODGE, 2);
+				setStatus(Status.DODGE, true);
 				Interface.writeOut("You try dodge all incoming attacks, increasing evasiveness");
 				break;
 
 			case 3: //use inputed item
-				Equipment.equip(this, pick);
-				pick = null;
+				Equipment.equip(this, item); //can't remove item
+				item = null;
+				break;
+
+			case 4: //unequip item
+				Equipment.unequip(this, slot);
+				slot = null;
+				break;
 		}
 	}
 
 	public void addItems (Item added, int amount) {
 		inventory.addItems(added, amount);
+	}
+
+	public void addItem (Item added) {
+		addItems(added, 1);
 	}
 }

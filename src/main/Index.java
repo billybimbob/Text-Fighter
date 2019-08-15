@@ -113,18 +113,19 @@ public class Index {
 
 			while((line = reader.readLine()) != null) {
 				String[] toks = line.split(",\\s+");
-				if (toks.length < 5)
+				if (toks.length < 6)
 					continue;
 
 				String name = toks[0];
-				Equipment.Slot slot = Equipment.Slot.valueOf(toks[1].toUpperCase());
+				Slot slot = Slot.valueOf(toks[1].toUpperCase());
 				boolean attType = Boolean.parseBoolean(toks[2]);
-				List<Stat> stats = Arrays.stream(toks[3].split(","))
+				int space = Integer.parseInt(toks[3]);
+				List<Stat> stats = Arrays.stream(toks[4].split(","))
 					.map(stat -> Stat.valueOf(stat.toUpperCase()))
 					.collect(Collectors.toList());
-				int modVal = Integer.parseInt(toks[4]);
+				int modVal = Integer.parseInt(toks[5]);
 
-				armors.add(new Armor(name, slot, attType, stats, modVal));
+				armors.add(new Armor(name, slot, attType, space, stats, modVal));
 			}
 
 		} catch (IOException e) {

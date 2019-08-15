@@ -38,7 +38,7 @@ public class Inventory implements Iterable<Item> {
 		
 		ItemInfo info = inventoryList.get(item);
 		if (info == null)
-			Interface.writeOut("Item does not exist");
+			System.err.println("Item does not exist");
 		else {
 			slotsUsed -= item.getSpace();
 			if (info.getAmount() == 1)
@@ -65,8 +65,8 @@ public class Inventory implements Iterable<Item> {
 		int remain = inventSpace-slotsUsed;
 		
 		int canAdd = remain >= amount
-			? amount
-			: remain - (remain % item.getSpace());
+			? numItems
+			: remain / item.getSpace();
 
 		ItemInfo info = inventoryList.get(item);
 		if (info == null) {
@@ -75,11 +75,11 @@ public class Inventory implements Iterable<Item> {
 		} else
 			info.addAmount(canAdd);
 		
-		slotsUsed += canAdd;
+		slotsUsed += (canAdd * item.getSpace());
 
-		if (canAdd != amount)
+		if (canAdd != numItems)
 			Interface.writeOut("Your inventory is full, and cannot fit " 
-				+ (amount-canAdd) + " " + item.getName() + " (s)\n");
+				+ (numItems-canAdd) + " " + item.getName() + " (s)\n");
 	}
 
 	
