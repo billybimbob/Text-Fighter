@@ -16,17 +16,18 @@ public class Freeze extends Ability {
 		damageMod = 0.75f;
 	}
 	
-	protected void execute(Monster target) {
+	protected void execute() {
 
+		Monster target = this.getTarget();
 		String failPrompt = attacker.getName() + "'s spell failed";
-		if (attackHit(target, failPrompt)) {
+		if (attackHit(failPrompt)) {
 			//Attack based on RNG and modified by stats, need to consider magic attack
 
 			String blockedPrompt = attacker.getName() + "'s freeze was resisted by " + target.getName();
-			if (!targetReduct(target, blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+			if (!targetReduct(blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 				
-				Interface.writeOut(attacker.getName() + " freezes " + target.getName() + " for " +damage + " damage");
-				dealDamage(attacker, target, damage);
+				String damPrompt = attacker.getName() + " freezes " + target.getName() + " for " +damage + " damage";
+				dealDamage(damPrompt);
 				
 				if (target.getStat(Stat.SPEED) > 0) {
 					int statDam = (int)(damage*0.5);		

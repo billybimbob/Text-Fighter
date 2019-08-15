@@ -1,6 +1,7 @@
 package combat;
 
 import java.util.*;
+import combat.moves.Ability;
 import assets.Monster;
 
 class FightLog {
@@ -8,6 +9,8 @@ class FightLog {
     public static class LogInfo {
         private Monster attacker;
         private float damage;
+        //private Ability attack;
+        //private List<Status> applied;
 
         private LogInfo(Monster attacker, float damage) {
             this.attacker = attacker;

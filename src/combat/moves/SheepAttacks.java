@@ -12,8 +12,10 @@ public class SheepAttacks extends Ability{
 		description = "the most OP attack in the game";
 	}
 	
-	protected void execute(Monster target) {
+	protected void execute() {
 		int dialogue = (int)(Math.random()*4);
+		Monster target = this.getTarget();
+		
 		switch(dialogue) {
 			case 0:
 				Interface.writeOut(attacker.getName() + " readies its.. hoof to strike");
@@ -26,9 +28,10 @@ public class SheepAttacks extends Ability{
 				break;
 			case 3:
 				if (Math.random()>0.99) {
-					float secretDam = (int)(Math.random()*(target.getStat(Stat.HP)))*2;
-					Interface.writeOut("Woah! " + attacker.getName() + " is angry, and bites on " + target.getName() + " for " + secretDam + " damage!");
-					dealDamage(attacker, target, secretDam);
+					this.damage = (int)(Math.random()*(target.getStat(Stat.HP)))*2;
+					String damPrompt = "Woah! " + attacker.getName() + " is angry, and bites on " 
+						+ target.getName() + " for " + damage + " damage!";
+					dealDamage(damPrompt);
 				} else {
 					Interface.writeOut("Just a little old goat");
 				}

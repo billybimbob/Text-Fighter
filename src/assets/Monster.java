@@ -112,6 +112,14 @@ public class Monster extends Entity implements Cloneable {
 		specials.forEach(special -> 
 			moveSto.add(createAbility(special)));
 
+		moveSto.sort(new Comparator<Ability>() {
+			@Override
+			public int compare(Ability a, Ability b) {
+				Float aMana = a.getManaCost(), bMana = b.getManaCost();
+				return aMana.compareTo(bMana);
+			}
+		});
+
 		moveList = moveSto.toArray(Ability[]::new);
 	}
 
@@ -143,7 +151,7 @@ public class Monster extends Entity implements Cloneable {
 		if (copy.passive != null)
 			this.setPassive((Ability)copy.passive.clone(this));
 		
-		this.moveList = Arrays.stream(copy.moveList)
+		this.moveList = Arrays.stream(copy.moveList) //should already be sorted
 			.map(move -> (Ability)move.clone(this)) //could use name and valueOf
 			.toArray(Ability[]::new);
 
@@ -265,10 +273,24 @@ public class Monster extends Entity implements Cloneable {
 	}
 
 	/**
-	 * @return -1 is no limit, 0 is self, >0 max number of targets 
+	 * returns number of targets; defaults to 0
+	 * @return -1 is no limit, 0 is self, >0 max number of targets
 	 */
 	protected int getNumTar() { //could be null
-		return turnMove.getNumTar();
+		return turnMove == null? 0 : turnMove.getNumTar();
+	}
+	
+	protected Ability getTurnMove() { return turnMove; }
+	
+	protected void setTurnMove(int idx) {
+		if (idx == -1)
+			turnMove = null;
+		if (turnMove == null)
+			turnMove = moveList[idx];
+	}
+	protected void setTurnMove() {
+		int randInt = (int)(Math.random()*moveList.length);
+		setTurnMove(randInt);
 	}
 
 	protected void setPassive(Ability passive) {
@@ -288,17 +310,6 @@ public class Monster extends Entity implements Cloneable {
 			System.err.println("issue cloning monster");
 			return null;
 		}
-	}
-
-	protected Ability getTurnMove() { return turnMove; }
-	
-	protected void setTurnMove(int idx) {
-		if (turnMove == null)
-			turnMove = moveList[idx];	
-	}
-	protected void setTurnMove() {
-		int randInt = (int)(Math.random()*moveList.length);
-		setTurnMove(randInt);
 	}
 
 
@@ -396,7 +407,7 @@ public class Monster extends Entity implements Cloneable {
 		if (targets.size() > 0)
 			turnMove.useAbility();
 		else
-			System.err.println("no targets found, aggro: " + this.aggro);
+			Interface.writeOut(this.name + "'s targets(s) are no longer valid");
 	}
 
 	public void clearTurn() {
@@ -419,6 +430,9 @@ public class Monster extends Entity implements Cloneable {
 			this.targets = sto;
 			this.turnMove = stoMove;
 		}
+
+		if (this.getNumTar() != 0)
+			this.targets.retainAll(possTargets);
 	}
 
 	public void addAttack(Ability adding) { //not sure if better

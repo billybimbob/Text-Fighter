@@ -2,9 +2,12 @@ package combat.moves;
 
 import assets.Monster;
 import assets.Stat;
+import combat.Status;
 import main.Interface;
 
 public abstract class Ability implements Cloneable {
+
+	private Monster target; //changes with useAbility
 
 	protected String name, description;
 	protected float manaCost, attMod, damage, damageMod;
@@ -68,11 +71,10 @@ public abstract class Ability implements Cloneable {
 	 * checks whether attacks lands on target; based on att/mag, attMod, and speed
 	 * damage calculated on success;
 	 * attack damage check based on either the att or mag stat
-	 * @param target {@code Monster} used to determine if miss
 	 * @param failPrompt prints prompt if attack misses; {@code null} prints nothing on miss
 	 * @return {@code true} if attack hits, {@code false} if attack misses
 	 */
-	protected boolean attackHit(Monster target, String failPrompt) {
+	protected boolean attackHit(String failPrompt) {
 		Stat hitStat = Stat.getHitStat(attType);
 		Stat blockStat = Stat.getBlockStat(attType);
 		double checkNum = Math.random()*attacker.getStat(hitStat) - Math.random()*target.getStat(Stat.SPEED)*0.5;
@@ -90,8 +92,8 @@ public abstract class Ability implements Cloneable {
 	 * checks whether attacks lands on target; damage calculated on success; nothing done on fail
 	 * @see {@link Ability#attackHit(Monster, String)}
 	 */
-	protected boolean attackHit(Monster target) {
-		return attackHit(target, null);
+	protected boolean attackHit() {
+		return attackHit(null);
 	}
 	
 	/**
@@ -111,11 +113,10 @@ public abstract class Ability implements Cloneable {
 
 	/**
 	 * modfies(lowers) damage value based on target's defense stat
-	 * @param target {@code Monster} to be dealt damage
 	 * @param blockedPrompt prints out the value if return value is {@code true}
 	 * @return {@code true} if modified damage value is less than or equal to 0
 	 */
-	protected boolean targetReduct(Monster target, String blockedPrompt) { //maybe look over
+	protected boolean targetReduct(String blockedPrompt) { //maybe look over
 		Stat hitStat = Stat.getHitStat(attType), blockStat = Stat.getBlockStat(attType);
 		damage -= (int)(Math.random()*(target.getStat(blockStat)));
 		
@@ -146,14 +147,21 @@ public abstract class Ability implements Cloneable {
 		return enoughMana();
 	}
 
-	protected abstract void execute(Monster target);
+	/**use ability on specific target */
+	protected abstract void execute();
 
 
 	/*
 	 * getters
 	 */
+	protected Monster getTarget() {
+		return this.target;
+	}
 	public String getName() {
 		return name;
+	}
+	public float getManaCost() {
+		return manaCost;
 	}
 	public int getNumTar() {
 		return numTar;
@@ -168,6 +176,24 @@ public abstract class Ability implements Cloneable {
 		return true;
 	}
 
+	
+	/**
+	 * attacker deals damage to target, and the damage is logged
+	 */
+	public void dealDamage (String damPrompt) {
+		
+		target.modStat(Stat.HP, true, -damage);
+		Interface.writeOut(damPrompt);
+
+		if (target.getStatus(Status.REFLECT) > -1) { //not sure if I want to check every time
+			float refDam = (int)(damage*0.75f);
+			attacker.modStat(Stat.HP, true, -refDam);
+			Interface.writeOut(target.getName() + " reflects " + refDam 
+				+ " damage to " + attacker.getName());
+		}
+			
+		Interface.currentFight().addLog(attacker, target, damage);
+	}
 
 	@Override
 	public String toString() {
@@ -175,17 +201,13 @@ public abstract class Ability implements Cloneable {
 	}
 
 	public void useAbility() { //not sure if needs to be static
-		if (this.preExecute())
-			for (Monster target: attacker.getTargets())
-				this.execute(target);
-	}
-
-	/**
-	 * attacker deals damage to target, and the damage is logged
-	 */
-	public static void dealDamage (Monster attacker, Monster target, float damage) {
-		target.modStat(Stat.HP, true, -damage);
-		Interface.currentFight().addLog(attacker, target, damage);
+		if (this.preExecute()) {
+			for (Monster target: attacker.getTargets()) {
+				this.target = target;
+				this.execute();
+			}
+			this.target = null;
+		}
 	}
 
 }

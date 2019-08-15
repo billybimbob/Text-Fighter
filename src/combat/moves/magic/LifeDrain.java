@@ -16,16 +16,17 @@ public class LifeDrain extends Ability {
 		damageMod = 1.4f;
 	}
 
-	protected void execute(Monster target) {
+	protected void execute() {
 
+		Monster target = this.getTarget();
 		String failPrompt = attacker.getName() + "'s spell failed";
-		if (attackHit(target, failPrompt)) { //Check if attack will be successful
+		if (attackHit(failPrompt)) { //Check if attack will be successful
 			
 			String blockedPrompt = attacker.getName() + "'s drain was resisted by " + target.getName();
-			if (!targetReduct(target, blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+			if (!targetReduct(blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 				
-				dealDamage(attacker, target, damage);
-				Interface.writeOut(attacker.getName() + " drains " + target.getName() + " for " + damage + " damage");
+				String damPrompt = attacker.getName() + " drains " + target.getName() + " for " + damage + " damage";
+				dealDamage(damPrompt);
 
 				float baseHeal = (int)(damage*0.5);
 				float capOver = attacker.modStat(Stat.HP, true, baseHeal);

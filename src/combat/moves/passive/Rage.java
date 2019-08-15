@@ -15,7 +15,7 @@ public class Rage extends Ability {
 		numTar = 0;
 	}
 
-	protected void execute(Monster target) {
+	protected void execute() {
 		attacker.modStat(Stat.ATT, false, 1);
 		attacker.modStat(Stat.DEF, false, -1);
 		Interface.writeOut(attacker.getName() + "'s gains attack boost and lowers defense");

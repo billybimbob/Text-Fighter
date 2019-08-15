@@ -3,7 +3,6 @@ package combat.moves.magic;
 import assets.Monster;
 import combat.Status;
 import combat.moves.Ability;
-import main.Interface;
 
 public class FlameBurst extends Ability {
 
@@ -26,13 +25,15 @@ public class FlameBurst extends Ability {
         return enoughMana(attPrompt);
     }
 
-    protected void execute(Monster target) {
+    protected void execute() {
+		Monster target = this.getTarget();
         String failPrompt = target.getName() + " resists the flames";
-        if (attackHit(target, failPrompt)) {
-            dealDamage(attacker, target, damage);
+        if (attackHit(failPrompt)) {
+            String damPrompt = target.getName() + " is hit with flames for " + damage + " damage"
+                + "\nand burning for " + duration + " turns";
+
             target.setStatus(Status.BURN, duration);
-            Interface.writeOut(target.getName() + " is hit with flames for " + damage + " damage"
-                + "\n\tand is also burning for " + duration + " turns");
+            dealDamage(damPrompt);
         }
     }
 

@@ -17,7 +17,7 @@ public class Fight {
 
 	public Fight(List<Monster> fighters) {
 		this.log = new FightLog();
-		this.fighters = fighters;
+		this.fighters = new ArrayList<>(fighters); //for random access
 		this.fightControl = false;
 	}
 	
@@ -51,24 +51,25 @@ public class Fight {
 			
 			priorities();
 			
+			for (int i = 0; i < fighters.size(); i++) { //idx loop from removing
+				Monster fighter = fighters.get(i);
+				runTurn(fighter);
+
+				for(int idx: removeDead()) {
+					if (idx <= i) i--;
+				}
+
+				if (!fightControl)
+					break;
+			}
+
+			/*
 			//Goes through the move of each fighter
 			for (Monster fighter: fighters)
 				runTurn(fighter);
 
-			for (Iterator<Monster> i = fighters.iterator(); i.hasNext(); ) {
-				Monster fighter = i.next();
-				
-				if (fighter.getStat(Stat.HP) <= 0) {
-					if (fighter.getClass().equals(Hero.class)) {
-						fightControl = false;
-						Interface.writeOut("You have received a fatal blow, and have died");
-						break;
-					} else {
-						i.remove();
-						Interface.writeOut(fighter.getName() + " has died");
-					}
-				}
-			}
+			//remove after to not mess up prior targets
+			removeDead();*/
 
 			if (fightControl && otherFighters(Interface.getHero()).size() == 0) { //Check if all Monster are killed
 				Interface.writeOut("All of the Monster have been killed, you win!");
@@ -91,16 +92,13 @@ public class Fight {
 
 	private void newRound() {
 		log.newRound();
-
-		StringBuilder lstFighters = new StringBuilder(Interface.LINESPACE + "\n");
-
 		attackOrder(); //Orders the fighters by speed
 
+		StringBuilder lstFighters = new StringBuilder(Interface.LINESPACE + "\n");
 		fighters.forEach(fighter -> {
 			fighter.resetStatusChecks();
 			lstFighters.append(fighter + "\n");
 		});
-
 		lstFighters.append(Interface.LINESPACE + "\n");
 		Interface.writeOut(lstFighters.toString());
 	}
@@ -131,10 +129,12 @@ public class Fight {
 
 	private void runTurn(Monster attacker) {
 
-		if (attacker.getStat(Stat.HP) <= 0) //got rid of flee, maybe temporary
+		if (attacker.getStat(Stat.HP) <= 0) { //got rid of flee, maybe temporary; should not occur
+			System.err.println(attacker.getName() + " should be dead");
 			return;
+		}
 		
-		attacker.usePassive( otherFighters(attacker) );
+		attacker.usePassive( otherFighters(attacker) ); //runs passive and updates targets
 		
 		//could put status in array
 		statusCheck(attacker, Status.BURN);
@@ -145,6 +145,8 @@ public class Fight {
 
 		if (fightControl) 
 			/**
+			 * fightControl can be switched off
+			 * from stun
 			 * includes heroTurn, overriden
 			 */
 			attacker.executeTurn();
@@ -166,13 +168,36 @@ public class Fight {
 				statusCheck(attacker, status);
 		}
 
-
 		try {
 			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {}
 		
 		Interface.writeOut(" ");
 	}	
+
+
+	private List<Integer> removeDead() {
+		List<Integer> removedIdx = new ArrayList<>();
+		Iterator<Monster> iter = fighters.iterator(); 
+		
+		for (int i = 0; iter.hasNext(); i++) {
+			Monster fighter = iter.next();
+			
+			if (fighter.getStat(Stat.HP) <= 0) {
+				if (fighter.getClass().equals(Hero.class)) {
+					fightControl = false;
+					Interface.writeOut("You have received a fatal blow, and have died");
+					removedIdx.clear();
+					return removedIdx;
+				} else {
+					iter.remove();
+					removedIdx.add(i);
+					Interface.writeOut(fighter.getName() + " has died\n");
+				}
+			}
+		}
+		return removedIdx;
+	}
 		
 	/**
 	 * each turn effects, while status is active
@@ -215,7 +240,7 @@ public class Fight {
 		} else if (check > -1) { //active
 			switch(status) {
 				case BURN:
-					int burnDam = (int)(checking.getStat(Stat.HP)*0.1);
+					int burnDam = (int)(checking.getStat(Stat.HP)*0.5f*Math.random());
 					checking.modStat(Stat.HP, false, -burnDam);
 					Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
 					break;
@@ -240,14 +265,14 @@ public class Fight {
 					break;
 
 				case REFLECT:
-					for (FightLog.LogInfo info: log.getInfo(getTurnNum()-1, checking)) { //checking all damage recieved from last round
+					/*for (FightLog.LogInfo info: log.getInfo(getTurnNum()-1, checking)) { //checking all damage recieved from last round
 						Monster attacker = info.getAttacker();
 						if (fighters.contains(attacker)) {
 							float refDam = (int)(info.getDamage()*0.75);
 							attacker.modStat(Stat.HP, false, -refDam);
 							Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
 						}
-					}
+					}*/
 					break;
 
 				case STUN:

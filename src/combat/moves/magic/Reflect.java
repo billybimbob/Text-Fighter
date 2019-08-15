@@ -19,7 +19,7 @@ public class Reflect extends Ability { //not sure if should be priority or not
 		duration = 5;
 	}
 
-	protected void execute(Monster target) {
+	protected void execute() {
 		attacker.setStatus(Status.REFLECT, 5);
 		Interface.writeOut(attacker.getName() + " casts a reflecting shield for " + duration + " turns");
 	}

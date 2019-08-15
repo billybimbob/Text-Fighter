@@ -17,15 +17,16 @@ public class Shock extends Ability {
 		damageMod = 1.5f;
 	}
 
-	protected void execute(Monster target) {
+	protected void execute() {
+		Monster target = this.getTarget();
 		String failPrompt = attacker.getName() + "'s spell failed";
-		if (attackHit(target, failPrompt)) {
+		if (attackHit(failPrompt)) {
 			
 			String blockedPrompt = attacker.getName() + "'s shock was resisted by " + target.getName();
-			if (!targetReduct(target, blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
+			if (!targetReduct(blockedPrompt)) { //Check if the defense reduction value is greater than the attack, therefore blocking the attack
 				
-				dealDamage(attacker, target, damage);
-				Interface.writeOut(attacker.getName() + " blasts " + target.getName() + " for " + damage + " damage");
+				String damPrompt = attacker.getName() + " blasts " + target.getName() + " for " + damage + " damage";
+				dealDamage(damPrompt);
 				
 				attacker.setStatus(Status.DODGE, 3); //keep eye on
 				Interface.writeOut(attacker.getName() + " gains increased evasiveness for 3 turns");

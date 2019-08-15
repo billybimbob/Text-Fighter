@@ -21,8 +21,8 @@ public class Intimidate extends Ability {
 		return true;
 	}
 
-	protected void execute(Monster target) {
-		target.modStat(Stat.SPEED, true, -1);
+	protected void execute() {
+		this.getTarget().modStat(Stat.SPEED, true, -1);
 	}
 
 }

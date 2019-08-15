@@ -30,27 +30,27 @@ public class ChargeAttack extends Ability {
 		return true;
 	}
 	
-	protected void execute(Monster target) { //might put the print statements in the fight class
+	protected void execute() { //might put the print statements in the fight class
 		if (turnCount == 1) { //checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
-
+			Monster target = this.getTarget();
 			String missPrompt = attacker.getName() + "'s attack missed";
-			if (attackHit(target, missPrompt)) {
+			if (attackHit(missPrompt)) {
 				
 				boolean blocked = false;
 				if (!critCheck()) { //reduce damage on failure
 					String blockedPrompt = target.getName() + " resisted " + attacker.getName() + "'s attack";
-					blocked = targetReduct(target, blockedPrompt);
+					blocked = targetReduct(blockedPrompt);
 				}
 			
 				if (!blocked) {
-					dealDamage(attacker, target, damage);
-					Interface.writeOut(attacker.getName() + " lands a powerful hit on " 
-						+ target.getName() + " for " + damage + " damage");
+					String damPrompt = attacker.getName() + " lands a powerful hit on " 
+						+ target.getName() + " for " + damage + " damage";
+					dealDamage(damPrompt);
 				}
 						
 				float sto = setAttMod(0.1f);
-				if (attackHit(target)) {
+				if (attackHit()) {
 					Interface.writeOut(attacker.getName() + "'s charged attack stuns " + target.getName());
 					target.setStatus(Status.STUN, true);
 				}

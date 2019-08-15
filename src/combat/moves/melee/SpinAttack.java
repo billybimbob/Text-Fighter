@@ -2,7 +2,6 @@ package combat.moves.melee;
 
 import assets.Monster;
 import combat.moves.Ability;
-import main.Interface;
 
 public class SpinAttack extends Ability {
 
@@ -23,14 +22,15 @@ public class SpinAttack extends Ability {
 		return enoughMana(attPrompt);
 	}
 	
-	protected void execute(Monster target) {
+	protected void execute() {
+		Monster target = this.getTarget();
 		String missPrompt = target.getName() + " dodges the attack";
-		if (attackHit(target, missPrompt)) { //Check if attack will be successful
+		if (attackHit(missPrompt)) { //Check if attack will be successful
 			
 			String blockedPrompt = target.getName() + " blocks all damage";
-			if (!targetReduct(target, blockedPrompt)) {	
-				dealDamage(attacker, target, damage);
-				Interface.writeOut(target.getName() + " gets hit for " + damage + " damage");
+			if (!targetReduct(blockedPrompt)) {	
+				String damPrompt = target.getName() + " gets hit for " + damage + " damage";
+				dealDamage(damPrompt);
 			}
 		}
 	}

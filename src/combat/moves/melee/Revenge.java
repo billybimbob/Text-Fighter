@@ -25,8 +25,8 @@ public class Revenge extends Ability {
     }
 
     @Override
-	protected void execute(Monster target) {
-        dealDamage(attacker, target, damage);
-        Interface.writeOut(target.getName() + " is dealt " + damage + " damage");
+	protected void execute() {
+        String damPrompt = this.getTarget().getName() + " is dealt " + damage + " damage";
+        dealDamage(damPrompt);
     }
 }

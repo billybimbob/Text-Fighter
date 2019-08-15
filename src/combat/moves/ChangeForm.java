@@ -49,7 +49,7 @@ public class ChangeForm extends Ability {
 		}
 	}
 	
-	protected void execute(Monster target) {
+	protected void execute() {
 		boolean shifted = attacker.getStatus(Status.SHIFT) >= 0;
 
 		List<Monster> tempList = Arrays.stream(formList) //determine available transformations, removes caster from list
