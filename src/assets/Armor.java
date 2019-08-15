@@ -17,14 +17,12 @@ public class Armor extends Item {
     }
 
     @Override
-    protected void use(Monster user, boolean remove) {
-        if (remove)
-            Interface.writeOut(user.getName() + " has removed " + this.name);
+    protected void usePrompts () {
+        if (this.remove)
+            Interface.writeOut(currentUser.getName() + " has removed " + this.name);
         else
-            Interface.writeOut(user.getName() + " equips " + this.name
+            Interface.writeOut(currentUser.getName() + " equips " + this.name
                 + " and gains a boost in " + this.getModNames());
-
-        super.use(user, remove);
     }
 
     protected void statMod(Stat stat, int mod) {

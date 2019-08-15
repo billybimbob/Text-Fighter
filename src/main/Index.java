@@ -14,7 +14,7 @@ import combat.moves.passive.*;
 public class Index {
 
 	public static enum Move { //used to make map limited
-		BASIC, SHEEP, //atcks
+		BASIC, SHEEP, //attacks
 		BURST, DRAIN, FREEZE, FRENZY, POLY, POSSESS, REFLECT, SHIFT, SHOCK, //magic
 		CHARGE, DISRUPT, REVENGE, SPIN, //melee
 		INTIM, RAGE; //passives
@@ -39,23 +39,20 @@ public class Index {
 		T get(String name) { return this.idxGet( names.get(name) ); }
 	}
 	
-	
+	//encapsulated away ability to add values once init
 	private static final Map<Move, Function<Monster, Ability>> attacks = new HashMap<>();
 	private static final Map<Move, Function<Monster, Ability>> passives = new HashMap<>();
 	private static final NameList<Monster> monsters = new NameList<>();
 	private static final NameList<Potion> potions = new NameList<>();
 	private static final NameList<Armor> armors = new NameList<>();
-
-	private Index() { }
-
-	//add values to attrs
-	public static void createVals() {
+	static {
 		mapMoves();
 		readPotions();
 		readArmors();
 		readMonsters();
 	}
 
+	private Index() { }
 
 	private static void mapMoves() {
 		//could split different class abilities
@@ -74,7 +71,7 @@ public class Index {
 		attacks.put(Move.SHIFT,   ChangeForm::new);
 		attacks.put(Move.SHOCK,   Shock::new);
 		attacks.put(Move.SPIN,    SpinAttack::new);
-
+		
 		passives.put(Move.INTIM,  Intimidate::new);
 		passives.put(Move.RAGE,   Rage::new);
 

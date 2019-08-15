@@ -13,8 +13,7 @@ public class Fight {
 
 	private FightLog log;
 	private List<Monster> fighters;
-	private boolean fightControl;
-	private boolean skipTurn;
+	private boolean fightControl; //indicate fight running and if to skip turns
 
 	public Fight(List<Monster> fighters) {
 		this.log = new FightLog();
@@ -131,7 +130,7 @@ public class Fight {
 	}
 
 	private void runTurn(Monster attacker) {
-		skipTurn = false;
+
 		if (attacker.getStat(Stat.HP) <= 0) //got rid of flee, maybe temporary
 			return;
 		
@@ -144,7 +143,7 @@ public class Fight {
 		statusCheck(attacker, Status.REFLECT);
 		statusCheck(attacker, Status.STUN);
 
-		if (!skipTurn) 
+		if (fightControl) 
 			/**
 			 * includes heroTurn, overriden
 			 */
@@ -157,6 +156,7 @@ public class Fight {
 		statusCheck(attacker, Status.POISON);
 		statusCheck(attacker, Status.SHIFT);
 		
+		fightControl = true; //not sure
 		attacker.clearTurn();
 		attacker.modStat(Stat.MP, true, 1); //passive mp gain, could change the val
 		
@@ -242,15 +242,17 @@ public class Fight {
 				case REFLECT:
 					for (FightLog.LogInfo info: log.getInfo(getTurnNum()-1, checking)) { //checking all damage recieved from last round
 						Monster attacker = info.getAttacker();
-						float refDam = (int)(info.getDamage()*0.5);
-						attacker.modStat(Stat.HP, false, -refDam);
-						Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
+						if (fighters.contains(attacker)) {
+							float refDam = (int)(info.getDamage()*0.75);
+							attacker.modStat(Stat.HP, false, -refDam);
+							Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
+						}
 					}
 					break;
 
 				case STUN:
-					skipTurn = true;
-					Interface.writeOut(checking.getName() + " is stunned"); //multiTurn attack still carries on
+					fightControl = false; //not sure
+					Interface.writeOut(checking.getName() + " cannot move"); //multiTurn attack still carries on
 					break;
 
 				case CONTROL:

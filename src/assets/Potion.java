@@ -22,26 +22,24 @@ public class Potion extends Item {
 
 	
 	@Override
-	protected void use(Monster user, boolean remove) { //override for printing
+	protected void usePrompts() { //override for printing
 
-		if (remove) {
-			user.setStatus(Status.POTION, false);
+		if (this.remove) {
+			currentUser.setStatus(Status.POTION, false);
 			Interface.writeOut(this.getName() + " has worn off");
 
-		} else if (this.start = user.getStatus(Status.POTION) == -1) { //potential issue; potion can't refresh
-			user.setStatus(Status.POTION, duration);
+		} else if (this.start = currentUser.getStatus(Status.POTION) == -1) { //potential issue; potion can't refresh
+			currentUser.setStatus(Status.POTION, duration);
 			String modNames = this.getModNames();
 
 			if (this.overTime)
-				Interface.writeOut(user.getName() + " has used " 
+				Interface.writeOut(currentUser.getName() + " has used " 
 					+ this.getName() + " and will gain " + modNames + " over time");
 					
 			else
-				Interface.writeOut(user.getName() + " has used " + this.getName()
+				Interface.writeOut(currentUser.getName() + " has used " + this.getName()
 					+ " and gains a boost in " + modNames);
 		}
-		
-		super.use(user, remove);
 	}
 	
 	
@@ -52,14 +50,14 @@ public class Potion extends Item {
 			Interface.writeOut(currentUser.getName() + " gain " 
 				+ (modVal-capOver) + " " + stat + " from the " + this.getName());
 
-		} else { //nothing done if not start or remove
+		} else if (!this.overTime) { //nothing done if not start or remove
 
 			if (this.remove)
 				currentUser.modStat(stat, false, -modVal);
 			
 			else if (this.start) {
 				currentUser.modStat(stat, false, modVal);
-				Interface.writeOut(currentUser.getName() + " and gained " + modVal + " " + stat);
+				Interface.writeOut(currentUser.getName() + " gained " + modVal + " " + stat);
 			}
 		}
 	}

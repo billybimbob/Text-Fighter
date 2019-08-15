@@ -64,24 +64,37 @@ public abstract class Item extends Entity {
 	}
 
 	/**
+	 * prints item being used being modifying each stat
+	 */
+	protected abstract void usePrompts();
+
+	/**
 	 * modifies user's individual stat by value
 	 */
 	protected abstract void statMod (Stat stat, int modVal);
 	
+
+	protected boolean checkState(Monster user, boolean remove) {
+		boolean contains = using.contains(user);
+		return remove && contains || !remove && !contains;
+	}
 
 	/**
 	 * modifies user's stats by the Item
 	 * @param user monster using the item
 	 * @param remove {@code true} if to remove stats from user
 	 */
-	protected void use (Monster user, boolean remove) { //not sure if should be public or not
-		this.currentUser = user;
-		if (this.remove = remove)
-			using.remove(user);
-		else
-			using.add(user);
-	
-		mods.forEach(info -> statMod(info.getStat(), info.getMod()));
+	protected void use (Monster user, boolean remove) { //should not be remove true first
+		if (checkState(user, remove)) {
+			this.currentUser = user;
+			if (this.remove = remove)
+				using.remove(user);
+			else
+				using.add(user);
+
+			usePrompts();
+			mods.forEach(info -> statMod(info.getStat(), info.getMod()));
+		}
 	}
 
 	/**

@@ -15,7 +15,6 @@ public class Interface {
 	private static Fight fight;
 	
 	public static void main(String[] args) { //All this is probably temporary
-		Index.createVals();
 		
 		List<Monster> fighters = new ArrayList<>();
 		Interface.writeOut("Welcome hero!");
@@ -44,7 +43,7 @@ public class Interface {
 				break;
 			case 3:
 				hero.addItem(Index.getArmor("Tome"));
-				hero.addItem(Index.getPotion("Element Barrier Potion Potion"));
+				hero.addItem(Index.getPotion("Element Barrier Potion"));
 				hero.addItem(Index.getPotion("Ironskin Potion"));
 				Interface.writeOut("You are a cleric");
 				break;

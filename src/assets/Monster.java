@@ -349,18 +349,18 @@ public class Monster extends Entity implements Cloneable {
 			? -1
 			: endTurn - currentTurn();
 	}
+	
+	public boolean statusUpdated() {
+		return this.status.values().stream()
+			.map(StatusInfo::getChecked)
+			.reduce(true, (accum, info) -> accum && info);
+	}
 
 	public Status[] getNotChecked() {
 		return this.status.entrySet().stream()
 			.filter(entry -> !entry.getValue().getChecked())
 			.map(entry -> entry.getKey())
 			.toArray(Status[]::new);
-	}
-
-	public boolean statusUpdated() {
-		return this.status.values().stream()
-			.map(StatusInfo::getChecked)
-			.reduce(true, (accum, info) -> accum && info);
 	}
 
 
