@@ -21,26 +21,16 @@ public class Fight {
 		this.fightControl = false;
 	}
 	
-	public void addLog(Monster attacker, Monster target, float damage) {
-		log.addLog(attacker, target, damage);
-	}
-
 	public int getTurnNum() { return log.roundCount()-1; }
+	public FightLog getLogs() { return log; }
 
-	public float getTurnDamage(int round, Monster target) {
-		float totalDam = 0;
-		for(FightLog.LogInfo info: log.getInfo(round, target))
-			totalDam += info.getDamage();
-		
-		return totalDam;
-	}
 
 	public void run() {
 		if (fightControl) {
 			System.err.println("fight is already running");
 			return;
 		}
-		
+
 		fightControl = true;
 		do {
 			newRound();
@@ -51,16 +41,13 @@ public class Fight {
 			
 			priorities();
 			
-			for (int i = 0; i < fighters.size(); i++) { //idx loop from removing
+			for (int i = 0; fightControl && i < fighters.size(); i++) { //idx loop from removing
 				Monster fighter = fighters.get(i);
 				runTurn(fighter);
 
 				for(int idx: removeDead()) {
 					if (idx <= i) i--;
 				}
-
-				if (!fightControl)
-					break;
 			}
 
 			/*
@@ -90,6 +77,7 @@ public class Fight {
 			.collect(Collectors.toList());
 	}
 
+	
 	private void newRound() {
 		log.newRound();
 		attackOrder(); //Orders the fighters by speed
@@ -240,7 +228,8 @@ public class Fight {
 		} else if (check > -1) { //active
 			switch(status) {
 				case BURN:
-					int burnDam = (int)(checking.getStat(Stat.HP)*0.5f*Math.random());
+					int burnDam = (int)(checking.getStat(Stat.HP)*0.1f*Math.random());
+					burnDam = burnDam == 0 ? 1 : burnDam; //floor to 1
 					checking.modStat(Stat.HP, false, -burnDam);
 					Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
 					break;
@@ -265,10 +254,11 @@ public class Fight {
 					break;
 
 				case REFLECT:
-					/*for (FightLog.LogInfo info: log.getInfo(getTurnNum()-1, checking)) { //checking all damage recieved from last round
-						Monster attacker = info.getAttacker();
+					/*//checking all damage recieved from last round
+					for (Map.Entry<Monster, FightLog.Log> info: log.getInfo(getTurnNum()-1, checking).entrySet()) {
+						Monster attacker = info.getKey();
 						if (fighters.contains(attacker)) {
-							float refDam = (int)(info.getDamage()*0.75);
+							float refDam = (int)(info.getValue().getDamage()*0.75);
 							attacker.modStat(Stat.HP, false, -refDam);
 							Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
 						}

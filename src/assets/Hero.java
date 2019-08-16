@@ -3,7 +3,9 @@ package assets;
 import java.util.List;
 
 import combat.*;
-import main.*;
+import main.Inventory;
+import main.Index;
+import static main.Interface.*; //not sure if to keep
 
 public class Hero extends Monster {
 
@@ -49,7 +51,7 @@ public class Hero extends Monster {
 
 		while (!action) {
 			final String fightPrompt = "Which action would you like to do?";
-			choice = Interface.choiceInput(false, Fight.FIGHTCHOICES, fightPrompt);
+			choice = choiceInput(false, Fight.FIGHTCHOICES, fightPrompt);
 			
 			switch (choice) {
 				case 1: //Attack a prompted target
@@ -74,12 +76,12 @@ public class Hero extends Monster {
 	private void selectAttack(List<Monster> possTargets) { //array generate every time
 		do { //probably okay?
 			final String attPrompt = "Which attack do you want to use?";
-			int attNum = Interface.choiceInput(true, this.getMoves(), attPrompt);
+			int attNum = choiceInput(true, this.getMoves(), attPrompt);
 			if (attNum == 0)
 				return;
 			
 			this.setTurnMove(attNum-1); //start at 0th idx
-			Interface.writeOut("Move selected: " + this.getTurnMove().getName() + "\n");
+			writeOut("Move selected: " + this.getTurnMove().getName() + "\n");
 			
 			//determine the targets of hero move
 			action = true;
@@ -91,7 +93,7 @@ public class Hero extends Monster {
 
 				String[] monNames = possTargets.stream().map(Monster::getName).toArray(String[]::new);
 				final String tarPrompt = "Which monster would you want to target?";
-				int tarNum = Interface.choiceInput(true, monNames, tarPrompt);
+				int tarNum = choiceInput(true, monNames, tarPrompt);
 				
 				if (tarNum == 0) {//have to change how to implement
 					action = false;
@@ -106,30 +108,33 @@ public class Hero extends Monster {
 		} while (!action);
 	}
 
+
 	private void pickItem() {
 		if (inventory.empty()) {
-			Interface.writeOut("You have no items in your inventory\n");
+			writeOut("You have no items in your inventory\n");
 			return;
 		}
 
 		String[] inventNames = inventory.accessNames();
 		final String itemPrompt = "Which item do you want to use?";
-		int pickNum = Interface.choiceInput(true, inventNames, itemPrompt);
+		int pickNum = choiceInput(true, inventNames, itemPrompt);
 		
-		if (pickNum == 0)
+		if (pickNum == RESPONSENUM.get("Back"))
 			return;
 
-		if (this.getStatus(Status.POTION) > 0) { //potin still active
+		item = inventory.getItem(pickNum-1);
+		if (item.getSlot().equals(Slot.POTION) && this.getStatus(Status.POTION) > 0) { //potin still active
 			final String usePrompt = "Another buff is still active, "
 				+ "and will be canceled by this potion"
 				+ "\nAre you sure you want to do this?";
 
-			int confirmUse = Interface.choiceInput(false, Interface.RESPONSEOPTIONS, usePrompt);
-			if (confirmUse == 2) //could change to string; or stay in function
+			int confirmUse = choiceInput(false, RESPONSEOPTIONS, usePrompt);
+			if (confirmUse == RESPONSENUM.get("No")) { //could change to string; or stay in function
+				item = null;
 				return;
+			}
 		}
 
-		item = inventory.getItem(pickNum-1);
 		action = true;
 	}
 
@@ -137,14 +142,14 @@ public class Hero extends Monster {
 		String[] equipList = Equipment.showEquipped(this);
 		final String unequipPrompt = "Select a slot to unequip an item";
 		do {
-			int pickNum = Interface.choiceInput(true, equipList, unequipPrompt);
+			int pickNum = choiceInput(true, equipList, unequipPrompt);
 			if (pickNum == 0)
 				return;
 
 			slot = Equipment.numToSlot(pickNum-1);
 
 			if (Equipment.checkSlot(this, slot) == null) {
-				Interface.writeOut("No item is in the selected slot");
+				writeOut("No item is in the selected slot");
 				continue;
 			}
 
@@ -165,7 +170,7 @@ public class Hero extends Monster {
 			case 2: //Try to flee
 				//double escapeCheck = Math.random() + (attacker.spe*0.1-monFighters.get(0).spe*0.1); //Escape check based on speed of hero, against fastest enemy, and RNG
 				setStatus(Status.DODGE, true);
-				Interface.writeOut("You try dodge all incoming attacks, increasing evasiveness");
+				writeOut("You try dodge all incoming attacks, increasing evasiveness");
 				break;
 
 			case 3: //use inputed item

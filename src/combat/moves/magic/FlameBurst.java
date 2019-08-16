@@ -33,6 +33,7 @@ public class FlameBurst extends Ability {
                 + "\nand burning for " + duration + " turns";
 
             target.setStatus(Status.BURN, duration);
+            this.afflicted.add(Status.BURN);
             dealDamage(damPrompt);
         }
     }

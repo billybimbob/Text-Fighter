@@ -22,11 +22,12 @@ public class Frenzy extends Ability {
         return enoughMana(attPrompt);
     }
 
-	protected void execute() {
-		Monster target = this.getTarget();
+    protected void execute() {
+        Monster target = this.getTarget();
         String failPrompt = target.getName() + " resists being frenzied";
         if (attackHit(failPrompt)) {
             target.setStatus(Status.FRENZY, 2);
+            this.afflicted.add(Status.FRENZY);
             Interface.writeOut(target.getName() + " becomes frenzied");
         }
     

@@ -1,5 +1,8 @@
 package combat.moves;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import assets.Monster;
 import assets.Stat;
 import combat.Status;
@@ -8,17 +11,14 @@ import main.Interface;
 public abstract class Ability implements Cloneable {
 
 	private Monster target; //changes with useAbility
-
 	protected String name, description;
 	protected float manaCost, attMod, damage, damageMod;
 	protected Monster attacker;
 	protected int numTar;
 	protected boolean attType, priority, passive; //aoe attacks can't work with Monster
+	protected List<Status> afflicted; //could be expensive
 
-	/**
-	 * set default values for an abiltiy
-	 */
-	protected Ability(Monster user) {
+	protected Ability() {
 		this.priority = false;
 		this.passive = false;
 		this.numTar = 1;
@@ -26,14 +26,23 @@ public abstract class Ability implements Cloneable {
 		this.damage = 0;
 		this.attMod = 0.01f;
 		this.damageMod = 1;
+		this.afflicted = new ArrayList<>();
+	}
+
+	/**
+	 * set default values for an abiltiy
+	 */
+	protected Ability(Monster user) {
+		this();
 		this.attacker = user;
 	}
 
 	public Object clone(Monster attacker) { //can't do copy constructor becuase of subclasses
 		try {
-			Ability newAbility = (Ability)this.clone();
+			Ability newAbility = (Ability)super.clone();
 			newAbility.attacker = attacker;
 			newAbility.damage = 0;
+			newAbility.afflicted = new ArrayList<>(); //not sure
 			return newAbility;
 		} catch (CloneNotSupportedException e) {
 			System.err.println("issue cloning ability");
@@ -181,7 +190,6 @@ public abstract class Ability implements Cloneable {
 	 * attacker deals damage to target, and the damage is logged
 	 */
 	public void dealDamage (String damPrompt) {
-		
 		target.modStat(Stat.HP, true, -damage);
 		Interface.writeOut(damPrompt);
 
@@ -192,12 +200,8 @@ public abstract class Ability implements Cloneable {
 				+ " damage to " + attacker.getName());
 		}
 			
-		Interface.currentFight().addLog(attacker, target, damage);
-	}
-
-	@Override
-	public String toString() {
-		return name + " - " + manaCost + " mana\n\t" + description;
+		Interface.currentFight().getLogs()
+			.addLog(attacker, target, this, damage, this.afflicted);
 	}
 
 	public void useAbility() { //not sure if needs to be static
@@ -205,9 +209,15 @@ public abstract class Ability implements Cloneable {
 			for (Monster target: attacker.getTargets()) {
 				this.target = target;
 				this.execute();
+				afflicted.clear();
 			}
 			this.target = null;
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return name + " - " + manaCost + " mana\n\t" + description;
 	}
 
 }

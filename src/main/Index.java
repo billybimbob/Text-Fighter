@@ -39,7 +39,7 @@ public class Index {
 		T get(String name) { return this.idxGet( names.get(name) ); }
 	}
 	
-	//encapsulated away ability to add values once init
+	//encapsulated away ability to add values after init
 	private static final Map<Move, Function<Monster, Ability>> attacks = new HashMap<>();
 	private static final Map<Move, Function<Monster, Ability>> passives = new HashMap<>();
 	private static final NameList<Monster> monsters = new NameList<>();

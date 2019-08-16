@@ -20,10 +20,13 @@ public class Potion extends Item {
 		modStats.forEach(stat -> mods.add(new ModInfo(stat, modVal)));
 	}
 
-	
+	@Override
+	protected boolean checkState(Monster user, boolean remove) { //accounts for overtime
+		return super.checkState(user, remove) || !remove && using.contains(user); //contains called twice, inefficent
+	}
+
 	@Override
 	protected void usePrompts() { //override for printing
-
 		if (this.remove) {
 			currentUser.setStatus(Status.POTION, false);
 			Interface.writeOut(this.getName() + " has worn off");
@@ -42,9 +45,7 @@ public class Potion extends Item {
 		}
 	}
 	
-	
 	protected void statMod (Stat stat, int modVal) {
-
 		if (this.overTime && !this.remove) { //for start and overTime
 			float capOver = currentUser.modStat(stat, true, modVal);
 			Interface.writeOut(currentUser.getName() + " gain " 

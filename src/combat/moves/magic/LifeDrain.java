@@ -19,7 +19,7 @@ public class LifeDrain extends Ability {
 	protected void execute() {
 
 		Monster target = this.getTarget();
-		String failPrompt = attacker.getName() + "'s spell failed";
+		String failPrompt = attacker.getName() + "'s drain failed";
 		if (attackHit(failPrompt)) { //Check if attack will be successful
 			
 			String blockedPrompt = attacker.getName() + "'s drain was resisted by " + target.getName();

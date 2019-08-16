@@ -18,7 +18,9 @@ public class Revenge extends Ability {
     @Override
     protected boolean preExecute() {
         int prevRound = Interface.currentFight().getTurnNum()-1;
-        damage = Interface.currentFight().getTurnDamage(prevRound, attacker); //keep eye on
+        
+        damage = Interface.currentFight().getLogs()
+            .getTurnDamage(prevRound, attacker); //keep eye on
 
         Interface.writeOut(attacker.getName() + " enacts revenge");
         return enoughMana();

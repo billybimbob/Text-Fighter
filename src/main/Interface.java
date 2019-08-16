@@ -7,8 +7,13 @@ import combat.Fight;
 
 public class Interface {
 	
-	public static final String[] RESPONSEOPTIONS = {"Yes", "No"};
 	public static final String LINESPACE = "-----------------------------------------------";
+	public static final String[] RESPONSEOPTIONS = {"Yes", "No"};
+	public static final Map<String, Integer> RESPONSENUM = Map.of(
+		"Back", 0,
+		"Yes", 1,
+		"No", 2
+	);
 	
 	private static final Scanner KEYBOARD = new Scanner(System.in);
 	private static Hero hero;

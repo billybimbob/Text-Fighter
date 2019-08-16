@@ -116,7 +116,11 @@ public class Monster extends Entity implements Cloneable {
 			@Override
 			public int compare(Ability a, Ability b) {
 				Float aMana = a.getManaCost(), bMana = b.getManaCost();
-				return aMana.compareTo(bMana);
+				int ret;
+				if ((ret = aMana.compareTo(bMana)) == 0)
+					return a.getName().compareTo(b.getName());
+				else
+					return ret;
 			}
 		});
 

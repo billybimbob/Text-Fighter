@@ -52,6 +52,7 @@ public class ChargeAttack extends Ability {
 				float sto = setAttMod(0.1f);
 				if (attackHit()) {
 					Interface.writeOut(attacker.getName() + "'s charged attack stuns " + target.getName());
+					this.afflicted.add(Status.STUN);
 					target.setStatus(Status.STUN, true);
 				}
 				setAttMod(sto);

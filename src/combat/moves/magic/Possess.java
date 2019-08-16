@@ -17,9 +17,10 @@ public class Possess extends Ability {
 
 	protected void execute() {
 		Monster target = this.getTarget();
-		String failPrompt = attacker.getName() + "'s spell failed";
+		String failPrompt = attacker.getName() + " failed to possess";
         if (attackHit(failPrompt)) {
             target.setStatus(Status.CONTROL, 3);
+            this.afflicted.add(Status.CONTROL);
             Interface.writeOut(attacker.getName() + " takes control of " + target.getName());
         }
     }

@@ -34,6 +34,7 @@ public class Disrupt extends Ability {
 				float sto = setAttMod(0.4f);
 				if (attackHit()) { //mods damage
 					Interface.writeOut(attacker.getName() + "'s blow also stuns " + target.getName());
+					this.afflicted.add(Status.STUN);
 					target.setStatus(Status.STUN, true);
 				}
 				setAttMod(sto);
