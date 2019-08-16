@@ -47,6 +47,10 @@ public class Hero extends Monster {
 	@Override
 	public void setTurn(List<Monster> targets) { //look at respone idx
 		//Hero user input/determine hero actions
+		if (item != null) { //could change to switch case, happens if turn skipped
+			this.addItem(item);
+			item = null;
+		}
 		action = this.getTurnMove() != null;
 
 		while (!action) {
@@ -77,7 +81,7 @@ public class Hero extends Monster {
 		do { //probably okay?
 			final String attPrompt = "Which attack do you want to use?";
 			int attNum = choiceInput(true, this.getMoves(), attPrompt);
-			if (attNum == 0)
+			if (attNum == RESPONSENUM.get("Back"))
 				return;
 			
 			this.setTurnMove(attNum-1); //start at 0th idx
@@ -95,7 +99,7 @@ public class Hero extends Monster {
 				final String tarPrompt = "Which monster would you want to target?";
 				int tarNum = choiceInput(true, monNames, tarPrompt);
 				
-				if (tarNum == 0) {//have to change how to implement
+				if (tarNum == RESPONSENUM.get("Back")) {//have to change how to implement
 					action = false;
 					this.setTurnMove(-1); //set to null
 					possTargets.addAll(this.targets);
@@ -114,36 +118,41 @@ public class Hero extends Monster {
 			writeOut("You have no items in your inventory\n");
 			return;
 		}
-
 		String[] inventNames = inventory.accessNames();
 		final String itemPrompt = "Which item do you want to use?";
-		int pickNum = choiceInput(true, inventNames, itemPrompt);
 		
-		if (pickNum == RESPONSENUM.get("Back"))
-			return;
-
-		item = inventory.getItem(pickNum-1);
-		if (item.getSlot().equals(Slot.POTION) && this.getStatus(Status.POTION) > 0) { //potin still active
-			final String usePrompt = "Another buff is still active, "
-				+ "and will be canceled by this potion"
-				+ "\nAre you sure you want to do this?";
-
-			int confirmUse = choiceInput(false, RESPONSEOPTIONS, usePrompt);
-			if (confirmUse == RESPONSENUM.get("No")) { //could change to string; or stay in function
-				item = null;
+		do {
+			int pickNum = choiceInput(true, inventNames, itemPrompt);
+			
+			if (pickNum == RESPONSENUM.get("Back"))
 				return;
-			}
-		}
 
-		action = true;
+			item = inventory.getItem(pickNum-1);
+			if (item.getSlot().equals(Slot.POTION) && this.getStatus(Status.POTION) > 0) { //can check all item slots or just pots
+				final String usePrompt = "Another buff is still active, "
+					+ "and will be canceled by this potion, and"
+					+ "\n the old potion will be lost"
+					+ "\nAre you sure you want to do this?";
+
+				int confirmUse = choiceInput(false, RESPONSEOPTIONS, usePrompt);
+				if (confirmUse == RESPONSENUM.get("No")) {
+					this.addItem(item);
+					item = null;
+					continue;
+				}
+			}
+			action = true;
+
+		} while(!action);
 	}
 
 	private void viewEquipment() {
 		String[] equipList = Equipment.showEquipped(this);
 		final String unequipPrompt = "Select a slot to unequip an item";
+		
 		do {
 			int pickNum = choiceInput(true, equipList, unequipPrompt);
-			if (pickNum == 0)
+			if (pickNum == RESPONSENUM.get("Back"))
 				return;
 
 			slot = Equipment.numToSlot(pickNum-1);
@@ -151,6 +160,16 @@ public class Hero extends Monster {
 			if (Equipment.checkSlot(this, slot) == null) {
 				writeOut("No item is in the selected slot");
 				continue;
+			
+			} else {
+				final String confirmPrompt = "Are you sure you want to "
+					+ "remove the item at " + slot.getName() + "?";
+				
+				int confirmUse = choiceInput(false, RESPONSEOPTIONS, confirmPrompt);
+				if (confirmUse == RESPONSENUM.get("No")) {
+					slot = null;
+					continue;
+				}
 			}
 
 			action = true;
@@ -174,15 +193,20 @@ public class Hero extends Monster {
 				break;
 
 			case 3: //use inputed item
-				Equipment.equip(this, item); //can't remove item
+				reAddItem( Equipment.equip(this, item) ); //can't remove item
 				item = null;
 				break;
 
 			case 4: //unequip item
-				Equipment.unequip(this, slot);
+				reAddItem( Equipment.unequip(this, slot) );
 				slot = null;
 				break;
 		}
+	}
+
+	private void reAddItem(Item item) { //assumed amount 1
+		if (item != null && !item.getSlot().equals(Slot.POTION))
+			this.addItem(item);
 	}
 
 	public void addItems (Item added, int amount) {

@@ -1,7 +1,5 @@
 package assets;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -9,19 +7,10 @@ import combat.Status;
 
 public class Equipment {
 
-
     private static class EquipInfo extends Monster.StatusInfo { //keeps track of overTime with start and duration
         private Map<Slot, Item> slots;
-        private static final Map<Integer, Slot> SLOTNUM;
-        static {
-            Map<Integer, Slot> tempSlots = new HashMap<>();
-            for (Slot slot: Slot.values())
-                tempSlots.put(slot.ordinal(), slot);
-
-            SLOTNUM = Collections.unmodifiableMap(tempSlots);
-        }
         
-        EquipInfo() {
+        private EquipInfo() {
             slots = new LinkedHashMap<>();
             
             for (Slot slot: Slot.values()) //order follows or of enums
@@ -34,7 +23,9 @@ public class Equipment {
             slots.put(item.getSlot(), item);
         }
         private Item removeItem(Slot slot) {
-            return slots.remove(slot);
+            Item item = slots.get(slot);
+            slots.put(slot, null);
+            return item;
         }
     }
 
@@ -59,7 +50,7 @@ public class Equipment {
     }
 
     static Slot numToSlot(int num) {
-        return EquipInfo.SLOTNUM.get(num);
+        return Slot.values()[num];
     }
 
 
@@ -68,22 +59,31 @@ public class Equipment {
         return getInfo(user).getItem(slot);
     }
 
-    public static void equip(Monster user, Item item) { //check if item already there
+    /**
+     * @return item previously in the slot, or {@code null}
+     */
+    public static Item equip(Monster user, Item item) { //check if item already there
         EquipInfo info = getInfo(user);
         Slot slot = item.getSlot();
         
-        if (info.getItem(slot) != null) //same potions treated as new ones
-            unequip(user, slot); //not sure
+        Item oldItem = unequip(user, slot); //not sure
 
         info.addItem(item);
         item.use(user);
+        return oldItem;
     }
 
-    public static void unequip(Monster user, Slot slot) {
-        EquipInfo info = getInfo(user);
-        Item item = info.removeItem(slot);
-        if (item != null)
-            item.use(user);
+    /**
+     * @return the item at {@code slot}, or {@code null} if
+     * no item was in the slot
+     */
+    public static Item unequip(Monster user, Slot slot) {
+        EquipInfo info = getInfo(user); //called twice
+        Item removed = info.removeItem(slot);
+        
+        if (removed != null)
+            removed.use(user);
+        return removed;
     }
 
     public static void overTime(Monster user) { //for now just Potion slot

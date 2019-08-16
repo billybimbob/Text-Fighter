@@ -34,8 +34,8 @@ public class Inventory implements Iterable<Item> {
 	private Item[] listItems() {
 		return inventoryList.keySet().toArray(Item[]::new); //same order as toString because of TreeMap
 	}
-	private void removeItem (Item item) { //removes one item; could change to param amounts
-		
+
+	private void removeItem (Item item) { //removes one item; could change to param amounts	
 		ItemInfo info = inventoryList.get(item);
 		if (info == null)
 			System.err.println("Item does not exist");
