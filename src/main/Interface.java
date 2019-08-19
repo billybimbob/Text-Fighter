@@ -1,6 +1,7 @@
 package main;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import assets.*;
 import combat.Fight;
@@ -15,6 +16,7 @@ public class Interface {
 		"No", 2
 	);
 	
+	private static final int TABSIZE = 12;
 	private static final Scanner KEYBOARD = new Scanner(System.in);
 	private static Hero hero;
 	private static Fight fight;
@@ -84,11 +86,35 @@ public class Interface {
 
 	
 	public static void writeOut(String... printings) { //wrapper for system.out.print; can be other output
-		StringBuilder combined = new StringBuilder();
-		for (String printing: printings)
-			combined.append(printing);
-		System.out.println(combined.toString());
+		List<String> lines = new ArrayList<>();
+		StringBuilder words = new StringBuilder();
+
+		for (String printing: printings) {
+			for (String line:  printing.split("\\n+")) {
+				int lineSize = 0;
+				boolean tabbed = line.contains("\t"); //not sure
+				int lineLimit = tabbed ? LINESPACE.length()-TABSIZE : LINESPACE.length();
+				
+				for (String word: line.split(" +")) {
+					if (lineSize+word.length() > lineLimit) {
+						words.append("\n\t");
+						if (!tabbed)
+							lineLimit -= TABSIZE;
+						lineSize = 0;
+					} 
+
+					words.append(word);
+					words.append(" ");
+					lineSize += word.length();
+				}
+				
+				lines.add(words.toString());
+				words.delete(0, words.length());
+			}
+		}
+		System.out.println(lines.stream().collect(Collectors.joining("\n")));
 	}
+
 	public static void prompt(String prompt) { //print to same line
 		System.out.print(prompt);
 	}

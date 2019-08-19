@@ -116,11 +116,10 @@ public class Monster extends Entity implements Cloneable {
 			@Override
 			public int compare(Ability a, Ability b) {
 				Float aMana = a.getManaCost(), bMana = b.getManaCost();
-				int ret;
-				if ((ret = aMana.compareTo(bMana)) == 0)
-					return a.getName().compareTo(b.getName());
-				else
-					return ret;
+				int ret = aMana.compareTo(bMana);
+				return ret == 0
+					? a.getName().compareTo(b.getName())
+					: ret;
 			}
 		});
 
@@ -289,7 +288,7 @@ public class Monster extends Entity implements Cloneable {
 	protected void setTurnMove(int idx) {
 		if (idx == -1)
 			turnMove = null;
-		if (turnMove == null)
+		else if (turnMove == null)
 			turnMove = moveList[idx];
 	}
 	protected void setTurnMove() {
@@ -353,16 +352,24 @@ public class Monster extends Entity implements Cloneable {
 		return this.stats.get(stat).getBase();
 	}
 
+	private int getStatus(Status status, boolean check) { //checks if status needs updating, keep eye on
+		StatusInfo info = this.status.get(status);
+		if (check)
+			info.setCheck(true);
+
+		int endTurn = info.getEnd();
+		return endTurn == -1
+			? -1
+			: endTurn - currentTurn();
+	}
+
 	/**
 	 * shows the amount of time for the status;
 	 * @return {@code -1} not active, {@code 0} finished, 
 	 * {@code >0} amount of time remaining
 	 */
-	public int getStatus(Status status) { //checks if status needs updating, keep eye on
-		int endTurn = this.status.get(status).getEnd();
-		return endTurn == -1
-			? -1
-			: endTurn - currentTurn();
+	public int getStatus(Status status) {
+		return getStatus(status, false);
 	}
 	
 	public boolean statusUpdated() {
@@ -518,7 +525,7 @@ public class Monster extends Entity implements Cloneable {
 	 * {@code >0} amount of time remaining 
 	 */
 	public int updateStatus(Status status) { //could add active mods here
-		int timeLeft = this.getStatus(status);
+		int timeLeft = this.getStatus(status, true);
 
 		if (timeLeft == 0) { //keep eye on
 			switch(status) {
@@ -533,7 +540,6 @@ public class Monster extends Entity implements Cloneable {
 			}
 		}
 
-		this.status.get(status).setCheck(true); //inefficient
 		return timeLeft;
 	}
 	

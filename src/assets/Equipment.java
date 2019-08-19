@@ -29,8 +29,27 @@ public class Equipment {
         }
     }
 
+    private static EquipInfo stoInfo;
+
+
+    private static EquipInfo getInfo(Monster mon, boolean store) {
+        EquipInfo info;
+
+        if(!store && stoInfo != null) { //could add counter param and info
+            info = stoInfo;
+            stoInfo = null;
+            return info;
+
+        } else {
+            info = ((EquipInfo)(mon.status.get(Status.POTION)));
+            if (store) //will null on second call with keep as false; keep eye on
+                stoInfo = info;
+            
+            return info;
+        }
+    }
     private static EquipInfo getInfo(Monster mon) {
-        return ((EquipInfo)(mon.status.get(Status.POTION)));
+        return getInfo(mon, false);
     }
 
     static void initEquip(Monster mon) {
@@ -63,10 +82,10 @@ public class Equipment {
      * @return item previously in the slot, or {@code null}
      */
     public static Item equip(Monster user, Item item) { //check if item already there
-        EquipInfo info = getInfo(user);
+        EquipInfo info = getInfo(user, true);
         Slot slot = item.getSlot();
         
-        Item oldItem = unequip(user, slot); //not sure
+        Item oldItem = unequip(user, slot); //clear store info here
 
         info.addItem(item);
         item.use(user);
