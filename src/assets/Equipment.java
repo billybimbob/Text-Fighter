@@ -42,7 +42,7 @@ public class Equipment {
 
         } else {
             info = ((EquipInfo)(mon.status.get(Status.POTION)));
-            if (store) //will null on second call with keep as false; keep eye on
+            if (store) //will null on second call with store as false; keep eye on
                 stoInfo = info;
             
             return info;

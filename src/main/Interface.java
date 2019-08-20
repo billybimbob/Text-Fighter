@@ -8,7 +8,7 @@ import combat.Fight;
 
 public class Interface {
 	
-	public static final String LINESPACE = "-----------------------------------------------";
+	public static final String LINESPACE = "--------------------------------------------------";
 	public static final String[] RESPONSEOPTIONS = {"Yes", "No"};
 	public static final Map<String, Integer> RESPONSENUM = Map.of(
 		"Back", 0,
@@ -16,7 +16,7 @@ public class Interface {
 		"No", 2
 	);
 	
-	private static final int TABSIZE = 12;
+	private static final int TABSIZE = 8;
 	private static final Scanner KEYBOARD = new Scanner(System.in);
 	private static Hero hero;
 	private static Fight fight;
@@ -29,7 +29,7 @@ public class Interface {
 		String name = KEYBOARD.nextLine();
 		
 		String[] availClass = {"Warrior", "Mage", "Cleric", "Shifter"};
-		String classPrompt = "Which class you would like to be?\nThis will affect your stats, potions, and abilities";
+		String classPrompt = "Which class you would like to be?\nThis will affect stats, items, and abilities";
 		int classChoice = choiceInput(false, availClass, classPrompt);
 		
 		
@@ -84,15 +84,15 @@ public class Interface {
 	public static Fight currentFight() { return fight; }
 	public static Hero getHero() { return hero; }
 
-	
-	public static void writeOut(String... printings) { //wrapper for system.out.print; can be other output
+
+	private static String formatPrint(String... printings) {
 		List<String> lines = new ArrayList<>();
 		StringBuilder words = new StringBuilder();
 
 		for (String printing: printings) {
 			for (String line:  printing.split("\\n+")) {
 				int lineSize = 0;
-				boolean tabbed = line.contains("\t"); //not sure
+				boolean tabbed = line.charAt(0) == '\t'; //not sure
 				int lineLimit = tabbed ? LINESPACE.length()-TABSIZE : LINESPACE.length();
 				
 				for (String word: line.split(" +")) {
@@ -102,22 +102,27 @@ public class Interface {
 							lineLimit -= TABSIZE;
 						lineSize = 0;
 					} 
-
-					words.append(word);
-					words.append(" ");
-					lineSize += word.length();
+					String plusSpace = word.concat(" ");
+					words.append(plusSpace);
+					lineSize += plusSpace.length();
 				}
 				
 				lines.add(words.toString());
 				words.delete(0, words.length());
 			}
 		}
-		System.out.println(lines.stream().collect(Collectors.joining("\n")));
+
+		return lines.stream().collect(Collectors.joining("\n"));
+	}
+	
+	public static void writeOut(String... printings) { //wrapper for system.out.print; can be other output
+		System.out.println(formatPrint(printings));
 	}
 
-	public static void prompt(String prompt) { //print to same line
-		System.out.print(prompt);
+	public static void prompt(String... prompt) { //print to same line
+		System.out.print(formatPrint(prompt));
 	}
+	
 	public static void confirm() {
 		KEYBOARD.nextLine();
 	}
