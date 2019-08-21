@@ -9,11 +9,14 @@ import assets.Monster;
 public class FightLog {
 
     public static class Log {
+        private Monster attacker, target;
         private float damage;
         private Ability attack;
         private List<Status> applied;
 
-        private Log(Ability ability, float damage, List<Status> applied) {
+        public Log(Monster attacker, Monster target, Ability ability, float damage, List<Status> applied) {
+            this.attacker = attacker;
+            this.target = target;
             this.attack = ability;
             this.damage = damage;
             this.applied = Collections.unmodifiableList(applied);
@@ -77,20 +80,23 @@ public class FightLog {
 
 
     /* mutators */
-    public void addLog(Monster attacker, Monster target, Ability attack, float damage, List<Status> applied) {
+    public void addLog(Log log) {
+        if (log == null) {
+            System.err.println("log is null");
+            return;
+        }
+
         Map<Monster, Map<Monster, Log>> round = newestRound();
-        Log newInfo = new Log(attack, damage, applied);
-        
-        Map<Monster, Log> targLog = round.get(target);
+        Map<Monster, Log> targLog = round.get(log.target);
 
         if (targLog == null) {
             targLog = new HashMap<>();
-            targLog.put(attacker, newInfo);
-            round.put(target, targLog);
+            targLog.put(log.attacker, log);
+            round.put(log.target, targLog);
         } else {
-            if (targLog.containsKey(attacker)) //each attacker expected to target target once per round at most
+            if (targLog.containsKey(log.attacker)) //each attacker expected to target target once per round at most
                 System.err.println("dup attacker");
-            targLog.put(attacker, newInfo); //will override potentially
+            targLog.put(log.attacker, log); //will override potentially
         }
     }
 

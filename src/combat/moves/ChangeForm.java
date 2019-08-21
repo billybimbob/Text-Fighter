@@ -20,32 +20,33 @@ public class ChangeForm extends Ability {
 		numTar = 0;
 		priority = true;
 		
-		initFormList(this, attacker);
+		this.initFormList(attacker);
 	}
 
 	@Override
 	public Object clone(Monster attacker) { //update attacker of formList
 		ChangeForm copy = (ChangeForm)super.clone(attacker);
-		initFormList(copy, attacker);
-
+		copy.initFormList(attacker);
 		return copy;
 	}
 
-	private static void initFormList(ChangeForm move, Monster attacker) {
-		move.formList = new Monster[] { //see if I can parameterize; clone doesn't work here
+	private void initFormList(Monster attacker) {
+		this.formList = new Monster[] { //see if I can parameterize; clone doesn't work here
 			Index.createMonster("Eagle"), 
 			Index.createMonster("Pangolin"), 
 			Index.createMonster("Salamander") //circular dependency; bad
 		};
 
-		for(Monster shift: move.formList) {
+		for(Monster shift: this.formList) { //order not sorted
 			Ability passive = shift.getPassive();
+			
 			if (passive != null)
 				passive.attacker = attacker;
+				
 			for (Ability ability: shift.getMoves())
 				ability.attacker = attacker;
 			
-			shift.addAttack(move);
+			shift.addAttack(this);
 		}
 	}
 	

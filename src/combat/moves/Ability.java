@@ -3,9 +3,10 @@ package combat.moves;
 import java.util.List;
 import java.util.ArrayList;
 
-import assets.Monster;
 import assets.Stat;
+import assets.Monster;
 import combat.Status;
+import combat.FightLog.Log;
 import main.Interface;
 
 public abstract class Ability implements Cloneable {
@@ -185,6 +186,15 @@ public abstract class Ability implements Cloneable {
 		return true;
 	}
 
+
+	/**
+	 * can return null if state inconsistent
+	 */
+	private Log createLog() {
+		return target == null
+			? null
+			: new Log(attacker, target, this, damage, afflicted);
+	}
 	
 	/**
 	 * attacker deals damage to target, and the damage is logged
@@ -201,13 +211,14 @@ public abstract class Ability implements Cloneable {
 		}
 			
 		Interface.currentFight().getLogs()
-			.addLog(attacker, target, this, damage, this.afflicted);
+			.addLog(this.createLog());
 	}
 
 	public void useAbility() { //not sure if needs to be static
 		if (this.preExecute()) {
 			for (Monster target: attacker.getTargets()) {
 				this.target = target;
+				this.damage = 0;
 				this.execute();
 				afflicted.clear();
 			}
