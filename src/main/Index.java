@@ -1,15 +1,18 @@
 package main;
 
 import java.util.*;
-import java.util.function.Function;
+//import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import assets.*;
 import combat.moves.*;
+/*
 import combat.moves.magic.*;
 import combat.moves.melee.*;
-import combat.moves.passive.*;
+import combat.moves.passive.*;*/
 
 public class Index {
 
@@ -40,8 +43,9 @@ public class Index {
 	}
 	
 	//encapsulated away ability to add values after init
-	private static final Map<Move, Function<Monster, Ability>> attacks = new HashMap<>();
-	private static final Map<Move, Function<Monster, Ability>> passives = new HashMap<>();
+	private static final Map<Move, Constructor<? extends Ability>> moves = new HashMap<>();
+	//private static final Map<Move, Function<Monster, Ability>> attacks = new HashMap<>();
+	//private static final Map<Move, Function<Monster, Ability>> passives = new HashMap<>();
 	private static final NameList<Monster> monsters = new NameList<>();
 	private static final NameList<Potion> potions = new NameList<>();
 	private static final NameList<Armor> armors = new NameList<>();
@@ -56,6 +60,37 @@ public class Index {
 
 	private static void mapMoves() {
 		//could split different class abilities
+		try (BufferedReader reader = new BufferedReader(new FileReader("src/data/moves.txt"))) {
+			String line;
+
+			while((line = reader.readLine()) != null) {
+				String[] tok = line.split(",\\s+");
+				if (tok.length < 2)
+					continue;
+
+				var move = Move.valueOf(tok[0].toUpperCase());
+
+				var path = new StringBuilder("combat.moves.");
+				if (tok.length > 2)
+					path.append( tok[2].strip().concat(".") );
+				path.append(tok[1].strip());
+
+				var constructor = Class.forName(path.toString())
+					.asSubclass(Ability.class)
+					.getDeclaredConstructor(Monster.class);
+
+				moves.put(move, constructor);
+			}
+
+		} catch (IOException e) {
+			System.err.println("Issue reading potions");
+			System.exit(-1);
+		} catch (ClassNotFoundException | NoSuchMethodException e) {
+			System.err.println("Issue finding listed move");
+			System.err.println(e);
+			System.exit(-1);
+		}
+		/*
 		attacks.put(Move.BASIC,   BasicAttack::new);
 		attacks.put(Move.BURST,   FlameBurst::new);
 		attacks.put(Move.CHARGE,  ChargeAttack::new);
@@ -73,7 +108,7 @@ public class Index {
 		attacks.put(Move.SPIN,    SpinAttack::new);
 		
 		passives.put(Move.INTIM,  Intimidate::new);
-		passives.put(Move.RAGE,   Rage::new);
+		passives.put(Move.RAGE,   Rage::new);*/
 
 	}
 
@@ -176,10 +211,20 @@ public class Index {
 
 	//uses index attrs
 	public static Ability createAbility(Move name, Monster user) { //wrapper for getting and apply
-		return attacks.get(name).apply(user);
+		//return attacks.get(name).apply(user);
+		try {
+			return moves.get(name).newInstance(user);
+
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			
+			System.err.println("Issue creating ability");
+		}
+
+		return null;
 	}
 	public static Ability createPassive(Move name, Monster user) {
-		return passives.get(name).apply(user);
+		//return passives.get(name).apply(user);
+		return createAbility(name, user);
 	}
 
 

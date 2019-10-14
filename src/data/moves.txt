@@ -1,0 +1,22 @@
+enum      className      subDir
+
+Attacks:
+basic,    BasicAttack
+burst,    FlameBurst,    magic
+charge,   ChargeAttack,  melee
+disrupt,  Disrupt,       melee   
+drain,    LifeDrain,     magic
+freeze,   Freeze,        magic
+frenzy,   Frenzy,        magic
+poly,     Polymorph,     magic
+possess,  Possess,       magic
+reflect,  Reflect,       magic
+revenge,  Revenge,       melee
+sheep,    SheepAttacks
+shift,    ChangeForm
+shock,    Shock,         magic
+spin,     SpinAttack,    melee
+		
+Passives:
+intim,    Intimidate,    passive
+rage,     Rage,          passive
