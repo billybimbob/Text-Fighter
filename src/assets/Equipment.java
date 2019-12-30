@@ -13,7 +13,7 @@ public class Equipment {
         private EquipInfo() {
             slots = new LinkedHashMap<>();
             
-            for (Slot slot: Slot.values()) //order follows or of enums
+            for (Slot slot: Slot.values()) //order follows order of enums
                 slots.put(slot, null);
         }
 

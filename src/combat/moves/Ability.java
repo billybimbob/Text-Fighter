@@ -214,7 +214,7 @@ public abstract class Ability implements Cloneable {
 			.addLog(this.createLog());
 	}
 
-	public void useAbility() { //not sure if needs to be static
+	public void useAbility() {
 		if (this.preExecute()) {
 			for (Monster target: attacker.getTargets()) {
 				this.target = target;

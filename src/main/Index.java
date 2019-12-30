@@ -1,7 +1,6 @@
 package main;
 
 import java.util.*;
-//import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.io.*;
 import java.lang.reflect.Constructor;
@@ -44,8 +43,6 @@ public class Index {
 	
 	//encapsulated away ability to add values after init
 	private static final Map<Move, Constructor<? extends Ability>> moves = new HashMap<>();
-	//private static final Map<Move, Function<Monster, Ability>> attacks = new HashMap<>();
-	//private static final Map<Move, Function<Monster, Ability>> passives = new HashMap<>();
 	private static final NameList<Monster> monsters = new NameList<>();
 	private static final NameList<Potion> potions = new NameList<>();
 	private static final NameList<Armor> armors = new NameList<>();
@@ -90,25 +87,6 @@ public class Index {
 			System.err.println(e);
 			System.exit(-1);
 		}
-		/*
-		attacks.put(Move.BASIC,   BasicAttack::new);
-		attacks.put(Move.BURST,   FlameBurst::new);
-		attacks.put(Move.CHARGE,  ChargeAttack::new);
-		attacks.put(Move.DISRUPT, Disrupt::new);
-		attacks.put(Move.DRAIN,   LifeDrain::new);
-		attacks.put(Move.FREEZE,  Freeze::new);
-		attacks.put(Move.FRENZY,  Frenzy::new);
-		attacks.put(Move.POLY,    Polymorph::new);
-		attacks.put(Move.POSSESS, Possess::new);
-		attacks.put(Move.REFLECT, Reflect::new);
-		attacks.put(Move.REVENGE, Revenge::new);
-		attacks.put(Move.SHEEP,   SheepAttacks::new);
-		attacks.put(Move.SHIFT,   ChangeForm::new);
-		attacks.put(Move.SHOCK,   Shock::new);
-		attacks.put(Move.SPIN,    SpinAttack::new);
-		
-		passives.put(Move.INTIM,  Intimidate::new);
-		passives.put(Move.RAGE,   Rage::new);*/
 
 	}
 

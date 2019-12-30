@@ -101,7 +101,7 @@ public abstract class Item extends Entity {
 	 * use method with the default remove value; 
 	 * multiple calls of this {@code use} on the same 
 	 * Item and user will toggle between
-	 * the remove paramter first being off then on
+	 * the remove parameter first being off then on
 	 * @param user user of the item
 	 */
 	protected void use (Monster user) {

@@ -28,7 +28,7 @@ public class FightLog {
     }
 
     //1st Monster key is target; 2nd Monster key is attacker
-    private List <Map<Monster, Map<Monster, Log>>> logs;
+    private List< Map<Monster, List<Log>> > logs;
 
 
     FightLog() {
@@ -36,7 +36,7 @@ public class FightLog {
     }
 
     //private methods
-    private Map<Monster, Map<Monster, Log>> newestRound() {
+    private Map<Monster, List<Log>> newestRound() {
         return logs.get(roundCount()-1);
     }
 
@@ -58,22 +58,22 @@ public class FightLog {
      * @param target
      * @return key is the attacker, value is the log
      */
-    public Map<Monster, Log> getLog (int round, Monster target) {
-        Map<Monster, Log> info = null;
+    public List<Log> getLogs (int round, Monster target) {
+        List<Log> targLogs = null;
         try {
-            info = logs.get(round).get(target);
+            targLogs = logs.get(round).get(target);
         } catch (IndexOutOfBoundsException e) { } //handle case if on first round
         
-        if (info == null) //blank map, might keep eye on
-            info = new HashMap<>();
-        
-        return info;
+        if (targLogs == null)
+            targLogs = new ArrayList<>();
+
+        return targLogs;
     }
 
 	public float getTurnDamage(int round, Monster target) {
 		float totalDam = 0;
-		for(Entry<Monster, Log> info: this.getLog(round, target).entrySet())
-			totalDam += info.getValue().getDamage();
+		for(Log log: this.getLogs(round, target))
+			totalDam += log.getDamage();
 		
 		return totalDam;
 	}
@@ -86,18 +86,15 @@ public class FightLog {
             return;
         }
 
-        Map<Monster, Map<Monster, Log>> round = newestRound();
-        Map<Monster, Log> targLog = round.get(log.target);
+        var round = newestRound();
+        var targLog = round.get(log.target);
 
         if (targLog == null) {
-            targLog = new HashMap<>();
-            targLog.put(log.attacker, log);
+            targLog = new ArrayList<>();
             round.put(log.target, targLog);
-        } else {
-            if (targLog.containsKey(log.attacker)) //each attacker expected to target target once per round at most
-                System.err.println("dup attacker");
-            targLog.put(log.attacker, log); //will override potentially
         }
+        
+        targLog.add(log);
     }
 
 
@@ -105,13 +102,13 @@ public class FightLog {
     public String toString() {
         StringBuilder accum = new StringBuilder();
         
-        for (Map<Monster, Map<Monster, Log>> round: logs) //might want to be reversed
-            for (Entry<Monster, Map<Monster, Log>> entry: round.entrySet())  {
+        for (Map<Monster, List<Log>> round: this.logs) //might want to be reversed
+            for (Entry<Monster,List<Log>> entry: round.entrySet())  {
                 String target = entry.getKey().getName();
 
-                for (Entry<Monster, Log> info: entry.getValue().entrySet()) {
-                    String attacker = info.getKey().getName();
-                    double damage = info.getValue().getDamage();
+                for (Log log: entry.getValue()) {
+                    String attacker = log.attacker.getName();
+                    double damage = log.getDamage();
                     accum.append(attacker + " hit " + target + " for " + damage + " damage");
                 }
             }

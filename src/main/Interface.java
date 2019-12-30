@@ -18,7 +18,6 @@ public class Interface {
 	
 	private static final int TABSIZE = 8;
 	private static final Scanner KEYBOARD = new Scanner(System.in);
-	private static Hero hero;
 	private static Fight fight;
 	
 	public static void main(String[] args) { //All this is probably temporary
@@ -33,7 +32,7 @@ public class Interface {
 		int classChoice = choiceInput(false, availClass, classPrompt);
 		
 		
-		hero = new Hero(name, classChoice);
+		Hero hero = new Hero(name, classChoice);
 		
 		switch (classChoice) {
 			case 1: //warrior
@@ -77,12 +76,9 @@ public class Interface {
 		Interface.confirm();
 		fight.run();
 		fight = null;
-		
-		KEYBOARD.close();
 	}
 
 	public static Fight currentFight() { return fight; }
-	public static Hero getHero() { return hero; }
 
 
 	private static String formatPrint(String... printings) {

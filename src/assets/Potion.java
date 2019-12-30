@@ -38,7 +38,6 @@ public class Potion extends Item {
 			if (this.overTime)
 				Interface.writeOut(currentUser.getName() + " has used " 
 					+ this.getName() + " and will gain " + modNames + " over time");
-					
 			else
 				Interface.writeOut(currentUser.getName() + " has used " + this.getName()
 					+ " and gains a boost in " + modNames);
@@ -55,7 +54,6 @@ public class Potion extends Item {
 
 			if (this.remove)
 				currentUser.modStat(stat, false, -modVal);
-			
 			else if (this.start) {
 				currentUser.modStat(stat, false, modVal);
 				Interface.writeOut(currentUser.getName() + " gained " + modVal + " " + stat);

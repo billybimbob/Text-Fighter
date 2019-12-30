@@ -58,8 +58,8 @@ public class Fight {
 			//remove after to not mess up prior targets
 			removeDead();*/
 
-			if (fightControl && otherFighters(Interface.getHero()).size() == 0) { //Check if all Monster are killed
-				Interface.writeOut("All of the Monster have been killed, you win!");
+			if (fightControl && noEnemies()) { //Check if all Monster are killed
+				Interface.writeOut("There are no more enemies, you win!");
 				fightControl = false;
 			}
 
@@ -253,28 +253,25 @@ public class Fight {
 					Equipment.overTime(checking);
 					break;
 
-				case REFLECT:
-					/*//checking all damage recieved from last round
-					for (Map.Entry<Monster, FightLog.Log> info: log.getInfo(getTurnNum()-1, checking).entrySet()) {
-						Monster attacker = info.getKey();
-						if (fighters.contains(attacker)) {
-							float refDam = (int)(info.getValue().getDamage()*0.75);
-							attacker.modStat(Stat.HP, false, -refDam);
-							Interface.writeOut(checking.getName() + " reflects " + refDam + " damage to " + attacker.getName());
-						}
-					}*/
-					break;
-
 				case STUN:
 					fightControl = false; //not sure
 					Interface.writeOut(checking.getName() + " cannot move"); //multiTurn attack still carries on
 					break;
 
 				case CONTROL:
+				case REFLECT:
 				case SHIFT:
 					break;
 			}
 		}
+	}
+
+	private boolean noEnemies() {
+		for (Monster mon: fighters) {
+			if (mon.getAggro()) //does not account for temp no aggro
+				return false;
+		}
+		return true;
 	}
 
 }
