@@ -18,7 +18,8 @@ public class Freeze extends Ability {
 	
 	protected void execute() {
 
-		Monster target = this.getTarget();
+		Monster attacker = this.getAttacker();
+		Monster target = this.currentTarget();
 		String failPrompt = attacker.getName() + "'s freeze failed";
 		if (attackHit(failPrompt)) {
 			//Attack based on RNG and modified by stats, need to consider magic attack

@@ -76,7 +76,6 @@ public class Monster extends Entity implements Cloneable {
 	protected Map<Stat, StatInfo> stats;
 	protected Map<Status, StatusInfo> status; //temporary values
 	protected Ability[] moveList;
-	protected List<Monster> targets; //keep eye on how set and used
 	protected int level = 1;
 
 
@@ -96,7 +95,6 @@ public class Monster extends Entity implements Cloneable {
 		for (int i = 0; i < statsIn.size(); i++)
 			this.stats.put(Stat.values()[i], new StatInfo(statsIn.get(i)));
 
-		this.targets = new ArrayList<>();
 		initStatus();
 		moveList = new Ability[] {createAbility(Move.BASIC)};
 	}
@@ -148,9 +146,7 @@ public class Monster extends Entity implements Cloneable {
 		for (Stat statName: Stat.values())
 			this.stats.put(statName, new StatInfo(copy.getStatMax(statName)));
 		
-		this.targets = new ArrayList<>(copy.targets);
 		initStatus();
-
 		if (copy.passive != null)
 			this.setPassive((Ability)copy.passive.clone(this));
 		
@@ -240,41 +236,6 @@ public class Monster extends Entity implements Cloneable {
 		return turnOff;
 	}
 
-
-	private void setTargets(List<Monster> possTargets) {
-		if (!checkAutoTar(possTargets)) {
-			for (int i = 0; i < possTargets.size() 
-				&& this.targets.size() < this.getNumTar(); i++) { //gets targets if needed
-				
-				Monster possTarget = possTargets.get(i);
-				if (possTarget.getAggro() != this.getAggro())
-					this.targets.add(possTarget);
-			}
-		}
-	}
-
-	private boolean checkAddAll(List<Monster> possTargets) {
-		int numTar = this.getNumTar();
-
-		boolean check = numTar == -1 || numTar >= possTargets.size();
-		if (check)
-			this.targets.addAll(possTargets);
-
-		return check;
-	}
-	private boolean checkSelfTar() {
-		boolean check = this.getNumTar() == 0;
-		if (check)
-			this.targets.add(this);
-		
-		return check;
-	}
-
-	//protected helpers
-	protected boolean checkAutoTar(List<Monster> possTargets) {
-		return checkAddAll(possTargets) || checkSelfTar();
-	}
-
 	/**
 	 * returns number of targets; defaults to 0
 	 * @return -1 is no limit, 0 is self, >0 max number of targets
@@ -290,10 +251,6 @@ public class Monster extends Entity implements Cloneable {
 			turnMove = null;
 		else if (turnMove == null)
 			turnMove = moveList[idx];
-	}
-	protected void setTurnMove() {
-		int randInt = (int)(Math.random()*moveList.length);
-		setTurnMove(randInt);
 	}
 
 	protected void setPassive(Ability passive) {
@@ -335,10 +292,6 @@ public class Monster extends Entity implements Cloneable {
 	}
 	public Ability getPassive() {
 		return passive;
-	}
-
-	public Monster[] getTargets() {
-		return targets.toArray(Monster[]::new);
 	}
 
 	public float getStatRatio(Stat stat) {
@@ -392,58 +345,45 @@ public class Monster extends Entity implements Cloneable {
 	}
 
 	public void setRandomTargets(List<Monster> possTargets) {
-		this.targets.clear();
-		
-		if (turnMove == null || checkAutoTar(possTargets))
+		if (turnMove == null || Ability.checkAutoTar(turnMove, possTargets))
 			return;
 
 		int amountTars = this.getNumTar();
+		List<Monster> newTargs = new ArrayList<>(amountTars);
+
 		for (int i = 0; i < amountTars; i++) {
 			int randIdx = (int)(Math.random()*(possTargets.size()));
-			this.targets.add(possTargets.remove(randIdx));
+			newTargs.add(possTargets.remove(randIdx));
 		}
-	}
-	
-	public void setTurn(List<Monster> targets) {
-		setTurnMove();
-		setTargets(targets);
+
+		turnMove.setTargets(newTargs);
 	}
 
 	public void setTurn(List<Monster> targets, int idx) {
 		setTurnMove(idx);
-		setTargets(targets);
+		turnMove.pickTargets(targets);
+	}
+
+	public void setTurn(List<Monster> targets) {
+		int randInt = (int)(Math.random()*moveList.length);
+		setTurn(targets, randInt);
 	}
 
 	public void executeTurn() { //wrapper for turnMove
-		if (targets.size() > 0)
-			turnMove.useAbility();
-		else
-			Interface.writeOut(this.name + "'s targets(s) are no longer valid");
+		turnMove.useAbility();
 	}
 
-	public void clearTurn() {
+	public void clearTurn() { //not sure if too needed
 		if (turnMove != null && turnMove.resolved()) {
-			turnMove = null;		
-			this.targets.clear();
+			turnMove = null;
 		}
 	}
 	
 	public void usePassive(List<Monster> possTargets) { //look at; assume all fighters passed in
 		if (passive != null) {
-			List<Monster> sto = this.targets; //store previous targets
-			Ability stoMove = this.turnMove;
-
-			this.targets = new ArrayList<>();
-			this.turnMove = passive;
-			this.setTargets(possTargets);
+			passive.pickTargets(possTargets);
 			passive.useAbility();
-
-			this.targets = sto;
-			this.turnMove = stoMove;
 		}
-
-		if (this.getNumTar() != 0)
-			this.targets.retainAll(possTargets);
 	}
 
 	public void addAttack(Ability adding) { //not sure if better
@@ -505,6 +445,10 @@ public class Monster extends Entity implements Cloneable {
 			return offChecks(status);
 	}
 
+	public static int toggleToDuration(boolean toggle) {
+		return toggle ? 1 : 0;
+	}
+
 	/**
 	 * turns on/off the inputted status; defaults to one turn; 
 	 * status may not always successful be changed, if the state
@@ -512,8 +456,7 @@ public class Monster extends Entity implements Cloneable {
 	 * @see {@link Monster#setStatus(Status, int)}
 	 */
 	public boolean setStatus(Status status, boolean toggle) {
-		int duration = toggle ? 1 : 0;
-		return setStatus(status, duration);
+		return setStatus(status, toggleToDuration(toggle));
 	}
 
 	/** 

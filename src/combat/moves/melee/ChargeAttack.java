@@ -31,9 +31,11 @@ public class ChargeAttack extends Ability {
 	}
 	
 	protected void execute() { //might put the print statements in the fight class
+		Monster attacker = this.getAttacker();
+		
 		if (turnCount == 1) { //checks if attack charged for 1 turn
 			//Attack based on RNG and modified by stats
-			Monster target = this.getTarget();
+			Monster target = this.currentTarget();
 			String missPrompt = attacker.getName() + "'s attack missed";
 			if (attackHit(missPrompt)) {
 				
@@ -51,9 +53,8 @@ public class ChargeAttack extends Ability {
 						
 				float sto = setAttMod(0.1f);
 				if (attackHit()) {
-					Interface.writeOut(attacker.getName() + "'s charged attack stuns " + target.getName());
-					this.afflicted.add(Status.STUN);
-					target.setStatus(Status.STUN, true);
+					String stunPrompt = attacker.getName() + "'s charged attack stuns " + target.getName();
+					applyStatus(Status.STUN, true, stunPrompt);
 				}
 				setAttMod(sto);
 			}

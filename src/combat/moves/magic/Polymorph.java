@@ -15,17 +15,30 @@ public class Polymorph extends Ability { //doesn't account for if the moveLists 
 		manaCost = 15;
 		attMod = 0.05f;
 	}
+
+	@Override
+	protected void applyStatus(Status status, int duration, String statusPrompt) {
+		if (status == Status.SHIFT) {
+			Monster sheep = Index.createMonster("Sheep");
+			ShapeShift.transform(this.currentTarget(), sheep, duration); //last 3 turns
+			if (statusPrompt != null)
+				Interface.writeOut(statusPrompt);
+		} else {
+			super.applyStatus(status, duration, statusPrompt);
+		}
+		this.applied.add(status);
+	}
 	
 	protected void execute() { //checks twice
-		Monster target = this.getTarget();
+		Monster attacker = this.getAttacker();
+		Monster target = this.currentTarget();
 		String failPrompt = attacker.getName() + "'s morph failed";
 		String secondFail = attacker.getName() + "'s morph was resisted";
+
 		if (attackHit(failPrompt) && attackHit(secondFail)) { //Check if attack will be successful
 			
-			Interface.writeOut(attacker.getName() + " has transformed " + target.getName() + " into a sheep");
-			Monster sheep = Index.createMonster("Sheep");
-			this.afflicted.add(Status.SHIFT);
-			ShapeShift.transform(target, sheep, 3); //last 3 turns
+			String transPrompt = attacker.getName() + " has transformed " + target.getName() + " into a sheep";
+			applyStatus(Status.SHIFT, 3, transPrompt);
 		}
 	}
 

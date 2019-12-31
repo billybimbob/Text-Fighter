@@ -19,7 +19,9 @@ public class Disrupt extends Ability {
 	}
 	
 	protected void execute() {
-		Monster target = this.getTarget();
+		Monster attacker = this.getAttacker();
+		Monster target = this.currentTarget();
+
 		String missPrompt = attacker.getName() + "'s attack missed";
 		if (attackHit(missPrompt)) { //Check if attack will be successful
 			
@@ -33,9 +35,8 @@ public class Disrupt extends Ability {
 
 				float sto = setAttMod(0.4f);
 				if (attackHit()) { //mods damage
-					Interface.writeOut(attacker.getName() + "'s blow also stuns " + target.getName());
-					this.afflicted.add(Status.STUN);
-					target.setStatus(Status.STUN, true);
+					String stunPrompt = attacker.getName() + "'s blow also stuns " + target.getName();
+					applyStatus(Status.STUN, true, stunPrompt);
 				}
 				setAttMod(sto);
 			}

@@ -18,12 +18,12 @@ public class SpinAttack extends Ability {
 
 	@Override
 	protected boolean preExecute() {
-		String attPrompt = attacker.getName() + " spins around";
+		String attPrompt = this.getAttacker().getName() + " spins around";
 		return enoughMana(attPrompt);
 	}
 	
 	protected void execute() {
-		Monster target = this.getTarget();
+		Monster target = this.currentTarget();
 		String missPrompt = target.getName() + " dodges the attack";
 		if (attackHit(missPrompt)) { //Check if attack will be successful
 			

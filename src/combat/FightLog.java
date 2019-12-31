@@ -1,10 +1,11 @@
 package combat;
 
-import java.util.*;
-import java.util.Map.Entry;
-
 import combat.moves.Ability;
 import assets.Monster;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class FightLog {
 
@@ -13,7 +14,7 @@ public class FightLog {
         private float damage;
         private Ability attack;
         private List<Status> applied;
-
+    
         public Log(Monster attacker, Monster target, Ability ability, float damage, List<Status> applied) {
             this.attacker = attacker;
             this.target = target;
@@ -21,15 +22,30 @@ public class FightLog {
             this.damage = damage;
             this.applied = Collections.unmodifiableList(applied);
         }
-
+    
+        public Monster getAttacker() { return attacker; }
+        public Monster getTarget() { return target; }
         public Ability getAttack() { return attack; }
         public float getDamage() { return damage; }
         public List<Status> getApplied() { return applied; }
+    
+        private String appliedStr() {
+            Function<Status, String> getName = Status::name;
+            return applied.stream()
+                .map(getName.andThen(String::toLowerCase))
+                .collect(Collectors.joining(", "));
+        }
+    
+        @Override
+        public String toString() {
+            return attacker.getName() + " used " + attack.getName() 
+                + " on" + target.getName() + " for " + damage 
+                + " damage, and applied " + appliedStr();
+        }
     }
 
-    //1st Monster key is target; 2nd Monster key is attacker
+     //key is the target of log
     private List< Map<Monster, List<Log>> > logs;
-
 
     FightLog() {
         this.logs = new ArrayList<>();
@@ -64,8 +80,10 @@ public class FightLog {
             targLogs = logs.get(round).get(target);
         } catch (IndexOutOfBoundsException e) { } //handle case if on first round
         
-        if (targLogs == null)
+        if (targLogs == null) {
+            System.err.println("no logs found");
             targLogs = new ArrayList<>();
+        }
 
         return targLogs;
     }
@@ -87,32 +105,21 @@ public class FightLog {
         }
 
         var round = newestRound();
-        var targLog = round.get(log.target);
-
-        if (targLog == null) {
-            targLog = new ArrayList<>();
-            round.put(log.target, targLog);
-        }
+        if (!round.containsKey(log.getTarget())) //slower?
+            round.put(log.getTarget(), new ArrayList<>());
         
-        targLog.add(log);
+        round.get(log.getTarget()).add(log);
     }
 
 
     @Override
     public String toString() {
         StringBuilder accum = new StringBuilder();
-        
-        for (Map<Monster, List<Log>> round: this.logs) //might want to be reversed
-            for (Entry<Monster,List<Log>> entry: round.entrySet())  {
-                String target = entry.getKey().getName();
-
-                for (Log log: entry.getValue()) {
-                    String attacker = log.attacker.getName();
-                    double damage = log.getDamage();
-                    accum.append(attacker + " hit " + target + " for " + damage + " damage");
-                }
-            }
-
+        this.logs.forEach(round -> {
+            round.entrySet().forEach(log -> {
+                accum.append(log.toString());
+            });
+        });
         return accum.toString();
     }
 

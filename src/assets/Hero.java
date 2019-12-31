@@ -1,8 +1,10 @@
 package assets;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import combat.*;
+import combat.moves.Ability;
 import main.Inventory;
 import main.Index;
 import static main.Interface.*; //not sure if to keep
@@ -89,9 +91,10 @@ public class Hero extends Monster {
 			
 			//determine the targets of hero move
 			action = true;
-			if (checkAutoTar(possTargets))
+			if (Ability.checkAutoTar(getTurnMove(), possTargets))
 				continue;
 				
+			List<Monster> targets = new ArrayList<>();
 			int numOptions = possTargets.size();
 			while (numOptions-possTargets.size() < this.getNumTar()) { //loop until amount selected enough
 
@@ -102,12 +105,14 @@ public class Hero extends Monster {
 				if (tarNum == RESPONSENUM.get("Back")) {//have to change how to implement
 					action = false;
 					this.setTurnMove(-1); //set to null
-					possTargets.addAll(this.targets);
-					this.targets.clear();
+					possTargets.addAll(targets);
 					break;
 				}
-				this.targets.add(possTargets.remove(tarNum-1));
+				targets.add(possTargets.remove(tarNum-1));
 			}
+
+			if (action)
+				this.getTurnMove().setTargets(targets);
 
 		} while (!action);
 	}

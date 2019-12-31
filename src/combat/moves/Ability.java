@@ -11,13 +11,14 @@ import main.Interface;
 
 public abstract class Ability implements Cloneable {
 
-	private Monster target; //changes with useAbility
+	private List<Monster> targets;
+	private Monster attacker, currTarget; //changes with useAbility
+
 	protected String name, description;
 	protected float manaCost, attMod, damage, damageMod;
-	protected Monster attacker;
 	protected int numTar;
 	protected boolean attType, priority, passive; //aoe attacks can't work with Monster
-	protected List<Status> afflicted; //could be expensive
+	protected List<Status> applied; //could be expensive, maybe add removed status list?
 
 	protected Ability() {
 		this.priority = false;
@@ -27,7 +28,8 @@ public abstract class Ability implements Cloneable {
 		this.damage = 0;
 		this.attMod = 0.01f;
 		this.damageMod = 1;
-		this.afflicted = new ArrayList<>();
+		this.applied = new ArrayList<>();
+		this.targets = new ArrayList<>();
 	}
 
 	/**
@@ -43,7 +45,8 @@ public abstract class Ability implements Cloneable {
 			Ability newAbility = (Ability)super.clone();
 			newAbility.attacker = attacker;
 			newAbility.damage = 0;
-			newAbility.afflicted = new ArrayList<>(); //not sure
+			newAbility.targets = new ArrayList<>();
+			newAbility.applied = new ArrayList<>(); //not sure
 			return newAbility;
 		} catch (CloneNotSupportedException e) {
 			System.err.println("issue cloning ability");
@@ -87,8 +90,9 @@ public abstract class Ability implements Cloneable {
 	protected boolean attackHit(String failPrompt) {
 		Stat hitStat = Stat.getHitStat(attType);
 		Stat blockStat = Stat.getBlockStat(attType);
-		double checkNum = Math.random()*attacker.getStat(hitStat) - Math.random()*target.getStat(Stat.SPEED)*0.5;
-		boolean check = checkNum > target.getStat(blockStat)*attMod;
+		double checkNum = Math.random()*attacker.getStat(hitStat)
+			- Math.random()*currTarget.getStat(Stat.SPEED)*0.5;
+		boolean check = checkNum > currTarget.getStat(blockStat)*attMod;
 		
 		if (check) //determines damage if successful
 			damage = (int)(Math.random()*(attacker.getStat(hitStat)*damageMod)+1);
@@ -128,16 +132,18 @@ public abstract class Ability implements Cloneable {
 	 */
 	protected boolean targetReduct(String blockedPrompt) { //maybe look over
 		Stat hitStat = Stat.getHitStat(attType), blockStat = Stat.getBlockStat(attType);
-		damage -= (int)(Math.random()*(target.getStat(blockStat)));
+		damage -= (int)(Math.random()*(currTarget.getStat(blockStat)));
 		
 		int minDam = (int)attacker.getStat(hitStat);
-		float stat = target.getStat(blockStat);
+		float stat = currTarget.getStat(blockStat);
 		minDam -= ((int)stat/2);
 
 		damage = minDam > damage ? minDam : damage; //floor to minDam
-		boolean blocked = damage <= 0;
-		if (blocked)
+		boolean blocked = this.damage <= 0;
+		if (blocked) {
+			this.damage = 0;
 			Interface.writeOut(blockedPrompt);
+		}
 
 		return blocked;
 	}
@@ -157,78 +163,138 @@ public abstract class Ability implements Cloneable {
 		return enoughMana();
 	}
 
-	/**use ability on specific target */
+	/**
+	 * use ability on specific target;
+	 * combat damage is determined here
+	 */
 	protected abstract void execute();
 
 
 	/*
 	 * getters
 	 */
-	protected Monster getTarget() {
-		return this.target;
-	}
-	public String getName() {
-		return name;
-	}
-	public float getManaCost() {
-		return manaCost;
-	}
-	public int getNumTar() {
-		return numTar;
-	}
-	public boolean getPriority() {
-		return priority;
-	}
-	public boolean isPassive() {
-		return passive;
-	}
-	public boolean resolved() { //check if multi turn, see if ability finished
-		return true;
-	}
+	protected Monster getAttacker() { return this.attacker; }
+	protected Monster currentTarget() { return this.currTarget;	}
 
+	public String getName() { return name; }
+	public float getManaCost() { return manaCost; }
+	public int getNumTar() { return numTar;	}
+	public boolean getPriority() { return priority;	}
+	public boolean isPassive() { return passive; }
+	public boolean resolved() { return true; } //check if multi turn, see if ability finished
+
+	void setAttacker(Monster attacker) { this.attacker = attacker; }
 
 	/**
 	 * can return null if state inconsistent
 	 */
 	private Log createLog() {
-		return target == null
+		return currTarget == null
 			? null
-			: new Log(attacker, target, this, damage, afflicted);
+			: new Log(attacker, currTarget, this, damage, applied);
 	}
 	
 	/**
 	 * attacker deals damage to target, and the damage is logged
 	 */
-	public void dealDamage (String damPrompt) {
-		target.modStat(Stat.HP, true, -damage);
+	protected void dealDamage (String damPrompt) {
+		currTarget.modStat(Stat.HP, true, -damage);
 		Interface.writeOut(damPrompt);
 
-		if (target.getStatus(Status.REFLECT) > -1) { //not sure if I want to check every time
+		if (currTarget.getStatus(Status.REFLECT) > -1) { //not sure if I want to check every time
 			float refDam = (int)(damage*0.75f);
 			attacker.modStat(Stat.HP, true, -refDam);
-			Interface.writeOut(target.getName() + " reflects " + refDam 
+			Interface.writeOut(currTarget.getName() + " reflects " + refDam 
 				+ " damage to " + attacker.getName());
 		}
-			
-		Interface.currentFight().getLogs()
-			.addLog(this.createLog());
 	}
+
+	/**
+	 * applies status effect to {@code currTarget} for specified
+	 * amount of turns
+	 * @param status
+	 * @param duration
+	 */
+	protected void applyStatus (Status status, int duration, String statusPrompt) {
+		this.currTarget.setStatus(status, duration);
+		this.applied.add(status);
+		if (statusPrompt != null)
+			Interface.writeOut(statusPrompt);
+	}
+
+	/**
+	 * applies status effect to {@code currTarget} for one turn
+	 */
+	protected void applyStatus(Status status, boolean toggle, String statusPrompt) {
+		applyStatus(status, Monster.toggleToDuration(toggle), statusPrompt);
+	}
+
+
+	/*
+	 * targeting methods
+	 */
+	private boolean checkAddAll(List<Monster> possTargets) {
+		int numTar = this.getNumTar();
+
+		boolean check = numTar == -1 || numTar >= possTargets.size();
+		if (check)
+			this.targets.addAll(possTargets);
+
+		return check;
+	}
+
+	private boolean checkSelfTar() {
+		boolean check = numTar == 0;
+		if (check)
+			this.targets.add(attacker);
+		
+		return check;
+	}
+
+	public static boolean checkAutoTar(Ability check, List<Monster> possTargets) {
+		return check.checkAddAll(possTargets) || check.checkSelfTar();
+	}
+
+	public void pickTargets(List<Monster> possTargets) {
+		targets.clear();
+		if (!checkAutoTar(this, possTargets)) {
+			for (int i = 0; i < possTargets.size() 
+				&& this.targets.size() < this.getNumTar(); i++) { //gets targets if needed
+				
+				Monster possTarget = possTargets.get(i);
+				if (possTarget.getAggro() != attacker.getAggro())
+					this.targets.add(possTarget);
+			}
+		}
+	}
+
+	public void setTargets(List<Monster> adding) {
+		if (numTar == 0 && adding.size() != 1 || numTar >= 1 && adding.size() > numTar) {
+			System.err.println("incorrect amount of targets being added");
+			return;
+		}
+
+		targets.clear();
+		targets.addAll(adding);
+	}
+
 
 	public void useAbility() {
 		if (this.preExecute()) {
-			for (Monster target: attacker.getTargets()) {
-				this.target = target;
+			for (Monster target: targets) {
+				this.currTarget = target;
 				this.damage = 0;
 				this.execute();
-				afflicted.clear();
+				Interface.currentFight().getLogs().addLog(this.createLog()); //not sure
+				applied.clear();
 			}
-			this.target = null;
+			this.currTarget = null;
 		}
 	}
 	
 	@Override
 	public String toString() {
-		return name + " - " + manaCost + " mana\n\t" + description;
+		return this.name + " - " + manaCost + " mana\n\t" + description;
 	}
 
 }

@@ -21,20 +21,19 @@ public class FlameBurst extends Ability {
 
     @Override
     protected boolean preExecute() {
-        String attPrompt = attacker.getName() + " creates a burst of flame surrounding self";
+        String attPrompt = this.getAttacker().getName() + " creates a burst of flame surrounding self";
         return enoughMana(attPrompt);
     }
 
     protected void execute() {
-		Monster target = this.getTarget();
+		Monster target = this.currentTarget();
         String failPrompt = target.getName() + " resists the flames";
         if (attackHit(failPrompt)) {
+
             String damPrompt = target.getName() + " is hit with flames for " + damage + " damage"
                 + "\nand burning for " + duration + " turns";
-
-            target.setStatus(Status.BURN, duration);
-            this.afflicted.add(Status.BURN);
             dealDamage(damPrompt);
+            applyStatus(Status.BURN, duration, null);
         }
     }
 

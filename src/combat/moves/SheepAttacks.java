@@ -14,7 +14,8 @@ public class SheepAttacks extends Ability{
 	
 	protected void execute() {
 		int dialogue = (int)(Math.random()*4);
-		Monster target = this.getTarget();
+		Monster attacker = this.getAttacker();
+		Monster target = this.currentTarget();
 		
 		switch(dialogue) {
 			case 0:

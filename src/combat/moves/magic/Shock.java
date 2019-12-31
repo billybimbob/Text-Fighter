@@ -18,7 +18,8 @@ public class Shock extends Ability {
 	}
 
 	protected void execute() {
-		Monster target = this.getTarget();
+		Monster attacker = this.getAttacker();
+		Monster target = this.currentTarget();
 		String failPrompt = attacker.getName() + "'s shock failed";
 		if (attackHit(failPrompt)) {
 			

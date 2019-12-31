@@ -1,4 +1,4 @@
-package combat.moves; //here to access Ability members
+package combat.moves; //here to access Ability members and setAttacker
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,6 +11,8 @@ import main.*;
 public class ChangeForm extends Ability {
 
 	private Monster[] formList;
+	private Monster newForm;
+	private int duration;
 	
 	public ChangeForm (Monster user) {
 		super(user);
@@ -19,8 +21,9 @@ public class ChangeForm extends Ability {
 		manaCost = 1; //might get rid
 		numTar = 0;
 		priority = true;
+		duration = 5;
 		
-		this.initFormList(attacker);
+		this.initFormList(this.getAttacker());
 	}
 
 	@Override
@@ -41,16 +44,30 @@ public class ChangeForm extends Ability {
 			Ability passive = shift.getPassive();
 			
 			if (passive != null)
-				passive.attacker = attacker;
+				passive.setAttacker(attacker);
 				
 			for (Ability ability: shift.getMoves())
-				ability.attacker = attacker;
+				ability.setAttacker(attacker);
 			
 			shift.addAttack(this);
 		}
 	}
+
+
+	@Override
+	protected void applyStatus(Status status, int duration, String statusPrompt) {
+		if (status == Status.SHIFT) {
+			ShapeShift.transform(this.getAttacker(), newForm, duration);
+			if (statusPrompt != null)
+				Interface.writeOut(statusPrompt);
+		} else {
+			super.applyStatus(status, duration, statusPrompt);
+		}
+		this.applied.add(status);
+	}
 	
 	protected void execute() {
+		Monster attacker = this.getAttacker();
 		boolean shifted = attacker.getStatus(Status.SHIFT) >= 0;
 
 		List<Monster> tempList = Arrays.stream(formList) //determine available transformations, removes caster from list
@@ -74,10 +91,11 @@ public class ChangeForm extends Ability {
 			ShapeShift.revert(attacker);
 			Interface.writeOut(attacker.getName() + " reverted back");
 		} else {	
-			Monster newForm = tempList.get(formChoice);
-			String beforeName = attacker.getName(), newName = newForm.getName();
-			ShapeShift.transform(attacker, newForm, 5);			
-			Interface.writeOut(beforeName + " has transformed into " + newName);
+			newForm = tempList.get(formChoice);
+			String beforeName = attacker.getName();
+			String newName = newForm.getName();
+			String transPrompt = beforeName + " has transformed into " + newName;
+			applyStatus(Status.SHIFT, this.duration, transPrompt);
 		}
 	}
 }

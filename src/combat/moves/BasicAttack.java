@@ -20,7 +20,8 @@ public class BasicAttack extends Ability {
 	
 	protected void execute() { //might need to change how the target is handled
 		//Attack based on RNG and modified by stats, need to consider magic attack
-		Monster target = this.getTarget();
+		Monster attacker = this.getAttacker();
+		Monster target = this.currentTarget();
 		String missPrompt = attacker.getName() + "'s attack missed";
 		if (attackHit(missPrompt)) { //check if attack will be successful
 

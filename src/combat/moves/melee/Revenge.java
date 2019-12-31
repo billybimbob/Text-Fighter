@@ -6,6 +6,8 @@ import main.Interface;
 
 public class Revenge extends Ability {
 
+    private float turnDamage;
+
     public Revenge(Monster user) {
         super(user);
         name = "Revenge";
@@ -17,9 +19,10 @@ public class Revenge extends Ability {
 
     @Override
     protected boolean preExecute() {
+		Monster attacker = this.getAttacker();
         int prevRound = Interface.currentFight().getTurnNum()-1;
         
-        damage = Interface.currentFight().getLogs()
+        turnDamage = Interface.currentFight().getLogs()
             .getTurnDamage(prevRound, attacker); //keep eye on
 
         Interface.writeOut(attacker.getName() + " enacts revenge");
@@ -28,7 +31,8 @@ public class Revenge extends Ability {
 
     @Override
 	protected void execute() {
-        String damPrompt = this.getTarget().getName() + " is dealt " + damage + " damage";
+        this.damage = turnDamage;
+        String damPrompt = this.currentTarget().getName() + " is dealt " + this.damage + " damage";
         dealDamage(damPrompt);
     }
 }

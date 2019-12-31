@@ -17,12 +17,12 @@ public class Intimidate extends Ability {
 
 	@Override
 	protected boolean preExecute() {
-		Interface.writeOut(attacker.getName() + " intimidates all enemies, and decreases all of their speed");
+		Interface.writeOut(this.getAttacker().getName() + " intimidates all enemies, and decreases all of their speed");
 		return true;
 	}
 
 	protected void execute() {
-		this.getTarget().modStat(Stat.SPEED, true, -1);
+		this.currentTarget().modStat(Stat.SPEED, true, -1);
 	}
 
 }

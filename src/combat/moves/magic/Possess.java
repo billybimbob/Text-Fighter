@@ -3,7 +3,6 @@ package combat.moves.magic;
 import combat.moves.Ability;
 import combat.Status;
 import assets.Monster;
-import main.Interface;
 
 public class Possess extends Ability {
     //look over either this ability or look at aggro
@@ -16,12 +15,12 @@ public class Possess extends Ability {
     }
 
 	protected void execute() {
-		Monster target = this.getTarget();
+		Monster attacker = this.getAttacker();
+		Monster target = this.currentTarget();
 		String failPrompt = attacker.getName() + " failed to possess";
         if (attackHit(failPrompt)) {
-            target.setStatus(Status.CONTROL, 3);
-            this.afflicted.add(Status.CONTROL);
-            Interface.writeOut(attacker.getName() + " takes control of " + target.getName());
+            String controlPrompt = attacker.getName() + " takes control of " + target.getName();
+            applyStatus(Status.CONTROL, 3, controlPrompt);
         }
     }
 }
