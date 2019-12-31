@@ -12,8 +12,7 @@ public class SpinAttack extends Ability {
 		description = "A spinning melee attack that damages all enemies for less damage than a basic attack";
 		attType = true; //melee attack; might make it based on the attacker
 		numTar = -1;
-		manaCost = 5;
-		damageMod = 1.25f;
+		manaCost = 6;
 	}
 
 	@Override

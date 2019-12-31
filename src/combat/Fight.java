@@ -41,7 +41,7 @@ public class Fight {
 			
 			priorities();
 			
-			for (int i = 0; fightControl && i < fighters.size(); i++) { //idx loop from removing
+			for (int i = 0; fightControl && i < fighters.size(); i++) { //idx loop for removing
 				Monster fighter = fighters.get(i);
 				runTurn(fighter);
 
@@ -50,15 +50,7 @@ public class Fight {
 				}
 			}
 
-			/*
-			//Goes through the move of each fighter
-			for (Monster fighter: fighters)
-				runTurn(fighter);
-
-			//remove after to not mess up prior targets
-			removeDead();*/
-
-			if (fightControl && noEnemies()) { //Check if all Monster are killed
+			if (fightControl && noEnemies()) { //check if all Monster are killed
 				Interface.writeOut("There are no more enemies, you win!");
 				fightControl = false;
 			}
@@ -147,7 +139,7 @@ public class Fight {
 		statusCheck(attacker, Status.SHIFT);
 		
 		fightControl = true; //not sure
-		attacker.clearTurn();
+		attacker.endTurn();
 		attacker.modStat(Stat.MP, true, 1); //passive mp gain, could change the val
 		
 		if (!attacker.statusUpdated()) { //might be temporary
@@ -228,7 +220,7 @@ public class Fight {
 		} else if (check > -1) { //active
 			switch(status) {
 				case BURN:
-					int burnDam = (int)(checking.getStat(Stat.HP)*0.1f*Math.random());
+					int burnDam = (int)(checking.getStat(Stat.HP)*0.3f*Math.random());
 					burnDam = burnDam == 0 ? 1 : burnDam; //floor to 1
 					checking.modStat(Stat.HP, false, -burnDam);
 					Interface.writeOut(checking.getName() + " is burned, and takes " + burnDam + " damage");
@@ -266,9 +258,10 @@ public class Fight {
 		}
 	}
 
-	private boolean noEnemies() {
+	private boolean noEnemies() { //not working?
 		for (Monster mon: fighters) {
-			if (mon.getAggro()) //does not account for temp no aggro
+			//if (mon.getAggro()) //does not account for temp no aggro
+			if (mon.getClass() != Hero.class) //temp fix
 				return false;
 		}
 		return true;

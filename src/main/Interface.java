@@ -87,6 +87,9 @@ public class Interface {
 
 		for (String printing: printings) {
 			for (String line:  printing.split("\\n+")) {
+				if (line.isEmpty())
+					continue;
+
 				int lineSize = 0;
 				boolean tabbed = line.charAt(0) == '\t'; //not sure
 				int lineLimit = tabbed ? LINESPACE.length()-TABSIZE : LINESPACE.length();

@@ -13,10 +13,10 @@ public class FlameBurst extends Ability {
         name = "Flame Burst";
         description = "A blast of fire that causes all others to be set on fire for " + duration + " turns";
         attType = false;
-        manaCost = 6;
+        manaCost = 7;
         numTar = -1;
-        damageMod = 0.5f;
-        duration = 3;
+        damageMod = 0.75f;
+        duration = 4;
     }
 
     @Override

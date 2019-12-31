@@ -373,7 +373,7 @@ public class Monster extends Entity implements Cloneable {
 		turnMove.useAbility();
 	}
 
-	public void clearTurn() { //not sure if too needed
+	public void endTurn() { //not sure if too needed
 		if (turnMove != null && turnMove.resolved()) {
 			turnMove = null;
 		}

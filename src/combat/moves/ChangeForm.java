@@ -56,14 +56,10 @@ public class ChangeForm extends Ability {
 
 	@Override
 	protected void applyStatus(Status status, int duration, String statusPrompt) {
-		if (status == Status.SHIFT) {
+		if (status == Status.SHIFT)
 			ShapeShift.transform(this.getAttacker(), newForm, duration);
-			if (statusPrompt != null)
-				Interface.writeOut(statusPrompt);
-		} else {
-			super.applyStatus(status, duration, statusPrompt);
-		}
-		this.applied.add(status);
+		
+		super.applyStatus(status, duration, statusPrompt); //second setStatus should fail, not sure
 	}
 	
 	protected void execute() {

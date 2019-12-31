@@ -96,6 +96,7 @@ public class Hero extends Monster {
 				
 			List<Monster> targets = new ArrayList<>();
 			int numOptions = possTargets.size();
+			
 			while (numOptions-possTargets.size() < this.getNumTar()) { //loop until amount selected enough
 
 				String[] monNames = possTargets.stream().map(Monster::getName).toArray(String[]::new);

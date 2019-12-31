@@ -4,7 +4,6 @@ import assets.*;
 import combat.Status;
 import combat.moves.Ability;
 import main.Index;
-import main.Interface;
 
 public class Polymorph extends Ability { //doesn't account for if the moveLists are different length
 
@@ -21,12 +20,8 @@ public class Polymorph extends Ability { //doesn't account for if the moveLists 
 		if (status == Status.SHIFT) {
 			Monster sheep = Index.createMonster("Sheep");
 			ShapeShift.transform(this.currentTarget(), sheep, duration); //last 3 turns
-			if (statusPrompt != null)
-				Interface.writeOut(statusPrompt);
-		} else {
-			super.applyStatus(status, duration, statusPrompt);
 		}
-		this.applied.add(status);
+		super.applyStatus(status, duration, statusPrompt);
 	}
 	
 	protected void execute() { //checks twice

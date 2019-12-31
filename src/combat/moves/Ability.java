@@ -13,12 +13,12 @@ public abstract class Ability implements Cloneable {
 
 	private List<Monster> targets;
 	private Monster attacker, currTarget; //changes with useAbility
+	private List<Status> applied; //maybe add removed status list?
 
 	protected String name, description;
 	protected float manaCost, attMod, damage, damageMod;
 	protected int numTar;
 	protected boolean attType, priority, passive; //aoe attacks can't work with Monster
-	protected List<Status> applied; //could be expensive, maybe add removed status list?
 
 	protected Ability() {
 		this.priority = false;
@@ -184,7 +184,7 @@ public abstract class Ability implements Cloneable {
 	public boolean resolved() { return true; } //check if multi turn, see if ability finished
 
 	void setAttacker(Monster attacker) { this.attacker = attacker; }
-
+	protected void setTarget(Monster target) { this.currTarget = target; }
 	/**
 	 * can return null if state inconsistent
 	 */
@@ -250,15 +250,19 @@ public abstract class Ability implements Cloneable {
 		
 		return check;
 	}
+	
+	protected void addTarget(Monster add) { //can add targets in subclasses, not sure
+		targets.add(add);
+	}
 
 	public static boolean checkAutoTar(Ability check, List<Monster> possTargets) {
+		check.targets.clear();
 		return check.checkAddAll(possTargets) || check.checkSelfTar();
 	}
 
-	public void pickTargets(List<Monster> possTargets) {
-		targets.clear();
+	public void pickTargets(List<Monster> possTargets) { //cleared in auto
 		if (!checkAutoTar(this, possTargets)) {
-			for (int i = 0; i < possTargets.size() 
+			for (int i = 0; i < possTargets.size()
 				&& this.targets.size() < this.getNumTar(); i++) { //gets targets if needed
 				
 				Monster possTarget = possTargets.get(i);
@@ -268,18 +272,17 @@ public abstract class Ability implements Cloneable {
 		}
 	}
 
-	public void setTargets(List<Monster> adding) {
-		if (numTar == 0 && adding.size() != 1 || numTar >= 1 && adding.size() > numTar) {
+	public void setTargets(List<Monster> newTargs) {
+		targets.clear();
+		if (numTar == 0 && newTargs.size() != 1 || numTar >= 1 && newTargs.size() > numTar) {
 			System.err.println("incorrect amount of targets being added");
 			return;
 		}
-
-		targets.clear();
-		targets.addAll(adding);
+		targets.addAll(newTargs);
 	}
 
 
-	public void useAbility() {
+	public final void useAbility() {
 		if (this.preExecute()) {
 			for (Monster target: targets) {
 				this.currTarget = target;

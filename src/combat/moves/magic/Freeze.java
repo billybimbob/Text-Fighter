@@ -12,7 +12,8 @@ public class Freeze extends Ability {
 		name = "Freeze";
 		description = "A a magic attack with the less damage, but lowers target's speed and evasion";
 		attType = false;
-		manaCost = 2;
+		numTar = 2;
+		manaCost = 3;
 		damageMod = 0.75f;
 	}
 	

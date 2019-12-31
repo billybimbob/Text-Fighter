@@ -16,7 +16,7 @@ public class Reflect extends Ability { //not sure if should be priority or not
 		manaCost = 6;
 		numTar = 0;
 		duration = 5;
-		attMod = 0.005f;
+		attMod = 0.002f;
 	}
 
 	protected void execute() {

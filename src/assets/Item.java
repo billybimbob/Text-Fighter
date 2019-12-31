@@ -84,7 +84,7 @@ public abstract class Item extends Entity {
 	 * @param user monster using the item
 	 * @param remove {@code true} if to remove stats from user
 	 */
-	protected void use (Monster user, boolean remove) { //should not be remove true first
+	protected final void use (Monster user, boolean remove) { //should not be remove true first
 		if (checkState(user, remove)) {
 			this.currentUser = user;
 			if (this.remove = remove)
@@ -104,7 +104,7 @@ public abstract class Item extends Entity {
 	 * the remove parameter first being off then on
 	 * @param user user of the item
 	 */
-	protected void use (Monster user) {
+	protected final void use (Monster user) {
 		use(user, defaultRemove(user));			
 	}
 	
