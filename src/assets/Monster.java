@@ -6,8 +6,8 @@ import assets.items.Slot;
 import combat.Status;
 import combat.moves.Ability;
 import main.Index;
-import main.Index.Move;
 import main.Interface;
+
 
 public class Monster extends Entity implements Cloneable {
 
@@ -40,7 +40,6 @@ public class Monster extends Entity implements Cloneable {
 				capOver = newVal-this.base;
 				if (this.temp < this.base) //keep old temp or ceiling to base
 					this.setTemp(this.base);
-
 			} else
 				this.setTemp(newVal);
 
@@ -61,12 +60,10 @@ public class Monster extends Entity implements Cloneable {
 		boolean getChecked() { return checked; }
 		void setEnd(int end) { this.end = end; }
 		void setCheck(boolean checked) { this.checked = checked; }
-
 	}
 
 
-	/**variables */
-
+	/* variables */
 	public final static int levMult = 2;
 	
 	private Ability passive;
@@ -78,11 +75,6 @@ public class Monster extends Entity implements Cloneable {
 	protected Map<Status, StatusInfo> status; //temporary values
 	protected Ability[] moveList;
 	protected int level = 1;
-
-	/**
-	 * constructor used only for dummy monsters, do not use
-	 */
-	public Monster() { }
 
 	/**
 	 * constructor to have no extra attacks but basic
@@ -101,14 +93,14 @@ public class Monster extends Entity implements Cloneable {
 			this.stats.put(Stat.values()[i], new StatInfo(statsIn.get(i)));
 
 		initStatus();
-		moveList = new Ability[] {createAbility(Move.BASIC)};
+		moveList = new Ability[] {createAbility("basic")};
 	}
 
 	/**
 	 * monster constructor, basic attack and list of specials
 	 * @see {@link Monster#Monster(String, boolean, boolean, List)}
 	 */
-	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats, List<Move> specials) {
+	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats, List<String> specials) {
 		this(name, aggro, attType, stats);
 		
 		List<Ability> moveSto = new ArrayList<>(Arrays.asList(moveList)); //abilities from default constructor
@@ -133,7 +125,7 @@ public class Monster extends Entity implements Cloneable {
 	 * contructor with specials and a passive
 	 * @param passive must be a passive ability
 	 */
-	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats, List<Move> specials, Move passive) {
+	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats, List<String> specials, String passive) {
 		this(name, aggro, attType, stats, specials);
 		this.setPassive(createPassive(passive));
 	}
@@ -153,28 +145,26 @@ public class Monster extends Entity implements Cloneable {
 		
 		initStatus(); //status not copied
 		if (copy.passive != null)
-			this.setPassive((Ability)copy.passive.clone(this));
-			//this.setPassive( createPassive(copy.passive.getName()) );
+			this.setPassive( createPassive(copy.passive) );
 		
 		this.moveList = Arrays.stream(copy.moveList) //should already be sorted
-			.map(move -> (Ability)move.clone(this))
-			//.map(move -> createAbility(move.getName()))
+			.map(move -> createAbility(move))
 			.toArray(Ability[]::new);
 
 	}
 
 	//private helpers
-	private Ability createAbility(Move name) {
+	private Ability createAbility(String name) {
 		return Index.createAbility(name, this);
 	}
-	private Ability createAbility(String moveName) {
-		return Index.createAbility(moveName, this);
+	private Ability createAbility(Ability ability) {
+		return Index.createAbility(ability, this);
 	}
-	private Ability createPassive(Move name) {
+	private Ability createPassive(String name) {
 		return Index.createPassive(name, this);
 	}
-	private Ability createPassive(String moveName) { 
-		return Index.createAbility(moveName, this);
+	private Ability createPassive(Ability ability) { 
+		return Index.createAbility(ability, this);
 	}
 
 	private void initStatus() {
@@ -189,8 +179,10 @@ public class Monster extends Entity implements Cloneable {
 	}
 
 	
-	/** extra values to check/modify while turning on status;
-	 *  status will only update if new values will extend duration */
+	/** 
+     * extra values to check/modify while turning on status;
+	 * status will only update if new values will extend duration
+     */
 	private boolean onChecks(Status status, int endTurn) {
 		StatusInfo info = this.status.get(status);
 		int oldEnd = info.getEnd();
@@ -220,7 +212,9 @@ public class Monster extends Entity implements Cloneable {
 		return turnOn;
 	}
 
-	/** extra values to check/modify while turning off a status */
+	/**
+     * extra values to check/modify while turning off a status
+     */
 	private boolean offChecks(Status status) {
 		StatusInfo info = this.status.get(status);
 		
@@ -280,8 +274,7 @@ public class Monster extends Entity implements Cloneable {
 		try {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
-			System.err.println("issue cloning monster");
-			return null;
+			throw new RuntimeException("issue cloning monster");
 		}
 	}
 

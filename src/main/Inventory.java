@@ -38,7 +38,7 @@ public class Inventory implements Iterable<Item> {
 	private void removeItem (Item item) { //removes one item; could change to param amounts	
 		ItemInfo info = inventoryList.get(item);
 		if (info == null)
-			System.err.println("Item does not exist");
+			throw new RuntimeException("Item does not exist");
 		else {
 			slotsUsed -= item.getSpace();
 			if (info.getAmount() == 1)

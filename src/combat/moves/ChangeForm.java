@@ -26,13 +26,6 @@ public class ChangeForm extends Ability {
 		this.initFormList(this.getAttacker());
 	}
 
-	@Override
-	public Object clone(Monster attacker) { //update attacker of formList
-		ChangeForm copy = (ChangeForm)super.clone(attacker);
-		copy.initFormList(attacker);
-		return copy;
-	}
-
 	private void initFormList(Monster attacker) {
 		this.formList = new Monster[] { //see if I can parameterize; clone doesn't work here
 			Index.createMonster("Eagle"), 

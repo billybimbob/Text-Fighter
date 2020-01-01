@@ -99,10 +99,8 @@ public class FightLog {
 
     /* mutators */
     public void addLog(Log log) {
-        if (log == null) {
-            System.err.println("log is null");
-            return;
-        }
+        if (log == null)
+            throw new NullPointerException("log is null");
 
         var round = newestRound();
         if (!round.containsKey(log.getTarget())) //slower?

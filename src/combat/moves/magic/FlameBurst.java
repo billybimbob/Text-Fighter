@@ -30,8 +30,8 @@ public class FlameBurst extends Ability {
         String failPrompt = target.getName() + " resists the flames";
         
         if (attackHit(failPrompt)) {
-            String damPrompt = target.getName() + " is hit with flames for " + damage + " damage"
-                + "\nand burning for " + duration + " turns";
+            String damPrompt = target.getName() + " is hit with flames for " + damage + " damage and"
+                + "\nburning for " + duration + " turns";
             dealDamage(damPrompt);
             applyStatus(Status.BURN, duration, null);
         }

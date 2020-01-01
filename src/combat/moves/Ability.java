@@ -40,20 +40,6 @@ public abstract class Ability implements Cloneable {
 		this.attacker = user;
 	}
 
-	public Object clone(Monster attacker) { //can't do copy constructor becuase of subclasses
-		try {
-			Ability newAbility = (Ability)super.clone();
-			newAbility.attacker = attacker;
-			newAbility.damage = 0;
-			newAbility.targets = new ArrayList<>();
-			newAbility.applied = new ArrayList<>(); //not sure
-			return newAbility;
-		} catch (CloneNotSupportedException e) {
-			System.err.println("issue cloning ability");
-			return null;
-		}
-	}
-
 
 	/* 
 	 * combat calculations, helper functions
@@ -285,10 +271,9 @@ public abstract class Ability implements Cloneable {
 
 	public void setTargets(List<Monster> newTargs) {
 		targets.clear();
-		if (numTar == 0 && newTargs.size() != 1 || numTar >= 1 && newTargs.size() > numTar) {
-			System.err.println("incorrect amount of targets being added");
-			return;
-		}
+		if (numTar == 0 && newTargs.size() != 1 || numTar >= 1 && newTargs.size() > numTar)
+			throw new RuntimeException("incorrect amount of targets being added");
+
 		targets.addAll(newTargs);
 	}
 

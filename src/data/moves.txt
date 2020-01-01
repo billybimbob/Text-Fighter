@@ -1,4 +1,4 @@
-enum      className      subDir
+aliases   className      subDir
 
 Attacks:
 basic,    BasicAttack

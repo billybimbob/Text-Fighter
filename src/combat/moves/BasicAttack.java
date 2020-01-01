@@ -10,13 +10,6 @@ public class BasicAttack extends Ability {
 		description = "A basic attack based off of the attack or magic skill of the attacker with a chance to crit";
 		attType = user.getAttType();
 	}
-
-	@Override
-	public Object clone (Monster user) {
-		BasicAttack clone = (BasicAttack)super.clone(user);
-		clone.attType = user.getAttType();
-		return clone;
-	}
 	
 	protected void execute() { //might need to change how the target is handled
 		//Attack based on RNG and modified by stats, need to consider magic attack

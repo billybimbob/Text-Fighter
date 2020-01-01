@@ -4,21 +4,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.io.*;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import assets.*;
 import assets.items.*;
 import combat.moves.*;
 
 public class Index {
-
-	public static enum Move { //used to make map limited
-		BASIC, SHEEP, //attacks
-		BURST, DRAIN, FREEZE, FRENZY, POLY, POSSESS, REFLECT, SHIFT, SHOCK, //magic
-		CHARGE, DISRUPT, REVENGE, SPIN, //melee
-		INTIM, RAGE; //passives
-	}
-
 
 	private static class NameList <T extends Entity> {
 		final List<T> lst = new ArrayList<>(); //can't index straight into
@@ -39,8 +30,8 @@ public class Index {
 	}
 	
 	//encapsulated away ability to add values after init
-	private static final Map<String, Move> moveNames = new HashMap<>(); //for name to move
-	private static final Map<Move, Constructor<? extends Ability>> moves = new HashMap<>();
+	private static final Map<String, String> aliases = new HashMap<>(); //for name to move
+	private static final Map<String, Constructor<? extends Ability>> moves = new HashMap<>();
 	private static final NameList<Monster> monsters = new NameList<>();
 	private static final NameList<Potion> potions = new NameList<>();
 	private static final NameList<Armor> armors = new NameList<>();
@@ -49,7 +40,6 @@ public class Index {
 		readPotions();
 		readArmors();
 		readMonsters();
-		//mapMoveNames();
 	}
 
 	private Index() { }
@@ -64,26 +54,23 @@ public class Index {
 				if (tok.length < 2)
 					continue;
 
-				var move = Move.valueOf(tok[0].toUpperCase());
-
+				var move = tok[0].toLowerCase();
 				var path = new StringBuilder("combat.moves.");
 				if (tok.length > 2)
 					path.append( tok[2].strip().concat(".") );
 				path.append(tok[1].strip());
 
-				var constructor = Class.forName(path.toString())
-					.asSubclass(Ability.class)
-					.getDeclaredConstructor(Monster.class);
+				var classRef = Class.forName(path.toString()).asSubclass(Ability.class);
+				var constructor = classRef.getDeclaredConstructor(Monster.class);
 
 				moves.put(move, constructor);
+				aliases.put(classRef.getName(), move);
 			}
 
 		} catch (IOException e) {
-			System.err.println("Issue reading moves");
-			System.exit(-1);
+			throw new RuntimeException("Issue reading moves\n" + e.getMessage());
 		} catch (ClassNotFoundException | NoSuchMethodException e) {
-			System.err.println("Issue finding listed move\n" + e);
-			System.exit(-1);
+			throw new RuntimeException("Issue finding listed move\n" + e.getMessage());
 		}
 
 	}
@@ -110,8 +97,7 @@ public class Index {
 			}
 
 		} catch (IOException e) {
-			System.err.println("Issue reading potions");
-			System.exit(-1);
+			throw new RuntimeException("Issue reading potions\n" + e.getMessage());
 		}
 	}
 
@@ -137,11 +123,9 @@ public class Index {
 			}
 
 		} catch (IOException e) {
-			System.err.println("Issue reading armors");
-			System.exit(-1);		
+			throw new RuntimeException("Issue reading armors\n" + e.getMessage());
 		}
 	}
-
 
 	private static void readMonsters() {
 
@@ -163,12 +147,12 @@ public class Index {
 					.collect(Collectors.toList());
 
 				if (parseLen >= 4) { //has special moves
-					List<Move> moves = Arrays.stream(tok[3].split(","))
-						.map(moveTok -> Move.valueOf(moveTok.toUpperCase()))
+					List<String> moves = Arrays.stream(tok[3].split(","))
+						.map(moveTok -> moveTok.toLowerCase())
 						.collect(Collectors.toList());
 
 					if (parseLen >= 5) { //has passive
-						Move passive = Move.valueOf(tok[4].toUpperCase());
+						String passive = tok[4].toLowerCase();
 						monsters.add(new Monster(name, defltAggro, attType, stats, moves, passive));
 
 					} else
@@ -179,51 +163,37 @@ public class Index {
 			} 
 
 		} catch (IOException e) {
-			System.err.println("Issue reading monsters");
-			System.exit(-1);
+			throw new RuntimeException("Issue reading monsters\n" + e.getMessage());
 		}
 
-	}
-
-	private static void mapMoveNames() {
-		Monster dummyMon = new Monster(); //kind of hacky
-
-		try {
-			for (var entry: moves.entrySet()) {
-				var tempAbility = entry.getValue().newInstance(dummyMon);
-				moveNames.put(tempAbility.getName(), entry.getKey());
-			}
-
-		} catch (ReflectiveOperationException e) {
-			System.err.println("Issue creating dummy Ability");
-			e.printStackTrace();
-			System.exit(-1);
-		}
 	}
 
 	//uses index attrs
-	public static Ability createAbility(Move name, Monster user) { //wrapper for getting and apply
-		//return attacks.get(name).apply(user);
+	public static Ability createAbility(String name, Monster user) { //wrapper for getting and apply
 		try {
 			return moves.get(name).newInstance(user);
-
 		} catch (ReflectiveOperationException e) {
-			System.err.println("Issue creating ability");
-			e.printStackTrace();
-			System.exit(-1);
+			throw new RuntimeException("Issue creating ability\n" + e.getMessage());
 		}
-
-		return null;
-	}
-	public static Ability createAbility(String name, Monster user) {
-		return createAbility(moveNames.get(name), user);
 	}
 
-	public static Ability createPassive(Move name, Monster user) {
-		return createAbility(name, user);
+	private static String abilityAlias (Ability ability) {
+		return aliases.get(ability.getClass().getName());
 	}
+
+	public static Ability createAbility(Ability copy, Monster user) {
+		return createAbility(abilityAlias(copy), user);
+	}
+
 	public static Ability createPassive(String name, Monster user) {
-		return createPassive(moveNames.get(name), user);
+		Ability ability = createAbility(name, user);
+		if (!ability.isPassive())
+			throw new RuntimeException("given abilty is not passive");
+
+		return ability;
+	}
+	public static Ability createPassive(Ability copy, Monster user) {
+		return createPassive(abilityAlias(copy), user);
 	}
 
 	public static Potion getPotion(int id) { return potions.get(id); }

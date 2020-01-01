@@ -26,10 +26,8 @@ public class Fight {
 
 
 	public void run() {
-		if (fightControl) {
-			System.err.println("fight is already running");
-			return;
-		}
+		if (fightControl)
+			throw new RuntimeException("fight is already running");
 
 		fightControl = true;
 		do {
@@ -109,10 +107,8 @@ public class Fight {
 
 	private void runTurn(Monster attacker) {
 
-		if (attacker.getStat(Stat.HP) <= 0) { //got rid of flee, maybe temporary; should not occur
-			System.err.println(attacker.getName() + " should be dead");
-			return;
-		}
+		if (attacker.getStat(Stat.HP) <= 0) //got rid of flee, maybe temporary; should not occur
+			throw new RuntimeException(attacker.getName() + " should be dead");
 		
 		attacker.usePassive( otherFighters(attacker) ); //runs passive and updates targets
 		

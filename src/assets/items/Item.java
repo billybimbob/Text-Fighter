@@ -79,7 +79,7 @@ public abstract class Item extends Entity {
 		boolean contains = using.contains(user);
 		boolean slotsUpdated = Equipment.useCheck(user, slot, remove);
 		if (!slotsUpdated)
-			System.err.println("item can't be used outside of Equipment contex");
+			throw new RuntimeException("item can't be used outside of Equipment contex");
 
 		return slotsUpdated && (remove && contains || !remove && !contains);
 	}
