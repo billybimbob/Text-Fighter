@@ -28,7 +28,7 @@ public class Index {
 		T get(int id) { return this.idxGet( ids.get(id) ); }
 		T get(String name) { return this.idxGet( names.get(name) ); }
 	}
-	
+
 	//encapsulated away ability to add values after init
 	private static final Map<String, String> aliases = new HashMap<>(); //for name to move
 	private static final Map<String, Constructor<? extends Ability>> moves = new HashMap<>();
@@ -47,7 +47,7 @@ public class Index {
 	private static void mapMoves() {
 		//could split different class abilities
 		try (BufferedReader reader = new BufferedReader(new FileReader("src/data/moves.txt"))) {
-			
+
 			String line;
 			while((line = reader.readLine()) != null) {
 				String[] tok = line.split(",\\s+");
@@ -132,7 +132,7 @@ public class Index {
 		try (BufferedReader reader = new BufferedReader(new FileReader("src/data/monster.txt"));) {
 			final boolean defltAggro = false;
 			String line;
-			
+
 			while((line = reader.readLine()) != null) {
 				String[] tok = line.split(",\\s+");
 				final int parseLen = tok.length;
@@ -160,7 +160,7 @@ public class Index {
 
 				} else //basic
 					monsters.add(new Monster(name, defltAggro, attType, stats));
-			} 
+			}
 
 		} catch (IOException e) {
 			throw new RuntimeException("Issue reading monsters\n" + e.getMessage());

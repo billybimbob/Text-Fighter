@@ -41,7 +41,7 @@ public abstract class Ability implements Cloneable {
 	}
 
 
-	/* 
+	/*
 	 * combat calculations, helper functions
 	 */
 
@@ -58,7 +58,7 @@ public abstract class Ability implements Cloneable {
 
 		} else
 			Interface.writeOut(attacker.getName() + " tries to use " + name + ", but has insufficient mana");
-			
+
 		return check;
 	}
 
@@ -79,7 +79,7 @@ public abstract class Ability implements Cloneable {
 		double checkNum = Math.random()*attacker.getStat(hitStat)
 			- Math.random()*currTarget.getStat(Stat.SPEED)*0.5;
 		boolean check = checkNum > currTarget.getStat(blockStat)*attMod;
-		
+
 		if (check) //determines damage if successful
 			damage = (int)(Math.random()*(attacker.getStat(hitStat)*damageMod)+1);
 		else if (failPrompt != null)
@@ -95,7 +95,7 @@ public abstract class Ability implements Cloneable {
 	protected boolean attackHit() {
 		return attackHit(null);
 	}
-	
+
 	/**
 	 * checks if attack is a critical hit; prints prompt on success
 	 * @return true if critical check was successful, false if not
@@ -119,7 +119,7 @@ public abstract class Ability implements Cloneable {
 	protected boolean targetReduct(String blockedPrompt) { //maybe look over
 		Stat hitStat = Stat.getHitStat(attType), blockStat = Stat.getBlockStat(attType);
 		damage -= (int)(Math.random()*(currTarget.getStat(blockStat)));
-		
+
 		int minDam = (int)attacker.getStat(hitStat);
 		float stat = currTarget.getStat(blockStat);
 		minDam -= ((int)stat/2);
@@ -170,7 +170,7 @@ public abstract class Ability implements Cloneable {
 	public boolean resolved() { return true; } //check if multi turn, see if ability finished
 
 	void setAttacker(Monster attacker) { this.attacker = attacker; }
-	
+
 	/**
 	 * can return null if state inconsistent
 	 */
@@ -179,7 +179,7 @@ public abstract class Ability implements Cloneable {
 			? null
 			: new Log(attacker, currTarget, this, damage, applied);
 	}
-	
+
 	/**
 	 * attacker deals damage to target, can maybe reflect
 	 */
@@ -190,7 +190,7 @@ public abstract class Ability implements Cloneable {
 		if (checkRef && currTarget.getStatus(Status.REFLECT) > -1) { //not sure if I want to check every time
 			float refDam = (int)(damage*0.75f);
 			attacker.modStat(Stat.HP, true, -refDam);
-			Interface.writeOut(currTarget.getName() + " reflects " + refDam 
+			Interface.writeOut(currTarget.getName() + " reflects " + refDam
 				+ " damage to " + attacker.getName());
 		}
 	}
@@ -244,10 +244,10 @@ public abstract class Ability implements Cloneable {
 			targets.clear();
 			targets.add(attacker);
 		}
-		
+
 		return check;
 	}
-	
+
 	protected void addTarget(Monster add) { //can add targets in subclasses, not sure
 		targets.add(add);
 	}
@@ -261,7 +261,7 @@ public abstract class Ability implements Cloneable {
 		if (!checkAutoTar(this, possTargets)) {
 			for (int i = 0; i < possTargets.size()
 				&& this.targets.size() < this.getNumTar(); i++) { //gets targets if needed
-				
+
 				Monster possTarget = possTargets.get(i);
 				if (possTarget.getAggro() != attacker.getAggro())
 					this.targets.add(possTarget);
@@ -290,7 +290,7 @@ public abstract class Ability implements Cloneable {
 			this.currTarget = null;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.name + " - " + manaCost + " mana\n\t" + description;

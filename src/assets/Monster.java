@@ -25,7 +25,7 @@ public class Monster extends Entity implements Cloneable {
 		float getTemp() { return temp; } //current val
 
 
-		void setBase(float base) { 
+		void setBase(float base) {
 			this.base = base<0 ? 0 : base;
 			this.temp = temp>base ? base : temp; //if new base is less than temp
 		}
@@ -35,7 +35,7 @@ public class Monster extends Entity implements Cloneable {
 		}
 		float setTempCapped(float newVal) { //floor to 0; celings to base; returns amount over basecap
 			float capOver = 0;
-			
+
 			if (newVal > this.base) {
 				capOver = newVal-this.base;
 				if (this.temp < this.base) //keep old temp or ceiling to base
@@ -65,10 +65,10 @@ public class Monster extends Entity implements Cloneable {
 
 	/* variables */
 	public final static int levMult = 2;
-	
+
 	private Ability passive;
 	private Ability turnMove;
-	
+
 	protected boolean attType; //attType true means physical attack
 	protected boolean aggro;
 	protected Map<Stat, StatInfo> stats;
@@ -102,9 +102,9 @@ public class Monster extends Entity implements Cloneable {
 	 */
 	public Monster (String name, boolean aggro, boolean attType, List<Integer> stats, List<String> specials) {
 		this(name, aggro, attType, stats);
-		
+
 		List<Ability> moveSto = new ArrayList<>(Arrays.asList(moveList)); //abilities from default constructor
-		specials.forEach(special -> 
+		specials.forEach(special ->
 			moveSto.add(createAbility(special)));
 
 		moveSto.sort(new Comparator<Ability>() {
@@ -142,11 +142,11 @@ public class Monster extends Entity implements Cloneable {
 		this.stats = new HashMap<>(); //deep copy
 		for (Stat statName: Stat.values())
 			this.stats.put(statName, new StatInfo(copy.getStatMax(statName)));
-		
+
 		initStatus(); //status not copied
 		if (copy.passive != null)
 			this.setPassive( createPassive(copy.passive) );
-		
+
 		this.moveList = Arrays.stream(copy.moveList) //should already be sorted
 			.map(move -> createAbility(move))
 			.toArray(Ability[]::new);
@@ -163,7 +163,7 @@ public class Monster extends Entity implements Cloneable {
 	private Ability createPassive(String name) {
 		return Index.createPassive(name, this);
 	}
-	private Ability createPassive(Ability ability) { 
+	private Ability createPassive(Ability ability) {
 		return Index.createAbility(ability, this);
 	}
 
@@ -178,11 +178,11 @@ public class Monster extends Entity implements Cloneable {
 				status.put(statusName, new StatusInfo());
 	}
 
-	
-	/** 
-     * extra values to check/modify while turning on status;
+
+	/**
+	 * extra values to check/modify while turning on status;
 	 * status will only update if new values will extend duration
-     */
+	 */
 	private boolean onChecks(Status status, int endTurn) {
 		StatusInfo info = this.status.get(status);
 		int oldEnd = info.getEnd();
@@ -213,11 +213,11 @@ public class Monster extends Entity implements Cloneable {
 	}
 
 	/**
-     * extra values to check/modify while turning off a status
-     */
+	 * extra values to check/modify while turning off a status
+	 */
 	private boolean offChecks(Status status) {
 		StatusInfo info = this.status.get(status);
-		
+
 		boolean turnOff = true;
 		switch(status) {
 			case CONTROL:
@@ -236,7 +236,7 @@ public class Monster extends Entity implements Cloneable {
 			default:
 				break;
 		}
-		
+
 		if (turnOff)
 			info.setEnd(-1);
 
@@ -250,9 +250,9 @@ public class Monster extends Entity implements Cloneable {
 	protected int getNumTar() { //could be null
 		return turnMove == null? 0 : turnMove.getNumTar();
 	}
-	
+
 	protected Ability getTurnMove() { return turnMove; }
-	
+
 	protected void setTurnMove(int idx) {
 		if (idx == -1)
 			turnMove = null;
@@ -261,14 +261,14 @@ public class Monster extends Entity implements Cloneable {
 	}
 
 	protected void setPassive(Ability passive) {
-		if (passive != null && passive.isPassive() || passive == null) 
+		if (passive != null && passive.isPassive() || passive == null)
 			this.passive = passive;
 	}
 
 	protected int currentTurn() {
 		return Interface.currentFight().getTurnNum();
 	}
-	
+
 	@Override
 	protected Object clone() { //intentional shallow copy
 		try {
@@ -303,7 +303,7 @@ public class Monster extends Entity implements Cloneable {
 	public float getStatRatio(Stat stat) {
 		return this.getStat(stat)/this.getStatMax(stat);
 	}
-	
+
 	public float getStat (Stat stat) {
 		return this.stats.get(stat).getTemp();
 	}
@@ -324,13 +324,13 @@ public class Monster extends Entity implements Cloneable {
 
 	/**
 	 * shows the amount of time for the status;
-	 * @return {@code -1} not active, {@code 0} finished, 
+	 * @return {@code -1} not active, {@code 0} finished,
 	 * {@code >0} amount of time remaining
 	 */
 	public int getStatus(Status status) {
 		return getStatus(status, false);
 	}
-	
+
 	public boolean statusUpdated() {
 		return this.status.values().stream()
 			.map(StatusInfo::getChecked)
@@ -384,7 +384,7 @@ public class Monster extends Entity implements Cloneable {
 			turnMove = null;
 		}
 	}
-	
+
 	public void usePassive(List<Monster> possTargets) { //look at; assume all fighters passed in
 		if (passive != null) {
 			passive.pickTargets(possTargets);
@@ -456,7 +456,7 @@ public class Monster extends Entity implements Cloneable {
 	}
 
 	/**
-	 * turns on/off the inputted status; defaults to one turn; 
+	 * turns on/off the inputted status; defaults to one turn;
 	 * status may not always successful be changed, if the state
 	 * of the monster is not correct
 	 * @see {@link Monster#setStatus(Status, int)}
@@ -465,13 +465,13 @@ public class Monster extends Entity implements Cloneable {
 		return setStatus(status, toggleToDuration(toggle));
 	}
 
-	/** 
+	/**
 	 * returns the time of the status, and also updating state
-	 * if the time is {@code 0}; if {@code 0}, the status will automatically be turned off; 
+	 * if the time is {@code 0}; if {@code 0}, the status will automatically be turned off;
 	 * multiple, consecutive calls of this method when status is initially {@code 0} will
 	 * then be {@code -1} on calls afterwards
-	 * @return {@code -1} not active, {@code 0} finished, 
-	 * {@code >0} amount of time remaining 
+	 * @return {@code -1} not active, {@code 0} finished,
+	 * {@code >0} amount of time remaining
 	 */
 	public int updateStatus(Status status) { //could add active mods here
 		int timeLeft = this.getStatus(status, true);
@@ -491,7 +491,7 @@ public class Monster extends Entity implements Cloneable {
 
 		return timeLeft;
 	}
-	
+
 	public void resetStatusChecks() {
 		this.status.values().stream()
 			.filter(info -> info.getEnd() > -1)
@@ -513,8 +513,8 @@ public class Monster extends Entity implements Cloneable {
 
 	@Override
 	public String toString () {
-		return this.getName() + " - " 
-			+ getStat(Stat.HP) + " hp" + " - " 
+		return this.getName() + " - "
+			+ getStat(Stat.HP) + " hp" + " - "
 			+ getStat(Stat.MP) + " mp" + " - "
 			+ getStat(Stat.SPEED) + " speed";
 	}
@@ -525,5 +525,5 @@ public class Monster extends Entity implements Cloneable {
 		return bSpeed.compareTo(aSpeed);
 	}
 
-	
+
 }
