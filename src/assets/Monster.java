@@ -2,6 +2,7 @@ package assets;
 
 import java.util.*;
 
+import assets.items.Slot;
 import combat.Status;
 import combat.moves.Ability;
 import main.Index;
@@ -47,11 +48,11 @@ public class Monster extends Entity implements Cloneable {
 		}
 	}
 
-	static class StatusInfo {
+	protected static class StatusInfo { //for overriding
 		private int end;
 		private boolean checked;
 
-		StatusInfo () {
+		protected StatusInfo () {
 			this.end = -1;
 			checked = true;
 		}
@@ -78,6 +79,10 @@ public class Monster extends Entity implements Cloneable {
 	protected Ability[] moveList;
 	protected int level = 1;
 
+	/**
+	 * constructor used only for dummy monsters, do not use
+	 */
+	public Monster() { }
 
 	/**
 	 * constructor to have no extra attacks but basic
@@ -146,12 +151,14 @@ public class Monster extends Entity implements Cloneable {
 		for (Stat statName: Stat.values())
 			this.stats.put(statName, new StatInfo(copy.getStatMax(statName)));
 		
-		initStatus();
+		initStatus(); //status not copied
 		if (copy.passive != null)
 			this.setPassive((Ability)copy.passive.clone(this));
+			//this.setPassive( createPassive(copy.passive.getName()) );
 		
 		this.moveList = Arrays.stream(copy.moveList) //should already be sorted
-			.map(move -> (Ability)move.clone(this)) //could use name and valueOf
+			.map(move -> (Ability)move.clone(this))
+			//.map(move -> createAbility(move.getName()))
 			.toArray(Ability[]::new);
 
 	}
@@ -160,8 +167,14 @@ public class Monster extends Entity implements Cloneable {
 	private Ability createAbility(Move name) {
 		return Index.createAbility(name, this);
 	}
+	private Ability createAbility(String moveName) {
+		return Index.createAbility(moveName, this);
+	}
 	private Ability createPassive(Move name) {
 		return Index.createPassive(name, this);
+	}
+	private Ability createPassive(String moveName) { 
+		return Index.createAbility(moveName, this);
 	}
 
 	private void initStatus() {
@@ -398,11 +411,11 @@ public class Monster extends Entity implements Cloneable {
 	/**
 	 * modifies max stat value to newVal
 	 */
-	protected void setStatMax (Stat stat, float newVal) {
+	public void setStatMax (Stat stat, float newVal) {
 		stats.get(stat).setBase(newVal);
 	}
 
-	protected void modStatMax (Stat stat, float mod) {
+	public void modStatMax (Stat stat, float mod) {
 		float modVal = mod + stats.get(stat).getBase();
 		setStatMax(stat, modVal);
 	}

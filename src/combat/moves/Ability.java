@@ -184,7 +184,7 @@ public abstract class Ability implements Cloneable {
 	public boolean resolved() { return true; } //check if multi turn, see if ability finished
 
 	void setAttacker(Monster attacker) { this.attacker = attacker; }
-	protected void setTarget(Monster target) { this.currTarget = target; }
+	
 	/**
 	 * can return null if state inconsistent
 	 */
@@ -195,18 +195,25 @@ public abstract class Ability implements Cloneable {
 	}
 	
 	/**
-	 * attacker deals damage to target, and the damage is logged
+	 * attacker deals damage to target, can maybe reflect
 	 */
-	protected void dealDamage (String damPrompt) {
+	protected void dealDamage (String damPrompt, boolean checkRef) {
 		currTarget.modStat(Stat.HP, true, -damage);
 		Interface.writeOut(damPrompt);
 
-		if (currTarget.getStatus(Status.REFLECT) > -1) { //not sure if I want to check every time
+		if (checkRef && currTarget.getStatus(Status.REFLECT) > -1) { //not sure if I want to check every time
 			float refDam = (int)(damage*0.75f);
 			attacker.modStat(Stat.HP, true, -refDam);
 			Interface.writeOut(currTarget.getName() + " reflects " + refDam 
 				+ " damage to " + attacker.getName());
 		}
+	}
+
+	/**
+	 * attacker deals damage to target and damage is also reflected
+	 */
+	protected void dealDamage (String damPrompt) {
+		dealDamage(damPrompt, true);
 	}
 
 	/**
@@ -237,16 +244,20 @@ public abstract class Ability implements Cloneable {
 		int numTar = this.getNumTar();
 
 		boolean check = numTar == -1 || numTar >= possTargets.size();
-		if (check)
-			this.targets.addAll(possTargets);
+		if (check) {
+			targets.clear();
+			targets.addAll(possTargets);
+		}
 
 		return check;
 	}
 
 	private boolean checkSelfTar() {
 		boolean check = numTar == 0;
-		if (check)
-			this.targets.add(attacker);
+		if (check) {
+			targets.clear();
+			targets.add(attacker);
+		}
 		
 		return check;
 	}
@@ -256,11 +267,11 @@ public abstract class Ability implements Cloneable {
 	}
 
 	public static boolean checkAutoTar(Ability check, List<Monster> possTargets) {
-		check.targets.clear();
 		return check.checkAddAll(possTargets) || check.checkSelfTar();
 	}
 
-	public void pickTargets(List<Monster> possTargets) { //cleared in auto
+	public void pickTargets(List<Monster> possTargets) {
+		targets.clear();
 		if (!checkAutoTar(this, possTargets)) {
 			for (int i = 0; i < possTargets.size()
 				&& this.targets.size() < this.getNumTar(); i++) { //gets targets if needed

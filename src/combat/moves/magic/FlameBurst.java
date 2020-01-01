@@ -28,8 +28,8 @@ public class FlameBurst extends Ability {
     protected void execute() {
 		Monster target = this.currentTarget();
         String failPrompt = target.getName() + " resists the flames";
+        
         if (attackHit(failPrompt)) {
-
             String damPrompt = target.getName() + " is hit with flames for " + damage + " damage"
                 + "\nand burning for " + duration + " turns";
             dealDamage(damPrompt);

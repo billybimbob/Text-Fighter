@@ -3,6 +3,7 @@ package assets;
 import java.util.ArrayList;
 import java.util.List;
 
+import assets.items.*;
 import combat.*;
 import combat.moves.Ability;
 import main.Inventory;

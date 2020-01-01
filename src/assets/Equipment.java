@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import combat.Status;
+import assets.items.*;
 
 public class Equipment {
 
@@ -76,6 +77,12 @@ public class Equipment {
     //public methods
     public static Item checkSlot(Monster user, Slot slot) {
         return getInfo(user).getItem(slot);
+    }
+
+    public static boolean useCheck(Monster user, Slot slot, boolean remove) { //checks if equip info updated before item use
+        EquipInfo info = getInfo(user);
+        boolean removed = info.getItem(slot) == null;
+        return remove ? removed : !removed;
     }
 
     /**

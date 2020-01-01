@@ -12,7 +12,7 @@ public class BasicAttack extends Ability {
 	}
 
 	@Override
-	public Object clone(Monster user) {
+	public Object clone (Monster user) {
 		BasicAttack clone = (BasicAttack)super.clone(user);
 		clone.attType = user.getAttType();
 		return clone;

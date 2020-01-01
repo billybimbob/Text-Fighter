@@ -1,7 +1,8 @@
-package assets;
+package assets.items;
 
 import java.util.List;
 import main.Interface;
+import assets.Stat;
 
 public class Armor extends Item {
 
@@ -27,7 +28,7 @@ public class Armor extends Item {
 
     protected void statMod(Stat stat, int mod) {
         int modVal = this.remove ? -mod : mod;
-        if (currentUser.attType != this.attType)
+        if (currentUser.getAttType() != this.attType)
             modVal *= 0.5;
 		currentUser.modStatMax(stat, modVal);
     }

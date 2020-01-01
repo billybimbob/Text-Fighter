@@ -1,7 +1,7 @@
 package main;
 
 import java.util.*;
-import assets.Item;
+import assets.items.Item;
 
 public class Inventory implements Iterable<Item> {
 	

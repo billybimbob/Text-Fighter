@@ -1,8 +1,9 @@
-package assets;
+package assets.items;
 
 import java.util.List;
 
 import combat.Status;
+import assets.*;
 import main.*;
 
 public class Potion extends Item {

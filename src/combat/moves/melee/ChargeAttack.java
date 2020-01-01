@@ -27,7 +27,7 @@ public class ChargeAttack extends Ability {
 
 	@Override
 	protected boolean preExecute() { //checks happen later
-		return true;
+		return turnCount==0 && enoughMana() || turnCount==1;
 	}
 	
 	protected void execute() { //might put the print statements in the fight class
@@ -61,7 +61,7 @@ public class ChargeAttack extends Ability {
 			
 			turnCount = 0;
 			
-		} else if (enoughMana() && turnCount == 0) { //checks if sufficient mana, and starts charged turn
+		} else if (turnCount == 0) { //checks if sufficient mana, and starts charged turn
 			Interface.writeOut(attacker.getName() + " readies their swing");
 			turnCount++;
 		}

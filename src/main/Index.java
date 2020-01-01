@@ -7,11 +7,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import assets.*;
+import assets.items.*;
 import combat.moves.*;
-/*
-import combat.moves.magic.*;
-import combat.moves.melee.*;
-import combat.moves.passive.*;*/
 
 public class Index {
 
@@ -42,6 +39,7 @@ public class Index {
 	}
 	
 	//encapsulated away ability to add values after init
+	private static final Map<String, Move> moveNames = new HashMap<>(); //for name to move
 	private static final Map<Move, Constructor<? extends Ability>> moves = new HashMap<>();
 	private static final NameList<Monster> monsters = new NameList<>();
 	private static final NameList<Potion> potions = new NameList<>();
@@ -51,6 +49,7 @@ public class Index {
 		readPotions();
 		readArmors();
 		readMonsters();
+		//mapMoveNames();
 	}
 
 	private Index() { }
@@ -58,8 +57,8 @@ public class Index {
 	private static void mapMoves() {
 		//could split different class abilities
 		try (BufferedReader reader = new BufferedReader(new FileReader("src/data/moves.txt"))) {
+			
 			String line;
-
 			while((line = reader.readLine()) != null) {
 				String[] tok = line.split(",\\s+");
 				if (tok.length < 2)
@@ -80,11 +79,10 @@ public class Index {
 			}
 
 		} catch (IOException e) {
-			System.err.println("Issue reading potions");
+			System.err.println("Issue reading moves");
 			System.exit(-1);
 		} catch (ClassNotFoundException | NoSuchMethodException e) {
-			System.err.println("Issue finding listed move");
-			System.err.println(e);
+			System.err.println("Issue finding listed move\n" + e);
 			System.exit(-1);
 		}
 
@@ -187,24 +185,46 @@ public class Index {
 
 	}
 
+	private static void mapMoveNames() {
+		Monster dummyMon = new Monster(); //kind of hacky
+
+		try {
+			for (var entry: moves.entrySet()) {
+				var tempAbility = entry.getValue().newInstance(dummyMon);
+				moveNames.put(tempAbility.getName(), entry.getKey());
+			}
+
+		} catch (ReflectiveOperationException e) {
+			System.err.println("Issue creating dummy Ability");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
 	//uses index attrs
 	public static Ability createAbility(Move name, Monster user) { //wrapper for getting and apply
 		//return attacks.get(name).apply(user);
 		try {
 			return moves.get(name).newInstance(user);
 
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			
+		} catch (ReflectiveOperationException e) {
 			System.err.println("Issue creating ability");
+			e.printStackTrace();
+			System.exit(-1);
 		}
 
 		return null;
 	}
-	public static Ability createPassive(Move name, Monster user) {
-		//return passives.get(name).apply(user);
-		return createAbility(name, user);
+	public static Ability createAbility(String name, Monster user) {
+		return createAbility(moveNames.get(name), user);
 	}
 
+	public static Ability createPassive(Move name, Monster user) {
+		return createAbility(name, user);
+	}
+	public static Ability createPassive(String name, Monster user) {
+		return createPassive(moveNames.get(name), user);
+	}
 
 	public static Potion getPotion(int id) { return potions.get(id); }
 	public static Potion getPotion(String name) { return potions.get(name); }

@@ -22,7 +22,7 @@ public class Shock extends Ability {
 	@Override
 	protected boolean preExecute() {
 		addTarget(this.getAttacker()); //for self buff
-		return super.preExecute();
+		return enoughMana();
 	}
 
 	protected void execute() {

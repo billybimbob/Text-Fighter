@@ -1,4 +1,4 @@
-package assets;
+package assets.items;
 
 public enum Slot {
     HEAD("Head"), BODY("Body"), MARM("Main Arm"), AARM("Alt Arm"), POTION("Potion");
@@ -9,5 +9,5 @@ public enum Slot {
         this.name = name;
     }
 
-    String getName() { return this.name; }
+    public String getName() { return this.name; }
 }

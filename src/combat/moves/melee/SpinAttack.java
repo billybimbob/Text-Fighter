@@ -5,7 +5,6 @@ import combat.moves.Ability;
 
 public class SpinAttack extends Ability {
 
-	
 	public SpinAttack (Monster user) { //might change to get rid of enemies parameter; max amount of targets is 5
 		super(user);
 		name = "Spin Attack";

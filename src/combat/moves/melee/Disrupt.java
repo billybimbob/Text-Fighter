@@ -1,12 +1,13 @@
 package combat.moves.melee;
 
-import assets.Stat;
 import assets.Monster;
 import combat.moves.Ability;
 import combat.Status;
 import main.Interface;
 
 public class Disrupt extends Ability {
+
+	private float recoil;
 
 	public Disrupt(Monster user) {
 		super(user);
@@ -16,15 +17,27 @@ public class Disrupt extends Ability {
 		priority = true;
 		attMod = 0.02f;
 		manaCost = 7;
+		recoil = 0;
+	}
+
+	@Override
+	protected boolean preExecute() {
+		addTarget(this.getAttacker()); //for recoil
+		return enoughMana();
 	}
 	
 	protected void execute() {
 		Monster attacker = this.getAttacker();
 		Monster target = this.currentTarget();
-
 		String missPrompt = attacker.getName() + "'s attack missed";
-		if (attackHit(missPrompt)) { //Check if attack will be successful
-			
+
+		if (target.equals(attacker) && recoil>0) {
+			this.damage = recoil;
+			String recoilPrompt = attacker.getName() + " deals " + damage + " damage to self from recoil";
+			dealDamage(recoilPrompt, false);
+			recoil = 0;
+
+		} else if (attackHit(missPrompt)) { //Check if attack will be successful
 			Interface.prompt(attacker.getName() + " slams into " + target.getName());
 
 			String blockedPrompt = "but was resisted";
@@ -40,11 +53,7 @@ public class Disrupt extends Ability {
 				}
 				setAttMod(sto);
 			}
-			
-			if (damage > 0) {
-				attacker.modStat(Stat.HP, true, -damage); //might add to damage received in turn?
-				Interface.writeOut(attacker.getName() + " deals " + damage + " damage to self from recoil");
-			}
+			recoil = damage;
 			
 		}
 	}

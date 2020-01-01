@@ -1,4 +1,4 @@
-package assets;
+package assets.items;
 
 import java.util.List;
 import java.util.Set;
@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import assets.*;
 
 public abstract class Item extends Entity {
 
@@ -76,7 +77,11 @@ public abstract class Item extends Entity {
 
 	protected boolean checkState(Monster user, boolean remove) {
 		boolean contains = using.contains(user);
-		return remove && contains || !remove && !contains;
+		boolean slotsUpdated = Equipment.useCheck(user, slot, remove);
+		if (!slotsUpdated)
+			System.err.println("item can't be used outside of Equipment contex");
+
+		return slotsUpdated && (remove && contains || !remove && !contains);
 	}
 
 	/**
@@ -84,7 +89,7 @@ public abstract class Item extends Entity {
 	 * @param user monster using the item
 	 * @param remove {@code true} if to remove stats from user
 	 */
-	protected final void use (Monster user, boolean remove) { //should not be remove true first
+	public final void use (Monster user, boolean remove) { //should not be remove true first
 		if (checkState(user, remove)) {
 			this.currentUser = user;
 			if (this.remove = remove)
@@ -104,7 +109,7 @@ public abstract class Item extends Entity {
 	 * the remove parameter first being off then on
 	 * @param user user of the item
 	 */
-	protected final void use (Monster user) {
+	public final void use (Monster user) {
 		use(user, defaultRemove(user));			
 	}
 	
@@ -113,7 +118,7 @@ public abstract class Item extends Entity {
 	
 	@Override
 	public int compareTo(Entity other) {
-		return this.name.compareTo(other.name);
+		return this.name.compareTo(other.getName());
 	}
 
 }
