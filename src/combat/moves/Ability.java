@@ -7,13 +7,14 @@ import assets.Stat;
 import assets.Monster;
 import combat.Status;
 import combat.FightLog.Log;
+import combat.FightLog.ApplyInfo;
 import main.Interface;
 
 public abstract class Ability implements Cloneable {
 
 	private List<Monster> targets;
 	private Monster attacker, currTarget; //changes with useAbility
-	private List<Status> applied; //maybe add removed status list?
+	private List<ApplyInfo> applied; //maybe add removed status list?
 
 	protected String name, description;
 	protected float manaCost, attMod, damage, damageMod;
@@ -145,6 +146,11 @@ public abstract class Ability implements Cloneable {
 		return ret;
 	}
 
+	/**
+	 * steps before the ability is used on any specific
+	 * target, by default does an {@code enoughMana}
+	 * check
+	 */
 	protected boolean preExecute() {
 		return enoughMana();
 	}
@@ -181,7 +187,10 @@ public abstract class Ability implements Cloneable {
 	}
 
 	/**
-	 * attacker deals damage to target, can maybe reflect
+	 * attacker deals damage to target, can maybe reflect;
+	 * damage determined by {@code damage}
+	 * @param damPrompt prompt stated with the attack
+	 * @param checkRef determines if the damage applies reflect damage
 	 */
 	protected void dealDamage (String damPrompt, boolean checkRef) {
 		currTarget.modStat(Stat.HP, true, -damage);
@@ -210,7 +219,7 @@ public abstract class Ability implements Cloneable {
 	 */
 	protected void applyStatus (Status status, int duration, String statusPrompt) {
 		this.currTarget.setStatus(status, duration);
-		this.applied.add(status);
+		this.applied.add(new ApplyInfo(status, duration));
 		if (statusPrompt != null)
 			Interface.writeOut(statusPrompt);
 	}
@@ -252,13 +261,19 @@ public abstract class Ability implements Cloneable {
 		targets.add(add);
 	}
 
-	public static boolean checkAutoTar(Ability check, List<Monster> possTargets) {
-		return check.checkAddAll(possTargets) || check.checkSelfTar();
+	/**
+	 * checks if targets for ability can be selected automatically
+	 * from self target ability or aoe
+	 * @param possTargets all poss targets for ability (should not include attacker)
+	 * @return {@code true} if targets were able to be selected
+	 */
+	public boolean checkAutoTar(List<Monster> possTargets) {
+		return this.checkAddAll(possTargets) || this.checkSelfTar();
 	}
 
 	public void pickTargets(List<Monster> possTargets) {
 		targets.clear();
-		if (!checkAutoTar(this, possTargets)) {
+		if (!checkAutoTar(possTargets)) {
 			for (int i = 0; i < possTargets.size()
 				&& this.targets.size() < this.getNumTar(); i++) { //gets targets if needed
 

@@ -5,7 +5,6 @@ import java.util.List;
 
 import assets.items.*;
 import combat.*;
-import combat.moves.Ability;
 import main.Inventory;
 import main.Index;
 import static main.Interface.*; //not sure if to keep
@@ -76,6 +75,11 @@ public class Hero extends Monster {
 				case 4:
 					viewEquipment();
 					break;
+
+				case 5:
+					writeOut("Leaving the fight");
+					System.exit(1); //temporary?
+					break;
 			}
 		}
 	}
@@ -92,7 +96,7 @@ public class Hero extends Monster {
 			
 			//determine the targets of hero move
 			action = true;
-			if (Ability.checkAutoTar(getTurnMove(), possTargets))
+			if (this.getTurnMove().checkAutoTar(possTargets))
 				continue;
 				
 			List<Monster> targets = new ArrayList<>();
@@ -100,7 +104,9 @@ public class Hero extends Monster {
 			
 			while (numOptions-possTargets.size() < this.getNumTar()) { //loop until amount selected enough
 
-				String[] monNames = possTargets.stream().map(Monster::getName).toArray(String[]::new);
+				String[] monNames = possTargets.stream()
+					.map(Monster::getName)
+					.toArray(String[]::new);
 				final String tarPrompt = "Which monster would you want to target?";
 				int tarNum = choiceInput(true, monNames, tarPrompt);
 				
@@ -135,6 +141,7 @@ public class Hero extends Monster {
 				return;
 
 			item = inventory.getItem(pickNum-1);
+			//boolean potionActive = 
 			if (item.getSlot().equals(Slot.POTION) && this.getStatus(Status.POTION) > 0) { //can check all item slots or just pots
 				final String usePrompt = "Another buff is still active, "
 					+ "and will be canceled by this potion, and"

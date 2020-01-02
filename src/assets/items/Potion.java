@@ -1,6 +1,7 @@
 package assets.items;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import combat.Status;
 import assets.*;
@@ -9,15 +10,15 @@ import main.*;
 public class Potion extends Item {
 	
 	private int duration = 5;
-	private boolean overTime;
+	private boolean regen; //regen will not lose buff after gone
 	private boolean start;
 	
-	public Potion(String name, List<Stat> modStats, int modVal, int duration, boolean overTime) {
+	public Potion(String name, List<Stat> modStats, int modVal, int duration, boolean regen) {
 		this.slot = Slot.POTION;
 		this.space = 1; //could maybe paramerize
 		this.name = name;
 		this.duration = duration;
-		this.overTime = overTime;
+		this.regen = regen;
 		modStats.forEach(stat -> mods.add(new ModInfo(stat, modVal)));
 	}
 
@@ -32,11 +33,11 @@ public class Potion extends Item {
 			currentUser.setStatus(Status.POTION, false);
 			Interface.writeOut(this.getName() + " has worn off");
 
-		} else if (this.start = currentUser.getStatus(Status.POTION) == -1) { //potential issue; potion can't refresh
+		} else if (this.start = currentUser.getStatus(Status.POTION)==-1) { //potential issue; potion can't refresh
 			currentUser.setStatus(Status.POTION, duration);
 			String modNames = this.getModNames();
 
-			if (this.overTime)
+			if (this.regen)
 				Interface.writeOut(currentUser.getName() + " has used " 
 					+ this.getName() + " and will gain " + modNames + " over time");
 			else
@@ -46,12 +47,12 @@ public class Potion extends Item {
 	}
 	
 	protected void statMod (Stat stat, int modVal) {
-		if (this.overTime && !this.remove) { //for start and overTime
+		if (this.regen && !this.remove) { //for start and regen
 			float capOver = currentUser.modStat(stat, true, modVal);
 			Interface.writeOut(currentUser.getName() + " gain " 
 				+ (modVal-capOver) + " " + stat + " from the " + this.getName());
 
-		} else if (!this.overTime) { //nothing done if not start or remove
+		} else if (!this.regen) { //nothing done if not start or remove
 
 			if (this.remove)
 				currentUser.modStat(stat, false, -modVal);
@@ -61,5 +62,16 @@ public class Potion extends Item {
 			}
 		}
 	}
+
+	private String modStr() {
+		return mods.stream()
+		.map(mod -> "buffs " + mod.getStat() + " by " + mod.getMod())
+		.collect(Collectors.joining(", "));
+	}
+
+	@Override
+	public String toString() {
+		return name + ": that " + modStr() + " for " + duration + " turns";
+	} 
 
 }

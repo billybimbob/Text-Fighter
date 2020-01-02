@@ -1,11 +1,14 @@
 name stats val duration overTime
 
 Potions:
-Health Potion,          hp,    2,  5, true
-Mana Potion,            mp,    2,  5, true
-Potion of Offense,      att,   7,  5, false
-Ironskin Potion,        def,   10, 5, false
-Potion of Elements,     mag,   7,  5, false
-Element Barrier Potion, magr,  10, 5, false
-Swiftness Potion,       speed, 10, 5, false
-Lucky Potion,           crit,  10, 5, false
+Health Potion,          hp,           3,  5, true
+Mana Potion,            mp,           3,  5, true
+Potion of Offense,      att,          7,  5, false
+Ironskin Potion,        def,          10, 5, false
+Potion of Elements,     mag,          7,  5, false
+Element Barrier Potion, magr,         10, 5, false
+Swiftness Potion,       speed,        10, 5, false
+Lucky Potion,           crit,         10, 5, false
+Warrior Restore,        att,def,      3,  1, true
+Witch's Restore,        mag,magr,     3,  1, true
+Recovery Potion,        hp,mp,speed,  2,  1, true

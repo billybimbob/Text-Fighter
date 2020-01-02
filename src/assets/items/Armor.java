@@ -30,7 +30,10 @@ public class Armor extends Item {
 		int modVal = this.remove ? -mod : mod;
 		if (currentUser.getAttType() != this.attType)
 			modVal *= 0.5;
+			
 		currentUser.modStatMax(stat, modVal);
+		if (!this.remove)
+			currentUser.modStat(stat, true, modVal);
 	}
 
 	public boolean getAttType() { return attType; }

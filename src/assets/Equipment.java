@@ -30,8 +30,8 @@ public class Equipment {
 		}
 	}
 
-	private static EquipInfo stoInfo;
 
+	private static EquipInfo stoInfo;
 
 	private static EquipInfo getInfo(Monster mon, boolean store) {
 		EquipInfo info;

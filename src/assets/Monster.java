@@ -24,14 +24,13 @@ public class Monster extends Entity implements Cloneable {
 		float getBase() { return base; } //max val
 		float getTemp() { return temp; } //current val
 
-
 		void setBase(float base) {
-			this.base = base<0 ? 0 : base;
+			this.base = Math.abs(base);
 			this.temp = temp>base ? base : temp; //if new base is less than temp
 		}
 
 		void setTemp(float newVal) {
-			this.temp = newVal<0 ? 0 : newVal;
+			this.temp = Math.abs(newVal);
 		}
 		float setTempCapped(float newVal) { //floor to 0; celings to base; returns amount over basecap
 			float capOver = 0;
@@ -72,7 +71,7 @@ public class Monster extends Entity implements Cloneable {
 	protected boolean attType; //attType true means physical attack
 	protected boolean aggro;
 	protected Map<Stat, StatInfo> stats;
-	protected Map<Status, StatusInfo> status; //temporary values
+	protected Map<Status, StatusInfo> status; //temporary values, have time-based aspect
 	protected Ability[] moveList;
 	protected int level = 1;
 
@@ -195,7 +194,7 @@ public class Monster extends Entity implements Cloneable {
 				break;
 			case DODGE:
 				if (turnOn && oldEnd == -1)
-					this.modStat(Stat.SPEED, false, this.getStatMax(Stat.SPEED)); //doubles speed
+					this.modStat(Stat.SPEED, false, this.getStatMax(Stat.SPEED)); //doubles speed, keep eye on, issue with armor
 				break;
 			case SHIFT:
 				turnOn = turnOn && ShapeShift.switchCheck(info, true);
@@ -351,7 +350,7 @@ public class Monster extends Entity implements Cloneable {
 	}
 
 	public void setRandomTargets(List<Monster> possTargets) {
-		if (turnMove == null || Ability.checkAutoTar(turnMove, possTargets))
+		if (turnMove == null || turnMove.checkAutoTar(possTargets))
 			return;
 
 		int amountTars = this.getNumTar();

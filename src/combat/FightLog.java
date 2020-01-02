@@ -4,18 +4,35 @@ import combat.moves.Ability;
 import assets.Monster;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class FightLog {
+
+	public static class ApplyInfo {
+		private Status status;
+		private int duration;
+
+		public ApplyInfo(Status status, int duration) {
+			this.status = status;
+			this.duration = duration;
+		}
+
+		public Status getStatus() { return status; }
+		public int getAmount() { return duration; }
+
+		@Override
+		public String toString() {
+			return this.status.name().toLowerCase() + " for " + duration + " turns";
+		}
+	}
 
 	public static class Log {
 		private Monster attacker, target;
 		private float damage;
 		private Ability attack;
-		private List<Status> applied;
+		private List<ApplyInfo> applied;
 	
-		public Log(Monster attacker, Monster target, Ability ability, float damage, List<Status> applied) {
+		public Log(Monster attacker, Monster target, Ability ability, float damage, List<ApplyInfo> applied) {
 			this.attacker = attacker;
 			this.target = target;
 			this.attack = ability;
@@ -27,12 +44,11 @@ public class FightLog {
 		public Monster getTarget() { return target; }
 		public Ability getAttack() { return attack; }
 		public float getDamage() { return damage; }
-		public List<Status> getApplied() { return applied; }
-	
+		public List<ApplyInfo> getApplied() { return applied; }
+
 		private String appliedStr() {
-			Function<Status, String> getName = Status::name;
 			return applied.stream()
-				.map(getName.andThen(String::toLowerCase))
+				.map(ApplyInfo::toString)
 				.collect(Collectors.joining(", "));
 		}
 	
@@ -66,7 +82,6 @@ public class FightLog {
 		logs.clear();
 	}
 
-	//public methods
 	/* accessors */
 	/**
 	 * returns combat info based on round and target of combat

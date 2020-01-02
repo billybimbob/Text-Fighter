@@ -11,7 +11,7 @@ import combat.moves.*;
 
 public class Index {
 
-	private static class NameList <T extends Entity> {
+	private static class EntityList <T extends Entity> {
 		final List<T> lst = new ArrayList<>(); //can't index straight into
 		final Map<Integer, Integer> ids = new HashMap<>(); //ids to list idx
 		final Map<String, Integer> names = new HashMap<>(); //name to list idx
@@ -29,12 +29,14 @@ public class Index {
 		T get(String name) { return this.idxGet( names.get(name) ); }
 	}
 
-	//encapsulated away ability to add values after init
-	private static final Map<String, String> aliases = new HashMap<>(); //for name to move
-	private static final Map<String, Constructor<? extends Ability>> moves = new HashMap<>();
-	private static final NameList<Monster> monsters = new NameList<>();
-	private static final NameList<Potion> potions = new NameList<>();
-	private static final NameList<Armor> armors = new NameList<>();
+	private static class Moves { //for grouping
+		static final Map<String, String> aliases = new HashMap<>(); //for name to move
+		static final Map<String, Constructor<? extends Ability>> constrs = new HashMap<>();
+	}
+	private static final EntityList<Monster> monsters = new EntityList<>();
+	private static final EntityList<Potion> potions = new EntityList<>();
+	private static final EntityList<Armor> armors = new EntityList<>();
+
 	static {
 		mapMoves();
 		readPotions();
@@ -63,8 +65,8 @@ public class Index {
 				var classRef = Class.forName(path.toString()).asSubclass(Ability.class);
 				var constructor = classRef.getDeclaredConstructor(Monster.class);
 
-				moves.put(move, constructor);
-				aliases.put(classRef.getName(), move);
+				Moves.constrs.put(move, constructor);
+				Moves.aliases.put(classRef.getName(), move);
 			}
 
 		} catch (IOException e) {
@@ -78,8 +80,8 @@ public class Index {
 
 	private static void readPotions() {
 		try (BufferedReader reader = new BufferedReader(new FileReader("src/data/potion.txt"))) {
+			
 			String line;
-
 			while((line = reader.readLine()) != null) {
 				String[] tok = line.split(",\\s+");
 				if (tok.length < 5)
@@ -103,8 +105,8 @@ public class Index {
 
 	private static void readArmors() {
 		try (BufferedReader reader = new BufferedReader(new FileReader("src/data/equip.txt"))) {
+			
 			String line;
-
 			while((line = reader.readLine()) != null) {
 				String[] toks = line.split(",\\s+");
 				if (toks.length < 6)
@@ -130,9 +132,9 @@ public class Index {
 	private static void readMonsters() {
 
 		try (BufferedReader reader = new BufferedReader(new FileReader("src/data/monster.txt"));) {
+			
 			final boolean defltAggro = false;
 			String line;
-
 			while((line = reader.readLine()) != null) {
 				String[] tok = line.split(",\\s+");
 				final int parseLen = tok.length;
@@ -148,7 +150,7 @@ public class Index {
 
 				if (parseLen >= 4) { //has special moves
 					List<String> moves = Arrays.stream(tok[3].split(","))
-						.map(moveTok -> moveTok.toLowerCase())
+						.map(String::toLowerCase)
 						.collect(Collectors.toList());
 
 					if (parseLen >= 5) { //has passive
@@ -171,14 +173,14 @@ public class Index {
 	//uses index attrs
 	public static Ability createAbility(String name, Monster user) { //wrapper for getting and apply
 		try {
-			return moves.get(name).newInstance(user);
+			return Moves.constrs.get(name).newInstance(user);
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException("Issue creating ability\n" + e.getMessage());
 		}
 	}
 
 	private static String abilityAlias (Ability ability) {
-		return aliases.get(ability.getClass().getName());
+		return Moves.aliases.get(ability.getClass().getName());
 	}
 
 	public static Ability createAbility(Ability copy, Monster user) {

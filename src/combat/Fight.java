@@ -9,7 +9,7 @@ import main.*;
 
 public class Fight {
 	
-	public static final String[] FIGHTCHOICES = {"Fight", "Dodge", "Inventory", "View Equipment"};
+	public static final String[] FIGHTCHOICES = {"Fight", "Dodge", "Inventory", "View Equipment", "Flee"};
 
 	private FightLog log;
 	private List<Monster> fighters;
@@ -232,9 +232,12 @@ public class Fight {
 					break;
 
 				case POISON:
-					int poiDam = (int)(checking.getStat(Stat.HP)*0.1*(getTurnNum()%10));
-					checking.modStat(Stat.HP, false, -poiDam);
-					Interface.writeOut(checking.getName() + " is poisoned, and takes " + poiDam + " damage");
+					Stat[] statVals = Stat.values();
+					Stat randStat = statVals[(int)Math.random()*statVals.length]; //keep eye on rand
+					int poiDam = (int)(checking.getStat(randStat)*0.1*(getTurnNum()%10));
+					checking.modStat(randStat, false, -poiDam);
+					Interface.writeOut(checking.getName() + " is poisoned, and loses " 
+						+ poiDam + " " + randStat);
 					break;
 
 				case POTION:
